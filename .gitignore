@@ -47,3 +47,17 @@ app.*.map.json
 # Firebase API Key
 lib/firebase_options.dart
 **/google-services.json
+
+# Generated class
+*.freezed.dart
+*.g.dart
+*.config.dart
+
+# VSCode
+.vscode/
+
+# Firebase Emulator
+emulators/
+
+# FVM Version Cache
+.fvm/

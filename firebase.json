@@ -1,39 +1,39 @@
 {
+  "firestore": {
+    "database": "(default)",
+    "location": "asia-southeast2",
+    "rules": "firestore.rules",
+    "indexes": "firestore.indexes.json"
+  },
+  "emulators": {
+    "auth": {
+      "port": 9099
+    },
     "firestore": {
-        "database": "(default)",
-        "location": "asia-southeast2",
-        "rules": "firestore.rules",
-        "indexes": "firestore.indexes.json"
+      "port": 8080
     },
-    "emulators": {
-        "auth": {
-            "port": 9099
-        },
-        "functions": {
-            "port": 5001
-        },
-        "ui": {
-            "enabled": true
-        },
-        "singleProjectMode": true
+    "ui": {
+      "enabled": true
     },
-    "flutter": {
-        "platforms": {
-            "android": {
-                "default": {
-                    "projectId": "journexa-a2064",
-                    "appId": "1:258991680918:android:c9f07322ceef883becc1b7",
-                    "fileOutput": "android/app/google-services.json"
-                }
-            },
-            "dart": {
-                "lib/firebase_options.dart": {
-                    "projectId": "journexa-a2064",
-                    "configurations": {
-                        "android": "1:258991680918:android:c9f07322ceef883becc1b7"
-                    }
-                }
-            }
+    "singleProjectMode": true
+  },
+  "flutter": {
+    "platforms": {
+      "android": {
+        "default": {
+          "projectId": "journexa-a2064",
+          "appId": "1:258991680918:android:c9f07322ceef883becc1b7",
+          "fileOutput": "android/app/google-services.json"
         }
+      },
+      "dart": {
+        "lib/firebase_options.dart": {
+          "projectId": "journexa-a2064",
+          "configurations": {
+            "android": "1:258991680918:android:c9f07322ceef883becc1b7"
+          }
+        }
+      }
     }
+  }
 }

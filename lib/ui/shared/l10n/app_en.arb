@@ -1,0 +1,15 @@
+{
+  "@@locale": "en",
+  "loginButtonGoogleLabel": "Login with Google",
+  "@loginButtonGoogleLabel": {
+    "description": "Label for Login with Google button"
+  },
+  "commonAppName": "Journexa",
+  "@commonAppName": {
+    "description": "App name"
+  },
+  "commonAppTagline": "Your personal financial partner",
+  "@commonAppTagline": {
+    "description": "App tagline"
+  }
+}

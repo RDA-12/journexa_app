@@ -1,6 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:injectable/injectable.dart';
+import 'package:journexa_app/shared/app_env.dart';
 import 'package:uuid/uuid.dart';
 
 /// Module that includes external dependencies
@@ -10,7 +11,9 @@ abstract class ExternalModule {
   @lazySingleton
   @preResolve
   Future<FirebaseAuth> get firebaseAuth async {
-    await FirebaseAuth.instance.useAuthEmulator('localhost', 9099);
+    if (AppEnv.isDebug) {
+      await FirebaseAuth.instance.useAuthEmulator('localhost', 9099);
+    }
     return FirebaseAuth.instance;
   }
 

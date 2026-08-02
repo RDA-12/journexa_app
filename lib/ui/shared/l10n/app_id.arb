@@ -2,5 +2,10 @@
   "@@locale": "id",
   "loginButtonGoogleLabel": "Masuk dengan Google",
   "commonAppName": "Journexa",
-  "commonAppTagline": "Partner finansial pribadi Anda"
+  "commonAppTagline": "Partner finansial pribadi Anda",
+  "loginSuccessTitle": "Login berhasil",
+  "loginSuccessMessage": "Mengarahkan ke halaman utama...",
+  "loginFailedTitle": "Login gagal",
+  "errorInternalException": "Terjadi kesalahan saat login. Harap coba lagi",
+  "errorLoginCanceled": "Proses login dibatalkan"
 }

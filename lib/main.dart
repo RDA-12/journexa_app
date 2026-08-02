@@ -7,6 +7,7 @@ import 'package:journexa_app/shared/app_logger.dart';
 import 'package:journexa_app/ui/shared/app_router.dart';
 import 'package:journexa_app/ui/shared/l10n/l10n.dart';
 import 'package:journexa_app/ui/shared/theme.dart';
+import 'package:toastification/toastification.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -28,13 +29,21 @@ class JournexaApp extends StatelessWidget {
     final textTheme = createTextTheme(context, 'Roboto', 'Roboto Slab');
     final theme = JournexaTheme(textTheme);
 
-    return MaterialApp.router(
-      routerConfig: AppRouter.router,
-      themeMode: ThemeMode.light,
-      theme: theme.light(),
-      darkTheme: theme.dark(),
-      localizationsDelegates: AppLocalizations.localizationsDelegates,
-      supportedLocales: AppLocalizations.supportedLocales,
+    return ToastificationWrapper(
+      config: const ToastificationConfig(
+        alignment: Alignment.bottomCenter,
+        maxDescriptionLines: 2,
+        maxTitleLines: 1,
+        maxToastLimit: 5,
+      ),
+      child: MaterialApp.router(
+        routerConfig: AppRouter.router,
+        themeMode: ThemeMode.light,
+        theme: theme.light(),
+        darkTheme: theme.dark(),
+        localizationsDelegates: AppLocalizations.localizationsDelegates,
+        supportedLocales: AppLocalizations.supportedLocales,
+      ),
     );
   }
 }

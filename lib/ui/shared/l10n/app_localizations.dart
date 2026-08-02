@@ -115,6 +115,36 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Your personal financial partner'**
   String get commonAppTagline;
+
+  /// Login successful title
+  ///
+  /// In en, this message translates to:
+  /// **'Login successful'**
+  String get loginSuccessTitle;
+
+  /// Login successful message
+  ///
+  /// In en, this message translates to:
+  /// **'Redirecting to main page...'**
+  String get loginSuccessMessage;
+
+  /// Login failed title
+  ///
+  /// In en, this message translates to:
+  /// **'Login failed'**
+  String get loginFailedTitle;
+
+  /// Internal exception error message
+  ///
+  /// In en, this message translates to:
+  /// **'Internal exception error'**
+  String get errorInternalException;
+
+  /// Login canceled error message
+  ///
+  /// In en, this message translates to:
+  /// **'Login process was canceled'**
+  String get errorLoginCanceled;
 }
 
 class _AppLocalizationsDelegate

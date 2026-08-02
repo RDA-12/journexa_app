@@ -16,4 +16,19 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get commonAppTagline => 'Your personal financial partner';
+
+  @override
+  String get loginSuccessTitle => 'Login successful';
+
+  @override
+  String get loginSuccessMessage => 'Redirecting to main page...';
+
+  @override
+  String get loginFailedTitle => 'Login failed';
+
+  @override
+  String get errorInternalException => 'Internal exception error';
+
+  @override
+  String get errorLoginCanceled => 'Login process was canceled';
 }

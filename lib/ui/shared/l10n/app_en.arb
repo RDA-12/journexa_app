@@ -11,5 +11,25 @@
   "commonAppTagline": "Your personal financial partner",
   "@commonAppTagline": {
     "description": "App tagline"
+  },
+  "loginSuccessTitle": "Login successful",
+  "@loginSuccessTitle": {
+    "description": "Login successful title"
+  },
+  "loginSuccessMessage": "Redirecting to main page...",
+  "@loginSuccessMessage": {
+    "description": "Login successful message"
+  },
+  "loginFailedTitle": "Login failed",
+  "@loginFailedTitle": {
+    "description": "Login failed title"
+  },
+  "errorInternalException": "Internal exception error",
+  "@errorInternalException": {
+    "description": "Internal exception error message"
+  },
+  "errorLoginCanceled": "Login process was canceled",
+  "@errorLoginCanceled": {
+    "description": "Login canceled error message"
   }
 }

@@ -156,6 +156,9 @@ TextTheme createTextTheme(
     baseTextTheme,
   );
   final textTheme = displayTextTheme.copyWith(
+    titleLarge: bodyTextTheme.titleLarge,
+    titleMedium: bodyTextTheme.titleMedium,
+    titleSmall: bodyTextTheme.titleSmall,
     bodyLarge: bodyTextTheme.bodyLarge,
     bodyMedium: bodyTextTheme.bodyMedium,
     bodySmall: bodyTextTheme.bodySmall,

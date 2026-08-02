@@ -4,6 +4,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:journexa_app/ui/login_button/bloc/login_bloc.dart';
 import 'package:journexa_app/ui/shared/l10n/l10n.dart';
 import 'package:journexa_app/ui/shared/widgets/widgets.dart';
+import 'package:toastification/toastification.dart';
 
 /// Creates new [AppOutlinedButton] specifically for
 /// logging in user with Google account
@@ -12,6 +13,10 @@ class LoginWithGoogleButton extends StatelessWidget {
   ///
   /// It uses [LoginBloc] to handle login with Google.
   /// So, make sure to provide [LoginBloc] in the widget tree.
+  ///
+  /// It also handles updating the UI based on [LoginState].
+  /// So, usually the [onSuccess] callback is just for navigation
+  /// or any other action that needs to be done after successful login.
   const LoginWithGoogleButton({
     super.key,
     this.onSuccess,
@@ -28,6 +33,20 @@ class LoginWithGoogleButton extends StatelessWidget {
         state.whenOrNull(
           success: () {
             onSuccess?.call();
+            context.showToast(
+              type: ToastificationType.success,
+              title: context.l10n.loginSuccessTitle,
+              description: context.l10n.loginSuccessMessage,
+              autoCloseDuration: const Duration(seconds: 5),
+            );
+          },
+          failure: (error) {
+            context.showToast(
+              type: ToastificationType.error,
+              title: context.l10n.loginFailedTitle,
+              description: error.code.toLocalizedString(context),
+              autoCloseDuration: const Duration(seconds: 5),
+            );
           },
         );
       },

@@ -70,8 +70,8 @@ void main() {
     );
 
     test(
-      'returns LoginCanceledException when Google sign-in is canceled by user '
-      'and ensures remaining action is not called',
+      'returns AppException with loginCanceled code when Google sign-in is '
+      'canceled by user and ensures remaining action is not called',
       () async {
         when(() => mockGoogleSignIn.authenticate()).thenThrow(
           const GoogleSignInException(
@@ -86,7 +86,10 @@ void main() {
           result,
           equals(
             const AppResult<void>.failure(
-              LoginCanceledException('Google log in canceled by user'),
+              AppException(
+                'Google log in canceled by user',
+                code: AppExceptionCode.loginCanceled,
+              ),
             ),
           ),
         );
@@ -97,8 +100,8 @@ void main() {
     );
 
     test(
-      'returns InternalException when Google sign-in fails '
-      'with non-cancel error and ensures remaining action is not called',
+      'returns AppException with internalException code when Google sign-in '
+      'fails with non-cancel error and ensures remaining action is not called',
       () async {
         final nonCancelCode = GoogleSignInExceptionCode.values.firstWhere(
           (code) => code != GoogleSignInExceptionCode.canceled,
@@ -117,7 +120,10 @@ void main() {
           result,
           equals(
             const AppResult<void>.failure(
-              InternalException('Google sign-in failed'),
+              AppException(
+                'Google sign-in failed',
+                code: AppExceptionCode.internalException,
+              ),
             ),
           ),
         );
@@ -128,8 +134,8 @@ void main() {
     );
 
     test(
-      'returns InternalException when Google sign-in throws generic Exception '
-      'and ensures remaining action is not called',
+      'returns AppException with internalException code when Google sign-in '
+      'throws generic Exception and ensures remaining action is not called',
       () async {
         final exception = Exception('Network error');
         when(() => mockGoogleSignIn.authenticate()).thenThrow(exception);
@@ -139,8 +145,11 @@ void main() {
         expect(
           result,
           equals(
-            AppResult<void>.failure(
-              InternalException(exception.toString()),
+            const AppResult<void>.failure(
+              AppException(
+                'Exception: Network error',
+                code: AppExceptionCode.internalException,
+              ),
             ),
           ),
         );
@@ -151,8 +160,8 @@ void main() {
     );
 
     test(
-      'returns InternalException when Firebase signInWithCredential '
-      'throws Exception',
+      'returns AppException with internalException code when Firebase '
+      'signInWithCredential throws Exception',
       () async {
         when(
           () => mockGoogleSignIn.authenticate(),
@@ -172,8 +181,11 @@ void main() {
         expect(
           result,
           equals(
-            AppResult<void>.failure(
-              InternalException(firebaseException.toString()),
+            const AppResult<void>.failure(
+              AppException(
+                'Exception: Firebase authentication failed',
+                code: AppExceptionCode.internalException,
+              ),
             ),
           ),
         );

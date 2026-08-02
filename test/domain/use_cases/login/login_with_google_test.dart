@@ -43,7 +43,10 @@ void main() {
       'returns AppResult.failure when repository loginWithGoogle fails',
       () async {
         const failure = AppResult<void>.failure(
-          LoginCanceledException('Google log in canceled by user'),
+          AppException(
+            'Google log in canceled by user',
+            code: AppExceptionCode.loginCanceled,
+          ),
         );
         when(
           () => mockAuthRepository.loginWithGoogle(traceId: traceId),

@@ -56,7 +56,10 @@ class FirebaseAuthRepository implements IAuthRepository {
           traceId: traceId,
         );
         return const AppResult.failure(
-          LoginCanceledException('Google log in canceled by user'),
+          AppException(
+            'Google log in canceled by user',
+            code: AppExceptionCode.loginCanceled,
+          ),
         );
       }
       _logger.error(
@@ -65,7 +68,12 @@ class FirebaseAuthRepository implements IAuthRepository {
         stackTrace: st,
         traceId: traceId,
       );
-      return AppResult.failure(InternalException(e.description ?? code.name));
+      return AppResult.failure(
+        AppException(
+          e.description ?? code.name,
+          code: AppExceptionCode.internalException,
+        ),
+      );
     } on Exception catch (e, st) {
       _logger.error(
         'Unexpected failure: $e',
@@ -73,7 +81,12 @@ class FirebaseAuthRepository implements IAuthRepository {
         stackTrace: st,
         traceId: traceId,
       );
-      return AppResult.failure(InternalException(e.toString()));
+      return AppResult.failure(
+        AppException(
+          e.toString(),
+          code: AppExceptionCode.internalException,
+        ),
+      );
     }
   }
 }

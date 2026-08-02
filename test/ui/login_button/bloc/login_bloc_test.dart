@@ -67,7 +67,10 @@ void main() {
     blocTest<LoginBloc, LoginState>(
       'emits [LoginState.loading(), LoginState.failure()] when login fails',
       build: () {
-        const exception = LoginCanceledException('User canceled login');
+        const exception = AppException(
+          'User canceled login',
+          code: AppExceptionCode.loginCanceled,
+        );
         when(() => mockUidGenerator.generateUid()).thenReturn(traceId);
         when(
           () => mockLoginWithGoogleUseCase.execute(
@@ -82,7 +85,12 @@ void main() {
       act: (bloc) => bloc.add(const LoginEvent.loginWithGoogle()),
       expect: () => const <LoginState>[
         LoginState.loading(),
-        LoginState.failure(LoginCanceledException('User canceled login')),
+        LoginState.failure(
+          AppException(
+            'User canceled login',
+            code: AppExceptionCode.loginCanceled,
+          ),
+        ),
       ],
       verify: (_) {
         verify(() => mockUidGenerator.generateUid()).called(1);

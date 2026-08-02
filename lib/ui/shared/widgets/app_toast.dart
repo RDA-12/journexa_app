@@ -19,8 +19,10 @@ extension ShowToastX on BuildContext {
     /// Optional description of the toast
     String? description,
 
-    /// Optional auto close duration of the toast
-    Duration? autoCloseDuration,
+    /// Whether this toast can close automatically
+    ///
+    /// default to false
+    bool autoClose = false,
   }) {
     assert(
       title != null || description != null,
@@ -42,7 +44,10 @@ extension ShowToastX on BuildContext {
               style: text.bodyMedium,
             )
           : null,
-      autoCloseDuration: autoCloseDuration,
+      autoCloseDuration: autoClose ? kToastDuration : null,
     );
   }
 }
+
+/// Default duration for auto close toast
+const kToastDuration = Duration(seconds: 5);

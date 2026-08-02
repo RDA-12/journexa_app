@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
 import 'package:journexa_app/ui/shared/l10n/l10n.dart';
+import 'package:toastification/toastification.dart';
 
 /// Pump widget with [Scaffold].
 ///
@@ -43,20 +44,28 @@ Future<void> pumpForPageTest(
   String initialLocation = '/',
 }) async {
   await tester.pumpWidget(
-    MaterialApp.router(
-      localizationsDelegates: AppLocalizations.localizationsDelegates,
-      supportedLocales: AppLocalizations.supportedLocales,
-      locale: locale,
-      routerConfig: GoRouter(
-        initialLocation: initialLocation,
-        routes: [
-          ...routes.entries.map(
-            (e) => GoRoute(
-              path: e.key,
-              builder: (context, state) => e.value,
+    ToastificationWrapper(
+      config: const ToastificationConfig(
+        alignment: Alignment.bottomCenter,
+        maxDescriptionLines: 2,
+        maxTitleLines: 1,
+        maxToastLimit: 5,
+      ),
+      child: MaterialApp.router(
+        localizationsDelegates: AppLocalizations.localizationsDelegates,
+        supportedLocales: AppLocalizations.supportedLocales,
+        locale: locale,
+        routerConfig: GoRouter(
+          initialLocation: initialLocation,
+          routes: [
+            ...routes.entries.map(
+              (e) => GoRoute(
+                path: e.key,
+                builder: (context, state) => e.value,
+              ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     ),
   );
@@ -69,21 +78,29 @@ Future<void> pumpForLargeFontTest(
   required Locale locale,
 }) async {
   await tester.pumpWidget(
-    MaterialApp(
-      localizationsDelegates: AppLocalizations.localizationsDelegates,
-      supportedLocales: AppLocalizations.supportedLocales,
-      locale: locale,
-      home: Builder(
-        builder: (context) {
-          return MediaQuery(
-            data: MediaQuery.of(context).copyWith(
-              textScaler: const TextScaler.linear(2),
-            ),
-            child: Scaffold(
-              body: widget,
-            ),
-          );
-        },
+    ToastificationWrapper(
+      config: const ToastificationConfig(
+        alignment: Alignment.bottomCenter,
+        maxDescriptionLines: 2,
+        maxTitleLines: 1,
+        maxToastLimit: 5,
+      ),
+      child: MaterialApp(
+        localizationsDelegates: AppLocalizations.localizationsDelegates,
+        supportedLocales: AppLocalizations.supportedLocales,
+        locale: locale,
+        home: Builder(
+          builder: (context) {
+            return MediaQuery(
+              data: MediaQuery.of(context).copyWith(
+                textScaler: const TextScaler.linear(2),
+              ),
+              child: Scaffold(
+                body: widget,
+              ),
+            );
+          },
+        ),
       ),
     ),
   );

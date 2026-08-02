@@ -5,6 +5,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:journexa_app/ui/login_button/bloc/login_bloc.dart';
 import 'package:journexa_app/ui/login_button/widgets/login_with_google_button.dart';
 import 'package:journexa_app/ui/shared/l10n/l10n.dart';
+import 'package:journexa_app/ui/shared/widgets/app_toast.dart';
 import 'package:journexa_app/ui/shared/widgets/loading_indicator.dart';
 import 'package:mocktail/mocktail.dart';
 
@@ -15,9 +16,20 @@ class MockLoginBloc extends Mock implements LoginBloc {}
 const expectedTranslations = {
   'en': {
     'label': 'Login with Google',
+    'loginSuccessTitle': 'Login successful',
+    'loginSuccessMessage': 'Redirecting to main page...',
+    'loginFailedTitle': 'Login failed',
+    'errorInternalException':
+        'An error occurred during login. Please try again',
+    'errorLoginCanceled': 'Login process was cancelled',
   },
   'id': {
     'label': 'Masuk dengan Google',
+    'loginSuccessTitle': 'Login berhasil',
+    'loginSuccessMessage': 'Mengarahkan ke halaman utama...',
+    'loginFailedTitle': 'Login gagal',
+    'errorInternalException': 'Terjadi kesalahan saat login. Harap coba lagi',
+    'errorLoginCanceled': 'Proses login dibatalkan',
   },
 };
 
@@ -102,6 +114,7 @@ void main() {
     testWidgets(
       'calls onSuccess when login with Google is suceeded',
       (tester) async {
+        var autoCloseRemaining = kToastDuration;
         whenListen(
           mockLoginBloc,
           Stream.fromIterable([
@@ -117,11 +130,73 @@ void main() {
           onSuccess: () => isSucceeded = true,
         );
 
-        await tester.pumpAndSettle();
+        await tester.pumpAndSettle(const Duration(seconds: 1));
+        autoCloseRemaining -= const Duration(seconds: 1);
 
         expect(isSucceeded, true);
+
+        await tester.pumpAndSettle(autoCloseRemaining);
       },
     );
+
+    // TODO(RDA-12): find a way to test the toast
+    // for (final locale in AppLocalizations.supportedLocales) {
+    //   final expectedTitle =
+    //       expectedTranslations[locale.languageCode]!['loginSuccessTitle']!;
+    //   testWidgets(
+    //     'shows "$expectedTitle" for $locale',
+    //     (tester) async {
+    //       var autoCloseRemaining = kToastDuration;
+    //       whenListen(
+    //         mockLoginBloc,
+    //         Stream.fromIterable([
+    //           const LoginState.loading(),
+    //           const LoginState.success(),
+    //         ]),
+    //       );
+
+    //       await pumpWidget(
+    //         tester: tester,
+    //         locale: locale,
+    //       );
+
+    //       await tester.pumpAndSettle(const Duration(seconds: 1));
+    //       autoCloseRemaining -= const Duration(seconds: 1);
+
+    //       expect(find.text(expectedTitle), findsOneWidget);
+
+    //       await tester.pumpAndSettle(autoCloseRemaining);
+    //     },
+    //   );
+
+    //   final expectedMessage =
+    //       expectedTranslations[locale.languageCode]!['loginSuccessMessage']!;
+    //   testWidgets(
+    //     'shows "$expectedMessage" for $locale',
+    //     (tester) async {
+    //       var autoCloseRemaining = kToastDuration;
+    //       whenListen(
+    //         mockLoginBloc,
+    //         Stream.fromIterable([
+    //           const LoginState.loading(),
+    //           const LoginState.success(),
+    //         ]),
+    //       );
+
+    //       await pumpWidget(
+    //         tester: tester,
+    //         locale: locale,
+    //       );
+
+    //       await tester.pumpAndSettle(const Duration(seconds: 1));
+    //       autoCloseRemaining -= const Duration(seconds: 1);
+
+    //       expect(find.text(expectedMessage), findsOneWidget);
+
+    //       await tester.pumpAndSettle(autoCloseRemaining);
+    //     },
+    //   );
+    // }
   });
 
   group('a11y', () {
@@ -152,5 +227,7 @@ void main() {
         },
       );
     }
+
+    // TODO(RDA-12): find a way to test the toast to meet a11y guidelines
   });
 }

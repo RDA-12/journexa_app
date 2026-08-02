@@ -1,3 +1,4 @@
+import 'package:clock/clock.dart';
 import 'package:flutter/foundation.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:journexa_app/shared/formatter/formatter.dart';
@@ -147,7 +148,7 @@ sealed class LogMessage with _$LogMessage {
     /// Log timestamp
     DateTime? timestamp,
   }) = _LogMessage;
-  LogMessage._({DateTime? timestamp}) : timestamp = timestamp ?? DateTime.now();
+  LogMessage._({DateTime? timestamp}) : timestamp = timestamp ?? clock.now();
 
   /// Creates [LogMessage] from [json]
   factory LogMessage.fromJson(Map<String, dynamic> json) =>

@@ -22,6 +22,13 @@ void main() {
   setUp(() {
     mockLoginWithGoogleUseCase = MockLoginWithGoogleUseCase();
     mockUidGenerator = MockUidGenerator();
+    when(() => mockUidGenerator.generateUid()).thenReturn(traceId);
+    when(
+      () => mockLoginWithGoogleUseCase.execute(
+        const NoParams(),
+        traceId: traceId,
+      ),
+    ).thenAnswer((_) async => const AppResult<void>.success(null));
   });
 
   LoginBloc buildBloc() {
@@ -38,16 +45,7 @@ void main() {
   group('LoginEvent.loginWithGoogle', () {
     blocTest<LoginBloc, LoginState>(
       'emits [LoginState.loading(), LoginState.success()] when login succeeds',
-      build: () {
-        when(() => mockUidGenerator.generateUid()).thenReturn(traceId);
-        when(
-          () => mockLoginWithGoogleUseCase.execute(
-            const NoParams(),
-            traceId: traceId,
-          ),
-        ).thenAnswer((_) async => const AppResult<void>.success(null));
-        return buildBloc();
-      },
+      build: buildBloc,
       act: (bloc) => bloc.add(const LoginEvent.loginWithGoogle()),
       expect: () => const <LoginState>[
         LoginState.loading(),
@@ -66,12 +64,11 @@ void main() {
 
     blocTest<LoginBloc, LoginState>(
       'emits [LoginState.loading(), LoginState.failure()] when login fails',
-      build: () {
+      setUp: () {
         const exception = AppException(
           'User canceled login',
           code: AppExceptionCode.loginCanceled,
         );
-        when(() => mockUidGenerator.generateUid()).thenReturn(traceId);
         when(
           () => mockLoginWithGoogleUseCase.execute(
             const NoParams(),
@@ -80,8 +77,8 @@ void main() {
         ).thenAnswer(
           (_) async => const AppResult<void>.failure(exception),
         );
-        return buildBloc();
       },
+      build: buildBloc,
       act: (bloc) => bloc.add(const LoginEvent.loginWithGoogle()),
       expect: () => const <LoginState>[
         LoginState.loading(),

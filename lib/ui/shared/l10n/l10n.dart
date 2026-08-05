@@ -15,5 +15,6 @@ extension AppExceptionCodeX on AppExceptionCode {
   String toLocalizedString(BuildContext context) => switch (this) {
     AppExceptionCode.internalException => context.l10n.errorInternalException,
     AppExceptionCode.loginCanceled => context.l10n.errorLoginCanceled,
+    AppExceptionCode.serverException => context.l10n.errorServerException,
   };
 }

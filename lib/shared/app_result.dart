@@ -10,9 +10,12 @@ part 'app_result.freezed.dart';
 @freezed
 sealed class AppResult<T> with _$AppResult<T> {
   /// Creates a new [AppResult.success] instance.
-  const factory AppResult.success(T value) = _Success;
+  const factory AppResult.success(T value) = AppResultSuccess;
 
   /// Creates a new [AppResult.failure] instance.
-  const factory AppResult.failure(AppException error) = _Failure;
+  const factory AppResult.failure(AppException error) = AppResultFailure;
   const AppResult._();
+
+  /// Whether this result is failure or not
+  bool get isFailure => this is AppResultFailure;
 }

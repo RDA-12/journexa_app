@@ -31,4 +31,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get errorLoginCanceled => 'Login process was canceled';
+
+  @override
+  String get errorServerException => 'Server exception error';
 }

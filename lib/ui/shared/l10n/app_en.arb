@@ -31,5 +31,9 @@
   "errorLoginCanceled": "Login process was canceled",
   "@errorLoginCanceled": {
     "description": "Login canceled error message"
+  },
+  "errorServerException": "Server exception error",
+  "@errorServerException": {
+    "description": "Server exception error message"
   }
 }

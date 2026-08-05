@@ -145,6 +145,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Login process was canceled'**
   String get errorLoginCanceled;
+
+  /// Server exception error message
+  ///
+  /// In en, this message translates to:
+  /// **'Server exception error'**
+  String get errorServerException;
 }
 
 class _AppLocalizationsDelegate

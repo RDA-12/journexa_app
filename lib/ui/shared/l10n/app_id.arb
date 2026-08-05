@@ -6,6 +6,7 @@
   "loginSuccessTitle": "Login berhasil",
   "loginSuccessMessage": "Mengarahkan ke halaman utama...",
   "loginFailedTitle": "Login gagal",
-  "errorInternalException": "Terjadi kesalahan saat login. Harap coba lagi",
-  "errorLoginCanceled": "Proses login dibatalkan"
+  "errorInternalException": "Terjadi kesalahan internal",
+  "errorLoginCanceled": "Proses login dibatalkan",
+  "errorServerException": "Terjadi kesalah di server"
 }

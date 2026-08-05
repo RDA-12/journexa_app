@@ -7,6 +7,9 @@ enum AppExceptionCode {
 
   /// User canceling login flow
   loginCanceled,
+
+  /// Server returns error
+  serverException,
 }
 
 /// Base exception class for the application
@@ -14,6 +17,12 @@ enum AppExceptionCode {
 final class AppException implements Exception {
   /// Creates a new [AppException]
   const AppException(this.message, {required this.code});
+
+  /// Creates new [AppException] to helps testing
+  factory AppException.test() => const AppException(
+    'test failure',
+    code: AppExceptionCode.internalException,
+  );
 
   /// Exception code
   final AppExceptionCode code;

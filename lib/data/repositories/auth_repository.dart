@@ -74,6 +74,15 @@ class FirebaseAuthRepository implements IAuthRepository {
           code: AppExceptionCode.internalException,
         ),
       );
+    } on FirebaseException catch (e) {
+      _logger.error(
+        e.toString(),
+        error: e,
+        traceId: traceId,
+      );
+      return AppResult.failure(
+        AppException(e.toString(), code: AppExceptionCode.serverException),
+      );
     } on Exception catch (e, st) {
       _logger.error(
         'Unexpected failure: $e',
@@ -88,5 +97,11 @@ class FirebaseAuthRepository implements IAuthRepository {
         ),
       );
     }
+  }
+
+  @override
+  Future<AppResult<String>> getCurrentUserId({required String traceId}) {
+    // TODO: implement getCurrentUserId
+    throw UnimplementedError();
   }
 }

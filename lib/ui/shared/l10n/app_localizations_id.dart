@@ -27,9 +27,11 @@ class AppLocalizationsId extends AppLocalizations {
   String get loginFailedTitle => 'Login gagal';
 
   @override
-  String get errorInternalException =>
-      'Terjadi kesalahan saat login. Harap coba lagi';
+  String get errorInternalException => 'Terjadi kesalahan internal';
 
   @override
   String get errorLoginCanceled => 'Proses login dibatalkan';
+
+  @override
+  String get errorServerException => 'Terjadi kesalah di server';
 }

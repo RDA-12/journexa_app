@@ -12,6 +12,7 @@ sealed class FirestoreAccount with _$FirestoreAccount {
     required String code,
     required String name,
     required AccountType type,
+    @Default(false) bool isSystemAccount,
     String? parentCode,
   }) = _FirestoreAccount;
   const FirestoreAccount._();
@@ -21,6 +22,7 @@ sealed class FirestoreAccount with _$FirestoreAccount {
       code: domain.code,
       name: domain.name,
       type: domain.type,
+      isSystemAccount: domain.isSystemAccount,
       parentCode: domain.parent?.code,
     );
   }
@@ -35,6 +37,7 @@ sealed class FirestoreAccount with _$FirestoreAccount {
       code: code,
       name: name,
       type: type,
+      isSystemAccount: isSystemAccount,
     );
   }
 }

@@ -10,17 +10,20 @@ void main() {
         name: 'asset',
         type: AccountType.asset,
         parentCode: '10.0001',
+        isSystemAccount: true,
       );
       final parent = Account(
         code: expected.parentCode!,
         name: 'parent ${expected.name}',
         type: expected.type,
+        isSystemAccount: true,
       );
       final domain = Account(
         code: expected.code,
         name: expected.name,
         type: expected.type,
         parent: parent,
+        isSystemAccount: expected.isSystemAccount,
       );
 
       final result = FirestoreAccount.fromDomain(domain);
@@ -35,11 +38,13 @@ void main() {
         code: '10.0000',
         name: 'asset',
         type: AccountType.asset,
+        isSystemAccount: true,
       );
       final firestoreAccount = FirestoreAccount(
         code: expected.code,
         name: expected.name,
         type: expected.type,
+        isSystemAccount: expected.isSystemAccount,
       );
 
       final result = firestoreAccount.toDomain();

@@ -1,6 +1,7 @@
 import 'package:bloc_test/bloc_test.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:journexa_app/ui/login_button/bloc/login_bloc.dart';
 import 'package:journexa_app/ui/login_button/widgets/login_with_google_button.dart';
@@ -92,6 +93,23 @@ void main() {
       );
       expect(button.enabled, false);
     });
+
+    testWidgets(
+      'shows Google icon when state is not loading',
+      (tester) async {
+        await pumpWidget(tester: tester, locale: const Locale('en'));
+
+        final icon = tester.widget<SvgPicture>(find.byType(SvgPicture));
+        expect(
+          icon.bytesLoader,
+          isA<SvgAssetLoader>().having(
+            (e) => e.assetName,
+            'assetName',
+            'assets/icons/google.svg',
+          ),
+        );
+      },
+    );
   });
 
   group('Interaction', () {

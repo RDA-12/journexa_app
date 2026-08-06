@@ -2,10 +2,9 @@ import 'package:bloc_test/bloc_test.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:journexa_app/ui/login/bloc/login_bloc.dart';
 import 'package:journexa_app/ui/login/login_page.dart';
 import 'package:journexa_app/ui/login/widgets/widgets.dart';
-import 'package:journexa_app/ui/login_button/bloc/login_bloc.dart';
-import 'package:journexa_app/ui/login_button/widgets/login_with_google_button.dart';
 import 'package:mocktail/mocktail.dart';
 
 import '../util.dart';

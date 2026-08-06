@@ -4,9 +4,8 @@ import 'package:go_router/go_router.dart';
 import 'package:journexa_app/di.dart';
 import 'package:journexa_app/domain/use_cases/auth/login_with_google.dart';
 import 'package:journexa_app/shared/uid_generator.dart';
-import 'package:journexa_app/ui/login/widgets/login_header.dart';
-import 'package:journexa_app/ui/login_button/bloc/login_bloc.dart';
-import 'package:journexa_app/ui/login_button/widgets/widgets.dart';
+import 'package:journexa_app/ui/login/bloc/login_bloc.dart';
+import 'package:journexa_app/ui/login/widgets/widgets.dart';
 
 /// Page for login functionality.
 class LoginPage extends StatelessWidget {

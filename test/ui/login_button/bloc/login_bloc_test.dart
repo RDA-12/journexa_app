@@ -1,7 +1,7 @@
 import 'package:bloc_test/bloc_test.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:journexa_app/domain/use_cases/auth/login_with_google.dart';
 import 'package:journexa_app/domain/use_cases/base_use_case.dart';
-import 'package:journexa_app/domain/use_cases/login/login_with_google.dart';
 import 'package:journexa_app/shared/app_exception.dart';
 import 'package:journexa_app/shared/app_result.dart';
 import 'package:journexa_app/shared/uid_generator.dart';

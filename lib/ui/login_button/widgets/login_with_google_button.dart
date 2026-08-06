@@ -57,6 +57,7 @@ class LoginWithGoogleButton extends StatelessWidget {
         );
 
         return AppOutlinedButton(
+          size: ButtonSize.medium,
           onPressed: isLoading
               ? null
               : () {

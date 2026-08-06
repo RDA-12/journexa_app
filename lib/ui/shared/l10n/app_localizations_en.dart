@@ -21,7 +21,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get loginSuccessTitle => 'Login successful';
 
   @override
-  String get loginSuccessMessage => 'Redirecting to main page...';
+  String get loginSuccessMessage => 'Redirecting to initialization process...';
 
   @override
   String get loginFailedTitle => 'Login failed';

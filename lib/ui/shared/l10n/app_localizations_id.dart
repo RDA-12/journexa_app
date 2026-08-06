@@ -21,7 +21,7 @@ class AppLocalizationsId extends AppLocalizations {
   String get loginSuccessTitle => 'Login berhasil';
 
   @override
-  String get loginSuccessMessage => 'Mengarahkan ke halaman utama...';
+  String get loginSuccessMessage => 'Mengarahkan ke proses inisialisasi...';
 
   @override
   String get loginFailedTitle => 'Login gagal';

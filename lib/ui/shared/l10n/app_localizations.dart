@@ -125,7 +125,7 @@ abstract class AppLocalizations {
   /// Login successful message
   ///
   /// In en, this message translates to:
-  /// **'Redirecting to main page...'**
+  /// **'Redirecting to initialization process...'**
   String get loginSuccessMessage;
 
   /// Login failed title

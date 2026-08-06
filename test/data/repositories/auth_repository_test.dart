@@ -135,4 +135,46 @@ void main() {
       },
     );
   });
+
+  group('getCurrentUserId', () {
+    test('returns success with user id when user is logged in', () async {
+      const expectedUserId = 'userId';
+      mockAuth = MockFirebaseAuth(
+        signedIn: true,
+        mockUser: MockUser(uid: expectedUserId),
+      );
+      repository = FirebaseAuthRepository(
+        auth: mockAuth,
+        googleSignIn: mockGoogleSignIn,
+      );
+
+      final result = await repository.getCurrentUserId(traceId: traceId);
+
+      expect(
+        result,
+        isA<AppResultSuccess<String>>().having(
+          (e) => e.value,
+          'value',
+          expectedUserId,
+        ),
+      );
+    });
+
+    test(
+      'returns failure with unauthenticated code '
+      'when user not logged in',
+      () async {
+        final result = await repository.getCurrentUserId(traceId: traceId);
+
+        expect(
+          result,
+          isA<AppResultFailure<String>>().having(
+            (e) => e.error.code,
+            'error.code',
+            AppExceptionCode.unauthenticated,
+          ),
+        );
+      },
+    );
+  });
 }

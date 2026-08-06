@@ -10,6 +10,9 @@ enum AppExceptionCode {
 
   /// Server returns error
   serverException,
+
+  /// Missing current user
+  unauthenticated,
 }
 
 /// Base exception class for the application

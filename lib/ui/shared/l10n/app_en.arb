@@ -16,7 +16,7 @@
   "@loginSuccessTitle": {
     "description": "Login successful title"
   },
-  "loginSuccessMessage": "Redirecting to main page...",
+  "loginSuccessMessage": "Redirecting to initialization process...",
   "@loginSuccessMessage": {
     "description": "Login successful message"
   },
@@ -35,5 +35,17 @@
   "errorServerException": "Server exception error",
   "@errorServerException": {
     "description": "Server exception error message"
+  },
+  "errorUnauthenticated": "You are not logged in. Please login to continue.",
+  "@errorUnauthenticated": {
+    "description": "Message when user is not logged in"
+  },
+  "initializeLoadingText": "Initializing...",
+  "@initializeLoadingText": {
+    "description": "Loading indicator text for initialize page"
+  },
+  "initializeErrorTitle": "Initialization failed",
+  "@initializeErrorTitle": {
+    "description": "Title for error state in initialize page"
   }
 }

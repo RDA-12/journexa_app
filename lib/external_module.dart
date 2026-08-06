@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:injectable/injectable.dart';
@@ -26,6 +27,13 @@ abstract class ExternalModule {
   Future<GoogleSignIn> get googleSignIn async {
     await GoogleSignIn.instance.initialize(serverClientId: _kServerClientId);
     return GoogleSignIn.instance;
+  }
+
+  /// Instance of [FirebaseFirestore]
+  @lazySingleton
+  FirebaseFirestore get firebaseFirestore {
+    FirebaseFirestore.instance.useFirestoreEmulator('localhost', 8080);
+    return FirebaseFirestore.instance;
   }
 
   /// Instance of [Uuid]

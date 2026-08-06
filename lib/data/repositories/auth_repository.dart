@@ -100,8 +100,21 @@ class FirebaseAuthRepository implements IAuthRepository {
   }
 
   @override
-  Future<AppResult<String>> getCurrentUserId({required String traceId}) {
-    // TODO: implement getCurrentUserId
-    throw UnimplementedError();
+  Future<AppResult<String>> getCurrentUserId({required String traceId}) async {
+    _logger.info('Get current user id', traceId: traceId);
+    final userId = _auth.currentUser?.uid;
+    if (userId == null) {
+      return const AppResult.failure(
+        AppException(
+          'userId is null. probably user is not logged in',
+          code: AppExceptionCode.unauthenticated,
+        ),
+      );
+    }
+    _logger.info(
+      'User id found.',
+      traceId: traceId,
+    );
+    return AppResult.success(userId);
   }
 }

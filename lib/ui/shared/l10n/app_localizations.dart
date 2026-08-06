@@ -151,6 +151,24 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Server exception error'**
   String get errorServerException;
+
+  /// Message when user is not logged in
+  ///
+  /// In en, this message translates to:
+  /// **'You are not logged in. Please login to continue.'**
+  String get errorUnauthenticated;
+
+  /// Loading indicator text for initialize page
+  ///
+  /// In en, this message translates to:
+  /// **'Initializing...'**
+  String get initializeLoadingText;
+
+  /// Title for error state in initialize page
+  ///
+  /// In en, this message translates to:
+  /// **'Initialization failed'**
+  String get initializeErrorTitle;
 }
 
 class _AppLocalizationsDelegate

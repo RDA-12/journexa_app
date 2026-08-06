@@ -34,4 +34,14 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get errorServerException => 'Server exception error';
+
+  @override
+  String get errorUnauthenticated =>
+      'You are not logged in. Please login to continue.';
+
+  @override
+  String get initializeLoadingText => 'Initializing...';
+
+  @override
+  String get initializeErrorTitle => 'Initialization failed';
 }

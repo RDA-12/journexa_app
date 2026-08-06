@@ -47,7 +47,7 @@ class _LoginView extends StatelessWidget {
           const LoginHeader(),
           LoginWithGoogleButton(
             onSuccess: () {
-              context.go('/');
+              context.go('/initialize');
             },
           ),
         ],

@@ -37,6 +37,7 @@ class LoginWithGoogleButton extends StatelessWidget {
               type: ToastificationType.success,
               title: context.l10n.loginSuccessTitle,
               description: context.l10n.loginSuccessMessage,
+              autoClose: true,
             );
           },
           failure: (error) {
@@ -44,6 +45,7 @@ class LoginWithGoogleButton extends StatelessWidget {
               type: ToastificationType.error,
               title: context.l10n.loginFailedTitle,
               description: error.code.toLocalizedString(context),
+              autoClose: true,
             );
           },
         );

@@ -17,7 +17,7 @@ const expectedTranslations = {
   'en': {
     'label': 'Login with Google',
     'loginSuccessTitle': 'Login successful',
-    'loginSuccessMessage': 'Redirecting to main page...',
+    'loginSuccessMessage': 'Redirecting to initialization process...',
     'loginFailedTitle': 'Login failed',
     'errorInternalException':
         'An error occurred during login. Please try again',
@@ -26,7 +26,7 @@ const expectedTranslations = {
   'id': {
     'label': 'Masuk dengan Google',
     'loginSuccessTitle': 'Login berhasil',
-    'loginSuccessMessage': 'Mengarahkan ke halaman utama...',
+    'loginSuccessMessage': 'Mengarahkan ke proses inisialisasi...',
     'loginFailedTitle': 'Login gagal',
     'errorInternalException': 'Terjadi kesalahan saat login. Harap coba lagi',
     'errorLoginCanceled': 'Proses login dibatalkan',

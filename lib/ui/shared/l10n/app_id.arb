@@ -4,9 +4,12 @@
   "commonAppName": "Journexa",
   "commonAppTagline": "Partner finansial pribadi Anda",
   "loginSuccessTitle": "Login berhasil",
-  "loginSuccessMessage": "Mengarahkan ke halaman utama...",
+  "loginSuccessMessage": "Mengarahkan ke proses inisialisasi...",
   "loginFailedTitle": "Login gagal",
   "errorInternalException": "Terjadi kesalahan internal",
   "errorLoginCanceled": "Proses login dibatalkan",
-  "errorServerException": "Terjadi kesalah di server"
+  "errorServerException": "Terjadi kesalahan di server",
+  "errorUnauthenticated": "Anda belum login. Silakan login untuk melanjutkan.",
+  "initializeLoadingText": "Menginisialisasi...",
+  "initializeErrorTitle": "Inisialisasi gagal"
 }

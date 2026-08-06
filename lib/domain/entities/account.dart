@@ -1,0 +1,119 @@
+import 'package:freezed_annotation/freezed_annotation.dart';
+import 'package:journexa_app/shared/app_exception.dart';
+
+part 'account.freezed.dart';
+
+/// Types of [Account]
+enum AccountType {
+  /// Asset account
+  ///
+  /// Typically uses to holds value like cash, bank, accounts receivable, etc
+  asset,
+
+  /// Revenue account
+  ///
+  /// Typically uses to holds income value
+  revenue,
+
+  /// Liability account
+  ///
+  /// Typically uses to holds debt value like accounts payable, loans, etc
+  liability,
+
+  /// Expense account
+  ///
+  /// Typically uses to holds expense value like rent, salaries, utilities, etc
+  expense,
+
+  /// Equity account
+  ///
+  /// Typically uses to holds owner's equity value like capital, drawings, etc
+  equity;
+
+  /// Return prefix code based on standard accounting practice
+  String get prefixCode => switch (this) {
+    AccountType.asset => '1',
+    AccountType.liability => '2',
+    AccountType.equity => '3',
+    AccountType.revenue => '4',
+    AccountType.expense => '5',
+  };
+}
+
+/// Holds system defined accounts
+final kSystemDefinedAccounts = [
+  Account(
+    code: '10.0000',
+    name: 'asset',
+    type: AccountType.asset,
+    isSystemAccount: true,
+  ),
+];
+
+/// Represent single account in a double-entry accounting system
+@freezed
+sealed class Account with _$Account {
+  /// Creates new [Account]
+  factory Account({
+    /// Unique code for an [Account]
+    ///
+    /// Code will be formatted as `<SystemCode>.<UserCreatedCode>`
+    /// - SystemCode will have 2 digits.
+    /// - UserCreatedCode will have 4 digits.
+    required String code,
+
+    /// Unique name of the [Account]
+    required String name,
+
+    /// Type of the [Account]
+    required AccountType type,
+
+    /// Parent [Account] of this [Account]
+    Account? parent,
+
+    /// Whether this [Account] is defined by system or not
+    @Default(false) bool isSystemAccount,
+  }) = _Account;
+
+  /// Creates new [Account] to helps testing
+  factory Account.test() => Account(
+    code: '10.0000',
+    name: 'test',
+    type: AccountType.asset,
+  );
+  Account._() {
+    if (!code.startsWith(type.prefixCode)) {
+      throw AppException(
+        'account with type $type '
+        'must have code prefixed with ${type.prefixCode}. '
+        'got ${code[0]} instead',
+        code: AppExceptionCode.internalException,
+      );
+    }
+    final splitted = code.split('.');
+    if (splitted.length != 2) {
+      throw AppException(
+        'invalid code length. '
+        'it must have 2 parts, system and user code, splitted by ".". '
+        'got $splitted instead',
+        code: AppExceptionCode.internalException,
+      );
+    }
+    final systemCode = splitted[0];
+    if (systemCode.length != 2) {
+      throw AppException(
+        'invalid system part in code, it must 2 character long. '
+        'got $systemCode instead',
+        code: AppExceptionCode.internalException,
+      );
+    }
+    final userCode = splitted[1];
+    if (userCode.length != 4) {
+      throw AppException(
+        'invalid user part in code, it must 4 character long. '
+        'got $userCode instead',
+        code: AppExceptionCode.internalException,
+      );
+    }
+  }
+}

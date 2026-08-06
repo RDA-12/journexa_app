@@ -16,5 +16,6 @@ extension AppExceptionCodeX on AppExceptionCode {
     AppExceptionCode.internalException => context.l10n.errorInternalException,
     AppExceptionCode.loginCanceled => context.l10n.errorLoginCanceled,
     AppExceptionCode.serverException => context.l10n.errorServerException,
+    AppExceptionCode.unauthenticated => context.l10n.errorUnauthenticated,
   };
 }

@@ -33,5 +33,15 @@ class AppLocalizationsId extends AppLocalizations {
   String get errorLoginCanceled => 'Proses login dibatalkan';
 
   @override
-  String get errorServerException => 'Terjadi kesalah di server';
+  String get errorServerException => 'Terjadi kesalahan di server';
+
+  @override
+  String get errorUnauthenticated =>
+      'Anda belum login. Silakan login untuk melanjutkan.';
+
+  @override
+  String get initializeLoadingText => 'Menginisialisasi...';
+
+  @override
+  String get initializeErrorTitle => 'Inisialisasi gagal';
 }

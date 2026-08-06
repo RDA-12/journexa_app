@@ -76,7 +76,7 @@ void main() {
 
   group('Side Effects', () {
     testWidgets(
-      'go to home page when user log in succeeded',
+      'go to initialize page when user log in succeeded',
       (tester) async {
         whenListen(
           mockLoginBloc,
@@ -86,16 +86,16 @@ void main() {
           ]),
         );
 
-        const expectedPage = Scaffold(key: ValueKey('homepage'));
+        const expectedPage = Scaffold(key: ValueKey('initialize'));
         await pumpPage(
           tester,
           nextRoutes: {
-            '/': expectedPage,
+            '/initialize': expectedPage,
           },
         );
         await tester.pumpAndSettle();
 
-        expect(find.byKey(const ValueKey('homepage')), findsOneWidget);
+        expect(find.byKey(const ValueKey('initialize')), findsOneWidget);
         expect(find.byType(LoginPage), findsNothing);
       },
     );

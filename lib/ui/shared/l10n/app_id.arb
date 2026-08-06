@@ -11,5 +11,7 @@
   "errorServerException": "Terjadi kesalahan di server",
   "errorUnauthenticated": "Anda belum login. Silakan login untuk melanjutkan.",
   "initializeLoadingText": "Menginisialisasi...",
-  "initializeErrorTitle": "Inisialisasi gagal"
+  "initializeErrorTitle": "Inisialisasi gagal",
+  "appLogoLabel": "Logo Journexa",
+  "splashBoxLabel": "Membuka aplikasi Journexa"
 }

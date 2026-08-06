@@ -44,4 +44,10 @@ class AppLocalizationsId extends AppLocalizations {
 
   @override
   String get initializeErrorTitle => 'Inisialisasi gagal';
+
+  @override
+  String get appLogoLabel => 'Logo Journexa';
+
+  @override
+  String get splashBoxLabel => 'Membuka aplikasi Journexa';
 }

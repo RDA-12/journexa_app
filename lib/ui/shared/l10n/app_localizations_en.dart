@@ -44,4 +44,10 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get initializeErrorTitle => 'Initialization failed';
+
+  @override
+  String get appLogoLabel => 'Journexa logo';
+
+  @override
+  String get splashBoxLabel => 'Opening Journexa app';
 }

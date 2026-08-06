@@ -47,5 +47,13 @@
   "initializeErrorTitle": "Initialization failed",
   "@initializeErrorTitle": {
     "description": "Title for error state in initialize page"
+  },
+  "appLogoLabel": "Journexa logo",
+  "@appLogoLabel": {
+    "description": "Semantics label for app logo"
+  },
+  "splashBoxLabel": "Opening Journexa app",
+  "@splashBoxLabel": {
+    "description": "Semantics label for splash box"
   }
 }

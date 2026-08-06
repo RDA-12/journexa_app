@@ -1,13 +1,18 @@
 import 'package:go_router/go_router.dart';
 import 'package:journexa_app/ui/initialize/initialize_page.dart';
 import 'package:journexa_app/ui/login/login_page.dart';
+import 'package:journexa_app/ui/splash/splash_page.dart';
 
 /// [AppRouter] is a static class that holds the [GoRouter] instance.
 abstract class AppRouter {
   /// Return [GoRouter] instance for the app.
   static GoRouter router = GoRouter(
-    initialLocation: '/login',
+    initialLocation: '/',
     routes: <GoRoute>[
+      GoRoute(
+        path: '/',
+        builder: (context, state) => const SplashPage(),
+      ),
       GoRoute(
         path: '/login',
         builder: (context, state) => const LoginPage(),

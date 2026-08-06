@@ -169,6 +169,18 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Initialization failed'**
   String get initializeErrorTitle;
+
+  /// Semantics label for app logo
+  ///
+  /// In en, this message translates to:
+  /// **'Journexa logo'**
+  String get appLogoLabel;
+
+  /// Semantics label for splash box
+  ///
+  /// In en, this message translates to:
+  /// **'Opening Journexa app'**
+  String get splashBoxLabel;
 }
 
 class _AppLocalizationsDelegate

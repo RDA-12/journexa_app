@@ -5,6 +5,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:journexa_app/ui/login/bloc/login_bloc.dart';
 import 'package:journexa_app/ui/login/login_page.dart';
 import 'package:journexa_app/ui/login/widgets/widgets.dart';
+import 'package:journexa_app/ui/shared/widgets/app_toast.dart';
 import 'package:mocktail/mocktail.dart';
 
 import '../util.dart';
@@ -92,7 +93,7 @@ void main() {
             '/initialize': expectedPage,
           },
         );
-        await tester.pumpAndSettle();
+        await tester.pumpAndSettle(kToastDuration);
 
         expect(find.byKey(const ValueKey('initialize')), findsOneWidget);
         expect(find.byType(LoginPage), findsNothing);

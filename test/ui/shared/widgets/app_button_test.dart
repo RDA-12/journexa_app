@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:journexa_app/ui/shared/widgets/app_outlined_button.dart';
+import 'package:journexa_app/ui/shared/widgets/app_button.dart';
 
 void main() {
   Future<void> pumpWidget({

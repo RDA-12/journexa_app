@@ -50,4 +50,36 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get splashBoxLabel => 'Opening Journexa app';
+
+  @override
+  String errorAccountAlreadyExists(String name) {
+    return '$name with provided name already exists';
+  }
+
+  @override
+  String get formErrorRequired => 'Required';
+
+  @override
+  String get addCashAccountNameLabel => 'Name';
+
+  @override
+  String get addCashAccountButtonLabel => 'Add Cash';
+
+  @override
+  String get commonCash => 'Cash';
+
+  @override
+  String get addCashAccountSuccessMessage => 'Cash successfully added';
+
+  @override
+  String get addCashAccountSuccessTitle => 'Cash added';
+
+  @override
+  String get addCashAccountFailureTitle => 'Failed to add cash';
+
+  @override
+  String get commonRequired => 'Required';
+
+  @override
+  String get addCashAccountTitle => 'Add New Cash';
 }

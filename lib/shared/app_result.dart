@@ -16,6 +16,14 @@ sealed class AppResult<T> with _$AppResult<T> {
   const factory AppResult.failure(AppException error) = AppResultFailure;
   const AppResult._();
 
-  /// Whether this result is failure or not
-  bool get isFailure => this is AppResultFailure;
+  /// Returns [AppException] if this is failure or null if this is success
+  AppException? get errorOrNull => whenOrNull(failure: (exc) => exc);
+
+  /// Returns value if exists. Otherwise, null
+  ///
+  /// Beware that if the [T] is [Null], then this getter cannot
+  /// be used to check if the result is failure or success.
+  /// Instead, use [errorOrNull] to check the exception or use
+  /// `is` operator to check the type.
+  T? get valueOrNull => whenOrNull(success: (v) => v);
 }

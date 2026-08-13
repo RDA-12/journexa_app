@@ -1,4 +1,5 @@
 import 'package:flutter/foundation.dart';
+import 'package:journexa_app/domain/entities/account.dart';
 
 /// Possibles codes for [AppException]
 enum AppExceptionCode {
@@ -13,6 +14,9 @@ enum AppExceptionCode {
 
   /// Missing current user
   unauthenticated,
+
+  /// [Account] with same name/code already exists
+  accountAlreadyExists,
 }
 
 /// Base exception class for the application

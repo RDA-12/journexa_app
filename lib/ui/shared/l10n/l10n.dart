@@ -12,10 +12,22 @@ extension L10nX on BuildContext {
 /// Extension to converts [AppExceptionCode] to localized [String]
 extension AppExceptionCodeX on AppExceptionCode {
   /// Return localized [String] of this [AppExceptionCode]
-  String toLocalizedString(BuildContext context) => switch (this) {
+  ///
+  /// [data] will be used to format the localized string
+  /// Example:
+  /// ```dart
+  /// const data = {'name': 'Test'};
+  /// AppExceptionCode.accountAlreadyExists.toLocalizedString(context, data);
+  /// ```
+  String toLocalizedString(
+    BuildContext context, {
+    Map<String, dynamic> data = const {},
+  }) => switch (this) {
     AppExceptionCode.internalException => context.l10n.errorInternalException,
     AppExceptionCode.loginCanceled => context.l10n.errorLoginCanceled,
     AppExceptionCode.serverException => context.l10n.errorServerException,
     AppExceptionCode.unauthenticated => context.l10n.errorUnauthenticated,
+    AppExceptionCode.accountAlreadyExists =>
+      context.l10n.errorAccountAlreadyExists(data['name'] as String),
   };
 }

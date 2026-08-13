@@ -81,6 +81,24 @@ sealed class Account with _$Account {
     name: 'test',
     type: AccountType.asset,
   );
+
+  /// Creates new [Account] which code is derived from parent code
+  factory Account.user({
+    required Account parent,
+    required String name,
+    required int currentChildrenCount,
+  }) {
+    final nextUserCode = (currentChildrenCount + 1).toString().padLeft(4, '0');
+    final code = '${parent.code.split('.')[0]}.$nextUserCode';
+
+    return Account(
+      code: code,
+      name: name,
+      type: parent.type,
+      parent: parent,
+    );
+  }
+
   Account._() {
     if (!code.startsWith(type.prefixCode)) {
       throw AppException(

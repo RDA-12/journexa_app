@@ -55,5 +55,51 @@
   "splashBoxLabel": "Opening Journexa app",
   "@splashBoxLabel": {
     "description": "Semantics label for splash box"
+  },
+  "errorAccountAlreadyExists": "{name} with provided name already exists",
+  "@errorAccountAlreadyExists": {
+    "description": "Message when created Account already exists",
+    "placeholders": {
+      "name": {
+        "type": "String",
+        "example": "Cash"
+      }
+    }
+  },
+  "formErrorRequired": "Required",
+  "@formErrorRequired": {
+    "description": "Message showed when a TextField is required but the value is empty"
+  },
+  "addCashAccountNameLabel": "Name",
+  "@addCashAccountNameLabel": {
+    "description": "Label for name field"
+  },
+  "addCashAccountButtonLabel": "Add Cash",
+  "@addCashAccountButtonLabel": {
+    "description": "Label for add button on add cash account form"
+  },
+  "commonCash": "Cash",
+  "@commonCash": {
+    "description": "Cash label"
+  },
+  "addCashAccountSuccessMessage": "Cash successfully added",
+  "@addCashAccountSuccessMessage": {
+    "description": "Message to be showed when cash account added successfully"
+  },
+  "addCashAccountSuccessTitle": "Cash added",
+  "@addCashAccountSuccessTitle": {
+    "description": "Title for success state in add cash account page"
+  },
+  "addCashAccountFailureTitle": "Failed to add cash",
+  "@addCashAccountFailureTitle": {
+    "description": "Title for error state in add cash account page"
+  },
+  "commonRequired": "Required",
+  "@commonRequired": {
+    "description": "Label for required, usually for semantics"
+  },
+  "addCashAccountTitle": "Add New Cash",
+  "@addCashAccountTitle": {
+    "description": "Title for add cash account page"
   }
 }

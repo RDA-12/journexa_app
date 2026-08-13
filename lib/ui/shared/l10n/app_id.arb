@@ -13,5 +13,15 @@
   "initializeLoadingText": "Menginisialisasi...",
   "initializeErrorTitle": "Inisialisasi gagal",
   "appLogoLabel": "Logo Journexa",
-  "splashBoxLabel": "Membuka aplikasi Journexa"
+  "splashBoxLabel": "Membuka aplikasi Journexa",
+  "errorAccountAlreadyExists": "{name} dengan nama tersebut sudah ada",
+  "formErrorRequired": "Harus diisi",
+  "addCashAccountNameLabel": "Nama",
+  "addCashAccountButtonLabel": "Tambah Kas",
+  "commonCash": "Kas",
+  "addCashAccountSuccessMessage": "Kas ditambahkan",
+  "addCashAccountSuccessTitle": "Kas berhasil ditambahkan",
+  "addCashAccountFailureTitle": "Gagal menambahkan kas",
+  "commonRequired": "Wajib",
+  "addCashAccountTitle": "Tambah Kas Baru"
 }

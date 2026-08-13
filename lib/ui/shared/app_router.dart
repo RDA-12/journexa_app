@@ -1,4 +1,5 @@
 import 'package:go_router/go_router.dart';
+import 'package:journexa_app/ui/add_cash_account/add_cash_account_page.dart';
 import 'package:journexa_app/ui/initialize/initialize_page.dart';
 import 'package:journexa_app/ui/login/login_page.dart';
 import 'package:journexa_app/ui/splash/splash_page.dart';
@@ -20,6 +21,10 @@ abstract class AppRouter {
       GoRoute(
         path: '/initialize',
         builder: (context, state) => const InitializePage(),
+      ),
+      GoRoute(
+        path: '/add-cash-account',
+        builder: (context, state) => const AddCashAccountPage(),
       ),
     ],
   );

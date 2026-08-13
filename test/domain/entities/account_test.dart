@@ -109,4 +109,29 @@ void main() {
       },
     );
   });
+
+  group('Account.user', () {
+    final parents = kSystemDefinedAccounts;
+
+    for (final parent in parents) {
+      test('creates correct Account based on ${parent.type}', () {
+        const currentChildrenCount = 100;
+        final expectedCode = '${parent.code.split('.')[0]}.0101';
+        final expectedAccount = Account(
+          code: expectedCode,
+          name: 'name',
+          type: parent.type,
+          parent: parent,
+        );
+
+        final result = Account.user(
+          name: 'name',
+          parent: parent,
+          currentChildrenCount: currentChildrenCount,
+        );
+
+        expect(result, expectedAccount);
+      });
+    }
+  });
 }

@@ -181,6 +181,66 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Opening Journexa app'**
   String get splashBoxLabel;
+
+  /// Message when created Account already exists
+  ///
+  /// In en, this message translates to:
+  /// **'{name} with provided name already exists'**
+  String errorAccountAlreadyExists(String name);
+
+  /// Message showed when a TextField is required but the value is empty
+  ///
+  /// In en, this message translates to:
+  /// **'Required'**
+  String get formErrorRequired;
+
+  /// Label for name field
+  ///
+  /// In en, this message translates to:
+  /// **'Name'**
+  String get addCashAccountNameLabel;
+
+  /// Label for add button on add cash account form
+  ///
+  /// In en, this message translates to:
+  /// **'Add Cash'**
+  String get addCashAccountButtonLabel;
+
+  /// Cash label
+  ///
+  /// In en, this message translates to:
+  /// **'Cash'**
+  String get commonCash;
+
+  /// Message to be showed when cash account added successfully
+  ///
+  /// In en, this message translates to:
+  /// **'Cash successfully added'**
+  String get addCashAccountSuccessMessage;
+
+  /// Title for success state in add cash account page
+  ///
+  /// In en, this message translates to:
+  /// **'Cash added'**
+  String get addCashAccountSuccessTitle;
+
+  /// Title for error state in add cash account page
+  ///
+  /// In en, this message translates to:
+  /// **'Failed to add cash'**
+  String get addCashAccountFailureTitle;
+
+  /// Label for required, usually for semantics
+  ///
+  /// In en, this message translates to:
+  /// **'Required'**
+  String get commonRequired;
+
+  /// Title for add cash account page
+  ///
+  /// In en, this message translates to:
+  /// **'Add New Cash'**
+  String get addCashAccountTitle;
 }
 
 class _AppLocalizationsDelegate

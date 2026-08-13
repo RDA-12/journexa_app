@@ -11,12 +11,37 @@ import 'package:mock_exceptions/mock_exceptions.dart';
 void main() {
   const userId = 'userId';
   const traceId = 'trace';
+  final initialAccounts = [
+    Account(
+      code: '10.0001',
+      name: 'asset',
+      type: AccountType.asset,
+    ),
+    Account(
+      code: '10.0002',
+      name: 'asset',
+      type: AccountType.asset,
+    ),
+  ];
+  final accounts = [
+    Account(
+      code: '10.0000',
+      name: 'asset',
+      type: AccountType.asset,
+    ),
+  ];
 
   late FirebaseFirestore fakeFirestore;
   late IAccountRepository repository;
 
-  setUp(() {
+  setUp(() async {
     fakeFirestore = FakeFirebaseFirestore();
+    for (final account in initialAccounts) {
+      final doc = fakeFirestore.doc(
+        'users/$userId/accounts/${account.code}',
+      );
+      await doc.set(FirestoreAccount.fromDomain(account).toJson());
+    }
     repository = FirestoreAccountRepository(db: fakeFirestore);
   });
 
@@ -25,35 +50,6 @@ void main() {
   });
 
   group('ensureSaved', () {
-    final initialAccounts = [
-      Account(
-        code: '10.0001',
-        name: 'asset',
-        type: AccountType.asset,
-      ),
-      Account(
-        code: '10.0002',
-        name: 'asset',
-        type: AccountType.asset,
-      ),
-    ];
-    final accounts = [
-      Account(
-        code: '10.0000',
-        name: 'asset',
-        type: AccountType.asset,
-      ),
-    ];
-
-    setUp(() async {
-      for (final account in initialAccounts) {
-        final doc = fakeFirestore.doc(
-          'users/$userId/accounts/${account.code}',
-        );
-        await doc.set(FirestoreAccount.fromDomain(account).toJson());
-      }
-    });
-
     test(
       'returns success when all accounts saved',
       () async {
@@ -101,7 +97,7 @@ void main() {
           result,
           isA<AppResultFailure<Null>>().having(
             (e) => e.error.code,
-            'code',
+            'error.code',
             AppExceptionCode.serverException,
           ),
         );
@@ -129,7 +125,247 @@ void main() {
           result,
           isA<AppResultFailure<Null>>().having(
             (e) => e.error.code,
-            'code',
+            'error.code',
+            AppExceptionCode.internalException,
+          ),
+        );
+      },
+    );
+  });
+
+  group('save', () {
+    final args = Account(
+      code: '10.1000',
+      name: 'new asset',
+      type: AccountType.asset,
+    );
+
+    test('returns success and save correct account', () async {
+      final expected = args;
+
+      final result = await repository.save(
+        userId,
+        expected,
+        traceId: traceId,
+      );
+
+      expect(result, const AppResult.success(null));
+
+      final doc = fakeFirestore.doc('users/$userId/accounts/${expected.code}');
+      final snapshot = await doc.get();
+      expect(
+        snapshot.data(),
+        FirestoreAccount.fromDomain(expected).toJson(),
+      );
+    });
+
+    test(
+      'returns success and save correct account '
+      'when parent provided',
+      () async {
+        final parent = initialAccounts[0];
+        final expected = args.copyWith(parent: parent);
+
+        final result = await repository.save(
+          userId,
+          expected,
+          traceId: traceId,
+        );
+        expect(result, const AppResult.success(null));
+
+        final doc = fakeFirestore.doc(
+          'users/$userId/accounts/${expected.code}',
+        );
+        final snapshot = await doc.get();
+        expect(
+          snapshot.data(),
+          FirestoreAccount.fromDomain(expected).toJson(),
+        );
+      },
+    );
+
+    test(
+      'returns failure with accountAlreadyExists code '
+      'when save existing name account',
+      () async {
+        final expected = args.copyWith(name: initialAccounts[0].name);
+
+        final result = await repository.save(
+          userId,
+          expected,
+          traceId: traceId,
+        );
+
+        expect(
+          result,
+          isA<AppResultFailure<Null>>().having(
+            (e) => e.error.code,
+            'error.code',
+            AppExceptionCode.accountAlreadyExists,
+          ),
+        );
+      },
+    );
+
+    test(
+      'returns failure with accountAlreadyExists code '
+      'when save existing code account',
+      () async {
+        final expected = args.copyWith(code: initialAccounts[0].code);
+
+        final result = await repository.save(
+          userId,
+          expected,
+          traceId: traceId,
+        );
+
+        expect(
+          result,
+          isA<AppResultFailure<Null>>().having(
+            (e) => e.error.code,
+            'error.code',
+            AppExceptionCode.accountAlreadyExists,
+          ),
+        );
+      },
+    );
+
+    test(
+      'returns failure with serverException code '
+      'when firestore throws FirebaseException',
+      () async {
+        final expected = args;
+        final doc = fakeFirestore.doc(
+          'users/$userId/accounts/${expected.code}',
+        );
+        whenCalling(
+          Invocation.method(#set, null),
+        ).on(doc).thenThrow(FirebaseException(plugin: 'firestore'));
+
+        final result = await repository.save(
+          userId,
+          expected,
+          traceId: traceId,
+        );
+
+        expect(
+          result,
+          isA<AppResultFailure<Null>>().having(
+            (e) => e.error.code,
+            'error.code',
+            AppExceptionCode.serverException,
+          ),
+        );
+      },
+    );
+
+    test(
+      'returns failure with internalException code '
+      'when firestore throws Exception',
+      () async {
+        final expected = args;
+        final doc = fakeFirestore.doc(
+          'users/$userId/accounts/${expected.code}',
+        );
+        whenCalling(
+          Invocation.method(#set, null),
+        ).on(doc).thenThrow(Exception('exception'));
+
+        final result = await repository.save(
+          userId,
+          expected,
+          traceId: traceId,
+        );
+
+        expect(
+          result,
+          isA<AppResultFailure<Null>>().having(
+            (e) => e.error.code,
+            'error.code',
+            AppExceptionCode.internalException,
+          ),
+        );
+      },
+    );
+  });
+
+  group('getChildrenCountByParentCode', () {
+    final parent = initialAccounts[0];
+
+    test(
+      'returns success with correct count '
+      'when get children count by parent code',
+      () async {
+        const expectedChildrenCount = 5;
+        for (var i = 1; i <= expectedChildrenCount; i++) {
+          final child = Account(
+            code: '${parent.code.split('.')[0]}.100$i',
+            name: 'child $i',
+            type: AccountType.asset,
+            parent: parent,
+          );
+          final doc = fakeFirestore.doc('users/$userId/accounts/${child.code}');
+          await doc.set(FirestoreAccount.fromDomain(child).toJson());
+        }
+
+        final result = await repository.getChildrenCountByParentCode(
+          userId: userId,
+          parentCode: parent.code,
+          traceId: traceId,
+        );
+
+        expect(result, const AppResult.success(expectedChildrenCount));
+      },
+    );
+
+    test(
+      'returns failure with serverException code '
+      'when firestore throws FirebaseException',
+      () async {
+        whenCalling(Invocation.method(#getChildrenCountByParentCode, null))
+            .on(repository)
+            .thenThrow(
+              FirebaseException(plugin: 'firestore'),
+            );
+
+        final result = await repository.getChildrenCountByParentCode(
+          userId: userId,
+          parentCode: parent.code,
+          traceId: traceId,
+        );
+
+        expect(
+          result,
+          isA<AppResultFailure<int>>().having(
+            (e) => e.error.code,
+            'error.code',
+            AppExceptionCode.serverException,
+          ),
+        );
+      },
+    );
+
+    test(
+      'returns failure with internalException code '
+      'when unexpected Exception thrown',
+      () async {
+        whenCalling(Invocation.method(#getChildrenCountByParentCode, null))
+            .on(repository)
+            .thenThrow(
+              Exception(),
+            );
+
+        final result = await repository.getChildrenCountByParentCode(
+          userId: userId,
+          parentCode: parent.code,
+          traceId: traceId,
+        );
+
+        expect(
+          result,
+          isA<AppResultFailure<int>>().having(
+            (e) => e.error.code,
+            'error.code',
             AppExceptionCode.internalException,
           ),
         );

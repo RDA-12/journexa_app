@@ -50,4 +50,36 @@ class AppLocalizationsId extends AppLocalizations {
 
   @override
   String get splashBoxLabel => 'Membuka aplikasi Journexa';
+
+  @override
+  String errorAccountAlreadyExists(String name) {
+    return '$name dengan nama tersebut sudah ada';
+  }
+
+  @override
+  String get formErrorRequired => 'Harus diisi';
+
+  @override
+  String get addCashAccountNameLabel => 'Nama';
+
+  @override
+  String get addCashAccountButtonLabel => 'Tambah Kas';
+
+  @override
+  String get commonCash => 'Kas';
+
+  @override
+  String get addCashAccountSuccessMessage => 'Kas ditambahkan';
+
+  @override
+  String get addCashAccountSuccessTitle => 'Kas berhasil ditambahkan';
+
+  @override
+  String get addCashAccountFailureTitle => 'Gagal menambahkan kas';
+
+  @override
+  String get commonRequired => 'Wajib';
+
+  @override
+  String get addCashAccountTitle => 'Tambah Kas Baru';
 }

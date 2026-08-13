@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:journexa_app/ui/shared/theme.dart';
 
-/// Button sizes for [AppOutlinedButton]
+/// Button sizes for [AppButton]
 enum ButtonSize {
   /// Small size, default
   small,
@@ -40,13 +40,38 @@ enum ButtonSize {
   };
 }
 
-/// Creates new [OutlinedButton] if only label is provided.
-/// Creates new [OutlinedButton.icon] if both label and icon are provided.
-class AppOutlinedButton extends StatelessWidget {
-  /// Creates new [AppOutlinedButton]
-  const AppOutlinedButton({
+/// Button types for [AppButton]
+enum ButtonType {
+  /// Outlined type, default
+  outlined,
+
+  /// Filled type
+  filled;
+
+  /// Returns [ButtonStyle] for this type
+  ButtonStyle style(BuildContext context, ButtonSize size) => switch (this) {
+    ButtonType.outlined => OutlinedButton.styleFrom(
+      minimumSize: size.minimumSize,
+      textStyle: size.textStyle(context),
+      padding: size.padding,
+    ),
+    ButtonType.filled => FilledButton.styleFrom(
+      minimumSize: size.minimumSize,
+      textStyle: size.textStyle(context),
+      padding: size.padding,
+    ),
+  };
+}
+
+/// Conditionally creates [FilledButton] or [OutlinedButton] based on [type]
+///
+/// If [icon] provided, use [FilledButton.icon] or [OutlinedButton.icon].
+class AppButton extends StatelessWidget {
+  /// Creates new [AppButton]
+  const AppButton({
     required this.onPressed,
     required this.label,
+    this.type = ButtonType.outlined,
     this.size = ButtonSize.small,
     this.icon,
     super.key,
@@ -54,6 +79,9 @@ class AppOutlinedButton extends StatelessWidget {
 
   /// Size of the Button
   final ButtonSize size;
+
+  /// Type of the Button
+  final ButtonType type;
 
   /// Label for the Button
   final String label;
@@ -70,11 +98,23 @@ class AppOutlinedButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final style = OutlinedButton.styleFrom(
-      minimumSize: size.minimumSize,
-      textStyle: size.textStyle(context),
-      padding: size.padding,
-    );
+    if (type == ButtonType.filled) {
+      if (icon != null) {
+        return FilledButton.icon(
+          onPressed: onPressed,
+          label: Text(label),
+          icon: SizedBox.square(dimension: size.iconSize, child: icon),
+          iconAlignment: IconAlignment.start,
+          style: type.style(context, size),
+        );
+      }
+
+      return FilledButton(
+        onPressed: onPressed,
+        style: type.style(context, size),
+        child: Text(label),
+      );
+    }
 
     if (icon != null) {
       return OutlinedButton.icon(
@@ -82,13 +122,13 @@ class AppOutlinedButton extends StatelessWidget {
         label: Text(label),
         icon: SizedBox.square(dimension: size.iconSize, child: icon),
         iconAlignment: IconAlignment.start,
-        style: style,
+        style: type.style(context, size),
       );
     }
 
     return OutlinedButton(
       onPressed: onPressed,
-      style: style,
+      style: type.style(context, size),
       child: Text(label),
     );
   }

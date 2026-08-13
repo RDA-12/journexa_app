@@ -6,7 +6,7 @@ import 'package:journexa_app/ui/shared/l10n/l10n.dart';
 import 'package:journexa_app/ui/shared/widgets/widgets.dart';
 import 'package:toastification/toastification.dart';
 
-/// Creates new [AppOutlinedButton] specifically for
+/// Creates new [AppButton] specifically for
 /// logging in user with Google account
 class LoginWithGoogleButton extends StatelessWidget {
   /// Creates new [LoginWithGoogleButton]
@@ -56,7 +56,7 @@ class LoginWithGoogleButton extends StatelessWidget {
           orElse: () => false,
         );
 
-        return AppOutlinedButton(
+        return AppButton(
           size: ButtonSize.medium,
           onPressed: isLoading
               ? null

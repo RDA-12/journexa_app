@@ -73,6 +73,7 @@ class _AddCashAccountFormState extends State<AddCashAccountForm> {
         child: Column(
           spacing: 16,
           mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
             AppFormField(
               controller: _nameController,
@@ -83,6 +84,7 @@ class _AddCashAccountFormState extends State<AddCashAccountForm> {
             AppButton(
               label: context.l10n.addCashAccountButtonLabel,
               icon: const Icon(Icons.add_rounded),
+              type: ButtonType.filled,
               onPressed: () {
                 if (!_formKey.currentState!.validate()) return;
                 context.read<AddCashAccountBloc>().add(

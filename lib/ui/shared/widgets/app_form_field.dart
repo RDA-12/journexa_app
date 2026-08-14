@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:journexa_app/ui/shared/l10n/l10n.dart';
+import 'package:journexa_app/ui/shared/theme.dart';
 
 /// Creates new [TextFormField] to allows users input something
 class AppFormField extends StatelessWidget {
@@ -37,6 +38,43 @@ class AppFormField extends StatelessWidget {
       controller: controller,
       validator: (value) => _validator(context, value),
       decoration: InputDecoration(
+        fillColor: WidgetStateColor.resolveWith(
+          (states) {
+            if (states.contains(WidgetState.disabled)) {
+              return context.color.surfaceContainerHigh;
+            }
+            if (states.contains(WidgetState.hovered)) {
+              return context.color.surfaceContainer;
+            }
+            return context.color.surfaceContainerLow;
+          },
+        ),
+        filled: true,
+        border: WidgetStateInputBorder.resolveWith(
+          (states) {
+            final baseBorder = OutlineInputBorder(
+              borderRadius: BorderRadius.circular(100),
+              borderSide: BorderSide(
+                color: context.color.outlineVariant,
+              ),
+            );
+            if (states.contains(WidgetState.error)) {
+              return baseBorder.copyWith(
+                borderSide: BorderSide(
+                  color: context.color.error,
+                ),
+              );
+            }
+            if (states.contains(WidgetState.focused)) {
+              return baseBorder.copyWith(
+                borderSide: BorderSide(
+                  color: context.color.primary,
+                ),
+              );
+            }
+            return baseBorder;
+          },
+        ),
         prefixIcon: icon,
         label: label != null
             ? Text.rich(

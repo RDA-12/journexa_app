@@ -7,6 +7,7 @@ import 'package:journexa_app/ui/add_cash_account/widgets/add_cash_account_form.d
 import 'package:journexa_app/ui/shared/l10n/l10n.dart';
 import 'package:journexa_app/ui/shared/widgets/app_button.dart';
 import 'package:journexa_app/ui/shared/widgets/app_toast.dart';
+import 'package:journexa_app/ui/shared/widgets/loading_indicator.dart';
 import 'package:mocktail/mocktail.dart';
 
 import '../../util.dart';
@@ -82,6 +83,26 @@ void main() {
           },
         );
       }
+
+      testWidgets(
+        'has disabled button and shows LoadingIndicator '
+        'when state is loading',
+        (tester) async {
+          whenListen(
+            mockAddCashAccountBloc,
+            const Stream<AddCashAccountState>.empty(),
+            initialState: const AddCashAccountState.loading(),
+          );
+
+          await pumpWidget(tester);
+
+          final buttonFinder = find.byType(FilledButton);
+          final buttonWidget = tester.widget<FilledButton>(buttonFinder);
+          expect(buttonWidget.enabled, isFalse);
+
+          expect(find.byType(LoadingIndicator), findsOneWidget);
+        },
+      );
     },
   );
 

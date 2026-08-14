@@ -81,16 +81,30 @@ class _AddCashAccountFormState extends State<AddCashAccountForm> {
               label: context.l10n.addCashAccountNameLabel,
               icon: const Icon(Icons.wallet_rounded),
             ),
-            AppButton(
-              label: context.l10n.addCashAccountButtonLabel,
-              icon: const Icon(Icons.add_rounded),
-              type: ButtonType.filled,
-              onPressed: () {
-                if (!_formKey.currentState!.validate()) return;
-                context.read<AddCashAccountBloc>().add(
-                  AddCashAccountEvent.submit(
-                    name: _nameController.text.trim(),
-                  ),
+            BlocSelector<AddCashAccountBloc, AddCashAccountState, bool>(
+              selector: (state) {
+                return state.maybeWhen(
+                  loading: () => true,
+                  orElse: () => false,
+                );
+              },
+              builder: (context, isLoading) {
+                return AppButton(
+                  label: context.l10n.addCashAccountButtonLabel,
+                  icon: isLoading
+                      ? const LoadingIndicator(size: 8)
+                      : const Icon(Icons.add_rounded),
+                  type: ButtonType.filled,
+                  onPressed: isLoading
+                      ? null
+                      : () {
+                          if (!_formKey.currentState!.validate()) return;
+                          context.read<AddCashAccountBloc>().add(
+                            AddCashAccountEvent.submit(
+                              name: _nameController.text.trim(),
+                            ),
+                          );
+                        },
                 );
               },
             ),

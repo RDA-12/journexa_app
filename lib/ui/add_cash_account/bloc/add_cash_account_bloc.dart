@@ -12,11 +12,10 @@ part 'add_cash_account_bloc.freezed.dart';
 
 /// Bloc to handle creating new cash account
 class AddCashAccountBloc extends Bloc<AddCashAccountEvent, AddCashAccountState>
-    with Loggable {
+    with Loggable, GenerateUid {
   /// Creates new [AddCashAccountBloc]
   AddCashAccountBloc({
     required this._addCashAccount,
-    required this._uidGenerator,
   }) : super(const AddCashAccountState.initial()) {
     on<AddCashAccountEvent>((event, emit) async {
       await event.when(
@@ -29,13 +28,12 @@ class AddCashAccountBloc extends Bloc<AddCashAccountEvent, AddCashAccountState>
   String get logTag => 'AddCashAccountBloc';
 
   final AddCashAccountUseCase _addCashAccount;
-  final UidGenerator _uidGenerator;
 
   Future<void> _onSubmit({
     required String name,
     required Emitter<AddCashAccountState> emit,
   }) async {
-    final traceId = _uidGenerator.generateUid();
+    final traceId = generateUid();
     logInfo(
       'Start adding new cash account. Emit loading state',
       traceId: traceId,

@@ -3,7 +3,6 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:journexa_app/di.dart';
 import 'package:journexa_app/domain/use_cases/auth/login_with_google.dart';
-import 'package:journexa_app/shared/uid_generator.dart';
 import 'package:journexa_app/ui/login/bloc/login_bloc.dart';
 import 'package:journexa_app/ui/login/widgets/widgets.dart';
 
@@ -24,7 +23,6 @@ class LoginPage extends StatelessWidget {
           loginBloc ??
           LoginBloc(
             loginWithGoogleUseCase: getIt<LoginWithGoogleUseCase>(),
-            uidGenerator: getIt<UidGenerator>(),
           ),
       child: const Scaffold(
         body: _LoginView(),

@@ -34,8 +34,7 @@ void main() {
   LoginBloc buildBloc() {
     return LoginBloc(
       loginWithGoogleUseCase: mockLoginWithGoogleUseCase,
-      uidGenerator: mockUidGenerator,
-    );
+    )..customGenerator = mockUidGenerator;
   }
 
   test('initial state is LoginState.initial()', () {

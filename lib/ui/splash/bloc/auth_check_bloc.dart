@@ -12,11 +12,11 @@ part 'auth_check_state.dart';
 part 'auth_check_bloc.freezed.dart';
 
 /// Bloc for checking current user authentication state
-class AuthCheckBloc extends Bloc<AuthCheckEvent, AuthCheckState> with Loggable {
+class AuthCheckBloc extends Bloc<AuthCheckEvent, AuthCheckState>
+    with Loggable, GenerateUid {
   /// Creates new [AuthCheckBloc]
   AuthCheckBloc({
     required this._checkAuth,
-    required this._uidGenerator,
   }) : super(const AuthCheckState.initial()) {
     on<AuthCheckEvent>((event, emit) async {
       await event.when(
@@ -29,10 +29,9 @@ class AuthCheckBloc extends Bloc<AuthCheckEvent, AuthCheckState> with Loggable {
   String get logTag => 'AuthCheckBloc';
 
   final CheckAuthUseCase _checkAuth;
-  final UidGenerator _uidGenerator;
 
   Future<void> _onStarted({required Emitter<AuthCheckState> emit}) async {
-    final traceId = _uidGenerator.generateUid();
+    final traceId = generateUid();
     logInfo(
       'Start check auth state. Emit loading state',
       traceId: traceId,

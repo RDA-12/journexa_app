@@ -12,11 +12,11 @@ part 'login_state.dart';
 part 'login_bloc.freezed.dart';
 
 /// Bloc to handles all login operations
-class LoginBloc extends Bloc<LoginEvent, LoginState> with Loggable {
+class LoginBloc extends Bloc<LoginEvent, LoginState>
+    with Loggable, GenerateUid {
   /// Creates new [LoginBloc]
   LoginBloc({
     required this._loginWithGoogleUseCase,
-    required this._uidGenerator,
   }) : super(const LoginState.initial()) {
     on<LoginEvent>((event, emit) async {
       await event.when(
@@ -28,11 +28,10 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> with Loggable {
   @override
   String get logTag => 'LoginBloc';
 
-  final UidGenerator _uidGenerator;
   final LoginWithGoogleUseCase _loginWithGoogleUseCase;
 
   Future<void> _onLoginWithGoogle({required Emitter<LoginState> emit}) async {
-    final traceId = _uidGenerator.generateUid();
+    final traceId = generateUid();
     logInfo('Emitting loading state', traceId: traceId);
     emit(const LoginState.loading());
     final result = await _loginWithGoogleUseCase.execute(

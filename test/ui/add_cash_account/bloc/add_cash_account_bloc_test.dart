@@ -37,8 +37,7 @@ void main() {
   AddCashAccountBloc buildBloc() {
     return AddCashAccountBloc(
       addCashAccount: mockAddCashAccount,
-      uidGenerator: mockUidGenerator,
-    );
+    )..customGenerator = mockUidGenerator;
   }
 
   test('Initial state should be AddCashAccountState.initial', () {
@@ -56,6 +55,7 @@ void main() {
         AddCashAccountState.added(),
       ],
       verify: (_) {
+        verify(() => mockUidGenerator.generateUid()).called(1);
         verify(
           () => mockAddCashAccount.execute(params, traceId: traceId),
         ).called(1);
@@ -79,6 +79,7 @@ void main() {
         AddCashAccountState.failure(AppException.test()),
       ],
       verify: (_) {
+        verify(() => mockUidGenerator.generateUid()).called(1);
         verify(
           () => mockAddCashAccount.execute(params, traceId: traceId),
         ).called(1);

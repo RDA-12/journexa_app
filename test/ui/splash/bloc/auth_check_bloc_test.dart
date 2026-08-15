@@ -29,9 +29,8 @@ void main() {
 
   AuthCheckBloc buildBloc() {
     return AuthCheckBloc(
-      uidGenerator: mockUidGenerator,
       checkAuth: mockCheckAuthUseCase,
-    );
+    )..customGenerator = mockUidGenerator;
   }
 
   test(

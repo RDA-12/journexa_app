@@ -34,9 +34,8 @@ void main() {
 
   InitializeBloc buildBloc() {
     return InitializeBloc(
-      uidGenerator: mockUidGenerator,
       initializeAccounts: mockInitializeAccounts,
-    );
+    )..customGenerator = mockUidGenerator;
   }
 
   tearDown(() {

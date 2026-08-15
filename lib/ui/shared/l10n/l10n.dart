@@ -7,6 +7,9 @@ export 'app_localizations.dart';
 extension L10nX on BuildContext {
   /// Return [AppLocalizations] instance from the widget tree
   AppLocalizations get l10n => AppLocalizations.of(this)!;
+
+  /// Return language code from [Localizations]
+  String get languageCode => Localizations.localeOf(this).languageCode;
 }
 
 /// Extension to converts [AppExceptionCode] to localized [String]
@@ -29,5 +32,8 @@ extension AppExceptionCodeX on AppExceptionCode {
     AppExceptionCode.unauthenticated => context.l10n.errorUnauthenticated,
     AppExceptionCode.accountAlreadyExists =>
       context.l10n.errorAccountAlreadyExists(data['name'] as String),
+    AppExceptionCode.accountNotFound => context.l10n.errorAccountNotFound(
+      data['code'] as String,
+    ),
   };
 }

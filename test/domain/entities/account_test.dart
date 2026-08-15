@@ -134,4 +134,61 @@ void main() {
       });
     }
   });
+
+  group('AccountType normalBalance getter', () {
+    test(
+      'returns list of account types with debit normal balance',
+      () {
+        expect(
+          AccountType.debitNormalBalance,
+          [AccountType.asset, AccountType.expense],
+        );
+      },
+    );
+
+    test(
+      'returns list of account types with credit normal balance',
+      () {
+        expect(
+          AccountType.creditNormalBalance,
+          [AccountType.liability, AccountType.equity, AccountType.revenue],
+        );
+      },
+    );
+  });
+
+  group(
+    'Account.normalBalance getter',
+    () {
+      for (final type in AccountType.creditNormalBalance) {
+        test(
+          '$type has credit normal balance',
+          () {
+            final account = Account(
+              code: '${type.prefixCode}0.0000',
+              name: 'test',
+              type: type,
+            );
+
+            expect(account.normalBalance, BalanceType.credit);
+          },
+        );
+      }
+
+      for (final type in AccountType.debitNormalBalance) {
+        test(
+          '$type has debit normal balance',
+          () {
+            final account = Account(
+              code: '${type.prefixCode}0.0000',
+              name: 'test',
+              type: type,
+            );
+
+            expect(account.normalBalance, BalanceType.debit);
+          },
+        );
+      }
+    },
+  );
 }

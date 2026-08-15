@@ -82,4 +82,18 @@ class AppLocalizationsId extends AppLocalizations {
 
   @override
   String get addCashAccountTitle => 'Tambah Kas Baru';
+
+  @override
+  String errorAccountNotFound(String code) {
+    return 'Akun dengan kode $code tidak dapat ditemukan';
+  }
+
+  @override
+  String get cashAccountsListFailureTitle => 'Gagal mendapatkan data kas';
+
+  @override
+  String get cashAccountsListLoadingSemantics => 'Memuat data kas';
+
+  @override
+  String get cashAccountsListTitle => 'Daftar Kas';
 }

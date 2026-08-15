@@ -11,21 +11,30 @@ import 'package:mock_exceptions/mock_exceptions.dart';
 void main() {
   const userId = 'userId';
   const traceId = 'trace';
+  final parent = Account(
+    code: '10.0000',
+    name: 'asset',
+    type: AccountType.asset,
+    isSystemAccount: true,
+  );
   final initialAccounts = [
+    parent,
     Account(
       code: '10.0001',
       name: 'asset',
       type: AccountType.asset,
+      parent: parent,
     ),
     Account(
       code: '10.0002',
       name: 'asset',
       type: AccountType.asset,
+      parent: parent,
     ),
   ];
   final accounts = [
     Account(
-      code: '10.0000',
+      code: '10.0010',
       name: 'asset',
       type: AccountType.asset,
     ),
@@ -70,7 +79,13 @@ void main() {
           );
         }
 
-        expect(dbAccounts, [...initialAccounts, ...accounts]);
+        expect(
+          dbAccounts,
+          [
+            ...initialAccounts,
+            ...accounts,
+          ].map((it) => it.copyWith(parent: null)),
+        );
       },
     );
 
@@ -314,7 +329,12 @@ void main() {
           traceId: traceId,
         );
 
-        expect(result, const AppResult.success(expectedChildrenCount));
+        expect(
+          result,
+          AppResult.success(
+            expectedChildrenCount + initialAccounts.length - 1,
+          ),
+        );
       },
     );
 
@@ -364,6 +384,127 @@ void main() {
         expect(
           result,
           isA<AppResultFailure<int>>().having(
+            (e) => e.error.code,
+            'error.code',
+            AppExceptionCode.internalException,
+          ),
+        );
+      },
+    );
+  });
+
+  group('getByParentCode', () {
+    test(
+      'returns success with correct accounts',
+      () async {
+        final expectedAccounts = initialAccounts
+            .where(
+              (it) => it.parent?.code == parent.code,
+            )
+            .toList();
+
+        final result = await repository.getByParentCode(
+          userId: userId,
+          parentCode: parent.code,
+          traceId: traceId,
+        );
+
+        expect(result, AppResult.success(expectedAccounts));
+      },
+    );
+
+    test(
+      'returns success with empty list '
+      'when no accounts found for parent code',
+      () async {
+        final emptyParent = Account(
+          code: '11.0000',
+          name: 'not_exists',
+          type: AccountType.asset,
+          isSystemAccount: true,
+        );
+        final doc = fakeFirestore.doc(
+          'users/$userId/accounts/${emptyParent.code}',
+        );
+        await doc.set(FirestoreAccount.fromDomain(emptyParent).toJson());
+
+        final result = await repository.getByParentCode(
+          userId: userId,
+          parentCode: emptyParent.code,
+          traceId: traceId,
+        );
+
+        expect(result, const AppResult.success(<Account>[]));
+      },
+    );
+
+    test(
+      'returns failure with accountNotFound code '
+      'when parent data is not found',
+      () async {
+        final result = await repository.getByParentCode(
+          userId: userId,
+          parentCode: 'non-exist',
+          traceId: traceId,
+        );
+
+        expect(
+          result,
+          isA<AppResultFailure<List<Account>>>().having(
+            (e) => e.error.code,
+            'error.code',
+            AppExceptionCode.accountNotFound,
+          ),
+        );
+      },
+    );
+
+    test(
+      'returns failure with serverException code '
+      'when firestore throws FirebaseException',
+      () async {
+        whenCalling(Invocation.method(#getByParentCode, null))
+            .on(repository)
+            .thenThrow(
+              FirebaseException(plugin: 'firestore'),
+            );
+
+        final result = await repository.getByParentCode(
+          userId: userId,
+          parentCode: parent.code,
+          traceId: traceId,
+        );
+
+        expect(
+          result,
+          isA<AppResultFailure<List<Account>>>().having(
+            (e) => e.error.code,
+            'error.code',
+            AppExceptionCode.serverException,
+          ),
+        );
+      },
+    );
+
+    test(
+      'returns failure with internalException code '
+      'when unexpected Exception thrown',
+      () async {
+        whenCalling(Invocation.method(#getByParentCode, null))
+            .on(repository)
+            .thenThrow(
+              Exception(),
+            );
+
+        final result = await repository.getByParentCode(
+          userId: userId,
+          parentCode: parent.code,
+          traceId: traceId,
+        );
+
+        expect(
+          result,
+          isA<AppResultFailure<List<Account>>>().having(
             (e) => e.error.code,
             'error.code',
             AppExceptionCode.internalException,

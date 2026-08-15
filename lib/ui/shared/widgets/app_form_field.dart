@@ -53,10 +53,7 @@ class AppFormField extends StatelessWidget {
         border: WidgetStateInputBorder.resolveWith(
           (states) {
             final baseBorder = OutlineInputBorder(
-              borderRadius: BorderRadius.circular(100),
-              borderSide: BorderSide(
-                color: context.color.outlineVariant,
-              ),
+              borderRadius: BorderRadius.circular(12),
             );
             if (states.contains(WidgetState.error)) {
               return baseBorder.copyWith(

@@ -17,6 +17,9 @@ enum AppExceptionCode {
 
   /// [Account] with same name/code already exists
   accountAlreadyExists,
+
+  /// [Account] not found
+  accountNotFound,
 }
 
 /// Base exception class for the application

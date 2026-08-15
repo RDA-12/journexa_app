@@ -195,4 +195,65 @@ class FirestoreAccountRepository with Loggable implements IAccountRepository {
       );
     }
   }
+
+  @override
+  Future<AppResult<List<Account>>> getByParentCode({
+    required String userId,
+    required String parentCode,
+    required String traceId,
+  }) async {
+    try {
+      maybeThrowException(
+        this,
+        Invocation.method(#getByParentCode, null, {
+          #userId: userId,
+          #parentCode: parentCode,
+        }),
+      );
+      logInfo('Starts parent account', traceId: traceId);
+      final parentRef = _db.doc('users/$userId/accounts/$parentCode');
+      final parentSnap = await parentRef.get();
+      if (!parentSnap.exists) {
+        logError(
+          'Parent account $parentCode not found',
+          traceId: traceId,
+        );
+        return AppResult.failure(
+          AppException(
+            'Parent account $parentCode not found',
+            code: AppExceptionCode.accountNotFound,
+          ),
+        );
+      }
+      final parent = FirestoreAccount.fromJson(parentSnap.data()!).toDomain();
+      final colRef = _db.collection('users/$userId/accounts');
+      final query = colRef.where('parentCode', isEqualTo: parentCode);
+      final snap = await query.get();
+      if (snap.docs.isEmpty) {
+        logInfo('No children found', traceId: traceId);
+        return const AppResult.success([]);
+      }
+      logInfo('Children found. Mapping to domain model', traceId: traceId);
+      final accounts = snap.docs.map(
+        (it) => FirestoreAccount.fromJson(
+          it.data(),
+        ).toDomain().copyWith(parent: parent),
+      );
+      logInfo(
+        'Mapping succeeded. Get children by parentCode success',
+        traceId: traceId,
+      );
+      return AppResult.success(accounts.toList());
+    } on FirebaseException catch (e) {
+      logError('$e', traceId: traceId, error: e);
+      return AppResult.failure(
+        AppException('$e', code: AppExceptionCode.serverException),
+      );
+    } on Exception catch (e, st) {
+      logError('$e', traceId: traceId, error: e, stackTrace: st);
+      return AppResult.failure(
+        AppException('$e', code: AppExceptionCode.internalException),
+      );
+    }
+  }
 }

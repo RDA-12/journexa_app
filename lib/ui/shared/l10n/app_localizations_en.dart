@@ -82,4 +82,18 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get addCashAccountTitle => 'Add New Cash';
+
+  @override
+  String errorAccountNotFound(String code) {
+    return 'Account with code $code not found';
+  }
+
+  @override
+  String get cashAccountsListFailureTitle => 'Failed to get cash data';
+
+  @override
+  String get cashAccountsListLoadingSemantics => 'Loading cash data';
+
+  @override
+  String get cashAccountsListTitle => 'Cash List';
 }

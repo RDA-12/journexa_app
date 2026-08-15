@@ -241,6 +241,30 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Add New Cash'**
   String get addCashAccountTitle;
+
+  /// Message for when an account is not found
+  ///
+  /// In en, this message translates to:
+  /// **'Account with code {code} not found'**
+  String errorAccountNotFound(String code);
+
+  /// Title for error state in cash accounts list page
+  ///
+  /// In en, this message translates to:
+  /// **'Failed to get cash data'**
+  String get cashAccountsListFailureTitle;
+
+  /// Semantics label for loading state in cash accounts list page
+  ///
+  /// In en, this message translates to:
+  /// **'Loading cash data'**
+  String get cashAccountsListLoadingSemantics;
+
+  /// Title for cash accounts list page
+  ///
+  /// In en, this message translates to:
+  /// **'Cash List'**
+  String get cashAccountsListTitle;
 }
 
 class _AppLocalizationsDelegate

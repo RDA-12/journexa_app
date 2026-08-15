@@ -30,4 +30,11 @@ abstract interface class IAccountRepository {
     required String parentCode,
     required String traceId,
   });
+
+  /// Returns list of [Account] child of [parentCode] in [userId] database
+  Future<AppResult<List<Account>>> getByParentCode({
+    required String userId,
+    required String parentCode,
+    required String traceId,
+  });
 }

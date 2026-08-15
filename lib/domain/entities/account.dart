@@ -38,6 +38,28 @@ enum AccountType {
     AccountType.revenue => '4',
     AccountType.expense => '5',
   };
+
+  /// Return list of [AccountType] that have debit normal balance
+  static List<AccountType> get debitNormalBalance => [
+    AccountType.asset,
+    AccountType.expense,
+  ];
+
+  /// Return list of [AccountType] that have credit normal balance
+  static List<AccountType> get creditNormalBalance => [
+    AccountType.liability,
+    AccountType.equity,
+    AccountType.revenue,
+  ];
+}
+
+/// Types of balance
+enum BalanceType {
+  /// Debit balance
+  debit,
+
+  /// Credit balance
+  credit,
 }
 
 /// Holds system defined accounts
@@ -132,6 +154,18 @@ sealed class Account with _$Account {
         'got $userCode instead',
         code: AppExceptionCode.internalException,
       );
+    }
+  }
+
+  /// Return normal balance of this [Account].
+  ///
+  /// Normal balance means balance that needed to be increased
+  /// when the amount added to the account is positive value.
+  BalanceType get normalBalance {
+    if (AccountType.debitNormalBalance.contains(type)) {
+      return BalanceType.debit;
+    } else {
+      return BalanceType.credit;
     }
   }
 }

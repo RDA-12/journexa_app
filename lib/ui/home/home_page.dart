@@ -16,7 +16,7 @@ class HomePage extends StatelessWidget {
         children: [
           AppButton(
             onPressed: () {
-              unawaited(context.push('/add-cash-account'));
+              unawaited(context.push('/cash-accounts'));
             },
             label: 'Add Cash Account',
           ),

@@ -23,5 +23,9 @@
   "addCashAccountSuccessTitle": "Kas berhasil ditambahkan",
   "addCashAccountFailureTitle": "Gagal menambahkan kas",
   "commonRequired": "Wajib",
-  "addCashAccountTitle": "Tambah Kas Baru"
+  "addCashAccountTitle": "Tambah Kas Baru",
+  "errorAccountNotFound": "Akun dengan kode {code} tidak dapat ditemukan",
+  "cashAccountsListFailureTitle": "Gagal mendapatkan data kas",
+  "cashAccountsListLoadingSemantics": "Memuat data kas",
+  "cashAccountsListTitle": "Daftar Kas"
 }

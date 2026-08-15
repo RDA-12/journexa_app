@@ -12,7 +12,7 @@ import 'package:journexa_app/shared/app_result.dart';
 @lazySingleton
 class GetAllCashAccountsUseCase
     with Loggable
-    implements FutureBaseUseCase<NoParams, List<AccountBalance>> {
+    implements FutureBaseUseCaseNoParams<List<AccountBalance>> {
   /// Creates new [GetAllCashAccountsUseCase]
   GetAllCashAccountsUseCase({
     required this._accountRepository,
@@ -29,8 +29,7 @@ class GetAllCashAccountsUseCase
 
   /// Execute getting all cash Account from current user
   @override
-  Future<AppResult<List<AccountBalance>>> execute(
-    NoParams params, {
+  Future<AppResult<List<AccountBalance>>> execute({
     required String traceId,
   }) async {
     logInfo('Starts getting current user id ', traceId: traceId);

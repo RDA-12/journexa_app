@@ -1,7 +1,6 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:journexa_app/domain/repositories/i_auth_repository.dart';
 import 'package:journexa_app/domain/use_cases/auth/check_auth.dart';
-import 'package:journexa_app/domain/use_cases/base_use_case.dart';
 import 'package:journexa_app/shared/app_exception.dart';
 import 'package:journexa_app/shared/app_result.dart';
 import 'package:mocktail/mocktail.dart';
@@ -28,7 +27,7 @@ void main() {
   group('CheckAuthUseCase', () {
     test('returns AppResultSuccess with true '
         'when getCurrentUserId succeed', () async {
-      final result = await useCase.execute(const NoParams(), traceId: traceId);
+      final result = await useCase.execute(traceId: traceId);
 
       expect(result, const AppResult.success(true));
       verify(
@@ -49,7 +48,7 @@ void main() {
         ),
       );
 
-      final result = await useCase.execute(const NoParams(), traceId: traceId);
+      final result = await useCase.execute(traceId: traceId);
 
       expect(result, const AppResult.success(false));
       verify(
@@ -67,7 +66,7 @@ void main() {
         ),
       );
 
-      final result = await useCase.execute(const NoParams(), traceId: traceId);
+      final result = await useCase.execute(traceId: traceId);
 
       expect(result, AppResult<bool>.failure(AppException.test()));
       verify(

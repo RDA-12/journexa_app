@@ -6,7 +6,6 @@ import 'package:journexa_app/domain/repositories/i_account_repository.dart';
 import 'package:journexa_app/domain/repositories/i_auth_repository.dart';
 import 'package:journexa_app/domain/repositories/i_journal_repository.dart';
 import 'package:journexa_app/domain/use_cases/account/get_all_cash_accounts.dart';
-import 'package:journexa_app/domain/use_cases/base_use_case.dart';
 import 'package:journexa_app/shared/app_exception.dart';
 import 'package:journexa_app/shared/app_result.dart';
 import 'package:mocktail/mocktail.dart';
@@ -89,7 +88,7 @@ void main() {
     'calls AuthRepository.getCurrentUserId once '
     'to get current user id',
     () async {
-      await useCase.execute(const NoParams(), traceId: traceId);
+      await useCase.execute(traceId: traceId);
 
       verify(
         () => mockAuthRepository.getCurrentUserId(traceId: traceId),
@@ -101,7 +100,7 @@ void main() {
     'calls AccountRepository.getByParentCode once '
     'with correct args',
     () async {
-      await useCase.execute(const NoParams(), traceId: traceId);
+      await useCase.execute(traceId: traceId);
 
       verify(
         () => mockAccountRepository.getByParentCode(
@@ -117,7 +116,7 @@ void main() {
     'calls JournalRepository.getCurrentBalance once '
     'with correct args',
     () async {
-      await useCase.execute(const NoParams(), traceId: traceId);
+      await useCase.execute(traceId: traceId);
 
       verify(
         () => mockJournalRepository.getCurrentBalance(
@@ -132,7 +131,7 @@ void main() {
   test(
     'returns correct AccountBalances when all operations are successful',
     () async {
-      final result = await useCase.execute(const NoParams(), traceId: traceId);
+      final result = await useCase.execute(traceId: traceId);
 
       expect(
         result,
@@ -149,7 +148,7 @@ void main() {
         () => mockAuthRepository.getCurrentUserId(traceId: traceId),
       ).thenAnswer((_) async => AppResult<String>.failure(AppException.test()));
 
-      final result = await useCase.execute(const NoParams(), traceId: traceId);
+      final result = await useCase.execute(traceId: traceId);
 
       expect(
         result,
@@ -173,7 +172,7 @@ void main() {
         ),
       ).thenAnswer((_) async => AppResult.failure(AppException.test()));
 
-      final result = await useCase.execute(const NoParams(), traceId: traceId);
+      final result = await useCase.execute(traceId: traceId);
 
       expect(
         result,
@@ -199,7 +198,7 @@ void main() {
         ),
       );
 
-      final result = await useCase.execute(const NoParams(), traceId: traceId);
+      final result = await useCase.execute(traceId: traceId);
 
       expect(
         result,

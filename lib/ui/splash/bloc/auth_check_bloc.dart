@@ -1,7 +1,6 @@
 import 'package:bloc/bloc.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:journexa_app/domain/use_cases/auth/check_auth.dart';
-import 'package:journexa_app/domain/use_cases/base_use_case.dart';
 import 'package:journexa_app/shared/app_exception.dart';
 import 'package:journexa_app/shared/app_logger.dart';
 import 'package:journexa_app/shared/app_result.dart';
@@ -38,7 +37,7 @@ class AuthCheckBloc extends Bloc<AuthCheckEvent, AuthCheckState>
     );
     emit(const AuthCheckState.loading());
 
-    final result = await _checkAuth.execute(const NoParams(), traceId: traceId);
+    final result = await _checkAuth.execute(traceId: traceId);
 
     result.when(
       success: (authenticated) {

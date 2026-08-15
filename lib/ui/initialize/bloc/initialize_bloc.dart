@@ -1,7 +1,6 @@
 import 'package:bloc/bloc.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:journexa_app/domain/use_cases/account/initialize_accounts.dart';
-import 'package:journexa_app/domain/use_cases/base_use_case.dart';
 import 'package:journexa_app/shared/app_exception.dart';
 import 'package:journexa_app/shared/app_logger.dart';
 import 'package:journexa_app/shared/app_result.dart';
@@ -39,7 +38,6 @@ class InitializeBloc extends Bloc<InitializeEvent, InitializeState>
     logInfo('Start initialization. Emit loading state', traceId: traceId);
     emit(const InitializeState.loading());
     final result = await _initializeAccounts.execute(
-      const NoParams(),
       traceId: traceId,
     );
     result.when(

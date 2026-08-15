@@ -2,7 +2,6 @@ import 'package:bloc/bloc.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:journexa_app/domain/entities/journal.dart';
 import 'package:journexa_app/domain/use_cases/account/get_all_cash_accounts.dart';
-import 'package:journexa_app/domain/use_cases/base_use_case.dart';
 import 'package:journexa_app/shared/app_exception.dart';
 import 'package:journexa_app/shared/app_logger.dart';
 import 'package:journexa_app/shared/app_result.dart';
@@ -42,7 +41,6 @@ class CashAccountsBloc extends Bloc<CashAccountsEvent, CashAccountsState>
     emit(const CashAccountsState.loading());
 
     final result = await _getAllCashAccounts.execute(
-      const NoParams(),
       traceId: traceId,
     );
     result.when(

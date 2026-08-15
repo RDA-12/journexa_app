@@ -1,7 +1,6 @@
 import 'package:bloc/bloc.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:journexa_app/domain/use_cases/auth/login_with_google.dart';
-import 'package:journexa_app/domain/use_cases/base_use_case.dart';
 import 'package:journexa_app/shared/app_exception.dart';
 import 'package:journexa_app/shared/app_logger.dart';
 import 'package:journexa_app/shared/app_result.dart';
@@ -35,7 +34,6 @@ class LoginBloc extends Bloc<LoginEvent, LoginState>
     logInfo('Emitting loading state', traceId: traceId);
     emit(const LoginState.loading());
     final result = await _loginWithGoogleUseCase.execute(
-      const NoParams(),
       traceId: traceId,
     );
     result.when(

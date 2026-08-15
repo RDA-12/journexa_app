@@ -1,7 +1,6 @@
 import 'package:bloc_test/bloc_test.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:journexa_app/domain/use_cases/account/initialize_accounts.dart';
-import 'package:journexa_app/domain/use_cases/base_use_case.dart';
 import 'package:journexa_app/shared/app_exception.dart';
 import 'package:journexa_app/shared/app_result.dart';
 import 'package:journexa_app/shared/uid_generator.dart';
@@ -24,7 +23,6 @@ void main() {
     when(mockUidGenerator.generateUid).thenReturn(traceId);
     when(
       () => mockInitializeAccounts.execute(
-        const NoParams(),
         traceId: traceId,
       ),
     ).thenAnswer(
@@ -63,7 +61,6 @@ void main() {
         verify(mockUidGenerator.generateUid).called(1);
         verify(
           () => mockInitializeAccounts.execute(
-            const NoParams(),
             traceId: traceId,
           ),
         ).called(1);
@@ -76,7 +73,6 @@ void main() {
       setUp: () {
         when(
           () => mockInitializeAccounts.execute(
-            const NoParams(),
             traceId: traceId,
           ),
         ).thenAnswer(
@@ -93,7 +89,6 @@ void main() {
         verify(mockUidGenerator.generateUid).called(1);
         verify(
           () => mockInitializeAccounts.execute(
-            const NoParams(),
             traceId: traceId,
           ),
         ).called(1);

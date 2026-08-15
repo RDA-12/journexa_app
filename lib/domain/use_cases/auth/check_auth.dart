@@ -9,7 +9,7 @@ import 'package:journexa_app/shared/app_result.dart';
 @lazySingleton
 class CheckAuthUseCase
     with Loggable
-    implements FutureBaseUseCase<NoParams, bool> {
+    implements FutureBaseUseCaseNoParams<bool> {
   /// Creates new [CheckAuthUseCase]
   CheckAuthUseCase({required this._authRepository});
 
@@ -19,8 +19,7 @@ class CheckAuthUseCase
   final IAuthRepository _authRepository;
 
   @override
-  Future<AppResult<bool>> execute(
-    NoParams params, {
+  Future<AppResult<bool>> execute({
     required String traceId,
   }) async {
     logInfo('Start checks auth state', traceId: traceId);

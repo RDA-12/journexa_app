@@ -3,7 +3,6 @@ import 'package:journexa_app/domain/entities/account.dart';
 import 'package:journexa_app/domain/repositories/i_account_repository.dart';
 import 'package:journexa_app/domain/repositories/i_auth_repository.dart';
 import 'package:journexa_app/domain/use_cases/account/initialize_accounts.dart';
-import 'package:journexa_app/domain/use_cases/base_use_case.dart';
 import 'package:journexa_app/shared/app_exception.dart';
 import 'package:journexa_app/shared/app_result.dart';
 import 'package:mocktail/mocktail.dart';
@@ -49,7 +48,7 @@ void main() {
     'calls ensureSaved once with current user id '
     'and default system accounts',
     () async {
-      await useCase.execute(const NoParams(), traceId: traceId);
+      await useCase.execute(traceId: traceId);
 
       verify(
         () => mockAccountRepository.ensureSaved(
@@ -77,7 +76,7 @@ void main() {
         ),
       );
 
-      final result = await useCase.execute(const NoParams(), traceId: traceId);
+      final result = await useCase.execute(traceId: traceId);
 
       expect(result, AppResult<void>.failure(AppException.test()));
       verify(

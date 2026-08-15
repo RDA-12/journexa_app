@@ -13,7 +13,7 @@ import 'package:journexa_app/shared/app_result.dart';
 @lazySingleton
 class InitializeAccountsUseCase
     with Loggable
-    implements FutureBaseUseCase<NoParams, void> {
+    implements FutureBaseUseCaseNoParams<void> {
   /// Creates new [InitializeAccountsUseCase]
   InitializeAccountsUseCase({
     required this._accountRepository,
@@ -28,8 +28,7 @@ class InitializeAccountsUseCase
 
   /// Executes initialization of systems account
   @override
-  Future<AppResult<void>> execute(
-    NoParams params, {
+  Future<AppResult<void>> execute({
     required String traceId,
   }) async {
     logInfo('Start getting current user id', traceId: traceId);

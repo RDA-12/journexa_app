@@ -1,7 +1,6 @@
 import 'package:bloc_test/bloc_test.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:journexa_app/domain/use_cases/auth/check_auth.dart';
-import 'package:journexa_app/domain/use_cases/base_use_case.dart';
 import 'package:journexa_app/shared/app_exception.dart';
 import 'package:journexa_app/shared/app_result.dart';
 import 'package:journexa_app/shared/uid_generator.dart';
@@ -23,7 +22,7 @@ void main() {
     when(() => mockUidGenerator.generateUid()).thenReturn(traceId);
     mockCheckAuthUseCase = MockCheckAuthUseCase();
     when(
-      () => mockCheckAuthUseCase.execute(const NoParams(), traceId: traceId),
+      () => mockCheckAuthUseCase.execute(traceId: traceId),
     ).thenAnswer((_) async => const AppResult.success(true));
   });
 
@@ -55,7 +54,7 @@ void main() {
       verify: (_) {
         verify(
           () =>
-              mockCheckAuthUseCase.execute(const NoParams(), traceId: traceId),
+              mockCheckAuthUseCase.execute(traceId: traceId),
         ).called(1);
         verify(mockUidGenerator.generateUid).called(1);
       },
@@ -67,7 +66,6 @@ void main() {
       setUp: () {
         when(
           () => mockCheckAuthUseCase.execute(
-            const NoParams(),
             traceId: traceId,
           ),
         ).thenAnswer((_) async => const AppResult.success(false));
@@ -81,7 +79,7 @@ void main() {
       verify: (_) {
         verify(
           () =>
-              mockCheckAuthUseCase.execute(const NoParams(), traceId: traceId),
+              mockCheckAuthUseCase.execute(traceId: traceId),
         ).called(1);
         verify(mockUidGenerator.generateUid).called(1);
       },
@@ -93,7 +91,6 @@ void main() {
       setUp: () {
         when(
           () => mockCheckAuthUseCase.execute(
-            const NoParams(),
             traceId: traceId,
           ),
         ).thenAnswer((_) async => AppResult<bool>.failure(AppException.test()));
@@ -107,7 +104,6 @@ void main() {
       verify: (_) {
         verify(
           () => mockCheckAuthUseCase.execute(
-            const NoParams(),
             traceId: traceId,
           ),
         ).called(1);

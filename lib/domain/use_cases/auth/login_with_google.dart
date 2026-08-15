@@ -8,7 +8,7 @@ import 'package:journexa_app/shared/app_result.dart';
 /// Use case for logging in user with google
 class LoginWithGoogleUseCase
     with Loggable
-    implements FutureBaseUseCase<NoParams, void> {
+    implements FutureBaseUseCaseNoParams<void> {
   /// Creates new [LoginWithGoogleUseCase]
   LoginWithGoogleUseCase(this._authRepository);
 
@@ -19,8 +19,7 @@ class LoginWithGoogleUseCase
 
   /// Executes logging in user with google
   @override
-  Future<AppResult<void>> execute(
-    NoParams params, {
+  Future<AppResult<void>> execute({
     required String traceId,
   }) async {
     logInfo('Starts login with google', traceId: traceId);

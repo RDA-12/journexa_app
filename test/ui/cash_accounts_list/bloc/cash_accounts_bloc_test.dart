@@ -4,7 +4,6 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:journexa_app/domain/entities/account.dart';
 import 'package:journexa_app/domain/entities/journal.dart';
 import 'package:journexa_app/domain/use_cases/account/get_all_cash_accounts.dart';
-import 'package:journexa_app/domain/use_cases/base_use_case.dart';
 import 'package:journexa_app/shared/app_exception.dart';
 import 'package:journexa_app/shared/app_result.dart';
 import 'package:journexa_app/shared/uid_generator.dart';
@@ -38,7 +37,7 @@ void main() {
 
     mockGetAllCashAccounts = MockGetAllCashAccounts();
     when(
-      () => mockGetAllCashAccounts.execute(const NoParams(), traceId: traceId),
+      () => mockGetAllCashAccounts.execute(traceId: traceId),
     ).thenAnswer(
       (_) async => AppResult.success(cashAccounts),
     );
@@ -69,7 +68,6 @@ void main() {
       verify: (_) {
         verify(
           () => mockGetAllCashAccounts.execute(
-            const NoParams(),
             traceId: traceId,
           ),
         ).called(1);
@@ -82,7 +80,6 @@ void main() {
       setUp: () {
         when(
           () => mockGetAllCashAccounts.execute(
-            const NoParams(),
             traceId: traceId,
           ),
         ).thenAnswer(
@@ -99,7 +96,6 @@ void main() {
       verify: (_) {
         verify(
           () => mockGetAllCashAccounts.execute(
-            const NoParams(),
             traceId: traceId,
           ),
         ).called(1);

@@ -12,6 +12,9 @@ const Map<String, Map<AppExceptionCode, String>> expectedTranslations = {
     AppExceptionCode.serverException: 'Terjadi kesalahan di server',
     AppExceptionCode.unauthenticated:
         'Anda belum login. Silakan login untuk melanjutkan.',
+    AppExceptionCode.accountAlreadyExists: 'Kas dengan nama tersebut sudah ada',
+    AppExceptionCode.accountNotFound:
+        'Akun dengan kode 1234 tidak dapat ditemukan',
   },
   'en': {
     AppExceptionCode.internalException: 'Internal exception error',
@@ -19,6 +22,18 @@ const Map<String, Map<AppExceptionCode, String>> expectedTranslations = {
     AppExceptionCode.serverException: 'Server exception error',
     AppExceptionCode.unauthenticated:
         'You are not logged in. Please login to continue.',
+    AppExceptionCode.accountAlreadyExists:
+        'Kas with provided name already exists',
+    AppExceptionCode.accountNotFound: 'Account with code 1234 not found',
+  },
+};
+
+final additionalData = <AppExceptionCode, Map<String, dynamic>>{
+  AppExceptionCode.accountAlreadyExists: {
+    'name': 'Kas',
+  },
+  AppExceptionCode.accountNotFound: {
+    'code': '1234',
   },
 };
 
@@ -27,11 +42,12 @@ void main() {
     WidgetTester tester, {
     required Locale locale,
     required AppExceptionCode code,
+    Map<String, dynamic> data = const {},
   }) {
     return pumpForWidgetTest(
       tester,
       widget: Builder(
-        builder: (context) => Text(code.toLocalizedString(context)),
+        builder: (context) => Text(code.toLocalizedString(context, data: data)),
       ),
       locale: locale,
     );
@@ -41,10 +57,16 @@ void main() {
     for (final locale in AppLocalizations.supportedLocales) {
       for (final code in AppExceptionCode.values) {
         final expected = expectedTranslations[locale.languageCode]![code]!;
+        final data = additionalData[code];
         testWidgets(
           '$code translated to $expected for ${locale.languageCode}',
           (tester) async {
-            await pumpWidget(tester, code: code, locale: locale);
+            await pumpWidget(
+              tester,
+              code: code,
+              locale: locale,
+              data: data ?? {},
+            );
 
             expect(find.text(expected), findsOneWidget);
           },

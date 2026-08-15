@@ -173,3 +173,48 @@ Level _levelFromJson(String json) => Level(
           ?.value ??
       1,
 );
+
+/// Mixin to use in classes that need to log messages
+mixin Loggable {
+  /// Tag used to identify the logger
+  String get logTag;
+
+  /// Logger instance
+  late final AppLogger _logger = AppLogger(logTag);
+
+  /// Logs debug [message] with additional [extras]
+  void logDebug(
+    String message, {
+    required String traceId,
+    Map<String, dynamic>? extras,
+  }) => _logger.debug(message, traceId: traceId, extras: extras);
+
+  /// Logs info [message] with additional [extras]
+  void logInfo(
+    String message, {
+    required String traceId,
+    Map<String, dynamic>? extras,
+  }) => _logger.info(message, traceId: traceId, extras: extras);
+
+  /// Logs warning [message] with additional [extras]
+  void logWarning(
+    String message, {
+    required String traceId,
+    Map<String, dynamic>? extras,
+  }) => _logger.warning(message, traceId: traceId, extras: extras);
+
+  /// Logs error [message] with additional [extras]
+  void logError(
+    String message, {
+    required String traceId,
+    Map<String, dynamic>? extras,
+    Object? error,
+    StackTrace? stackTrace,
+  }) => _logger.error(
+    message,
+    traceId: traceId,
+    extras: extras,
+    error: error,
+    stackTrace: stackTrace,
+  );
+}

@@ -14,13 +14,13 @@ part 'initialize_bloc.freezed.dart';
 /// Bloc to handle initialize operations
 ///
 /// It includes initialization of default system accounts.
-class InitializeBloc extends Bloc<InitializeEvent, InitializeState> {
+class InitializeBloc extends Bloc<InitializeEvent, InitializeState>
+    with Loggable {
   /// Creates new [InitializeBloc]
   InitializeBloc({
     required this._uidGenerator,
     required this._initializeAccounts,
-  }) : _logger = AppLogger('InitializeBloc'),
-       super(const InitializeState.initial()) {
+  }) : super(const InitializeState.initial()) {
     on<InitializeEvent>((event, emit) async {
       await event.when(
         initialize: () => _onInitialize(emit: emit),
@@ -28,15 +28,17 @@ class InitializeBloc extends Bloc<InitializeEvent, InitializeState> {
     });
   }
 
+  @override
+  String get logTag => 'InitializeBloc';
+
   final UidGenerator _uidGenerator;
   final InitializeAccountsUseCase _initializeAccounts;
-  final AppLogger _logger;
 
   Future<void> _onInitialize({
     required Emitter<InitializeState> emit,
   }) async {
     final traceId = _uidGenerator.generateUid();
-    _logger.info('Start initialization. Emit loading state', traceId: traceId);
+    logInfo('Start initialization. Emit loading state', traceId: traceId);
     emit(const InitializeState.loading());
     final result = await _initializeAccounts.execute(
       const NoParams(),
@@ -44,14 +46,14 @@ class InitializeBloc extends Bloc<InitializeEvent, InitializeState> {
     );
     result.when(
       success: (_) {
-        _logger.info(
+        logInfo(
           'Initialization success. Emit initialized state',
           traceId: traceId,
         );
         return emit(const InitializeState.initialized());
       },
       failure: (exc) {
-        _logger.info(
+        logInfo(
           'Initialization failed. Emit failure state',
           traceId: traceId,
         );

@@ -29,16 +29,19 @@ sealed class AddCashAccountParams with _$AddCashAccountParams {
 /// Use case for adding new [Account] to current user database.
 @lazySingleton
 class AddCashAccountUseCase
+    with Loggable
     implements FutureBaseUseCase<AddCashAccountParams, Null> {
   /// Creates new [AddCashAccountUseCase]
   AddCashAccountUseCase({
     required this._accountRepository,
     required this._authRepository,
-  }) : _logger = AppLogger('AddCashAccountUseCase');
+  });
+
+  @override
+  String get logTag => 'AddCashAccountUseCase';
 
   final IAuthRepository _authRepository;
   final IAccountRepository _accountRepository;
-  final AppLogger _logger;
 
   /// Starts executing [AddCashAccountUseCase]
   @override
@@ -46,7 +49,7 @@ class AddCashAccountUseCase
     AddCashAccountParams params, {
     required String traceId,
   }) async {
-    _logger.info(
+    logInfo(
       'Start adding new cash Account. Get current user id',
       traceId: traceId,
       extras: params.extras,
@@ -56,20 +59,20 @@ class AddCashAccountUseCase
     );
     final getCurrentUserIdExc = getCurrentUserIdResult.errorOrNull;
     if (getCurrentUserIdExc != null) {
-      _logger.info(
+      logInfo(
         'Failed to get current user id.',
         traceId: traceId,
       );
       return AppResult.failure(getCurrentUserIdExc);
     }
-    _logger.info('userId obtained', traceId: traceId);
+    logInfo('userId obtained', traceId: traceId);
     final userId = getCurrentUserIdResult.valueOrNull!;
 
-    _logger.info('Get parent Account for asset', traceId: traceId);
+    logInfo('Get parent Account for asset', traceId: traceId);
     final parentAssetAccount = kSystemDefinedAccounts.firstWhere(
       (it) => it.code == '10.0000',
     );
-    _logger.info(
+    logInfo(
       'Asset parent Account obtained. Get children count',
       traceId: traceId,
     );
@@ -82,14 +85,14 @@ class AddCashAccountUseCase
         );
     final getChildrenCountExc = getChildrenCountResult.errorOrNull;
     if (getChildrenCountExc != null) {
-      _logger.info(
+      logInfo(
         'Failed to get children count for asset parent Account.',
         traceId: traceId,
       );
       return AppResult.failure(getChildrenCountExc);
     }
     final childrenCount = getChildrenCountResult.valueOrNull!;
-    _logger.info(
+    logInfo(
       'children count obtained. Creating new Account object',
       traceId: traceId,
     );
@@ -99,7 +102,7 @@ class AddCashAccountUseCase
       name: params.name,
       currentChildrenCount: childrenCount,
     );
-    _logger.info('New Account created. Saving Account', traceId: traceId);
+    logInfo('New Account created. Saving Account', traceId: traceId);
 
     final saveResult = await _accountRepository.save(
       userId,
@@ -108,11 +111,11 @@ class AddCashAccountUseCase
     );
     return saveResult.when(
       success: (_) {
-        _logger.info('new Account saved successfully. Done.', traceId: traceId);
+        logInfo('new Account saved successfully. Done.', traceId: traceId);
         return const AppResult<Null>.success(null);
       },
       failure: (exc) {
-        _logger.info('Failed to save new Account', traceId: traceId);
+        logInfo('Failed to save new Account', traceId: traceId);
         return AppResult.failure(exc);
       },
     );

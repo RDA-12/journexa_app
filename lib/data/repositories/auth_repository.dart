@@ -8,28 +8,29 @@ import 'package:journexa_app/shared/app_result.dart';
 
 /// Firebase implementation of [IAuthRepository]
 @LazySingleton(as: IAuthRepository)
-class FirebaseAuthRepository implements IAuthRepository {
+class FirebaseAuthRepository with Loggable implements IAuthRepository {
   /// Creates new [FirebaseAuthRepository]
-  FirebaseAuthRepository({required this._auth, required this._googleSignIn})
-    : _logger = AppLogger('FirebaseAuthRepository');
+  FirebaseAuthRepository({required this._auth, required this._googleSignIn});
+
+  @override
+  String get logTag => 'FirebaseAuthRepository';
 
   final FirebaseAuth _auth;
   final GoogleSignIn _googleSignIn;
-  final AppLogger _logger;
 
   @override
   Future<AppResult<void>> loginWithGoogle({required String traceId}) async {
     try {
-      _logger.info('Trigger Google auth flow', traceId: traceId);
+      logInfo('Trigger Google auth flow', traceId: traceId);
       final googleUser = await _googleSignIn.authenticate();
 
-      _logger.info(
+      logInfo(
         'Auth flow success. Obtain auth details',
         traceId: traceId,
       );
       final googleAuth = googleUser.authentication;
 
-      _logger.info(
+      logInfo(
         'Auth detail obtained. '
         'Creates credential for Firebase Auth',
         traceId: traceId,
@@ -39,19 +40,19 @@ class FirebaseAuthRepository implements IAuthRepository {
         idToken: googleAuth.idToken,
       );
 
-      _logger.info(
+      logInfo(
         'Credential created. '
         'Logging in to Firebase Auth with credentials',
         traceId: traceId,
       );
       await _auth.signInWithCredential(credential);
-      _logger.info('User logged in', traceId: traceId);
+      logInfo('User logged in', traceId: traceId);
 
       return const AppResult.success(null);
     } on GoogleSignInException catch (e, st) {
       final code = e.code;
       if (code == GoogleSignInExceptionCode.canceled) {
-        _logger.info(
+        logInfo(
           'Google log in canceled by user',
           traceId: traceId,
         );
@@ -62,7 +63,7 @@ class FirebaseAuthRepository implements IAuthRepository {
           ),
         );
       }
-      _logger.error(
+      logError(
         'Google log in flow fail: ${e.description ?? code}',
         error: e,
         stackTrace: st,
@@ -75,7 +76,7 @@ class FirebaseAuthRepository implements IAuthRepository {
         ),
       );
     } on FirebaseException catch (e) {
-      _logger.error(
+      logError(
         e.toString(),
         error: e,
         traceId: traceId,
@@ -84,7 +85,7 @@ class FirebaseAuthRepository implements IAuthRepository {
         AppException(e.toString(), code: AppExceptionCode.serverException),
       );
     } on Exception catch (e, st) {
-      _logger.error(
+      logError(
         'Unexpected failure: $e',
         error: e,
         stackTrace: st,
@@ -101,7 +102,7 @@ class FirebaseAuthRepository implements IAuthRepository {
 
   @override
   Future<AppResult<String>> getCurrentUserId({required String traceId}) async {
-    _logger.info('Get current user id', traceId: traceId);
+    logInfo('Get current user id', traceId: traceId);
     final userId = _auth.currentUser?.uid;
     if (userId == null) {
       return const AppResult.failure(
@@ -111,7 +112,7 @@ class FirebaseAuthRepository implements IAuthRepository {
         ),
       );
     }
-    _logger.info(
+    logInfo(
       'User id found.',
       traceId: traceId,
     );

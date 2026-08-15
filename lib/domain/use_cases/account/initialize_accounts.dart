@@ -11,16 +11,20 @@ import 'package:journexa_app/shared/app_result.dart';
 /// It will seeds default systems account to be used through out
 /// the apps.
 @lazySingleton
-class InitializeAccountsUseCase implements FutureBaseUseCase<NoParams, void> {
+class InitializeAccountsUseCase
+    with Loggable
+    implements FutureBaseUseCase<NoParams, void> {
   /// Creates new [InitializeAccountsUseCase]
   InitializeAccountsUseCase({
     required this._accountRepository,
     required this._authRepository,
-  }) : _logger = AppLogger('InitializeAccountsUseCase');
+  });
+
+  @override
+  String get logTag => 'InitializeAccountsUseCase';
 
   final IAuthRepository _authRepository;
   final IAccountRepository _accountRepository;
-  final AppLogger _logger;
 
   /// Executes initialization of systems account
   @override
@@ -28,18 +32,18 @@ class InitializeAccountsUseCase implements FutureBaseUseCase<NoParams, void> {
     NoParams params, {
     required String traceId,
   }) async {
-    _logger.info('Start getting current user id', traceId: traceId);
+    logInfo('Start getting current user id', traceId: traceId);
     final currentUserIdResult = await _authRepository.getCurrentUserId(
       traceId: traceId,
     );
 
     final userId = currentUserIdResult.whenOrNull(success: (userId) => userId);
     if (userId == null) {
-      _logger.info('Get current user id failed', traceId: traceId);
+      logInfo('Get current user id failed', traceId: traceId);
       return currentUserIdResult;
     }
 
-    _logger.info(
+    logInfo(
       'Start ensuring all default system defined accounts saved for $userId',
       traceId: traceId,
     );
@@ -48,7 +52,7 @@ class InitializeAccountsUseCase implements FutureBaseUseCase<NoParams, void> {
       accounts: kSystemDefinedAccounts,
       traceId: traceId,
     );
-    _logger.info(
+    logInfo(
       'Default system defined accounts ensured saved for $userId',
       traceId: traceId,
     );

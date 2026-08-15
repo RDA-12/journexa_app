@@ -12,13 +12,12 @@ part 'login_state.dart';
 part 'login_bloc.freezed.dart';
 
 /// Bloc to handles all login operations
-class LoginBloc extends Bloc<LoginEvent, LoginState> {
+class LoginBloc extends Bloc<LoginEvent, LoginState> with Loggable {
   /// Creates new [LoginBloc]
   LoginBloc({
     required this._loginWithGoogleUseCase,
     required this._uidGenerator,
-  }) : _logger = AppLogger('LoginBloc'),
-       super(const LoginState.initial()) {
+  }) : super(const LoginState.initial()) {
     on<LoginEvent>((event, emit) async {
       await event.when(
         loginWithGoogle: () => _onLoginWithGoogle(emit: emit),
@@ -26,13 +25,15 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
     });
   }
 
+  @override
+  String get logTag => 'LoginBloc';
+
   final UidGenerator _uidGenerator;
   final LoginWithGoogleUseCase _loginWithGoogleUseCase;
-  final AppLogger _logger;
 
   Future<void> _onLoginWithGoogle({required Emitter<LoginState> emit}) async {
     final traceId = _uidGenerator.generateUid();
-    _logger.info('Emitting loading state', traceId: traceId);
+    logInfo('Emitting loading state', traceId: traceId);
     emit(const LoginState.loading());
     final result = await _loginWithGoogleUseCase.execute(
       const NoParams(),
@@ -40,14 +41,14 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
     );
     result.when(
       success: (_) {
-        _logger.info(
+        logInfo(
           'Login with google success. Emitting success state',
           traceId: traceId,
         );
         return emit(const LoginState.success());
       },
       failure: (exc) {
-        _logger.error(
+        logError(
           'Login with google failed. Emitting failure state',
           traceId: traceId,
         );

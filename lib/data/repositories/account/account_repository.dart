@@ -10,13 +10,14 @@ import 'package:mock_exceptions/mock_exceptions.dart';
 
 /// Firestre implementation of [IAccountRepository]
 @LazySingleton(as: IAccountRepository)
-class FirestoreAccountRepository implements IAccountRepository {
+class FirestoreAccountRepository with Loggable implements IAccountRepository {
   /// Creates new [FirestoreAccountRepository]
-  FirestoreAccountRepository({required this._db})
-    : _logger = AppLogger('FirestoreAccountRepository');
+  FirestoreAccountRepository({required this._db});
+
+  @override
+  String get logTag => 'FirestoreAccountRepository';
 
   final FirebaseFirestore _db;
-  final AppLogger _logger;
 
   @override
   Future<AppResult<Null>> ensureSaved(
@@ -25,27 +26,27 @@ class FirestoreAccountRepository implements IAccountRepository {
     required String traceId,
   }) async {
     try {
-      _logger.info(
+      logInfo(
         'Start ensuring accounts saved',
         traceId: traceId,
       );
       for (final account in accounts) {
-        _logger.info('Checks ${account.name}', traceId: traceId);
+        logInfo('Checks ${account.name}', traceId: traceId);
         final doc = _db.doc('users/$userId/accounts/${account.code}');
         final data = await doc.get();
         if (!data.exists) {
-          _logger.info(
+          logInfo(
             '${account.name} doesnt exists. Save the default account',
             traceId: traceId,
           );
           await doc.set(FirestoreAccount.fromDomain(account).toJson());
         } else {
-          _logger.info('${account.name} exists', traceId: traceId);
+          logInfo('${account.name} exists', traceId: traceId);
         }
       }
       return const AppResult.success(null);
     } on FirebaseException catch (e) {
-      _logger.error(
+      logError(
         'FirebaseException: [${e.code}] ${e.message}',
         traceId: traceId,
         error: e,
@@ -57,7 +58,7 @@ class FirestoreAccountRepository implements IAccountRepository {
         ),
       );
     } on Exception catch (e, st) {
-      _logger.error(
+      logError(
         'Exception: $e',
         traceId: traceId,
         error: e,
@@ -89,7 +90,7 @@ class FirestoreAccountRepository implements IAccountRepository {
           #parentCode: parentCode,
         }),
       );
-      _logger.info(
+      logInfo(
         'Start get parentCode children count',
         traceId: traceId,
         extras: {'parentCode': parentCode},
@@ -98,19 +99,19 @@ class FirestoreAccountRepository implements IAccountRepository {
       final query = colRef.where('parentCode', isEqualTo: parentCode).count();
       final snap = await query.get();
       final count = snap.count ?? 0;
-      _logger.info(
+      logInfo(
         'Found $count children for parentCode $parentCode',
         traceId: traceId,
         extras: {'count': count},
       );
       return AppResult.success(count);
     } on FirebaseException catch (e) {
-      _logger.error('$e', traceId: traceId, error: e);
+      logError('$e', traceId: traceId, error: e);
       return AppResult.failure(
         AppException('$e', code: AppExceptionCode.serverException),
       );
     } on Exception catch (e, st) {
-      _logger.error('$e', traceId: traceId, error: e, stackTrace: st);
+      logError('$e', traceId: traceId, error: e, stackTrace: st);
       return AppResult.failure(
         AppException('$e', code: AppExceptionCode.internalException),
       );
@@ -125,7 +126,7 @@ class FirestoreAccountRepository implements IAccountRepository {
   }) async {
     try {
       final dbAccount = FirestoreAccount.fromDomain(account);
-      _logger.info(
+      logInfo(
         'Start saving Account',
         traceId: traceId,
         extras: dbAccount.toJson(),
@@ -133,14 +134,14 @@ class FirestoreAccountRepository implements IAccountRepository {
       final path = 'users/$userId/accounts/${dbAccount.code}';
       final doc = _db.doc(path);
 
-      _logger.info(
+      logInfo(
         'Get firestore data',
         traceId: traceId,
         extras: {'path': path},
       );
       final snapshot = await doc.get();
       if (snapshot.exists) {
-        _logger.error(
+        logError(
           'Account with code ${account.code} already exists',
           traceId: traceId,
         );
@@ -152,7 +153,7 @@ class FirestoreAccountRepository implements IAccountRepository {
         );
       }
 
-      _logger.info(
+      logInfo(
         'Checks name on accounts collection',
         traceId: traceId,
       );
@@ -160,7 +161,7 @@ class FirestoreAccountRepository implements IAccountRepository {
       final query = rootAccountsColRef.where('name', isEqualTo: dbAccount.name);
       final snap = await query.get();
       if (snap.docs.isNotEmpty) {
-        _logger.error(
+        logError(
           'Account with name ${account.name} already exists',
           traceId: traceId,
         );
@@ -171,21 +172,21 @@ class FirestoreAccountRepository implements IAccountRepository {
           ),
         );
       }
-      _logger.info(
+      logInfo(
         'Name not found in accounts collection. Save the Account',
         traceId: traceId,
       );
 
       await doc.set(dbAccount.toJson());
-      _logger.info('Account saved', traceId: traceId);
+      logInfo('Account saved', traceId: traceId);
       return const AppResult.success(null);
     } on FirebaseException catch (e) {
-      _logger.error('$e', traceId: traceId, error: e);
+      logError('$e', traceId: traceId, error: e);
       return AppResult.failure(
         AppException('$e', code: AppExceptionCode.serverException),
       );
     } on Exception catch (e, st) {
-      _logger.error(e.toString(), traceId: traceId, error: e, stackTrace: st);
+      logError(e.toString(), traceId: traceId, error: e, stackTrace: st);
       return AppResult.failure(
         AppException(
           e.toString(),

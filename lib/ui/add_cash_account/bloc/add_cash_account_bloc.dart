@@ -11,14 +11,13 @@ part 'add_cash_account_state.dart';
 part 'add_cash_account_bloc.freezed.dart';
 
 /// Bloc to handle creating new cash account
-class AddCashAccountBloc
-    extends Bloc<AddCashAccountEvent, AddCashAccountState> {
+class AddCashAccountBloc extends Bloc<AddCashAccountEvent, AddCashAccountState>
+    with Loggable {
   /// Creates new [AddCashAccountBloc]
   AddCashAccountBloc({
     required this._addCashAccount,
     required this._uidGenerator,
-  }) : _logger = AppLogger('AddCashAccountBloc'),
-       super(const AddCashAccountState.initial()) {
+  }) : super(const AddCashAccountState.initial()) {
     on<AddCashAccountEvent>((event, emit) async {
       await event.when(
         submit: (name) => _onSubmit(name: name, emit: emit),
@@ -26,8 +25,10 @@ class AddCashAccountBloc
     });
   }
 
+  @override
+  String get logTag => 'AddCashAccountBloc';
+
   final AddCashAccountUseCase _addCashAccount;
-  final AppLogger _logger;
   final UidGenerator _uidGenerator;
 
   Future<void> _onSubmit({
@@ -35,7 +36,7 @@ class AddCashAccountBloc
     required Emitter<AddCashAccountState> emit,
   }) async {
     final traceId = _uidGenerator.generateUid();
-    _logger.info(
+    logInfo(
       'Start adding new cash account. Emit loading state',
       traceId: traceId,
     );
@@ -47,14 +48,14 @@ class AddCashAccountBloc
     );
     result.when(
       success: (_) {
-        _logger.info(
+        logInfo(
           'Add new cash account succeeded. Emit added state',
           traceId: traceId,
         );
         emit(const AddCashAccountState.added());
       },
       failure: (exc) {
-        _logger.info(
+        logInfo(
           'Add new cash account failed. Emit failure state',
           traceId: traceId,
         );

@@ -96,4 +96,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get cashAccountsListTitle => 'Cash List';
+
+  @override
+  String get cashAccountsListSearchLabel => 'Search Cash';
 }

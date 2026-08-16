@@ -6,6 +6,7 @@ import 'package:journexa_app/shared/app_exception.dart';
 import 'package:journexa_app/shared/app_logger.dart';
 import 'package:journexa_app/shared/app_result.dart';
 import 'package:journexa_app/shared/uid_generator.dart';
+import 'package:journexa_app/ui/shared/event_transform/debounce.dart';
 
 part 'cash_accounts_event.dart';
 part 'cash_accounts_state.dart';
@@ -17,11 +18,21 @@ class CashAccountsBloc extends Bloc<CashAccountsEvent, CashAccountsState>
   /// Creates new [CashAccountsBloc]
   CashAccountsBloc({required this._getAllCashAccounts})
     : super(const CashAccountsState.initial()) {
-    on<CashAccountsEvent>((event, emit) async {
-      await event.when(
-        load: () => _onLoad(emit: emit),
+    on<_Load>((event, emit) async {
+      return _onLoad(
+        emit: emit,
+        params: const GetAllCashAccountsParams(),
       );
     });
+    on<_Search>(
+      (event, emit) async {
+        return _onLoad(
+          emit: emit,
+          params: GetAllCashAccountsParams(query: event.query),
+        );
+      },
+      transformer: debounce(),
+    );
   }
 
   @override
@@ -31,6 +42,7 @@ class CashAccountsBloc extends Bloc<CashAccountsEvent, CashAccountsState>
 
   Future<void> _onLoad({
     required Emitter<CashAccountsState> emit,
+    required GetAllCashAccountsParams params,
   }) async {
     final traceId = generateUid();
     logInfo(
@@ -41,6 +53,7 @@ class CashAccountsBloc extends Bloc<CashAccountsEvent, CashAccountsState>
     emit(const CashAccountsState.loading());
 
     final result = await _getAllCashAccounts.execute(
+      params,
       traceId: traceId,
     );
     result.when(

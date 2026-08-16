@@ -265,6 +265,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Cash List'**
   String get cashAccountsListTitle;
+
+  /// Label for search input on cash accounts list
+  ///
+  /// In en, this message translates to:
+  /// **'Search Cash'**
+  String get cashAccountsListSearchLabel;
 }
 
 class _AppLocalizationsDelegate

@@ -63,6 +63,7 @@ void main() {
         userId: userId,
         parentCode: expectedParentCode,
         traceId: traceId,
+        query: any(named: 'query'),
       ),
     ).thenAnswer((_) async => AppResult.success(accounts));
 
@@ -88,7 +89,7 @@ void main() {
     'calls AuthRepository.getCurrentUserId once '
     'to get current user id',
     () async {
-      await useCase.execute(traceId: traceId);
+      await useCase.execute(const GetAllCashAccountsParams(), traceId: traceId);
 
       verify(
         () => mockAuthRepository.getCurrentUserId(traceId: traceId),
@@ -100,7 +101,7 @@ void main() {
     'calls AccountRepository.getByParentCode once '
     'with correct args',
     () async {
-      await useCase.execute(traceId: traceId);
+      await useCase.execute(const GetAllCashAccountsParams(), traceId: traceId);
 
       verify(
         () => mockAccountRepository.getByParentCode(
@@ -113,10 +114,30 @@ void main() {
   );
 
   test(
+    'calls AccountRepository.getByParentCode once '
+    'with correct args when query provided',
+    () async {
+      await useCase.execute(
+        const GetAllCashAccountsParams(query: 'query'),
+        traceId: traceId,
+      );
+
+      verify(
+        () => mockAccountRepository.getByParentCode(
+          userId: userId,
+          parentCode: expectedParentCode,
+          traceId: traceId,
+          query: 'query',
+        ),
+      ).called(1);
+    },
+  );
+
+  test(
     'calls JournalRepository.getCurrentBalance once '
     'with correct args',
     () async {
-      await useCase.execute(traceId: traceId);
+      await useCase.execute(const GetAllCashAccountsParams(), traceId: traceId);
 
       verify(
         () => mockJournalRepository.getCurrentBalance(
@@ -131,7 +152,10 @@ void main() {
   test(
     'returns correct AccountBalances when all operations are successful',
     () async {
-      final result = await useCase.execute(traceId: traceId);
+      final result = await useCase.execute(
+        const GetAllCashAccountsParams(),
+        traceId: traceId,
+      );
 
       expect(
         result,
@@ -148,7 +172,10 @@ void main() {
         () => mockAuthRepository.getCurrentUserId(traceId: traceId),
       ).thenAnswer((_) async => AppResult<String>.failure(AppException.test()));
 
-      final result = await useCase.execute(traceId: traceId);
+      final result = await useCase.execute(
+        const GetAllCashAccountsParams(),
+        traceId: traceId,
+      );
 
       expect(
         result,
@@ -172,7 +199,10 @@ void main() {
         ),
       ).thenAnswer((_) async => AppResult.failure(AppException.test()));
 
-      final result = await useCase.execute(traceId: traceId);
+      final result = await useCase.execute(
+        const GetAllCashAccountsParams(),
+        traceId: traceId,
+      );
 
       expect(
         result,
@@ -198,7 +228,10 @@ void main() {
         ),
       );
 
-      final result = await useCase.execute(traceId: traceId);
+      final result = await useCase.execute(
+        const GetAllCashAccountsParams(),
+        traceId: traceId,
+      );
 
       expect(
         result,

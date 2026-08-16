@@ -123,5 +123,9 @@
   "cashAccountsListTitle": "Cash List",
   "@cashAccountsListTitle": {
     "description": "Title for cash accounts list page"
+  },
+  "cashAccountsListSearchLabel": "Search Cash",
+  "@cashAccountsListSearchLabel": {
+    "description": "Label for search input on cash accounts list"
   }
 }

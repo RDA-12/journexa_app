@@ -1,6 +1,6 @@
 import 'package:bloc_test/bloc_test.dart';
 import 'package:decimal/decimal.dart';
-import 'package:flutter/widgets.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:journexa_app/domain/entities/account.dart';
@@ -10,8 +10,7 @@ import 'package:journexa_app/ui/cash_accounts_list/bloc/cash_accounts_bloc.dart'
 import 'package:journexa_app/ui/cash_accounts_list/widgets/cash_accounts_list_view.dart';
 import 'package:journexa_app/ui/cash_accounts_list/widgets/widgets.dart';
 import 'package:journexa_app/ui/shared/l10n/app_localizations.dart';
-import 'package:journexa_app/ui/shared/widgets/app_exception_box.dart';
-import 'package:journexa_app/ui/shared/widgets/loading_indicator.dart';
+import 'package:journexa_app/ui/shared/widgets/widgets.dart';
 import 'package:mocktail/mocktail.dart';
 
 import '../../util.dart';
@@ -23,11 +22,13 @@ final expectedTranslations = {
     'errorTitle': 'Gagal mendapatkan data kas',
     'errorDesc': 'Terjadi kesalahan internal',
     'semanticsLoading': 'Memuat data kas',
+    'searchLabel': 'Cari Kas',
   },
   'en': {
     'errorTitle': 'Failed to get cash data',
     'errorDesc': 'Internal exception error',
     'semanticsLoading': 'Loading cash data',
+    'searchLabel': 'Search Cash',
   },
 };
 
@@ -142,6 +143,47 @@ void main() {
         },
       );
     }
+
+    for (final locale in AppLocalizations.supportedLocales) {
+      final expectedSearchLabel =
+          expectedTranslations[locale.languageCode]!['searchLabel']!;
+      testWidgets(
+        'shows input with $expectedSearchLabel label',
+        (tester) async {
+          whenListen(
+            mockCashAccountsBloc,
+            const Stream<CashAccountsState>.empty(),
+            initialState: CashAccountsState.loaded(accountBalances),
+          );
+
+          await pumpWidget(tester, locale: locale);
+
+          final finder = find.byType(AppFormField);
+          expect(finder, findsOneWidget);
+          final widget = tester.widget<AppFormField>(finder);
+          expect(widget.label, expectedSearchLabel);
+        },
+      );
+    }
+  });
+
+  group('Interaction', () {
+    testWidgets(
+      'add CashAccountEvent.search with correct query',
+      (tester) async {
+        await pumpWidget(tester);
+
+        final finder = find.byType(TextFormField);
+        await tester.enterText(finder, 'query');
+        expect(find.text('query'), findsOneWidget);
+
+        verify(
+          () => mockCashAccountsBloc.add(
+            const CashAccountsEvent.search(query: 'query'),
+          ),
+        ).called(1);
+      },
+    );
   });
 
   group('a11y', () {
@@ -160,6 +202,28 @@ void main() {
           await pumpWidget(tester, locale: locale);
 
           expect(find.bySemanticsLabel(expectedSemantics), findsOneWidget);
+        },
+      );
+    }
+
+    for (final locale in AppLocalizations.supportedLocales) {
+      final expectedSearchLabel =
+          expectedTranslations[locale.languageCode]!['searchLabel']!;
+      testWidgets(
+        'has $expectedSearchLabel label semantically',
+        (tester) async {
+          whenListen(
+            mockCashAccountsBloc,
+            const Stream<CashAccountsState>.empty(),
+            initialState: CashAccountsState.loaded(accountBalances),
+          );
+
+          await pumpWidget(tester, locale: locale);
+
+          expect(
+            find.bySemanticsLabel(expectedSearchLabel),
+            findsOneWidget,
+          );
         },
       );
     }

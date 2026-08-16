@@ -11,6 +11,7 @@ sealed class FirestoreAccount with _$FirestoreAccount {
   const factory FirestoreAccount({
     required String code,
     required String name,
+    required String nameLower,
     required AccountType type,
     @Default(false) bool isSystemAccount,
     String? parentCode,
@@ -21,6 +22,7 @@ sealed class FirestoreAccount with _$FirestoreAccount {
     return FirestoreAccount(
       code: domain.code,
       name: domain.name,
+      nameLower: domain.name.toLowerCase(),
       type: domain.type,
       isSystemAccount: domain.isSystemAccount,
       parentCode: domain.parent?.code,

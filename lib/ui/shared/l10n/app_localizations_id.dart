@@ -96,4 +96,7 @@ class AppLocalizationsId extends AppLocalizations {
 
   @override
   String get cashAccountsListTitle => 'Daftar Kas';
+
+  @override
+  String get cashAccountsListSearchLabel => 'Cari Kas';
 }

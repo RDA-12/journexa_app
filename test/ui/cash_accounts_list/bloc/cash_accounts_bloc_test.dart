@@ -8,6 +8,7 @@ import 'package:journexa_app/shared/app_exception.dart';
 import 'package:journexa_app/shared/app_result.dart';
 import 'package:journexa_app/shared/uid_generator.dart';
 import 'package:journexa_app/ui/cash_accounts_list/bloc/cash_accounts_bloc.dart';
+import 'package:journexa_app/ui/shared/event_transform/event_transform.dart';
 import 'package:mocktail/mocktail.dart';
 
 class MockGetAllCashAccounts extends Mock
@@ -31,13 +32,20 @@ void main() {
   late GetAllCashAccountsUseCase mockGetAllCashAccounts;
   late UidGenerator mockUidGenerator;
 
+  setUpAll(() {
+    registerFallbackValue(const GetAllCashAccountsParams());
+  });
+
   setUp(() {
     mockUidGenerator = MockUidGenerator();
     when(mockUidGenerator.generateUid).thenReturn(traceId);
 
     mockGetAllCashAccounts = MockGetAllCashAccounts();
     when(
-      () => mockGetAllCashAccounts.execute(traceId: traceId),
+      () => mockGetAllCashAccounts.execute(
+        any<GetAllCashAccountsParams>(),
+        traceId: traceId,
+      ),
     ).thenAnswer(
       (_) async => AppResult.success(cashAccounts),
     );
@@ -68,6 +76,7 @@ void main() {
       verify: (_) {
         verify(
           () => mockGetAllCashAccounts.execute(
+            const GetAllCashAccountsParams(),
             traceId: traceId,
           ),
         ).called(1);
@@ -80,6 +89,7 @@ void main() {
       setUp: () {
         when(
           () => mockGetAllCashAccounts.execute(
+            const GetAllCashAccountsParams(),
             traceId: traceId,
           ),
         ).thenAnswer(
@@ -96,6 +106,83 @@ void main() {
       verify: (_) {
         verify(
           () => mockGetAllCashAccounts.execute(
+            const GetAllCashAccountsParams(),
+            traceId: traceId,
+          ),
+        ).called(1);
+      },
+    );
+  });
+
+  group('search', () {
+    blocTest<CashAccountsBloc, CashAccountsState>(
+      'only process last event within debounce time',
+      build: buildBloc,
+      act: (bloc) => bloc
+        ..add(const CashAccountsEvent.search(query: 'q'))
+        ..add(const CashAccountsEvent.search(query: 'que'))
+        ..add(const CashAccountsEvent.search(query: 'query')),
+      wait: kDefaultDebounceDuration + const Duration(milliseconds: 1),
+      expect: () => <CashAccountsState>[
+        const CashAccountsState.loading(),
+        CashAccountsState.loaded(cashAccounts),
+      ],
+      verify: (_) {
+        verify(
+          () => mockGetAllCashAccounts.execute(
+            const GetAllCashAccountsParams(query: 'query'),
+            traceId: traceId,
+          ),
+        ).called(1);
+      },
+    );
+
+    blocTest<CashAccountsBloc, CashAccountsState>(
+      'emits [CashAccountsBloc.loading, CashAccountsBloc.loaded] '
+      'with correct account balances '
+      'when getAllCashAccountsUseCase returns success',
+      build: buildBloc,
+      act: (bloc) => bloc.add(const CashAccountsEvent.search(query: 'query')),
+      wait: kDefaultDebounceDuration,
+      expect: () => <CashAccountsState>[
+        const CashAccountsState.loading(),
+        CashAccountsState.loaded(cashAccounts),
+      ],
+      verify: (_) {
+        verify(
+          () => mockGetAllCashAccounts.execute(
+            const GetAllCashAccountsParams(query: 'query'),
+            traceId: traceId,
+          ),
+        ).called(1);
+      },
+    );
+
+    blocTest<CashAccountsBloc, CashAccountsState>(
+      'emits [CashAccountsBloc.loading, CashAccountsBloc.failure] '
+      'when getAllCashAccountsUseCase returns failure',
+      setUp: () {
+        when(
+          () => mockGetAllCashAccounts.execute(
+            const GetAllCashAccountsParams(query: 'query'),
+            traceId: traceId,
+          ),
+        ).thenAnswer(
+          (_) async =>
+              AppResult<List<AccountBalance>>.failure(AppException.test()),
+        );
+      },
+      build: buildBloc,
+      act: (bloc) => bloc.add(const CashAccountsEvent.search(query: 'query')),
+      wait: kDefaultDebounceDuration,
+      expect: () => <CashAccountsState>[
+        const CashAccountsState.loading(),
+        CashAccountsState.failure(AppException.test()),
+      ],
+      verify: (_) {
+        verify(
+          () => mockGetAllCashAccounts.execute(
+            const GetAllCashAccountsParams(query: 'query'),
             traceId: traceId,
           ),
         ).called(1);

@@ -27,5 +27,6 @@
   "errorAccountNotFound": "Akun dengan kode {code} tidak dapat ditemukan",
   "cashAccountsListFailureTitle": "Gagal mendapatkan data kas",
   "cashAccountsListLoadingSemantics": "Memuat data kas",
-  "cashAccountsListTitle": "Daftar Kas"
+  "cashAccountsListTitle": "Daftar Kas",
+  "cashAccountsListSearchLabel": "Cari Kas"
 }

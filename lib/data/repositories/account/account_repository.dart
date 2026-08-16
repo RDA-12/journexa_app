@@ -201,6 +201,7 @@ class FirestoreAccountRepository with Loggable implements IAccountRepository {
     required String userId,
     required String parentCode,
     required String traceId,
+    String? query,
   }) async {
     try {
       maybeThrowException(
@@ -227,8 +228,19 @@ class FirestoreAccountRepository with Loggable implements IAccountRepository {
       }
       final parent = FirestoreAccount.fromJson(parentSnap.data()!).toDomain();
       final colRef = _db.collection('users/$userId/accounts');
-      final query = colRef.where('parentCode', isEqualTo: parentCode);
-      final snap = await query.get();
+      var colQuery = colRef.where('parentCode', isEqualTo: parentCode);
+      if (query != null) {
+        colQuery = colQuery
+            .where(
+              'nameLower',
+              isGreaterThanOrEqualTo: query.toLowerCase(),
+            )
+            .where(
+              'nameLower',
+              isLessThanOrEqualTo: '${query.toLowerCase()}~',
+            );
+      }
+      final snap = await colQuery.get();
       if (snap.docs.isEmpty) {
         logInfo('No children found', traceId: traceId);
         return const AppResult.success([]);

@@ -7,7 +7,8 @@ void main() {
     test('returns correct FirestoreAccount', () {
       const expected = FirestoreAccount(
         code: '10.0000',
-        name: 'asset',
+        name: 'Asset',
+        nameLower: 'asset',
         type: AccountType.asset,
         parentCode: '10.0001',
         isSystemAccount: true,
@@ -43,6 +44,7 @@ void main() {
       final firestoreAccount = FirestoreAccount(
         code: expected.code,
         name: expected.name,
+        nameLower: expected.name.toLowerCase(),
         type: expected.type,
         isSystemAccount: expected.isSystemAccount,
       );

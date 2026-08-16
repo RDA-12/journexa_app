@@ -32,9 +32,13 @@ abstract interface class IAccountRepository {
   });
 
   /// Returns list of [Account] child of [parentCode] in [userId] database
+  ///
+  /// If [query] is provided. It will try to match [query]
+  /// with [Account.name].
   Future<AppResult<List<Account>>> getByParentCode({
     required String userId,
     required String parentCode,
     required String traceId,
+    String? query,
   });
 }

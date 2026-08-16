@@ -21,13 +21,13 @@ void main() {
     parent,
     Account(
       code: '10.0001',
-      name: 'asset',
+      name: 'Dompet Hitam',
       type: AccountType.asset,
       parent: parent,
     ),
     Account(
       code: '10.0002',
-      name: 'asset',
+      name: 'Bank BRI',
       type: AccountType.asset,
       parent: parent,
     ),
@@ -35,7 +35,7 @@ void main() {
   final accounts = [
     Account(
       code: '10.0010',
-      name: 'asset',
+      name: 'Bank Jago',
       type: AccountType.asset,
     ),
   ];
@@ -435,6 +435,29 @@ void main() {
         );
 
         expect(result, const AppResult.success(<Account>[]));
+      },
+    );
+
+    test(
+      'returns success with query',
+      () async {
+        final expectedAccounts = [
+          Account(
+            code: '10.0002',
+            name: 'Bank BRI',
+            type: AccountType.asset,
+            parent: parent,
+          ),
+        ];
+
+        final result = await repository.getByParentCode(
+          userId: userId,
+          parentCode: parent.code,
+          query: 'Bank B',
+          traceId: traceId,
+        );
+
+        expect(result, AppResult.success(expectedAccounts));
       },
     );
 

@@ -1,3 +1,4 @@
+import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:injectable/injectable.dart';
 import 'package:journexa_app/domain/entities/journal.dart';
 import 'package:journexa_app/domain/repositories/i_account_repository.dart';
@@ -7,12 +8,23 @@ import 'package:journexa_app/domain/use_cases/base_use_case.dart';
 import 'package:journexa_app/shared/app_logger.dart';
 import 'package:journexa_app/shared/app_result.dart';
 
+part 'get_all_cash_accounts.freezed.dart';
+
+/// Params for [GetAllCashAccountsUseCase]
+@freezed
+sealed class GetAllCashAccountsParams with _$GetAllCashAccountsParams {
+  const factory GetAllCashAccountsParams({
+    String? query,
+  }) = _GetAllCashAccountsParams;
+}
+
 /// Use case to get all Cash Accounts saved on
 /// current user database
 @lazySingleton
 class GetAllCashAccountsUseCase
     with Loggable
-    implements FutureBaseUseCaseNoParams<List<AccountBalance>> {
+    implements
+        FutureBaseUseCase<GetAllCashAccountsParams, List<AccountBalance>> {
   /// Creates new [GetAllCashAccountsUseCase]
   GetAllCashAccountsUseCase({
     required this._accountRepository,
@@ -29,7 +41,8 @@ class GetAllCashAccountsUseCase
 
   /// Execute getting all cash Account from current user
   @override
-  Future<AppResult<List<AccountBalance>>> execute({
+  Future<AppResult<List<AccountBalance>>> execute(
+    GetAllCashAccountsParams params, {
     required String traceId,
   }) async {
     logInfo('Starts getting current user id ', traceId: traceId);
@@ -51,6 +64,7 @@ class GetAllCashAccountsUseCase
     final accountsResult = await _accountRepository.getByParentCode(
       userId: userId,
       parentCode: parentCode,
+      query: params.query,
       traceId: traceId,
     );
     final accountsExc = accountsResult.errorOrNull;

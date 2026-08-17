@@ -9,6 +9,7 @@ class AppCard extends StatelessWidget {
   const AppCard({
     required this.child,
     this.leading,
+    this.bottom,
     super.key,
   });
 
@@ -17,6 +18,11 @@ class AppCard extends StatelessWidget {
 
   /// Main [Widget] to be showed
   final Widget child;
+
+  /// [Widget] that will be placed under [leading] and [child]
+  ///
+  /// Typically used for actions
+  final Widget? bottom;
 
   @override
   Widget build(BuildContext context) {
@@ -32,11 +38,18 @@ class AppCard extends StatelessWidget {
       ),
       child: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-        child: Row(
-          spacing: 16,
+        child: Column(
+          spacing: 12,
+          crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            ?leading,
-            child,
+            Row(
+              spacing: 16,
+              children: [
+                ?leading,
+                Expanded(child: child),
+              ],
+            ),
+            ?bottom,
           ],
         ),
       ),

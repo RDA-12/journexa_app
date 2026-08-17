@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:journexa_app/domain/entities/account.dart';
 import 'package:journexa_app/domain/entities/journal.dart';
 import 'package:journexa_app/ui/cash_accounts_list/widgets/cash_account_card.dart';
 
@@ -8,11 +9,17 @@ class CashAccountsList extends StatelessWidget {
   /// Creates new [CashAccountsList]
   const CashAccountsList({
     required this.accountBalances,
+    required this.onDeletePressed,
     super.key,
   });
 
   /// List of [AccountBalance] to be showed
   final List<AccountBalance> accountBalances;
+
+  /// Invoke when delete button is pressed in [CashAccountCard]
+  ///
+  /// It means the [Account] confirmed to be deleted
+  final void Function(Account) onDeletePressed;
 
   @override
   Widget build(BuildContext context) {
@@ -23,6 +30,9 @@ class CashAccountsList extends StatelessWidget {
         final accountBalance = accountBalances[index];
         return CashAccountCard(
           accountBalance: accountBalance,
+          onDeletePressed: () {
+            onDeletePressed(accountBalance.account);
+          },
         );
       },
     );

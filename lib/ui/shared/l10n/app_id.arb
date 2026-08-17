@@ -31,5 +31,12 @@
   "cashAccountsListSearchLabel": "Cari Kas",
   "commonEmptyTitle": "Data Tidak Ditemukan",
   "cashAccountsListEmptyDescription": "Tidak ada data kas yang ditemukan",
-  "cashAccountsListAddButtonSemantics": "Tambah Kas Baru"
+  "cashAccountsListAddButtonSemantics": "Tambah Kas Baru",
+  "commonConfirmLabel": "OK",
+  "commonCancelLabel": "Batal",
+  "deleteCashAccountDialogTitle": "Hapus {name}?",
+  "deleteCashAccountDialogContent": "Data yang terikat dengan {name} akan tetap ada. Tapi, {name} tidak akan bisa digunakan lagi untuk transaksi selanjutnya",
+  "deleteCashAccountDialogConfirmLabel": "Hapus",
+  "commonDelete": "Hapus",
+  "deleteCashAccountSemantics": "Hapus {name}"
 }

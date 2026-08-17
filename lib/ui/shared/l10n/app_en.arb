@@ -139,5 +139,51 @@
   "cashAccountsListAddButtonSemantics": "Add New Cash",
   "@cashAccountsListAddButtonSemantics": {
     "description": "Semantics label for add button on cash accounts list"
+  },
+  "commonConfirmLabel": "OK",
+  "@commonConfirmLabel": {
+    "description": "Default label for confirm button"
+  },
+  "commonCancelLabel": "Cancel",
+  "@commonCancelLabel": {
+    "description": "Default label for cancel button"
+  },
+  "deleteCashAccountDialogTitle": "Delete {name}?",
+  "@deleteCashAccountDialogTitle": {
+    "description": "Title for delete cash account dialog",
+    "placeholders": {
+      "name": {
+        "type": "String",
+        "example": "dompet hitam"
+      }
+    }
+  },
+  "deleteCashAccountDialogContent": "Data that related to {name} will still exist. But, {name} will no longer be able to be used for future transactions",
+  "@deleteCashAccountDialogContent": {
+    "description": "Content for delete cash account dialog",
+    "placeholders": {
+      "name": {
+        "type": "String",
+        "example": "dompet hitam"
+      }
+    }
+  },
+  "deleteCashAccountDialogConfirmLabel": "Delete",
+  "@deleteCashAccountDialogConfirmLabel": {
+    "description": "Confirm label for delete cash account dialog"
+  },
+  "commonDelete": "Delete",
+  "@commonDelete": {
+    "description": "Default label for delete"
+  },
+  "deleteCashAccountSemantics": "Delete {name}",
+  "@deleteCashAccountSemantics": {
+    "description": "Semantics label for delete cash account button",
+    "placeholders": {
+      "name": {
+        "type": "String",
+        "example": "dompet hitam"
+      }
+    }
   }
 }

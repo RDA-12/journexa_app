@@ -57,6 +57,7 @@ lib/firebase_options.dart
 
 # VSCode
 .vscode/
+devtools_options.yaml
 
 # Firebase Emulator
 emulators/

@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:journexa_app/di.dart';
+import 'package:journexa_app/domain/use_cases/account/delete_account.dart';
 import 'package:journexa_app/domain/use_cases/account/get_all_cash_accounts.dart';
 import 'package:journexa_app/ui/cash_accounts_list/bloc/cash_accounts_bloc.dart';
 import 'package:journexa_app/ui/cash_accounts_list/widgets/cash_accounts_list_view.dart';
@@ -30,6 +31,7 @@ class CashAccountsListPage extends StatelessWidget {
           (cashAccountsBloc ??
                 CashAccountsBloc(
                   getAllCashAccounts: getIt<GetAllCashAccountsUseCase>(),
+                  deleteAccount: getIt<DeleteAccountUseCase>(),
                 ))
             ..add(const CashAccountsEvent.load()),
       child: Scaffold(

@@ -59,6 +59,10 @@ enum ButtonColorType {
         ButtonColorType.normal => context.color.onSurfaceVariant,
         ButtonColorType.danger => context.color.error,
       },
+      ButtonType.text => switch (this) {
+        ButtonColorType.normal => context.color.primary,
+        ButtonColorType.danger => context.color.error,
+      },
     };
   }
 
@@ -70,6 +74,7 @@ enum ButtonColorType {
         ButtonColorType.danger => context.color.error,
       },
       ButtonType.outlined => Colors.transparent,
+      ButtonType.text => Colors.transparent,
     };
   }
 
@@ -77,6 +82,7 @@ enum ButtonColorType {
   Color? border(BuildContext context, ButtonType type) {
     return switch (type) {
       ButtonType.filled => null,
+      ButtonType.text => null,
       ButtonType.outlined => switch (this) {
         ButtonColorType.normal => context.color.primary,
         ButtonColorType.danger => context.color.error,
@@ -91,7 +97,10 @@ enum ButtonType {
   outlined,
 
   /// Filled type
-  filled;
+  filled,
+
+  /// Text type
+  text;
 
   /// Returns [ButtonStyle] for this type
   ButtonStyle style(
@@ -114,10 +123,18 @@ enum ButtonType {
       backgroundColor: color.background(context, this),
       foregroundColor: color.foreground(context, this),
     ),
+    ButtonType.text => TextButton.styleFrom(
+      minimumSize: size.minimumSize,
+      textStyle: size.textStyle(context),
+      padding: size.padding,
+      backgroundColor: color.background(context, this),
+      foregroundColor: color.foreground(context, this),
+    ),
   };
 }
 
-/// Conditionally creates [FilledButton] or [OutlinedButton] based on [type]
+/// Conditionally creates [FilledButton] or [OutlinedButton] or [TextButton]
+/// based on [type]
 ///
 /// If [icon] provided, use [FilledButton.icon] or [OutlinedButton.icon].
 class AppButton extends StatelessWidget {
@@ -128,6 +145,7 @@ class AppButton extends StatelessWidget {
     this.type = ButtonType.outlined,
     this.size = ButtonSize.small,
     this.color = ButtonColorType.normal,
+    this.semanticsLabel,
     this.icon,
     super.key,
   });
@@ -143,6 +161,11 @@ class AppButton extends StatelessWidget {
 
   /// Label for the Button
   final String label;
+
+  /// Optional semantics label for the Button
+  ///
+  /// If null, [label] will be used as semantics label
+  final String? semanticsLabel;
 
   /// Icon for the Button
   ///
@@ -160,7 +183,10 @@ class AppButton extends StatelessWidget {
       if (icon != null) {
         return FilledButton.icon(
           onPressed: onPressed,
-          label: Text(label),
+          label: Text(
+            label,
+            semanticsLabel: semanticsLabel,
+          ),
           icon: SizedBox.square(dimension: size.iconSize, child: icon),
           iconAlignment: IconAlignment.start,
           style: type.style(context, size, color),
@@ -170,14 +196,44 @@ class AppButton extends StatelessWidget {
       return FilledButton(
         onPressed: onPressed,
         style: type.style(context, size, color),
-        child: Text(label),
+        child: Text(
+          label,
+          semanticsLabel: semanticsLabel,
+        ),
+      );
+    }
+
+    if (type == ButtonType.text) {
+      if (icon != null) {
+        return TextButton.icon(
+          onPressed: onPressed,
+          label: Text(
+            label,
+            semanticsLabel: semanticsLabel,
+          ),
+          icon: SizedBox.square(dimension: size.iconSize, child: icon),
+          iconAlignment: IconAlignment.start,
+          style: type.style(context, size, color),
+        );
+      }
+
+      return TextButton(
+        onPressed: onPressed,
+        style: type.style(context, size, color),
+        child: Text(
+          label,
+          semanticsLabel: semanticsLabel,
+        ),
       );
     }
 
     if (icon != null) {
       return OutlinedButton.icon(
         onPressed: onPressed,
-        label: Text(label),
+        label: Text(
+          label,
+          semanticsLabel: semanticsLabel,
+        ),
         icon: SizedBox.square(dimension: size.iconSize, child: icon),
         iconAlignment: IconAlignment.start,
         style: type.style(context, size, color),
@@ -187,7 +243,10 @@ class AppButton extends StatelessWidget {
     return OutlinedButton(
       onPressed: onPressed,
       style: type.style(context, size, color),
-      child: Text(label),
+      child: Text(
+        label,
+        semanticsLabel: semanticsLabel,
+      ),
     );
   }
 }

@@ -72,36 +72,44 @@ class _CashAccountsListViewState extends State<CashAccountsListView> {
         ),
         Expanded(
           child: BlocBuilder<CashAccountsBloc, CashAccountsState>(
+            buildWhen: (p, c) =>
+                c.status == CashAccountsStatus.loading ||
+                p.accountBalances != c.accountBalances ||
+                p.exception != c.exception,
             builder: (context, state) {
-              return state.maybeWhen(
-                orElse: () => Center(
+              if (state.status == CashAccountsStatus.loading) {
+                return Center(
                   child: LoadingIndicator(
                     size: 32,
                     semanticsLabel:
                         context.l10n.cashAccountsListLoadingSemantics,
                   ),
-                ),
-                failure: (exc) {
-                  return Center(
-                    child: AppExceptionBox(
-                      title: context.l10n.cashAccountsListFailureTitle,
-                      description: exc.code.toLocalizedString(context),
+                );
+              }
+              if (state.exception != null) {
+                return Center(
+                  child: AppExceptionBox(
+                    title: context.l10n.cashAccountsListFailureTitle,
+                    description: state.exception!.code.toLocalizedString(
+                      context,
                     ),
-                  );
-                },
-                loaded: (accountBalances) {
-                  if (accountBalances.isEmpty) {
-                    return Center(
-                      child: AppEmptyBox(
-                        title: context.l10n.commonEmptyTitle,
-                        description:
-                            context.l10n.cashAccountsListEmptyDescription,
-                      ),
-                    );
-                  }
+                  ),
+                );
+              }
+              if (state.accountBalances.isEmpty) {
+                return Center(
+                  child: AppEmptyBox(
+                    title: context.l10n.commonEmptyTitle,
+                    description: context.l10n.cashAccountsListEmptyDescription,
+                  ),
+                );
+              }
 
-                  return CashAccountsList(
-                    accountBalances: accountBalances,
+              return CashAccountsList(
+                accountBalances: state.accountBalances,
+                onDeletePressed: (account) {
+                  context.read<CashAccountsBloc>().add(
+                    CashAccountsEvent.delete(account),
                   );
                 },
               );

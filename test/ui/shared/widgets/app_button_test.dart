@@ -87,6 +87,10 @@ void main() {
                   button = tester.widget<FilledButton>(
                     find.byType(FilledButton),
                   );
+                case ButtonType.text:
+                  button = tester.widget<TextButton>(
+                    find.byType(TextButton),
+                  );
               }
               expect(button.onPressed, null);
             },

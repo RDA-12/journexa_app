@@ -1,18 +1,43 @@
 part of 'cash_accounts_bloc.dart';
 
+/// Status of [CashAccountsBloc]
+enum CashAccountsStatus {
+  /// Initial status
+  initial,
+
+  /// Loading status for load and search event
+  loading,
+
+  /// Success status
+  loaded,
+
+  /// Failure status for load and search event
+  failure,
+
+  /// Loading status for delete event
+  deleting,
+
+  /// Failure status for delete event
+  deleteFailure,
+}
+
 /// States of [CashAccountsBloc]
 @freezed
-class CashAccountsState with _$CashAccountsState {
-  /// Intitial state
-  const factory CashAccountsState.initial() = _Initial;
+sealed class CashAccountsState with _$CashAccountsState {
+  /// Creates new [CashAccountsState]
+  const factory CashAccountsState({
+    /// Status of the state
+    @Default(CashAccountsStatus.initial) CashAccountsStatus status,
 
-  /// State when loading data
-  const factory CashAccountsState.loading() = _Loading;
+    /// List of cash accounts with their balances
+    @Default([]) List<AccountBalance> accountBalances,
 
-  /// States when data loaded
-  const factory CashAccountsState.loaded(List<AccountBalance> accountBalances) =
-      _Loaded;
+    /// Exception that occurred when load or search event failed
+    AppException? exception,
 
-  /// States when laoding data failed
-  const factory CashAccountsState.failure(AppException exc) = _Failure;
+    /// Exception that occurred when delete event failed
+    AppException? deleteException,
+  }) = _CashAccountsState;
+
+  const CashAccountsState._();
 }

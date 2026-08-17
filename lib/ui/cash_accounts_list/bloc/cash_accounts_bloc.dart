@@ -1,6 +1,9 @@
 import 'package:bloc/bloc.dart';
+import 'package:bloc_concurrency/bloc_concurrency.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
+import 'package:journexa_app/domain/entities/account.dart';
 import 'package:journexa_app/domain/entities/journal.dart';
+import 'package:journexa_app/domain/use_cases/account/delete_account.dart';
 import 'package:journexa_app/domain/use_cases/account/get_all_cash_accounts.dart';
 import 'package:journexa_app/shared/app_exception.dart';
 import 'package:journexa_app/shared/app_logger.dart';
@@ -16,8 +19,10 @@ part 'cash_accounts_bloc.freezed.dart';
 class CashAccountsBloc extends Bloc<CashAccountsEvent, CashAccountsState>
     with GenerateUid, Loggable {
   /// Creates new [CashAccountsBloc]
-  CashAccountsBloc({required this._getAllCashAccounts})
-    : super(const CashAccountsState.initial()) {
+  CashAccountsBloc({
+    required this._getAllCashAccounts,
+    required this._deleteAccount,
+  }) : super(const CashAccountsState()) {
     on<_Load>((event, emit) async {
       return _onLoad(
         emit: emit,
@@ -33,12 +38,19 @@ class CashAccountsBloc extends Bloc<CashAccountsEvent, CashAccountsState>
       },
       transformer: debounce(),
     );
+    on<_Delete>(
+      (event, emit) async {
+        return _onDelete(account: event.account, emit: emit);
+      },
+      transformer: droppable(),
+    );
   }
 
   @override
   String get logTag => 'CashAccountsBloc';
 
   final GetAllCashAccountsUseCase _getAllCashAccounts;
+  final DeleteAccountUseCase _deleteAccount;
 
   Future<void> _onLoad({
     required Emitter<CashAccountsState> emit,
@@ -47,10 +59,10 @@ class CashAccountsBloc extends Bloc<CashAccountsEvent, CashAccountsState>
     final traceId = generateUid();
     logInfo(
       'Starts getting cash accounts for current user. '
-      'Emit loading state',
+      'Emit loading status',
       traceId: traceId,
     );
-    emit(const CashAccountsState.loading());
+    emit(state.copyWith(status: CashAccountsStatus.loading));
 
     final result = await _getAllCashAccounts.execute(
       params,
@@ -59,17 +71,84 @@ class CashAccountsBloc extends Bloc<CashAccountsEvent, CashAccountsState>
     result.when(
       success: (accountBalances) {
         logInfo(
-          'Get cash accounts succeeded. Emit loaded state',
+          'Get cash accounts succeeded. Emit loaded status',
           traceId: traceId,
         );
-        emit(CashAccountsState.loaded(accountBalances));
+        emit(
+          state.copyWith(
+            status: CashAccountsStatus.loaded,
+            accountBalances: accountBalances,
+          ),
+        );
       },
       failure: (exc) {
         logInfo(
-          'Get cash accounts failed. Emit failure state',
+          'Get cash accounts failed. Emit failure status',
           traceId: traceId,
         );
-        emit(CashAccountsState.failure(exc));
+        emit(
+          state.copyWith(
+            status: CashAccountsStatus.failure,
+            exception: exc,
+          ),
+        );
+      },
+    );
+  }
+
+  Future<void> _onDelete({
+    required Account account,
+    required Emitter<CashAccountsState> emit,
+  }) async {
+    final traceId = generateUid();
+    final accountIdx = state.accountBalances.indexWhere(
+      (it) => it.account.code == account.code,
+    );
+    if (accountIdx == -1) {
+      logInfo(
+        'Account with code ${account.code} not found in accountBalances. '
+        'Early return',
+        traceId: traceId,
+      );
+      return;
+    }
+
+    final newAccounts = List<AccountBalance>.from(state.accountBalances);
+    logInfo(
+      'Starts deleting account with code ${account.code}. Emit deleting status',
+      traceId: traceId,
+    );
+    emit(state.copyWith(status: CashAccountsStatus.deleting));
+    final result = await _deleteAccount.execute(
+      DeleteAccountParams(account: account),
+      traceId: traceId,
+    );
+    result.when(
+      success: (_) {
+        logInfo(
+          'Deletes account success. '
+          'Filter account from accountBalances',
+          traceId: traceId,
+        );
+        newAccounts.removeAt(accountIdx);
+        emit(
+          state.copyWith(
+            status: CashAccountsStatus.loaded,
+            accountBalances: newAccounts,
+          ),
+        );
+      },
+      failure: (exc) {
+        logInfo(
+          'Delete account failed. Emit deleteFailure status',
+          traceId: traceId,
+        );
+        emit(
+          state.copyWith(
+            status: CashAccountsStatus.deleteFailure,
+            deleteException: exc,
+          ),
+        );
       },
     );
   }

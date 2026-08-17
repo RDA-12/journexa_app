@@ -10,4 +10,7 @@ sealed class CashAccountsEvent with _$CashAccountsEvent {
   ///
   /// It uses debounce transformer to prevent rapid calls
   const factory CashAccountsEvent.search({String? query}) = _Search;
+
+  /// Event to delete [account]
+  const factory CashAccountsEvent.delete(Account account) = _Delete;
 }

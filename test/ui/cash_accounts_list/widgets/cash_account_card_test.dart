@@ -4,6 +4,8 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:journexa_app/domain/entities/account.dart';
 import 'package:journexa_app/domain/entities/journal.dart';
 import 'package:journexa_app/ui/cash_accounts_list/widgets/cash_account_card.dart';
+import 'package:journexa_app/ui/cash_accounts_list/widgets/delete_cash_button.dart';
+import 'package:journexa_app/ui/cash_accounts_list/widgets/delete_cash_confirmation_dialog.dart';
 import 'package:journexa_app/ui/shared/l10n/l10n.dart';
 
 import '../../util.dart';
@@ -32,12 +34,14 @@ void main() {
   Future<void> pumpWidget(
     WidgetTester tester, {
     Locale locale = const Locale('en'),
+    VoidCallback? onDeletePressed,
   }) async {
     return pumpForWidgetTest(
       tester,
       locale: locale,
       widget: CashAccountCard(
         accountBalance: accountBalance,
+        onDeletePressed: onDeletePressed ?? () {},
       ),
     );
   }
@@ -65,11 +69,53 @@ void main() {
       );
     }
 
-    testWidgets('shows correct Monogram', (tester) async {
+    testWidgets('shows correct Initials', (tester) async {
       await pumpWidget(tester);
 
       expect(find.text('DH'), findsOneWidget);
     });
+
+    testWidgets(
+      'shows DeleteCashButton',
+      (tester) async {
+        await pumpWidget(tester);
+
+        final finder = find.byType(DeleteCashButton);
+        expect(finder, findsOneWidget);
+        final widget = tester.widget<DeleteCashButton>(finder);
+        expect(widget.account, accountBalance.account);
+      },
+    );
+  });
+
+  group('Interactions', () {
+    testWidgets(
+      'calls onDeletePressed when DeleteCashButton pressed '
+      'and user confirmed to delete it',
+      (tester) async {
+        var isDeleted = false;
+        await pumpWidget(
+          tester,
+          onDeletePressed: () {
+            isDeleted = true;
+          },
+        );
+
+        final finder = find.byType(DeleteCashButton);
+        await tester.tap(finder);
+        await tester.pump();
+
+        await tester.tap(
+          find.descendant(
+            of: find.byType(DeleteCashConfirmationDialog),
+            matching: find.text('Delete'),
+          ),
+        );
+        await tester.pump();
+
+        expect(isDeleted, isTrue);
+      },
+    );
   });
 
   group('a11y', () {

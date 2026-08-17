@@ -8,6 +8,8 @@ import 'package:journexa_app/domain/entities/journal.dart';
 import 'package:journexa_app/shared/app_exception.dart';
 import 'package:journexa_app/ui/cash_accounts_list/bloc/cash_accounts_bloc.dart';
 import 'package:journexa_app/ui/cash_accounts_list/widgets/cash_accounts_list_view.dart';
+import 'package:journexa_app/ui/cash_accounts_list/widgets/delete_cash_button.dart';
+import 'package:journexa_app/ui/cash_accounts_list/widgets/delete_cash_confirmation_dialog.dart';
 import 'package:journexa_app/ui/cash_accounts_list/widgets/widgets.dart';
 import 'package:journexa_app/ui/shared/l10n/app_localizations.dart';
 import 'package:journexa_app/ui/shared/widgets/app_empty_box.dart';
@@ -58,7 +60,7 @@ void main() {
     whenListen(
       mockCashAccountsBloc,
       const Stream<CashAccountsState>.empty(),
-      initialState: const CashAccountsState.initial(),
+      initialState: const CashAccountsState(),
     );
   });
 
@@ -81,27 +83,14 @@ void main() {
 
   group('Render', () {
     testWidgets(
-      'shows LoadingIndicator when state is initial',
-      (tester) async {
-        whenListen(
-          mockCashAccountsBloc,
-          const Stream<CashAccountsState>.empty(),
-          initialState: const CashAccountsState.initial(),
-        );
-
-        await pumpWidget(tester);
-
-        expect(find.byType(LoadingIndicator), findsOneWidget);
-      },
-    );
-
-    testWidgets(
       'shows LoadingIndicator when state is loading',
       (tester) async {
         whenListen(
           mockCashAccountsBloc,
           const Stream<CashAccountsState>.empty(),
-          initialState: const CashAccountsState.loading(),
+          initialState: const CashAccountsState(
+            status: CashAccountsStatus.loading,
+          ),
         );
 
         await pumpWidget(tester);
@@ -117,7 +106,10 @@ void main() {
         whenListen(
           mockCashAccountsBloc,
           const Stream<CashAccountsState>.empty(),
-          initialState: CashAccountsState.loaded(accountBalances),
+          initialState: CashAccountsState(
+            status: CashAccountsStatus.loaded,
+            accountBalances: accountBalances,
+          ),
         );
 
         await pumpWidget(tester);
@@ -140,7 +132,10 @@ void main() {
           whenListen(
             mockCashAccountsBloc,
             const Stream<CashAccountsState>.empty(),
-            initialState: CashAccountsState.failure(AppException.test()),
+            initialState: CashAccountsState(
+              status: CashAccountsStatus.failure,
+              exception: AppException.test(),
+            ),
           );
 
           await pumpWidget(tester, locale: locale);
@@ -160,7 +155,10 @@ void main() {
           whenListen(
             mockCashAccountsBloc,
             const Stream<CashAccountsState>.empty(),
-            initialState: CashAccountsState.loaded(accountBalances),
+            initialState: CashAccountsState(
+              status: CashAccountsStatus.loaded,
+              accountBalances: accountBalances,
+            ),
           );
 
           await pumpWidget(tester, locale: locale);
@@ -179,7 +177,9 @@ void main() {
           whenListen(
             mockCashAccountsBloc,
             const Stream<CashAccountsState>.empty(),
-            initialState: const CashAccountsState.loaded([]),
+            initialState: const CashAccountsState(
+              status: CashAccountsStatus.loaded,
+            ),
           );
 
           await pumpWidget(tester, locale: locale);
@@ -198,7 +198,9 @@ void main() {
           whenListen(
             mockCashAccountsBloc,
             const Stream<CashAccountsState>.empty(),
-            initialState: const CashAccountsState.loaded([]),
+            initialState: const CashAccountsState(
+              status: CashAccountsStatus.loaded,
+            ),
           );
 
           await pumpWidget(tester, locale: locale);
@@ -279,6 +281,41 @@ void main() {
         expect(isPressed, isTrue);
       },
     );
+
+    testWidgets(
+      'add CashAccountsEvent.delete when DeleteCashButton pressed',
+      (tester) async {
+        whenListen(
+          mockCashAccountsBloc,
+          const Stream<CashAccountsState>.empty(),
+          initialState: CashAccountsState(
+            status: CashAccountsStatus.loaded,
+            accountBalances: accountBalances,
+          ),
+        );
+        await pumpWidget(tester);
+
+        final expectedAccount = accountBalances.first.account;
+
+        final deleteButtonFinder = find.byType(DeleteCashButton).first;
+        await tester.tap(deleteButtonFinder);
+        await tester.pump();
+
+        final confirmButtonFinder = find.descendant(
+          of: find.byType(DeleteCashConfirmationDialog),
+          matching: find.text('Delete'),
+        );
+        expect(confirmButtonFinder, findsOneWidget);
+        await tester.tap(confirmButtonFinder);
+        await tester.pump();
+
+        verify(
+          () => mockCashAccountsBloc.add(
+            CashAccountsEvent.delete(expectedAccount),
+          ),
+        ).called(1);
+      },
+    );
   });
 
   group('a11y', () {
@@ -291,7 +328,10 @@ void main() {
         (tester) async {
           whenListen(
             mockCashAccountsBloc,
-            Stream.fromIterable([const CashAccountsState.loading()]),
+            const Stream<CashAccountsState>.empty(),
+            initialState: const CashAccountsState(
+              status: CashAccountsStatus.loading,
+            ),
           );
 
           await pumpWidget(tester, locale: locale);
@@ -307,7 +347,10 @@ void main() {
           whenListen(
             mockCashAccountsBloc,
             const Stream<CashAccountsState>.empty(),
-            initialState: CashAccountsState.loaded(accountBalances),
+            initialState: CashAccountsState(
+              status: CashAccountsStatus.loaded,
+              accountBalances: accountBalances,
+            ),
           );
 
           await pumpWidget(tester, locale: locale);
@@ -326,7 +369,10 @@ void main() {
           whenListen(
             mockCashAccountsBloc,
             const Stream<CashAccountsState>.empty(),
-            initialState: CashAccountsState.loaded(accountBalances),
+            initialState: CashAccountsState(
+              status: CashAccountsStatus.loaded,
+              accountBalances: accountBalances,
+            ),
           );
 
           await pumpWidget(tester, locale: locale);

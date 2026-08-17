@@ -270,4 +270,44 @@ class FirestoreAccountRepository with Loggable implements IAccountRepository {
       );
     }
   }
+
+  @override
+  Future<AppResult<Null>> deleteByCode({
+    required String userId,
+    required String code,
+    required String traceId,
+  }) async {
+    try {
+      maybeThrowException(
+        this,
+        Invocation.method(#deleteByCode, null, {
+          #userId: userId,
+          #code: code,
+        }),
+      );
+      logInfo('Start update account data to isDeleted: true', traceId: traceId);
+      final doc = _db.doc('users/$userId/accounts/$code');
+      final snap = await doc.get();
+      if (!snap.exists) {
+        logInfo('Account not found. Do nothing', traceId: traceId);
+        return const AppResult.success(null);
+      }
+      logInfo('Account found. Set isDeleted: true', traceId: traceId);
+      final account = FirestoreAccount.fromJson(snap.data()!);
+      final updated = account.copyWith(isDeleted: true);
+      await doc.set(updated.toJson());
+      logInfo('Account updated', traceId: traceId);
+      return const AppResult.success(null);
+    } on FirebaseException catch (e) {
+      logError('$e', traceId: traceId, error: e);
+      return AppResult.failure(
+        AppException('$e', code: AppExceptionCode.serverException),
+      );
+    } on Exception catch (e, st) {
+      logError('$e', traceId: traceId, error: e, stackTrace: st);
+      return AppResult.failure(
+        AppException('$e', code: AppExceptionCode.internalException),
+      );
+    }
+  }
 }

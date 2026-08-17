@@ -109,4 +109,31 @@ class AppLocalizationsId extends AppLocalizations {
 
   @override
   String get cashAccountsListAddButtonSemantics => 'Tambah Kas Baru';
+
+  @override
+  String get commonConfirmLabel => 'OK';
+
+  @override
+  String get commonCancelLabel => 'Batal';
+
+  @override
+  String deleteCashAccountDialogTitle(String name) {
+    return 'Hapus $name?';
+  }
+
+  @override
+  String deleteCashAccountDialogContent(String name) {
+    return 'Data yang terikat dengan $name akan tetap ada. Tapi, $name tidak akan bisa digunakan lagi untuk transaksi selanjutnya';
+  }
+
+  @override
+  String get deleteCashAccountDialogConfirmLabel => 'Hapus';
+
+  @override
+  String get commonDelete => 'Hapus';
+
+  @override
+  String deleteCashAccountSemantics(String name) {
+    return 'Hapus $name';
+  }
 }

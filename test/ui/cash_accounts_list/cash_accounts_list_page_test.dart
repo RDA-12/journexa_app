@@ -30,7 +30,7 @@ void main() {
     whenListen(
       mockCashAccountsBloc,
       const Stream<CashAccountsState>.empty(),
-      initialState: const CashAccountsState.initial(),
+      initialState: const CashAccountsState(),
     );
     when(mockCashAccountsBloc.close).thenAnswer((_) async {});
   });

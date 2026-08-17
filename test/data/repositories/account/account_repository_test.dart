@@ -566,4 +566,105 @@ void main() {
       },
     );
   });
+
+  group('deleteByCode', () {
+    test(
+      'returns success when set isDeleted on correct account',
+      () async {
+        final expectedAccountCode = initialAccounts.last.code;
+
+        final result = await repository.deleteByCode(
+          userId: userId,
+          code: expectedAccountCode,
+          traceId: traceId,
+        );
+
+        expect(result, const AppResult.success(null));
+
+        final snap = await fakeFirestore
+            .collection('users/$userId/accounts')
+            .where('isDeleted', isEqualTo: true)
+            .get();
+        expect(snap.docs.length, 1);
+
+        final actual = FirestoreAccount.fromJson(snap.docs.first.data());
+        expect(actual.code, expectedAccountCode);
+        expect(actual.isDeleted, isTrue);
+      },
+    );
+
+    test(
+      'returns success when delete non-existing account',
+      () async {
+        const code = 'non-exist';
+
+        final result = await repository.deleteByCode(
+          userId: userId,
+          code: code,
+          traceId: traceId,
+        );
+        expect(result, const AppResult.success(null));
+
+        final snap = await fakeFirestore
+            .collection('users/$userId/accounts')
+            .where('isDeleted', isEqualTo: true)
+            .get();
+        expect(snap.docs.isEmpty, isTrue);
+      },
+    );
+
+    test(
+      'returns failure with serverException code '
+      'when firestore throws FirebaseException',
+      () async {
+        whenCalling(Invocation.method(#deleteByCode, null))
+            .on(repository)
+            .thenThrow(
+              FirebaseException(plugin: 'firestore'),
+            );
+
+        final result = await repository.deleteByCode(
+          userId: userId,
+          code: initialAccounts.last.code,
+          traceId: traceId,
+        );
+
+        expect(
+          result,
+          isA<AppResultFailure<void>>().having(
+            (e) => e.error.code,
+            'error.code',
+            AppExceptionCode.serverException,
+          ),
+        );
+      },
+    );
+
+    test(
+      'returns failure with internalException code '
+      'when unexpected Exception thrown',
+      () async {
+        whenCalling(Invocation.method(#deleteByCode, null))
+            .on(repository)
+            .thenThrow(
+              Exception(),
+            );
+
+        final result = await repository.deleteByCode(
+          userId: userId,
+          code: initialAccounts.last.code,
+          traceId: traceId,
+        );
+
+        expect(
+          result,
+          isA<AppResultFailure<void>>().having(
+            (e) => e.error.code,
+            'error.code',
+            AppExceptionCode.internalException,
+          ),
+        );
+      },
+    );
+  });
 }

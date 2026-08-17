@@ -5,12 +5,14 @@ import 'package:journexa_app/domain/entities/account.dart';
 import 'package:journexa_app/domain/entities/journal.dart';
 import 'package:journexa_app/ui/cash_accounts_list/widgets/cash_account_card.dart';
 import 'package:journexa_app/ui/cash_accounts_list/widgets/cash_accounts_list.dart';
+import 'package:journexa_app/ui/cash_accounts_list/widgets/delete_cash_button.dart';
+import 'package:journexa_app/ui/cash_accounts_list/widgets/delete_cash_confirmation_dialog.dart';
 
 import '../../util.dart';
 
 void main() {
   final cashBalances = List.generate(
-    5,
+    2,
     (idx) => AccountBalance(
       account: Account(
         code: '10.000${idx + 1}',
@@ -21,12 +23,16 @@ void main() {
     ),
   );
 
-  Future<void> pumpWidget(WidgetTester tester) async {
+  Future<void> pumpWidget(
+    WidgetTester tester, {
+    void Function(Account)? onDeletePressed,
+  }) async {
     return pumpForWidgetTest(
       tester,
       locale: const Locale('en'),
       widget: CashAccountsList(
         accountBalances: cashBalances,
+        onDeletePressed: onDeletePressed ?? (account) {},
       ),
     );
   }
@@ -49,6 +55,40 @@ void main() {
           final widget = cards[i].widget as CashAccountCard;
           expect(widget.accountBalance, accountBalance);
         }
+      },
+    );
+  });
+
+  group('Interactions', () {
+    testWidgets(
+      'calls onDeletePressed when CashAccountCard - DeleteCashButton '
+      'is pressed and user confirmed to delete it',
+      (tester) async {
+        Account? deletedAccount;
+        await pumpWidget(
+          tester,
+          onDeletePressed: (account) => deletedAccount = account,
+        );
+
+        final card = cashBalances.first;
+        final cardWidget = tester.widget<CashAccountCard>(
+          find.byType(CashAccountCard).first,
+        );
+        expect(cardWidget.accountBalance, card);
+
+        final deleteButtonFinder = find.byType(DeleteCashButton).first;
+        await tester.tap(deleteButtonFinder);
+        await tester.pump();
+
+        await tester.tap(
+          find.descendant(
+            of: find.byType(DeleteCashConfirmationDialog),
+            matching: find.text('Delete'),
+          ),
+        );
+        await tester.pump();
+
+        expect(deletedAccount, card.account);
       },
     );
   });

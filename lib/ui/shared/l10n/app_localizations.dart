@@ -289,6 +289,48 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Add New Cash'**
   String get cashAccountsListAddButtonSemantics;
+
+  /// Default label for confirm button
+  ///
+  /// In en, this message translates to:
+  /// **'OK'**
+  String get commonConfirmLabel;
+
+  /// Default label for cancel button
+  ///
+  /// In en, this message translates to:
+  /// **'Cancel'**
+  String get commonCancelLabel;
+
+  /// Title for delete cash account dialog
+  ///
+  /// In en, this message translates to:
+  /// **'Delete {name}?'**
+  String deleteCashAccountDialogTitle(String name);
+
+  /// Content for delete cash account dialog
+  ///
+  /// In en, this message translates to:
+  /// **'Data that related to {name} will still exist. But, {name} will no longer be able to be used for future transactions'**
+  String deleteCashAccountDialogContent(String name);
+
+  /// Confirm label for delete cash account dialog
+  ///
+  /// In en, this message translates to:
+  /// **'Delete'**
+  String get deleteCashAccountDialogConfirmLabel;
+
+  /// Default label for delete
+  ///
+  /// In en, this message translates to:
+  /// **'Delete'**
+  String get commonDelete;
+
+  /// Semantics label for delete cash account button
+  ///
+  /// In en, this message translates to:
+  /// **'Delete {name}'**
+  String deleteCashAccountSemantics(String name);
 }
 
 class _AppLocalizationsDelegate

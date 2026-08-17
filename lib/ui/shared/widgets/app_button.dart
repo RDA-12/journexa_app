@@ -40,6 +40,51 @@ enum ButtonSize {
   };
 }
 
+/// Color types for [AppButton]
+enum ButtonColorType {
+  /// Normal color type
+  normal,
+
+  /// Danger color type
+  danger;
+
+  /// Returns [Color] of foreground for this type
+  Color foreground(BuildContext context, ButtonType type) {
+    return switch (type) {
+      ButtonType.filled => switch (this) {
+        ButtonColorType.normal => context.color.onPrimary,
+        ButtonColorType.danger => context.color.onError,
+      },
+      ButtonType.outlined => switch (this) {
+        ButtonColorType.normal => context.color.onSurfaceVariant,
+        ButtonColorType.danger => context.color.error,
+      },
+    };
+  }
+
+  /// Returns [Color] of background for this type
+  Color background(BuildContext context, ButtonType type) {
+    return switch (type) {
+      ButtonType.filled => switch (this) {
+        ButtonColorType.normal => context.color.primary,
+        ButtonColorType.danger => context.color.error,
+      },
+      ButtonType.outlined => Colors.transparent,
+    };
+  }
+
+  /// Return [Color] of border for this type
+  Color? border(BuildContext context, ButtonType type) {
+    return switch (type) {
+      ButtonType.filled => null,
+      ButtonType.outlined => switch (this) {
+        ButtonColorType.normal => context.color.primary,
+        ButtonColorType.danger => context.color.error,
+      },
+    };
+  }
+}
+
 /// Button types for [AppButton]
 enum ButtonType {
   /// Outlined type, default
@@ -49,16 +94,25 @@ enum ButtonType {
   filled;
 
   /// Returns [ButtonStyle] for this type
-  ButtonStyle style(BuildContext context, ButtonSize size) => switch (this) {
+  ButtonStyle style(
+    BuildContext context,
+    ButtonSize size,
+    ButtonColorType color,
+  ) => switch (this) {
     ButtonType.outlined => OutlinedButton.styleFrom(
       minimumSize: size.minimumSize,
       textStyle: size.textStyle(context),
       padding: size.padding,
+      backgroundColor: color.background(context, this),
+      foregroundColor: color.foreground(context, this),
+      side: BorderSide(color: color.border(context, this)!),
     ),
     ButtonType.filled => FilledButton.styleFrom(
       minimumSize: size.minimumSize,
       textStyle: size.textStyle(context),
       padding: size.padding,
+      backgroundColor: color.background(context, this),
+      foregroundColor: color.foreground(context, this),
     ),
   };
 }
@@ -73,6 +127,7 @@ class AppButton extends StatelessWidget {
     required this.label,
     this.type = ButtonType.outlined,
     this.size = ButtonSize.small,
+    this.color = ButtonColorType.normal,
     this.icon,
     super.key,
   });
@@ -82,6 +137,9 @@ class AppButton extends StatelessWidget {
 
   /// Type of the Button
   final ButtonType type;
+
+  /// Color of the Button
+  final ButtonColorType color;
 
   /// Label for the Button
   final String label;
@@ -105,13 +163,13 @@ class AppButton extends StatelessWidget {
           label: Text(label),
           icon: SizedBox.square(dimension: size.iconSize, child: icon),
           iconAlignment: IconAlignment.start,
-          style: type.style(context, size),
+          style: type.style(context, size, color),
         );
       }
 
       return FilledButton(
         onPressed: onPressed,
-        style: type.style(context, size),
+        style: type.style(context, size, color),
         child: Text(label),
       );
     }
@@ -122,13 +180,13 @@ class AppButton extends StatelessWidget {
         label: Text(label),
         icon: SizedBox.square(dimension: size.iconSize, child: icon),
         iconAlignment: IconAlignment.start,
-        style: type.style(context, size),
+        style: type.style(context, size, color),
       );
     }
 
     return OutlinedButton(
       onPressed: onPressed,
-      style: type.style(context, size),
+      style: type.style(context, size, color),
       child: Text(label),
     );
   }

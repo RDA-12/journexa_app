@@ -41,12 +41,12 @@ class AppFormField extends StatelessWidget {
         fillColor: WidgetStateColor.resolveWith(
           (states) {
             if (states.contains(WidgetState.disabled)) {
-              return context.color.surfaceContainerHigh;
+              return context.color.surfaceContainerHighest;
             }
             if (states.contains(WidgetState.hovered)) {
-              return context.color.surfaceContainer;
+              return context.color.surfaceContainerHigh;
             }
-            return context.color.surfaceContainerLow;
+            return context.color.surfaceContainer;
           },
         ),
         filled: true,
@@ -54,6 +54,7 @@ class AppFormField extends StatelessWidget {
           (states) {
             final baseBorder = OutlineInputBorder(
               borderRadius: BorderRadius.circular(12),
+              borderSide: BorderSide.none,
             );
             if (states.contains(WidgetState.error)) {
               return baseBorder.copyWith(

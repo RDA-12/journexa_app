@@ -53,4 +53,47 @@ void main() {
       expect(find.byWidget(expectedBottom), findsOneWidget);
     });
   });
+
+  group('a11y', () {
+    testWidgets(
+      'has correct title semantically',
+      (tester) async {
+        await pumpWidget(tester, title: 'title');
+
+        expect(find.bySemanticsLabel('title'), findsOneWidget);
+      },
+    );
+
+    testWidgets(
+      'has header to true on title',
+      (tester) async {
+        await pumpWidget(tester, title: 'title');
+
+        expect(
+          tester.getSemantics(find.bySemanticsLabel('title')),
+          isSemantics(isHeader: true),
+        );
+      },
+    );
+
+    testWidgets(
+      'has correct description semantically',
+      (tester) async {
+        await pumpWidget(tester, description: 'description');
+
+        expect(find.bySemanticsLabel('description'), findsOneWidget);
+      },
+    );
+
+    testWidgets(
+      'has liveRegion true on the widget',
+      (tester) async {
+        await pumpWidget(tester, title: 'title');
+
+        final finder = find.byType(AppExceptionBox);
+        final semantics = tester.getSemantics(finder);
+        expect(semantics, isSemantics(isLiveRegion: true));
+      },
+    );
+  });
 }

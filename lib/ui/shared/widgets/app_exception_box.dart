@@ -29,37 +29,44 @@ class AppExceptionBox extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      spacing: 16,
-      mainAxisSize: MainAxisSize.min,
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: [
-        Column(
-          spacing: 8,
-          mainAxisSize: MainAxisSize.min,
-          mainAxisAlignment: MainAxisAlignment.center,
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            if (title != null)
-              Text(
-                title!,
-                textAlign: TextAlign.center,
-                style: context.text.titleMedium?.copyWith(
-                  fontWeight: FontWeight.bold,
+    return Semantics(
+      liveRegion: true,
+      container: true,
+      child: Column(
+        spacing: 16,
+        mainAxisSize: MainAxisSize.min,
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Column(
+            spacing: 8,
+            mainAxisSize: MainAxisSize.min,
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              if (title != null)
+                Semantics(
+                  header: true,
+                  child: Text(
+                    title!,
+                    textAlign: TextAlign.center,
+                    style: context.text.titleMedium?.copyWith(
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
                 ),
-              ),
-            if (description != null)
-              Text(
-                description!,
-                textAlign: TextAlign.center,
-                style: context.text.bodyMedium?.copyWith(
-                  fontWeight: FontWeight.bold,
+              if (description != null)
+                Text(
+                  description!,
+                  textAlign: TextAlign.center,
+                  style: context.text.bodyMedium?.copyWith(
+                    fontWeight: FontWeight.bold,
+                  ),
                 ),
-              ),
-          ],
-        ),
-        ?bottom,
-      ],
+            ],
+          ),
+          ?bottom,
+        ],
+      ),
     );
   }
 }

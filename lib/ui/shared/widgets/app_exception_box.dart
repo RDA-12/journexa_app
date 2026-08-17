@@ -58,9 +58,7 @@ class AppExceptionBox extends StatelessWidget {
                 Text(
                   description!,
                   textAlign: TextAlign.center,
-                  style: context.text.bodyMedium?.copyWith(
-                    fontWeight: FontWeight.bold,
-                  ),
+                  style: context.text.bodyMedium,
                 ),
             ],
           ),

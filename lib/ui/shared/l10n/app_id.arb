@@ -30,5 +30,6 @@
   "cashAccountsListTitle": "Daftar Kas",
   "cashAccountsListSearchLabel": "Cari Kas",
   "commonEmptyTitle": "Data Tidak Ditemukan",
-  "cashAccountsListEmptyDescription": "Tidak ada data kas yang ditemukan"
+  "cashAccountsListEmptyDescription": "Tidak ada data kas yang ditemukan",
+  "cashAccountsListAddButtonSemantics": "Tambah Kas Baru"
 }

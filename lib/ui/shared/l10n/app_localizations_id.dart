@@ -106,4 +106,7 @@ class AppLocalizationsId extends AppLocalizations {
   @override
   String get cashAccountsListEmptyDescription =>
       'Tidak ada data kas yang ditemukan';
+
+  @override
+  String get cashAccountsListAddButtonSemantics => 'Tambah Kas Baru';
 }

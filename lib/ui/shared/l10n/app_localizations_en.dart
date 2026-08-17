@@ -105,4 +105,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get cashAccountsListEmptyDescription => 'No cash data was found';
+
+  @override
+  String get cashAccountsListAddButtonSemantics => 'Add New Cash';
 }

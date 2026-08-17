@@ -135,5 +135,9 @@
   "cashAccountsListEmptyDescription": "No cash data was found",
   "@cashAccountsListEmptyDescription": {
     "description": "Description to be showed when cash data is empty"
+  },
+  "cashAccountsListAddButtonSemantics": "Add New Cash",
+  "@cashAccountsListAddButtonSemantics": {
+    "description": "Semantics label for add button on cash accounts list"
   }
 }

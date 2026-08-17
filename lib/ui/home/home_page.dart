@@ -18,7 +18,7 @@ class HomePage extends StatelessWidget {
             onPressed: () {
               unawaited(context.push('/cash-accounts'));
             },
-            label: 'Add Cash Account',
+            label: 'Cash Accounts',
           ),
         ],
       ),

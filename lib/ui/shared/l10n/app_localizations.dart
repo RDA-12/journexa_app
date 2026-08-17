@@ -283,6 +283,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'No cash data was found'**
   String get cashAccountsListEmptyDescription;
+
+  /// Semantics label for add button on cash accounts list
+  ///
+  /// In en, this message translates to:
+  /// **'Add New Cash'**
+  String get cashAccountsListAddButtonSemantics;
 }
 
 class _AppLocalizationsDelegate

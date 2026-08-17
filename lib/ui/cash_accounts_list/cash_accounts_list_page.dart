@@ -1,5 +1,8 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
 import 'package:journexa_app/di.dart';
 import 'package:journexa_app/domain/use_cases/account/get_all_cash_accounts.dart';
 import 'package:journexa_app/ui/cash_accounts_list/bloc/cash_accounts_bloc.dart';
@@ -35,7 +38,11 @@ class CashAccountsListPage extends StatelessWidget {
         ),
         body: Padding(
           padding: context.pagePadding,
-          child: const CashAccountsListView(),
+          child: CashAccountsListView(
+            onAddPressed: () {
+              unawaited(context.push('/add-cash-account'));
+            },
+          ),
         ),
       ),
     );

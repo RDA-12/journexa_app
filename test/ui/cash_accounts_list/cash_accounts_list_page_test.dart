@@ -1,12 +1,12 @@
-import 'dart:ui';
-
 import 'package:bloc_test/bloc_test.dart';
+import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:journexa_app/ui/cash_accounts_list/bloc/cash_accounts_bloc.dart';
 import 'package:journexa_app/ui/cash_accounts_list/cash_accounts_list_page.dart';
 import 'package:journexa_app/ui/cash_accounts_list/widgets/cash_accounts_list_view.dart';
 import 'package:journexa_app/ui/shared/l10n/l10n.dart';
+import 'package:journexa_app/ui/shared/widgets/app_icon_button.dart';
 import 'package:mocktail/mocktail.dart';
 
 import '../util.dart';
@@ -38,6 +38,7 @@ void main() {
   Future<void> pumpWidget(
     WidgetTester tester, {
     Locale locale = const Locale('en'),
+    Map<String, Widget> nextRoutes = const {},
   }) {
     return pumpForPageTest(
       tester,
@@ -46,6 +47,7 @@ void main() {
         '/cash-accounts': CashAccountsListPage(
           cashAccountsBloc: mockCashAccountsBloc,
         ),
+        ...nextRoutes,
       },
       locale: locale,
     );
@@ -93,6 +95,26 @@ void main() {
         await pumpWidget(tester);
 
         expect(find.byType(CashAccountsListView), findsOneWidget);
+      },
+    );
+  });
+
+  group('Interactions', () {
+    testWidgets(
+      'navigates to /cash-accounts when add button pressed',
+      (tester) async {
+        await pumpWidget(
+          tester,
+          nextRoutes: {
+            '/add-cash-account': const Placeholder(),
+          },
+        );
+
+        final finder = find.byType(AppIconButton);
+        await tester.tap(finder);
+        await tester.pumpAndSettle();
+
+        expect(find.byType(Placeholder), findsOneWidget);
       },
     );
   });

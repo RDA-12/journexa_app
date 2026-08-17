@@ -26,6 +26,7 @@ final expectedTranslations = {
     'searchLabel': 'Cari Kas',
     'emptyTitle': 'Data Tidak Ditemukan',
     'emptyDescription': 'Tidak ada data kas yang ditemukan',
+    'semanticsAddButton': 'Tambah Kas Baru',
   },
   'en': {
     'errorTitle': 'Failed to get cash data',
@@ -34,6 +35,7 @@ final expectedTranslations = {
     'searchLabel': 'Search Cash',
     'emptyTitle': 'Data Not Found',
     'emptyDescription': 'No cash data was found',
+    'semanticsAddButton': 'Add New Cash',
   },
 };
 
@@ -63,13 +65,16 @@ void main() {
   Future<void> pumpWidget(
     WidgetTester tester, {
     Locale locale = const Locale('en'),
+    VoidCallback? onAddPressed,
   }) {
     return pumpForWidgetTest(
       tester,
       locale: locale,
       widget: BlocProvider.value(
         value: mockCashAccountsBloc,
-        child: const CashAccountsListView(),
+        child: CashAccountsListView(
+          onAddPressed: onAddPressed,
+        ),
       ),
     );
   }
@@ -205,6 +210,21 @@ void main() {
         },
       );
     }
+
+    testWidgets(
+      'shows 1 AppIconButton with correct icon',
+      (tester) async {
+        await pumpWidget(tester);
+
+        final finder = find.byType(AppIconButton);
+        expect(finder, findsOneWidget);
+        final widget = tester.widget<AppIconButton>(finder);
+        expect(
+          widget.icon,
+          isA<Icon>().having((e) => e.icon, 'icon', Icons.add_rounded),
+        );
+      },
+    );
   });
 
   group('Interaction', () {
@@ -222,6 +242,41 @@ void main() {
             const CashAccountsEvent.search(query: 'query'),
           ),
         ).called(1);
+      },
+    );
+
+    for (final locale in AppLocalizations.supportedLocales) {
+      final expectedTooltip =
+          expectedTranslations[locale.languageCode]!['semanticsAddButton']!;
+      testWidgets(
+        'shows $expectedTooltip tooltip on long press to AppIconButton',
+        (tester) async {
+          await pumpWidget(tester, locale: locale);
+
+          final finder = find.byType(AppIconButton);
+          await tester.longPress(finder);
+          await tester.pump();
+
+          expect(find.text(expectedTooltip), findsOneWidget);
+        },
+      );
+    }
+
+    testWidgets(
+      'calls onAddPressed when AppIconButton pressed',
+      (tester) async {
+        var isPressed = false;
+        await pumpWidget(
+          tester,
+          onAddPressed: () {
+            isPressed = true;
+          },
+        );
+
+        final finder = find.byType(AppIconButton);
+        await tester.tap(finder);
+
+        expect(isPressed, isTrue);
       },
     );
   });
@@ -244,11 +299,8 @@ void main() {
           expect(find.bySemanticsLabel(expectedSemantics), findsOneWidget);
         },
       );
-    }
 
-    for (final locale in AppLocalizations.supportedLocales) {
-      final expectedSearchLabel =
-          expectedTranslations[locale.languageCode]!['searchLabel']!;
+      final expectedSearchLabel = expectedTranslation['searchLabel']!;
       testWidgets(
         'has $expectedSearchLabel label semantically',
         (tester) async {
@@ -264,6 +316,22 @@ void main() {
             find.bySemanticsLabel(expectedSearchLabel),
             findsOneWidget,
           );
+        },
+      );
+
+      final expectedTooltip = expectedTranslation['semanticsAddButton']!;
+      testWidgets(
+        'has $expectedTooltip tooltip',
+        (tester) async {
+          whenListen(
+            mockCashAccountsBloc,
+            const Stream<CashAccountsState>.empty(),
+            initialState: CashAccountsState.loaded(accountBalances),
+          );
+
+          await pumpWidget(tester, locale: locale);
+
+          expect(find.byTooltip(expectedTooltip), findsOneWidget);
         },
       );
     }

@@ -12,7 +12,13 @@ class CashAccountsListView extends StatefulWidget {
   ///
   /// It reacts to [CashAccountsBloc]'s states changes.
   /// So, make sure to provide that bloc in the widget tree.
-  const CashAccountsListView({super.key});
+  const CashAccountsListView({
+    this.onAddPressed,
+    super.key,
+  });
+
+  /// Invoked when user press add icon button
+  final VoidCallback? onAddPressed;
 
   @override
   State<CashAccountsListView> createState() => _CashAccountsListViewState();
@@ -47,10 +53,22 @@ class _CashAccountsListViewState extends State<CashAccountsListView> {
     return Column(
       spacing: 24,
       children: [
-        AppFormField(
-          controller: _queryController,
-          isRequired: false,
-          label: context.l10n.cashAccountsListSearchLabel,
+        Row(
+          spacing: 8,
+          children: [
+            Expanded(
+              child: AppFormField(
+                controller: _queryController,
+                isRequired: false,
+                label: context.l10n.cashAccountsListSearchLabel,
+              ),
+            ),
+            AppIconButton(
+              icon: const Icon(Icons.add_rounded),
+              onPressed: widget.onAddPressed,
+              semanticsLabel: context.l10n.cashAccountsListAddButtonSemantics,
+            ),
+          ],
         ),
         Expanded(
           child: BlocBuilder<CashAccountsBloc, CashAccountsState>(

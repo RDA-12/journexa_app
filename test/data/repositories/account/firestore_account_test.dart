@@ -12,6 +12,8 @@ void main() {
         type: AccountType.asset,
         parentCode: '10.0001',
         isSystemAccount: true,
+        // ignore: avoid_redundant_argument_values need explicit for testing
+        isDeleted: false,
       );
       final parent = Account(
         code: expected.parentCode!,
@@ -47,6 +49,7 @@ void main() {
         nameLower: expected.name.toLowerCase(),
         type: expected.type,
         isSystemAccount: expected.isSystemAccount,
+        isDeleted: true,
       );
 
       final result = firestoreAccount.toDomain();

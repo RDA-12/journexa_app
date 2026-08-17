@@ -14,6 +14,7 @@ sealed class FirestoreAccount with _$FirestoreAccount {
     required String nameLower,
     required AccountType type,
     @Default(false) bool isSystemAccount,
+    @Default(false) bool isDeleted,
     String? parentCode,
   }) = _FirestoreAccount;
   const FirestoreAccount._();

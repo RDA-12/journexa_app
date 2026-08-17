@@ -228,7 +228,9 @@ class FirestoreAccountRepository with Loggable implements IAccountRepository {
       }
       final parent = FirestoreAccount.fromJson(parentSnap.data()!).toDomain();
       final colRef = _db.collection('users/$userId/accounts');
-      var colQuery = colRef.where('parentCode', isEqualTo: parentCode);
+      var colQuery = colRef
+          .where('parentCode', isEqualTo: parentCode)
+          .where('isDeleted', isEqualTo: false);
       if (query != null) {
         colQuery = colQuery
             .where(

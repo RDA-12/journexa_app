@@ -535,5 +535,35 @@ void main() {
         );
       },
     );
+
+    test(
+      'only returns isDeleted false accounts',
+      () async {
+        final expectedAccounts = initialAccounts
+            .where((it) => it.parent != null)
+            .toList();
+        final deletedAccount = FirestoreAccount(
+          code: '10.0101',
+          name: 'deleted',
+          nameLower: 'deleted',
+          type: AccountType.asset,
+          parentCode: parent.code,
+          isDeleted: true,
+        );
+        await fakeFirestore
+            .doc(
+              'users/$userId/accounts/${deletedAccount.code}',
+            )
+            .set(deletedAccount.toJson());
+
+        final result = await repository.getByParentCode(
+          userId: userId,
+          parentCode: parent.code,
+          traceId: traceId,
+        );
+
+        expect(result, AppResult.success(expectedAccounts));
+      },
+    );
   });
 }

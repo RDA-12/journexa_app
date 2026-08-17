@@ -99,4 +99,11 @@ class AppLocalizationsId extends AppLocalizations {
 
   @override
   String get cashAccountsListSearchLabel => 'Cari Kas';
+
+  @override
+  String get commonEmptyTitle => 'Data Tidak Ditemukan';
+
+  @override
+  String get cashAccountsListEmptyDescription =>
+      'Tidak ada data kas yang ditemukan';
 }

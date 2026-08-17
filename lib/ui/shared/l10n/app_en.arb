@@ -127,5 +127,13 @@
   "cashAccountsListSearchLabel": "Search Cash",
   "@cashAccountsListSearchLabel": {
     "description": "Label for search input on cash accounts list"
+  },
+  "commonEmptyTitle": "Data Not Found",
+  "@commonEmptyTitle": {
+    "description": "Default title to shows data not found"
+  },
+  "cashAccountsListEmptyDescription": "No cash data was found",
+  "@cashAccountsListEmptyDescription": {
+    "description": "Description to be showed when cash data is empty"
   }
 }

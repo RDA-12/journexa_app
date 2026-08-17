@@ -10,6 +10,7 @@ import 'package:journexa_app/ui/cash_accounts_list/bloc/cash_accounts_bloc.dart'
 import 'package:journexa_app/ui/cash_accounts_list/widgets/cash_accounts_list_view.dart';
 import 'package:journexa_app/ui/cash_accounts_list/widgets/widgets.dart';
 import 'package:journexa_app/ui/shared/l10n/app_localizations.dart';
+import 'package:journexa_app/ui/shared/widgets/app_empty_box.dart';
 import 'package:journexa_app/ui/shared/widgets/widgets.dart';
 import 'package:mocktail/mocktail.dart';
 
@@ -23,12 +24,16 @@ final expectedTranslations = {
     'errorDesc': 'Terjadi kesalahan internal',
     'semanticsLoading': 'Memuat data kas',
     'searchLabel': 'Cari Kas',
+    'emptyTitle': 'Data Tidak Ditemukan',
+    'emptyDescription': 'Tidak ada data kas yang ditemukan',
   },
   'en': {
     'errorTitle': 'Failed to get cash data',
     'errorDesc': 'Internal exception error',
     'semanticsLoading': 'Loading cash data',
     'searchLabel': 'Search Cash',
+    'emptyTitle': 'Data Not Found',
+    'emptyDescription': 'No cash data was found',
   },
 };
 
@@ -142,11 +147,8 @@ void main() {
           expect(widget.description, expectedDesc);
         },
       );
-    }
 
-    for (final locale in AppLocalizations.supportedLocales) {
-      final expectedSearchLabel =
-          expectedTranslations[locale.languageCode]!['searchLabel']!;
+      final expectedSearchLabel = expectedTranslation['searchLabel']!;
       testWidgets(
         'shows input with $expectedSearchLabel label',
         (tester) async {
@@ -162,6 +164,44 @@ void main() {
           expect(finder, findsOneWidget);
           final widget = tester.widget<AppFormField>(finder);
           expect(widget.label, expectedSearchLabel);
+        },
+      );
+
+      final expectedEmptyTitle = expectedTranslation['emptyTitle']!;
+      testWidgets(
+        'shows AppEmptyBox with $expectedEmptyTitle title',
+        (tester) async {
+          whenListen(
+            mockCashAccountsBloc,
+            const Stream<CashAccountsState>.empty(),
+            initialState: const CashAccountsState.loaded([]),
+          );
+
+          await pumpWidget(tester, locale: locale);
+
+          final finder = find.byType(AppEmptyBox);
+          expect(finder, findsOneWidget);
+          final widget = tester.widget<AppEmptyBox>(finder);
+          expect(widget.title, expectedEmptyTitle);
+        },
+      );
+
+      final expectedEmptyDesc = expectedTranslation['emptyDescription']!;
+      testWidgets(
+        'shows AppEmptyBox with $expectedEmptyDesc description',
+        (tester) async {
+          whenListen(
+            mockCashAccountsBloc,
+            const Stream<CashAccountsState>.empty(),
+            initialState: const CashAccountsState.loaded([]),
+          );
+
+          await pumpWidget(tester, locale: locale);
+
+          final finder = find.byType(AppEmptyBox);
+          expect(finder, findsOneWidget);
+          final widget = tester.widget<AppEmptyBox>(finder);
+          expect(widget.description, expectedEmptyDesc);
         },
       );
     }

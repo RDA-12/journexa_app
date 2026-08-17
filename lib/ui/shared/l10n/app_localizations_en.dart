@@ -99,4 +99,10 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get cashAccountsListSearchLabel => 'Search Cash';
+
+  @override
+  String get commonEmptyTitle => 'Data Not Found';
+
+  @override
+  String get cashAccountsListEmptyDescription => 'No cash data was found';
 }

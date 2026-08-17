@@ -28,5 +28,7 @@
   "cashAccountsListFailureTitle": "Gagal mendapatkan data kas",
   "cashAccountsListLoadingSemantics": "Memuat data kas",
   "cashAccountsListTitle": "Daftar Kas",
-  "cashAccountsListSearchLabel": "Cari Kas"
+  "cashAccountsListSearchLabel": "Cari Kas",
+  "commonEmptyTitle": "Data Tidak Ditemukan",
+  "cashAccountsListEmptyDescription": "Tidak ada data kas yang ditemukan"
 }

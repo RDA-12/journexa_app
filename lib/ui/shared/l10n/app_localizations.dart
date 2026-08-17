@@ -271,6 +271,18 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Search Cash'**
   String get cashAccountsListSearchLabel;
+
+  /// Default title to shows data not found
+  ///
+  /// In en, this message translates to:
+  /// **'Data Not Found'**
+  String get commonEmptyTitle;
+
+  /// Description to be showed when cash data is empty
+  ///
+  /// In en, this message translates to:
+  /// **'No cash data was found'**
+  String get cashAccountsListEmptyDescription;
 }
 
 class _AppLocalizationsDelegate

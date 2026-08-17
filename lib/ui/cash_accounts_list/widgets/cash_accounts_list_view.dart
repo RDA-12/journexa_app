@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:journexa_app/ui/cash_accounts_list/bloc/cash_accounts_bloc.dart';
 import 'package:journexa_app/ui/cash_accounts_list/widgets/cash_accounts_list.dart';
 import 'package:journexa_app/ui/shared/l10n/l10n.dart';
+import 'package:journexa_app/ui/shared/widgets/app_empty_box.dart';
 import 'package:journexa_app/ui/shared/widgets/widgets.dart';
 
 /// Creates [Widget] that reacts to [CashAccountsBloc]'s state changes
@@ -51,32 +52,43 @@ class _CashAccountsListViewState extends State<CashAccountsListView> {
           isRequired: false,
           label: context.l10n.cashAccountsListSearchLabel,
         ),
-        BlocBuilder<CashAccountsBloc, CashAccountsState>(
-          builder: (context, state) {
-            return state.maybeWhen(
-              orElse: () => Center(
-                child: LoadingIndicator(
-                  size: 32,
-                  semanticsLabel: context.l10n.cashAccountsListLoadingSemantics,
+        Expanded(
+          child: BlocBuilder<CashAccountsBloc, CashAccountsState>(
+            builder: (context, state) {
+              return state.maybeWhen(
+                orElse: () => Center(
+                  child: LoadingIndicator(
+                    size: 32,
+                    semanticsLabel:
+                        context.l10n.cashAccountsListLoadingSemantics,
+                  ),
                 ),
-              ),
-              failure: (exc) {
-                return Center(
-                  child: AppExceptionBox(
-                    title: context.l10n.cashAccountsListFailureTitle,
-                    description: exc.code.toLocalizedString(context),
-                  ),
-                );
-              },
-              loaded: (accountBalances) {
-                return Expanded(
-                  child: CashAccountsList(
+                failure: (exc) {
+                  return Center(
+                    child: AppExceptionBox(
+                      title: context.l10n.cashAccountsListFailureTitle,
+                      description: exc.code.toLocalizedString(context),
+                    ),
+                  );
+                },
+                loaded: (accountBalances) {
+                  if (accountBalances.isEmpty) {
+                    return Center(
+                      child: AppEmptyBox(
+                        title: context.l10n.commonEmptyTitle,
+                        description:
+                            context.l10n.cashAccountsListEmptyDescription,
+                      ),
+                    );
+                  }
+
+                  return CashAccountsList(
                     accountBalances: accountBalances,
-                  ),
-                );
-              },
-            );
-          },
+                  );
+                },
+              );
+            },
+          ),
         ),
       ],
     );

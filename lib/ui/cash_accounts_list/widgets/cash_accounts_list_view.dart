@@ -106,7 +106,7 @@ class _CashAccountsListViewState extends State<CashAccountsListView> {
               }
 
               return CashAccountsList(
-                accountBalances: state.accountBalances,
+                data: state.accountBalances,
                 onDeletePressed: (account) {
                   context.read<CashAccountsBloc>().add(
                     CashAccountsEvent.delete(account),

@@ -77,7 +77,9 @@ class CashAccountsBloc extends Bloc<CashAccountsEvent, CashAccountsState>
         emit(
           state.copyWith(
             status: CashAccountsStatus.loaded,
-            accountBalances: accountBalances,
+            accountBalances: accountBalances
+                .map((it) => AccountBalanceWithState(accountBalance: it))
+                .toList(),
           ),
         );
       },
@@ -102,7 +104,7 @@ class CashAccountsBloc extends Bloc<CashAccountsEvent, CashAccountsState>
   }) async {
     final traceId = generateUid();
     final accountIdx = state.accountBalances.indexWhere(
-      (it) => it.account.code == account.code,
+      (it) => it.accountBalance.account.code == account.code,
     );
     if (accountIdx == -1) {
       logInfo(
@@ -113,12 +115,19 @@ class CashAccountsBloc extends Bloc<CashAccountsEvent, CashAccountsState>
       return;
     }
 
-    final newAccounts = List<AccountBalance>.from(state.accountBalances);
     logInfo(
-      'Starts deleting account with code ${account.code}. Emit deleting status',
+      'Starts deleting account with code ${account.code}. '
+      'Emit new accountBalances with isDeleting = true on the Account',
       traceId: traceId,
     );
-    emit(state.copyWith(status: CashAccountsStatus.deleting));
+    emit(
+      state.copyWith(
+        accountBalances: state.accountBalances.map((it) {
+          final isDeleting = it.accountBalance.account.code == account.code;
+          return it.copyWith(isDeleting: isDeleting);
+        }).toList(),
+      ),
+    );
     final result = await _deleteAccount.execute(
       DeleteAccountParams(account: account),
       traceId: traceId,
@@ -130,11 +139,12 @@ class CashAccountsBloc extends Bloc<CashAccountsEvent, CashAccountsState>
           'Filter account from accountBalances',
           traceId: traceId,
         );
-        newAccounts.removeAt(accountIdx);
         emit(
           state.copyWith(
             status: CashAccountsStatus.loaded,
-            accountBalances: newAccounts,
+            accountBalances: state.accountBalances
+                .where((it) => it.accountBalance.account.code != account.code)
+                .toList(),
           ),
         );
       },
@@ -147,6 +157,11 @@ class CashAccountsBloc extends Bloc<CashAccountsEvent, CashAccountsState>
           state.copyWith(
             status: CashAccountsStatus.deleteFailure,
             deleteException: exc,
+            accountBalances: state.accountBalances.map((it) {
+              final processed = it.accountBalance.account.code == account.code;
+              if (!processed) return it;
+              return it.copyWith(isDeleting: false);
+            }).toList(),
           ),
         );
       },

@@ -9,9 +9,9 @@ import 'package:journexa_app/shared/app_exception.dart';
 import 'package:journexa_app/ui/cash_accounts_list/bloc/cash_accounts_bloc.dart';
 import 'package:journexa_app/ui/cash_accounts_list/widgets/cash_accounts_list_view.dart';
 import 'package:journexa_app/ui/cash_accounts_list/widgets/delete_cash_button.dart';
-import 'package:journexa_app/ui/cash_accounts_list/widgets/delete_cash_confirmation_dialog.dart';
 import 'package:journexa_app/ui/cash_accounts_list/widgets/widgets.dart';
 import 'package:journexa_app/ui/shared/l10n/app_localizations.dart';
+import 'package:journexa_app/ui/shared/widgets/app_confirmation_dialog.dart';
 import 'package:journexa_app/ui/shared/widgets/app_empty_box.dart';
 import 'package:journexa_app/ui/shared/widgets/widgets.dart';
 import 'package:mocktail/mocktail.dart';
@@ -52,6 +52,9 @@ void main() {
       balance: Decimal.zero,
     );
   });
+  final accountBalancesWithState = accountBalances
+      .map((it) => AccountBalanceWithState(accountBalance: it))
+      .toList();
 
   late CashAccountsBloc mockCashAccountsBloc;
 
@@ -108,7 +111,7 @@ void main() {
           const Stream<CashAccountsState>.empty(),
           initialState: CashAccountsState(
             status: CashAccountsStatus.loaded,
-            accountBalances: accountBalances,
+            accountBalances: accountBalancesWithState,
           ),
         );
 
@@ -117,7 +120,7 @@ void main() {
         final finder = find.byType(CashAccountsList);
         expect(finder, findsOneWidget);
         final widget = tester.widget<CashAccountsList>(finder);
-        expect(widget.accountBalances, accountBalances);
+        expect(widget.data, accountBalancesWithState);
       },
     );
 
@@ -157,7 +160,7 @@ void main() {
             const Stream<CashAccountsState>.empty(),
             initialState: CashAccountsState(
               status: CashAccountsStatus.loaded,
-              accountBalances: accountBalances,
+              accountBalances: accountBalancesWithState,
             ),
           );
 
@@ -290,7 +293,7 @@ void main() {
           const Stream<CashAccountsState>.empty(),
           initialState: CashAccountsState(
             status: CashAccountsStatus.loaded,
-            accountBalances: accountBalances,
+            accountBalances: accountBalancesWithState,
           ),
         );
         await pumpWidget(tester);
@@ -302,7 +305,7 @@ void main() {
         await tester.pump();
 
         final confirmButtonFinder = find.descendant(
-          of: find.byType(DeleteCashConfirmationDialog),
+          of: find.byType(AppConfirmationDialog),
           matching: find.text('Delete'),
         );
         expect(confirmButtonFinder, findsOneWidget);
@@ -349,7 +352,7 @@ void main() {
             const Stream<CashAccountsState>.empty(),
             initialState: CashAccountsState(
               status: CashAccountsStatus.loaded,
-              accountBalances: accountBalances,
+              accountBalances: accountBalancesWithState,
             ),
           );
 
@@ -371,7 +374,7 @@ void main() {
             const Stream<CashAccountsState>.empty(),
             initialState: CashAccountsState(
               status: CashAccountsStatus.loaded,
-              accountBalances: accountBalances,
+              accountBalances: accountBalancesWithState,
             ),
           );
 

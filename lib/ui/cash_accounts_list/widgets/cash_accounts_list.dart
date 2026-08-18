@@ -1,20 +1,20 @@
 import 'package:flutter/material.dart';
 import 'package:journexa_app/domain/entities/account.dart';
-import 'package:journexa_app/domain/entities/journal.dart';
+import 'package:journexa_app/ui/cash_accounts_list/bloc/cash_accounts_bloc.dart';
 import 'package:journexa_app/ui/cash_accounts_list/widgets/cash_account_card.dart';
 
 /// Creates new [ListView] contains list of [CashAccountCard]
-/// based on [accountBalances]
+/// based on [data]
 class CashAccountsList extends StatelessWidget {
   /// Creates new [CashAccountsList]
   const CashAccountsList({
-    required this.accountBalances,
+    required this.data,
     required this.onDeletePressed,
     super.key,
   });
 
-  /// List of [AccountBalance] to be showed
-  final List<AccountBalance> accountBalances;
+  /// List of data to be showed
+  final List<AccountBalanceWithState> data;
 
   /// Invoke when delete button is pressed in [CashAccountCard]
   ///
@@ -24,12 +24,15 @@ class CashAccountsList extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ListView.separated(
-      itemCount: accountBalances.length,
+      itemCount: data.length,
       separatorBuilder: (_, _) => const SizedBox(height: 8),
       itemBuilder: (context, index) {
-        final accountBalance = accountBalances[index];
+        final item = data[index];
+        final accountBalance = item.accountBalance;
+        final isDeleting = item.isDeleting;
         return CashAccountCard(
           accountBalance: accountBalance,
+          isDeleting: isDeleting,
           onDeletePressed: () {
             onDeletePressed(accountBalance.account);
           },

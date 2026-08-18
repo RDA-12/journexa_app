@@ -31,6 +31,13 @@ void main() {
       balance: Decimal.fromInt(idx * 1000),
     );
   });
+  final cashAccountsWithState = cashAccounts.map(
+    (it) {
+      return AccountBalanceWithState(
+        accountBalance: it,
+      );
+    },
+  ).toList();
 
   late GetAllCashAccountsUseCase mockGetAllCashAccounts;
   late UidGenerator mockUidGenerator;
@@ -89,7 +96,7 @@ void main() {
         const CashAccountsState(status: CashAccountsStatus.loading),
         CashAccountsState(
           status: CashAccountsStatus.loaded,
-          accountBalances: cashAccounts,
+          accountBalances: cashAccountsWithState,
         ),
       ],
       verify: (_) {
@@ -149,7 +156,7 @@ void main() {
         const CashAccountsState(status: CashAccountsStatus.loading),
         CashAccountsState(
           status: CashAccountsStatus.loaded,
-          accountBalances: cashAccounts,
+          accountBalances: cashAccountsWithState,
         ),
       ],
       verify: (_) {
@@ -173,7 +180,7 @@ void main() {
         const CashAccountsState(status: CashAccountsStatus.loading),
         CashAccountsState(
           status: CashAccountsStatus.loaded,
-          accountBalances: cashAccounts,
+          accountBalances: cashAccountsWithState,
         ),
       ],
       verify: (_) {
@@ -223,12 +230,12 @@ void main() {
 
   group('delete', () {
     blocTest<CashAccountsBloc, CashAccountsState>(
-      'emits [deleting, loaded with correct accountBalances] '
+      'emits [new accountBalances, loaded new accountBalances] '
       'when deleteAccountUseCase returns success',
       seed: () {
         return CashAccountsState(
           status: CashAccountsStatus.loaded,
-          accountBalances: cashAccounts,
+          accountBalances: cashAccountsWithState,
         );
       },
       build: buildBloc,
@@ -238,12 +245,17 @@ void main() {
       wait: kDefaultDebounceDuration,
       expect: () => <CashAccountsState>[
         CashAccountsState(
-          status: CashAccountsStatus.deleting,
-          accountBalances: cashAccounts,
+          status: CashAccountsStatus.loaded,
+          accountBalances: cashAccountsWithState.map((it) {
+            final isDeleting =
+                it.accountBalance.account.code ==
+                cashAccounts.first.account.code;
+            return it.copyWith(isDeleting: isDeleting);
+          }).toList(),
         ),
         CashAccountsState(
           status: CashAccountsStatus.loaded,
-          accountBalances: cashAccounts.sublist(1),
+          accountBalances: cashAccountsWithState.sublist(1),
         ),
       ],
       verify: (_) {
@@ -257,7 +269,7 @@ void main() {
     );
 
     blocTest<CashAccountsBloc, CashAccountsState>(
-      'emits [deleting, deleteFailure] '
+      'emits [new accountBalances, deleteFailure] '
       'when deleteAccountUseCase returns failure',
       setUp: () {
         when(
@@ -272,7 +284,7 @@ void main() {
       seed: () {
         return CashAccountsState(
           status: CashAccountsStatus.loaded,
-          accountBalances: cashAccounts,
+          accountBalances: cashAccountsWithState,
         );
       },
       build: buildBloc,
@@ -282,13 +294,18 @@ void main() {
       wait: kDefaultDebounceDuration,
       expect: () => <CashAccountsState>[
         CashAccountsState(
-          status: CashAccountsStatus.deleting,
-          accountBalances: cashAccounts,
+          status: CashAccountsStatus.loaded,
+          accountBalances: cashAccountsWithState.map((it) {
+            final isDeleting =
+                it.accountBalance.account.code ==
+                cashAccounts.first.account.code;
+            return it.copyWith(isDeleting: isDeleting);
+          }).toList(),
         ),
         CashAccountsState(
           status: CashAccountsStatus.deleteFailure,
           deleteException: AppException.test(),
-          accountBalances: cashAccounts,
+          accountBalances: cashAccountsWithState,
         ),
       ],
       verify: (_) {
@@ -322,7 +339,7 @@ void main() {
       seed: () {
         return CashAccountsState(
           status: CashAccountsStatus.loaded,
-          accountBalances: cashAccounts,
+          accountBalances: cashAccountsWithState,
         );
       },
       build: buildBloc,
@@ -340,24 +357,38 @@ void main() {
           CashAccountsEvent.delete(cashAccounts[1].account),
         ),
       wait: kDefaultDebounceDuration,
-      expect: () => <CashAccountsState>[
-        CashAccountsState(
-          status: CashAccountsStatus.deleting,
-          accountBalances: cashAccounts,
-        ),
-        CashAccountsState(
-          status: CashAccountsStatus.loaded,
-          accountBalances: cashAccounts.sublist(1),
-        ),
-        CashAccountsState(
-          status: CashAccountsStatus.deleting,
-          accountBalances: cashAccounts.sublist(1),
-        ),
-        CashAccountsState(
-          status: CashAccountsStatus.loaded,
-          accountBalances: cashAccounts.sublist(2),
-        ),
-      ],
+      expect: () {
+        final firstDeletionAccounts = cashAccountsWithState.map((it) {
+          final isDeleting =
+              it.accountBalance.account.code == cashAccounts.first.account.code;
+          return it.copyWith(isDeleting: isDeleting);
+        }).toList();
+        final secondDeletionAccounts = firstDeletionAccounts.sublist(1).map(
+          (it) {
+            final isDeleting =
+                it.accountBalance.account.code == cashAccounts[1].account.code;
+            return it.copyWith(isDeleting: isDeleting);
+          },
+        ).toList();
+        return <CashAccountsState>[
+          CashAccountsState(
+            status: CashAccountsStatus.loaded,
+            accountBalances: firstDeletionAccounts,
+          ),
+          CashAccountsState(
+            status: CashAccountsStatus.loaded,
+            accountBalances: firstDeletionAccounts.sublist(1),
+          ),
+          CashAccountsState(
+            status: CashAccountsStatus.loaded,
+            accountBalances: secondDeletionAccounts,
+          ),
+          CashAccountsState(
+            status: CashAccountsStatus.loaded,
+            accountBalances: secondDeletionAccounts.sublist(1),
+          ),
+        ];
+      },
       verify: (_) {
         verify(
           () => mockDeleteAccountUseCase.execute(

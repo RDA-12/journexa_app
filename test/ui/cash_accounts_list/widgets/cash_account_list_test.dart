@@ -3,24 +3,31 @@ import 'package:flutter/widgets.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:journexa_app/domain/entities/account.dart';
 import 'package:journexa_app/domain/entities/journal.dart';
+import 'package:journexa_app/ui/cash_accounts_list/bloc/cash_accounts_bloc.dart';
 import 'package:journexa_app/ui/cash_accounts_list/widgets/cash_account_card.dart';
 import 'package:journexa_app/ui/cash_accounts_list/widgets/cash_accounts_list.dart';
 import 'package:journexa_app/ui/cash_accounts_list/widgets/delete_cash_button.dart';
-import 'package:journexa_app/ui/cash_accounts_list/widgets/delete_cash_confirmation_dialog.dart';
+import 'package:journexa_app/ui/shared/widgets/app_confirmation_dialog.dart';
 
 import '../../util.dart';
 
 void main() {
-  final cashBalances = List.generate(
+  final data = List.generate(
     2,
-    (idx) => AccountBalance(
-      account: Account(
-        code: '10.000${idx + 1}',
-        name: 'asset $idx',
-        type: AccountType.asset,
-      ),
-      balance: Decimal.fromInt(idx * 1000),
-    ),
+    (idx) {
+      final accountBalance = AccountBalance(
+        account: Account(
+          code: '10.000${idx + 1}',
+          name: 'asset $idx',
+          type: AccountType.asset,
+        ),
+        balance: Decimal.fromInt(idx * 1000),
+      );
+      return AccountBalanceWithState(
+        accountBalance: accountBalance,
+        isDeleting: idx.isEven,
+      );
+    },
   );
 
   Future<void> pumpWidget(
@@ -31,7 +38,7 @@ void main() {
       tester,
       locale: const Locale('en'),
       widget: CashAccountsList(
-        accountBalances: cashBalances,
+        data: data,
         onDeletePressed: onDeletePressed ?? (account) {},
       ),
     );
@@ -46,14 +53,17 @@ void main() {
         final cardFinder = find.byType(CashAccountCard);
         expect(
           cardFinder,
-          findsNWidgets(cashBalances.length),
+          findsNWidgets(data.length),
         );
 
         final cards = cardFinder.evaluate().toList();
         for (var i = 0; i < cards.length; i++) {
-          final accountBalance = cashBalances[i];
+          final item = data[i];
+          final accountBalance = item.accountBalance;
+          final isDeleting = item.isDeleting;
           final widget = cards[i].widget as CashAccountCard;
           expect(widget.accountBalance, accountBalance);
+          expect(widget.isDeleting, isDeleting);
         }
       },
     );
@@ -70,25 +80,29 @@ void main() {
           onDeletePressed: (account) => deletedAccount = account,
         );
 
-        final card = cashBalances.first;
+        final deleteableData = data.last;
+        final deleteableCardFinder = find.byType(CashAccountCard).last;
         final cardWidget = tester.widget<CashAccountCard>(
-          find.byType(CashAccountCard).first,
+          deleteableCardFinder,
         );
-        expect(cardWidget.accountBalance, card);
+        expect(cardWidget.accountBalance, deleteableData.accountBalance);
 
-        final deleteButtonFinder = find.byType(DeleteCashButton).first;
+        final deleteButtonFinder = find.descendant(
+          of: deleteableCardFinder,
+          matching: find.byType(DeleteCashButton),
+        );
         await tester.tap(deleteButtonFinder);
         await tester.pump();
 
         await tester.tap(
           find.descendant(
-            of: find.byType(DeleteCashConfirmationDialog),
+            of: find.byType(AppConfirmationDialog),
             matching: find.text('Delete'),
           ),
         );
         await tester.pump();
 
-        expect(deletedAccount, card.account);
+        expect(deletedAccount, deleteableData.accountBalance.account);
       },
     );
   });

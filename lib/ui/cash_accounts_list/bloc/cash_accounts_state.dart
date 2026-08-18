@@ -14,11 +14,20 @@ enum CashAccountsStatus {
   /// Failure status for load and search event
   failure,
 
-  /// Loading status for delete event
-  deleting,
-
   /// Failure status for delete event
   deleteFailure,
+}
+
+/// Extends [AccountBalance] to includes state for UI
+@freezed
+sealed class AccountBalanceWithState with _$AccountBalanceWithState {
+  const factory AccountBalanceWithState({
+    /// The [AccountBalance]
+    required AccountBalance accountBalance,
+
+    /// Whether this [AccountBalance] is in deleting process or not
+    @Default(false) bool isDeleting,
+  }) = _AccountBalanceWithState;
 }
 
 /// States of [CashAccountsBloc]
@@ -30,7 +39,7 @@ sealed class CashAccountsState with _$CashAccountsState {
     @Default(CashAccountsStatus.initial) CashAccountsStatus status,
 
     /// List of cash accounts with their balances
-    @Default([]) List<AccountBalance> accountBalances,
+    @Default([]) List<AccountBalanceWithState> accountBalances,
 
     /// Exception that occurred when load or search event failed
     AppException? exception,

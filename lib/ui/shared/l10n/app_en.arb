@@ -199,5 +199,19 @@
         "example": "dompet hitam"
       }
     }
+  },
+  "cashAccountCardSemantics": "{name}, Balance {balance}",
+  "@cashAccountCardSemantics": {
+    "description": "Semantics label for CashAccountCard widget",
+    "placeholders": {
+      "name": {
+        "type": "String",
+        "example": "Dompet Hitam"
+      },
+      "balance": {
+        "type": "String",
+        "example": "Rp 10,000"
+      }
+    }
   }
 }

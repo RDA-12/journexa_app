@@ -40,5 +40,6 @@
   "commonDelete": "Hapus",
   "deleteCashAccountSemantics": "Hapus {name}",
   "commonDeletingLabel": "Menghapus",
-  "deleteCashAccountDeletingSemanticsLabel": "Menghapus {name}"
+  "deleteCashAccountDeletingSemanticsLabel": "Menghapus {name}",
+  "cashAccountCardSemantics": "{name}, Saldo {balance}"
 }

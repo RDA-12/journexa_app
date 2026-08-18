@@ -343,6 +343,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Deleting {name}'**
   String deleteCashAccountDeletingSemanticsLabel(String name);
+
+  /// Semantics label for CashAccountCard widget
+  ///
+  /// In en, this message translates to:
+  /// **'{name}, Balance {balance}'**
+  String cashAccountCardSemantics(String name, String balance);
 }
 
 class _AppLocalizationsDelegate

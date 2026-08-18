@@ -143,4 +143,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String deleteCashAccountDeletingSemanticsLabel(String name) {
     return 'Deleting $name';
   }
+
+  @override
+  String cashAccountCardSemantics(String name, String balance) {
+    return '$name, Balance $balance';
+  }
 }

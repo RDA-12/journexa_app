@@ -5,18 +5,18 @@ import 'package:journexa_app/domain/entities/account.dart';
 import 'package:journexa_app/domain/entities/journal.dart';
 import 'package:journexa_app/ui/cash_accounts_list/widgets/cash_account_card.dart';
 import 'package:journexa_app/ui/cash_accounts_list/widgets/delete_cash_button.dart';
-import 'package:journexa_app/ui/cash_accounts_list/widgets/delete_cash_confirmation_dialog.dart';
 import 'package:journexa_app/ui/shared/l10n/l10n.dart';
+import 'package:journexa_app/ui/shared/widgets/app_confirmation_dialog.dart';
 
 import '../../util.dart';
 
 final expectedTranslations = {
   'id': {
-    'semantics': 'Dompet Hitam, Rp 10.000',
+    'semantics': 'Dompet Hitam, Saldo Rp 10.000',
     'balance': 'Rp 10.000',
   },
   'en': {
-    'semantics': 'Dompet Hitam, Rp 10,000',
+    'semantics': 'Dompet Hitam, Balance Rp 10,000',
     'balance': 'Rp 10,000',
   },
 };
@@ -107,7 +107,7 @@ void main() {
 
         await tester.tap(
           find.descendant(
-            of: find.byType(DeleteCashConfirmationDialog),
+            of: find.byType(AppConfirmationDialog),
             matching: find.text('Delete'),
           ),
         );

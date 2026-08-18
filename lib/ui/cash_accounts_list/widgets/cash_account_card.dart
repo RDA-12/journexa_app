@@ -31,40 +31,42 @@ class CashAccountCard extends StatelessWidget {
     final languageCode = context.languageCode;
     final balanceString = balance.idrCurrency(languageCode);
 
-    return Semantics(
-      container: true,
-      label: '${account.name}, $balanceString',
-      child: ExcludeSemantics(
-        child: AppCard(
-          leading: CircleAvatar(
-            backgroundColor: context.color.primaryContainer,
-            radius: 24,
-            child: Text(account.name.initials),
+    return AppCard(
+      leading: CircleAvatar(
+        backgroundColor: context.color.primaryContainer,
+        radius: 24,
+        child: Text(account.name.initials),
+      ),
+      bottom: Row(
+        mainAxisAlignment: MainAxisAlignment.end,
+        children: [
+          DeleteCashButton(
+            account: account,
+            onDeletePressed: onDeletePressed,
           ),
-          bottom: Row(
-            mainAxisAlignment: MainAxisAlignment.end,
-            children: [
-              DeleteCashButton(
-                account: account,
-                onDeletePressed: onDeletePressed,
-              ),
-            ],
-          ),
-          child: Column(
-            spacing: 4,
-            mainAxisAlignment: MainAxisAlignment.center,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                account.name,
-                style: context.text.bodySmall,
-              ),
-              Text(
-                balanceString,
-                style: context.text.headlineSmall,
-              ),
-            ],
-          ),
+        ],
+      ),
+      child: Semantics(
+        container: true,
+        excludeSemantics: true,
+        label: context.l10n.cashAccountCardSemantics(
+          account.name,
+          balanceString,
+        ),
+        child: Column(
+          spacing: 4,
+          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              account.name,
+              style: context.text.bodySmall,
+            ),
+            Text(
+              balanceString,
+              style: context.text.headlineSmall,
+            ),
+          ],
         ),
       ),
     );

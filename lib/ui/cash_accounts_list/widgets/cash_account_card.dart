@@ -13,11 +13,15 @@ class CashAccountCard extends StatelessWidget {
   const CashAccountCard({
     required this.onDeletePressed,
     required this.accountBalance,
+    this.isDeleting = false,
     super.key,
   });
 
   /// [AccountBalance] data that will be showed
   final AccountBalance accountBalance;
+
+  /// Whether this account is in process of deleting
+  final bool isDeleting;
 
   /// Invoke when [DeleteCashButton] is pressed.
   ///
@@ -42,6 +46,7 @@ class CashAccountCard extends StatelessWidget {
         children: [
           DeleteCashButton(
             account: account,
+            isDeleting: isDeleting,
             onDeletePressed: onDeletePressed,
           ),
         ],

@@ -34,6 +34,7 @@ void main() {
   Future<void> pumpWidget(
     WidgetTester tester, {
     Locale locale = const Locale('en'),
+    bool isDeleting = false,
     VoidCallback? onDeletePressed,
   }) async {
     return pumpForWidgetTest(
@@ -41,6 +42,7 @@ void main() {
       locale: locale,
       widget: CashAccountCard(
         accountBalance: accountBalance,
+        isDeleting: isDeleting,
         onDeletePressed: onDeletePressed ?? () {},
       ),
     );
@@ -84,6 +86,18 @@ void main() {
         expect(finder, findsOneWidget);
         final widget = tester.widget<DeleteCashButton>(finder);
         expect(widget.account, accountBalance.account);
+      },
+    );
+
+    testWidgets(
+      'shows DeleteCashButton as disabled when isDeleting is true',
+      (tester) async {
+        await pumpWidget(tester, isDeleting: true);
+
+        final finder = find.byType(DeleteCashButton);
+        expect(finder, findsOneWidget);
+        final widget = tester.widget<DeleteCashButton>(finder);
+        expect(widget.isDeleting, isTrue);
       },
     );
   });

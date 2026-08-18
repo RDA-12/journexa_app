@@ -1,5 +1,3 @@
-import 'dart:async';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
@@ -34,17 +32,30 @@ class CashAccountsListPage extends StatelessWidget {
                   deleteAccount: getIt<DeleteAccountUseCase>(),
                 ))
             ..add(const CashAccountsEvent.load()),
-      child: Scaffold(
-        appBar: AppBar(
-          title: Text(context.l10n.cashAccountsListTitle),
-        ),
-        body: Padding(
-          padding: context.pagePadding,
-          child: CashAccountsListView(
-            onAddPressed: () {
-              unawaited(context.push('/add-cash-account'));
-            },
-          ),
+      child: const _CashAccountListView(),
+    );
+  }
+}
+
+class _CashAccountListView extends StatelessWidget {
+  const _CashAccountListView();
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: Text(context.l10n.cashAccountsListTitle),
+      ),
+      body: Padding(
+        padding: context.pagePadding,
+        child: CashAccountsListView(
+          onAddPressed: () async {
+            await context.push('/add-cash-account');
+            if (!context.mounted) return;
+            context.read<CashAccountsBloc>().add(
+              const CashAccountsEvent.load(),
+            );
+          },
         ),
       ),
     );

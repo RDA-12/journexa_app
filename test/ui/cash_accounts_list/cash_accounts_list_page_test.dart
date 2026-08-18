@@ -1,5 +1,5 @@
 import 'package:bloc_test/bloc_test.dart';
-import 'package:flutter/widgets.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:journexa_app/ui/cash_accounts_list/bloc/cash_accounts_bloc.dart';
@@ -132,5 +132,38 @@ void main() {
         },
       );
     }
+  });
+
+  group('Side Effects', () {
+    testWidgets(
+      'add CashAccountsBlocEvent.load '
+      'after going back from add cash account page',
+      (tester) async {
+        await pumpWidget(
+          tester,
+          nextRoutes: {
+            '/add-cash-account': Scaffold(
+              key: const ValueKey('add-cash-page'),
+              appBar: AppBar(),
+            ),
+          },
+        );
+
+        final finder = find.byType(AppIconButton);
+        await tester.tap(finder);
+        await tester.pumpAndSettle();
+
+        expect(find.byKey(const ValueKey('add-cash-page')), findsOneWidget);
+
+        await tester.tap(find.backButton());
+        await tester.pumpAndSettle();
+
+        expect(find.byKey(const ValueKey('add-cash-page')), findsNothing);
+
+        verify(
+          () => mockCashAccountsBloc.add(const CashAccountsEvent.load()),
+        ).called(2);
+      },
+    );
   });
 }

@@ -136,4 +136,12 @@ class AppLocalizationsId extends AppLocalizations {
   String deleteCashAccountSemantics(String name) {
     return 'Hapus $name';
   }
+
+  @override
+  String get commonDeletingLabel => 'Menghapus';
+
+  @override
+  String deleteCashAccountDeletingSemanticsLabel(String name) {
+    return 'Menghapus $name';
+  }
 }

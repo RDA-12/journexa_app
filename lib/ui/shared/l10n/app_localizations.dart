@@ -331,6 +331,18 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Delete {name}'**
   String deleteCashAccountSemantics(String name);
+
+  /// Default label when deleting entity is in progress
+  ///
+  /// In en, this message translates to:
+  /// **'Deleting'**
+  String get commonDeletingLabel;
+
+  /// Semantics label for button when cash account deletion is in progress
+  ///
+  /// In en, this message translates to:
+  /// **'Deleting {name}'**
+  String deleteCashAccountDeletingSemanticsLabel(String name);
 }
 
 class _AppLocalizationsDelegate

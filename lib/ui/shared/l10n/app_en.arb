@@ -185,5 +185,19 @@
         "example": "dompet hitam"
       }
     }
+  },
+  "commonDeletingLabel": "Deleting",
+  "@commonDeletingLabel": {
+    "description": "Default label when deleting entity is in progress"
+  },
+  "deleteCashAccountDeletingSemanticsLabel": "Deleting {name}",
+  "@deleteCashAccountDeletingSemanticsLabel": {
+    "description": "Semantics label for button when cash account deletion is in progress",
+    "placeholders": {
+      "name": {
+        "type": "String",
+        "example": "dompet hitam"
+      }
+    }
   }
 }

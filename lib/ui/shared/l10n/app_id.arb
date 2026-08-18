@@ -38,5 +38,7 @@
   "deleteCashAccountDialogContent": "Data yang terikat dengan {name} akan tetap ada. Tapi, {name} tidak akan bisa digunakan lagi untuk transaksi selanjutnya",
   "deleteCashAccountDialogConfirmLabel": "Hapus",
   "commonDelete": "Hapus",
-  "deleteCashAccountSemantics": "Hapus {name}"
+  "deleteCashAccountSemantics": "Hapus {name}",
+  "commonDeletingLabel": "Menghapus",
+  "deleteCashAccountDeletingSemanticsLabel": "Menghapus {name}"
 }

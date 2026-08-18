@@ -2,8 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:journexa_app/domain/entities/account.dart';
 import 'package:journexa_app/ui/cash_accounts_list/widgets/delete_cash_button.dart';
-import 'package:journexa_app/ui/cash_accounts_list/widgets/delete_cash_confirmation_dialog.dart';
 import 'package:journexa_app/ui/shared/l10n/app_localizations.dart';
+import 'package:journexa_app/ui/shared/widgets/app_confirmation_dialog.dart';
+import 'package:journexa_app/ui/shared/widgets/loading_indicator.dart';
 
 import '../../util.dart';
 
@@ -11,10 +12,14 @@ final expectedTranslations = {
   'id': {
     'label': 'Hapus',
     'semanticsLabel': 'Hapus dompet hitam',
+    'deletingLabel': 'Menghapus',
+    'deletingSemanticsLabel': 'Menghapus dompet hitam',
   },
   'en': {
     'label': 'Delete',
     'semanticsLabel': 'Delete dompet hitam',
+    'deletingLabel': 'Deleting',
+    'deletingSemanticsLabel': 'Deleting dompet hitam',
   },
 };
 
@@ -29,12 +34,14 @@ void main() {
     WidgetTester tester, {
     Locale locale = const Locale('en'),
     VoidCallback? onDeletePressed,
+    bool isDeleting = false,
   }) {
     return pumpForWidgetTest(
       tester,
       locale: locale,
       widget: DeleteCashButton(
         account: account,
+        isDeleting: isDeleting,
         onDeletePressed: onDeletePressed,
       ),
     );
@@ -52,6 +59,18 @@ void main() {
           expect(find.text(expectedLabel), findsOneWidget);
         },
       );
+
+      final expectedDeletingLabel =
+          expectedTranslations[locale.languageCode]!['deletingLabel']!;
+      testWidgets(
+        'shows $expectedDeletingLabel label for ${locale.languageCode} '
+        'when isDeleting true',
+        (tester) async {
+          await pumpWidget(tester, locale: locale, isDeleting: true);
+
+          expect(find.text(expectedDeletingLabel), findsOneWidget);
+        },
+      );
     }
 
     testWidgets(
@@ -62,23 +81,36 @@ void main() {
         expect(find.byIcon(Icons.delete_rounded), findsOneWidget);
       },
     );
+
+    testWidgets(
+      'disabled and shows LoadingIndicator when isDeleting true',
+      (tester) async {
+        await pumpWidget(tester, isDeleting: true);
+
+        final finder = find.byType(FilledButton);
+        final widget = tester.widget<FilledButton>(finder);
+        expect(widget.enabled, isFalse);
+
+        expect(find.byType(LoadingIndicator), findsOneWidget);
+      },
+    );
   });
 
   group('Interactions', () {
     testWidgets(
-      'shows DeleteCashConfirmationDialog when pressed',
+      'shows AppConfirmationDialog when pressed',
       (tester) async {
         await pumpWidget(tester);
 
         await tester.tap(find.byType(DeleteCashButton));
         await tester.pump();
 
-        expect(find.byType(DeleteCashConfirmationDialog), findsOneWidget);
+        expect(find.byType(AppConfirmationDialog), findsOneWidget);
       },
     );
 
     testWidgets(
-      'calls onDeletePressed when DeleteCashConfirmationDialog confirmed',
+      'calls onDeletePressed when AppConfirmationDialog confirmed',
       (tester) async {
         var deleted = false;
         await pumpWidget(
@@ -91,17 +123,17 @@ void main() {
         await tester.tap(find.byType(DeleteCashButton));
         await tester.pump();
 
-        expect(find.byType(DeleteCashConfirmationDialog), findsOneWidget);
+        expect(find.byType(AppConfirmationDialog), findsOneWidget);
 
         await tester.tap(
           find.descendant(
-            of: find.byType(DeleteCashConfirmationDialog),
+            of: find.byType(AppConfirmationDialog),
             matching: find.text('Delete'),
           ),
         );
         await tester.pump();
 
-        expect(find.byType(DeleteCashConfirmationDialog), findsNothing);
+        expect(find.byType(AppConfirmationDialog), findsNothing);
         expect(deleted, isTrue);
       },
     );
@@ -119,6 +151,21 @@ void main() {
 
           expect(
             find.bySemanticsLabel(expectedSemanticsLabel),
+            findsOneWidget,
+          );
+        },
+      );
+
+      final expectedDeletingSemanticsLabel =
+          expectedTranslations[locale.languageCode]!['deletingSemanticsLabel']!;
+      testWidgets(
+        'has $expectedDeletingSemanticsLabel label semantically '
+        'for ${locale.languageCode} when isDeleting true',
+        (tester) async {
+          await pumpWidget(tester, locale: locale, isDeleting: true);
+
+          expect(
+            find.bySemanticsLabel(expectedDeletingSemanticsLabel),
             findsOneWidget,
           );
         },

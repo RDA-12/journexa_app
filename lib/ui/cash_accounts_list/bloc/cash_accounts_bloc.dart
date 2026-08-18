@@ -145,6 +145,7 @@ class CashAccountsBloc extends Bloc<CashAccountsEvent, CashAccountsState>
             accountBalances: state.accountBalances
                 .where((it) => it.accountBalance.account.code != account.code)
                 .toList(),
+            recentlyDeletedAccount: account,
           ),
         );
       },

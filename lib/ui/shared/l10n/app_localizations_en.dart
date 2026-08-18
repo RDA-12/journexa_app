@@ -148,4 +148,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String cashAccountCardSemantics(String name, String balance) {
     return '$name, Balance $balance';
   }
+
+  @override
+  String deleteAccountToastMessage(String name) {
+    return '$name has been deleted';
+  }
 }

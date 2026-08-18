@@ -384,5 +384,11 @@ void main() {
         },
       );
     }
+
+    // TODO(RDA): expect to shows toast semantically on delete succeeded/failed
+  });
+
+  group('Side Effects', () {
+    // TODO(RDA): expect to shows toast on delete succeeded/failed
   });
 }

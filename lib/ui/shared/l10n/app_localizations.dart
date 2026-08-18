@@ -349,6 +349,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'{name}, Balance {balance}'**
   String cashAccountCardSemantics(String name, String balance);
+
+  /// Message to be showed on toast when Account has been deleted
+  ///
+  /// In en, this message translates to:
+  /// **'{name} has been deleted'**
+  String deleteAccountToastMessage(String name);
 }
 
 class _AppLocalizationsDelegate

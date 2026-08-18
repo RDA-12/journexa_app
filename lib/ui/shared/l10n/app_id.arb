@@ -41,5 +41,6 @@
   "deleteCashAccountSemantics": "Hapus {name}",
   "commonDeletingLabel": "Menghapus",
   "deleteCashAccountDeletingSemanticsLabel": "Menghapus {name}",
-  "cashAccountCardSemantics": "{name}, Saldo {balance}"
+  "cashAccountCardSemantics": "{name}, Saldo {balance}",
+  "deleteAccountToastMessage": "{name} telah dihapus"
 }

@@ -41,6 +41,9 @@ sealed class CashAccountsState with _$CashAccountsState {
     /// List of cash accounts with their balances
     @Default([]) List<AccountBalanceWithState> accountBalances,
 
+    /// Recently deleted [Account]
+    Account? recentlyDeletedAccount,
+
     /// Exception that occurred when load or search event failed
     AppException? exception,
 

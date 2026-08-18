@@ -5,6 +5,7 @@ import 'package:journexa_app/ui/cash_accounts_list/widgets/cash_accounts_list.da
 import 'package:journexa_app/ui/shared/l10n/l10n.dart';
 import 'package:journexa_app/ui/shared/widgets/app_empty_box.dart';
 import 'package:journexa_app/ui/shared/widgets/widgets.dart';
+import 'package:toastification/toastification.dart';
 
 /// Creates [Widget] that reacts to [CashAccountsBloc]'s state changes
 class CashAccountsListView extends StatefulWidget {
@@ -50,70 +51,98 @@ class _CashAccountsListViewState extends State<CashAccountsListView> {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      spacing: 24,
-      children: [
-        Row(
-          spacing: 8,
-          children: [
-            Expanded(
-              child: AppFormField(
-                controller: _queryController,
-                isRequired: false,
-                label: context.l10n.cashAccountsListSearchLabel,
-              ),
-            ),
-            AppIconButton(
-              icon: const Icon(Icons.add_rounded),
-              onPressed: widget.onAddPressed,
-              semanticsLabel: context.l10n.cashAccountsListAddButtonSemantics,
-            ),
-          ],
-        ),
-        Expanded(
-          child: BlocBuilder<CashAccountsBloc, CashAccountsState>(
-            buildWhen: (p, c) => c.status == CashAccountsStatus.loading,
-            builder: (context, state) {
-              if (state.status == CashAccountsStatus.loading) {
-                return Center(
-                  child: LoadingIndicator(
-                    size: 32,
-                    semanticsLabel:
-                        context.l10n.cashAccountsListLoadingSemantics,
-                  ),
-                );
-              }
-              if (state.status == CashAccountsStatus.failure) {
-                return Center(
-                  child: AppExceptionBox(
-                    title: context.l10n.cashAccountsListFailureTitle,
-                    description: state.exception!.code.toLocalizedString(
-                      context,
-                    ),
-                  ),
-                );
-              }
-              if (state.accountBalances.isEmpty) {
-                return Center(
-                  child: AppEmptyBox(
-                    title: context.l10n.commonEmptyTitle,
-                    description: context.l10n.cashAccountsListEmptyDescription,
-                  ),
-                );
-              }
-
-              return CashAccountsList(
-                data: state.accountBalances,
-                onDeletePressed: (account) {
-                  context.read<CashAccountsBloc>().add(
-                    CashAccountsEvent.delete(account),
-                  );
-                },
-              );
-            },
+    return BlocListener<CashAccountsBloc, CashAccountsState>(
+      listenWhen: (p, c) =>
+          p.recentlyDeletedAccount != c.recentlyDeletedAccount,
+      listener: (context, state) {
+        if (state.recentlyDeletedAccount == null) return;
+        context.showToast(
+          type: ToastificationType.info,
+          autoClose: true,
+          description: context.l10n.deleteAccountToastMessage(
+            state.recentlyDeletedAccount!.name,
           ),
-        ),
-      ],
+        );
+      },
+      child: Column(
+        spacing: 24,
+        children: [
+          Row(
+            spacing: 8,
+            children: [
+              Expanded(
+                child: AppFormField(
+                  controller: _queryController,
+                  isRequired: false,
+                  label: context.l10n.cashAccountsListSearchLabel,
+                ),
+              ),
+              AppIconButton(
+                icon: const Icon(Icons.add_rounded),
+                onPressed: widget.onAddPressed,
+                semanticsLabel: context.l10n.cashAccountsListAddButtonSemantics,
+              ),
+            ],
+          ),
+          Expanded(
+            child: BlocBuilder<CashAccountsBloc, CashAccountsState>(
+              buildWhen: (p, c) =>
+                  p.status == CashAccountsStatus.loading ||
+                  c.status == CashAccountsStatus.loading,
+              builder: (context, state) {
+                if (state.status == CashAccountsStatus.loading) {
+                  return Center(
+                    child: LoadingIndicator(
+                      size: 32,
+                      semanticsLabel:
+                          context.l10n.cashAccountsListLoadingSemantics,
+                    ),
+                  );
+                }
+                if (state.status == CashAccountsStatus.failure) {
+                  return Center(
+                    child: AppExceptionBox(
+                      title: context.l10n.cashAccountsListFailureTitle,
+                      description: state.exception!.code.toLocalizedString(
+                        context,
+                      ),
+                    ),
+                  );
+                }
+                if (state.accountBalances.isEmpty) {
+                  return Center(
+                    child: AppEmptyBox(
+                      title: context.l10n.commonEmptyTitle,
+                      description:
+                          context.l10n.cashAccountsListEmptyDescription,
+                    ),
+                  );
+                }
+
+                return BlocSelector<
+                  CashAccountsBloc,
+                  CashAccountsState,
+                  List<AccountBalanceWithState>
+                >(
+                  selector: (state) {
+                    return state.accountBalances;
+                  },
+                  builder: (context, accountBalances) {
+                    return CashAccountsList(
+                      data: accountBalances,
+                      onDeletePressed: (account) {
+                        context.read<CashAccountsBloc>().add(
+                          CashAccountsEvent.delete(account),
+                        );
+                      },
+                    );
+                  },
+                );
+              },
+            ),
+          ),
+        ],
+      ),
     );
   }
 }

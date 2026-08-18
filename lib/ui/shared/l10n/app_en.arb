@@ -213,5 +213,15 @@
         "example": "Rp 10,000"
       }
     }
+  },
+  "deleteAccountToastMessage": "{name} has been deleted",
+  "@deleteAccountToastMessage": {
+    "description": "Message to be showed on toast when Account has been deleted",
+    "placeholders": {
+      "name": {
+        "type": "String",
+        "example": "Dompet Hitam"
+      }
+    }
   }
 }

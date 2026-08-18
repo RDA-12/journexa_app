@@ -230,7 +230,8 @@ void main() {
 
   group('delete', () {
     blocTest<CashAccountsBloc, CashAccountsState>(
-      'emits [new accountBalances, loaded new accountBalances] '
+      'emits [new accountBalances, '
+      'loaded new accountBalances and recentlyDeletedAccount] '
       'when deleteAccountUseCase returns success',
       seed: () {
         return CashAccountsState(
@@ -256,6 +257,7 @@ void main() {
         CashAccountsState(
           status: CashAccountsStatus.loaded,
           accountBalances: cashAccountsWithState.sublist(1),
+          recentlyDeletedAccount: cashAccounts.first.account,
         ),
       ],
       verify: (_) {
@@ -378,14 +380,17 @@ void main() {
           CashAccountsState(
             status: CashAccountsStatus.loaded,
             accountBalances: firstDeletionAccounts.sublist(1),
+            recentlyDeletedAccount: cashAccounts.first.account,
           ),
           CashAccountsState(
             status: CashAccountsStatus.loaded,
             accountBalances: secondDeletionAccounts,
+            recentlyDeletedAccount: cashAccounts.first.account,
           ),
           CashAccountsState(
             status: CashAccountsStatus.loaded,
             accountBalances: secondDeletionAccounts.sublist(1),
+            recentlyDeletedAccount: cashAccounts[1].account,
           ),
         ];
       },

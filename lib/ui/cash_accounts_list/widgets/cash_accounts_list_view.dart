@@ -72,10 +72,7 @@ class _CashAccountsListViewState extends State<CashAccountsListView> {
         ),
         Expanded(
           child: BlocBuilder<CashAccountsBloc, CashAccountsState>(
-            buildWhen: (p, c) =>
-                c.status == CashAccountsStatus.loading ||
-                p.accountBalances != c.accountBalances ||
-                p.exception != c.exception,
+            buildWhen: (p, c) => c.status == CashAccountsStatus.loading,
             builder: (context, state) {
               if (state.status == CashAccountsStatus.loading) {
                 return Center(
@@ -86,7 +83,7 @@ class _CashAccountsListViewState extends State<CashAccountsListView> {
                   ),
                 );
               }
-              if (state.exception != null) {
+              if (state.status == CashAccountsStatus.failure) {
                 return Center(
                   child: AppExceptionBox(
                     title: context.l10n.cashAccountsListFailureTitle,

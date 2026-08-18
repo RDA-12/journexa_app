@@ -109,15 +109,6 @@ class _CashAccountsListViewState extends State<CashAccountsListView> {
                     ),
                   );
                 }
-                if (state.accountBalances.isEmpty) {
-                  return Center(
-                    child: AppEmptyBox(
-                      title: context.l10n.commonEmptyTitle,
-                      description:
-                          context.l10n.cashAccountsListEmptyDescription,
-                    ),
-                  );
-                }
 
                 return BlocSelector<
                   CashAccountsBloc,
@@ -128,6 +119,16 @@ class _CashAccountsListViewState extends State<CashAccountsListView> {
                     return state.accountBalances;
                   },
                   builder: (context, accountBalances) {
+                    if (accountBalances.isEmpty) {
+                      return Center(
+                        child: AppEmptyBox(
+                          title: context.l10n.commonEmptyTitle,
+                          description:
+                              context.l10n.cashAccountsListEmptyDescription,
+                        ),
+                      );
+                    }
+
                     return CashAccountsList(
                       data: accountBalances,
                       onDeletePressed: (account) {

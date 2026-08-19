@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:journexa_app/shared/app_exception.dart';
 import 'package:journexa_app/ui/cash_accounts_list/bloc/cash_accounts_bloc.dart';
 import 'package:journexa_app/ui/cash_accounts_list/widgets/cash_accounts_list.dart';
 import 'package:journexa_app/ui/shared/l10n/l10n.dart';
@@ -69,6 +70,22 @@ class _CashAccountsListViewState extends State<CashAccountsListView> {
         ),
         BlocListener<CashAccountsBloc, CashAccountsState>(
           listenWhen: (p, c) =>
+              p.status == CashAccountsStatus.loading &&
+              c.status == CashAccountsStatus.deleteFailure,
+          listener: (context, state) {
+            final exc = state.exception;
+            context.showToast(
+              type: ToastificationType.error,
+              autoClose: true,
+              title: context.l10n.deleteCashAccountToastFailureTitle,
+              description:
+                  exc?.code.toLocalizedString(context) ??
+                  AppExceptionCode.internalException.toLocalizedString(context),
+            );
+          },
+        ),
+        BlocListener<CashAccountsBloc, CashAccountsState>(
+          listenWhen: (p, c) =>
               p.recentlyUpdatedAccount != c.recentlyUpdatedAccount,
           listener: (context, state) {
             if (state.recentlyUpdatedAccount == null) return;
@@ -78,6 +95,22 @@ class _CashAccountsListViewState extends State<CashAccountsListView> {
               description: context.l10n.updateAccountToastMessage(
                 state.recentlyUpdatedAccount!.name,
               ),
+            );
+          },
+        ),
+        BlocListener<CashAccountsBloc, CashAccountsState>(
+          listenWhen: (p, c) =>
+              p.status == CashAccountsStatus.loading &&
+              c.status == CashAccountsStatus.updateFailure,
+          listener: (context, state) {
+            final exc = state.exception;
+            context.showToast(
+              type: ToastificationType.error,
+              autoClose: true,
+              title: context.l10n.updateCashAccountToastFailureTitle,
+              description:
+                  exc?.code.toLocalizedString(context) ??
+                  AppExceptionCode.internalException.toLocalizedString(context),
             );
           },
         ),

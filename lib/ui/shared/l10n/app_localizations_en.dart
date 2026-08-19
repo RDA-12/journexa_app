@@ -174,4 +174,10 @@ class AppLocalizationsEn extends AppLocalizations {
   String updateAccountToastMessage(String name) {
     return '$name has been updated';
   }
+
+  @override
+  String get deleteCashAccountToastFailureTitle => 'Failed to delete cash data';
+
+  @override
+  String get updateCashAccountToastFailureTitle => 'Failed to update cash data';
 }

@@ -261,5 +261,13 @@
         "example": "Dompet Hitam"
       }
     }
+  },
+  "deleteCashAccountToastFailureTitle": "Failed to delete cash data",
+  "@deleteCashAccountToastFailureTitle": {
+    "description": "Title for error state in delete cash account toast"
+  },
+  "updateCashAccountToastFailureTitle": "Failed to update cash data",
+  "@updateCashAccountToastFailureTitle": {
+    "description": "Title for error state in update cash account toast"
   }
 }

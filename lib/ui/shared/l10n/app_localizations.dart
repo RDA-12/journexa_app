@@ -385,6 +385,18 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'{name} has been updated'**
   String updateAccountToastMessage(String name);
+
+  /// Title for error state in delete cash account toast
+  ///
+  /// In en, this message translates to:
+  /// **'Failed to delete cash data'**
+  String get deleteCashAccountToastFailureTitle;
+
+  /// Title for error state in update cash account toast
+  ///
+  /// In en, this message translates to:
+  /// **'Failed to update cash data'**
+  String get updateCashAccountToastFailureTitle;
 }
 
 class _AppLocalizationsDelegate

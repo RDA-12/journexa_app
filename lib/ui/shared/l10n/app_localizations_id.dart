@@ -175,4 +175,10 @@ class AppLocalizationsId extends AppLocalizations {
   String updateAccountToastMessage(String name) {
     return '$name telah diperbarui';
   }
+
+  @override
+  String get deleteCashAccountToastFailureTitle => 'Gagal menghapus data kas';
+
+  @override
+  String get updateCashAccountToastFailureTitle => 'Gagal memperbarui data kas';
 }

@@ -47,5 +47,7 @@
   "commonUpdatingLabel": "Memperbarui",
   "updateCashAccountSemantics": "Perbarui {name}",
   "updateCashAccountUpdatingSemanticsLabel": "Memperbarui {name}",
-  "updateAccountToastMessage": "{name} telah diperbarui"
+  "updateAccountToastMessage": "{name} telah diperbarui",
+  "deleteCashAccountToastFailureTitle": "Gagal menghapus data kas",
+  "updateCashAccountToastFailureTitle": "Gagal memperbarui data kas"
 }

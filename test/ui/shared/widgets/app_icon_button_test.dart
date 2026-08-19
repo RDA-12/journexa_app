@@ -33,6 +33,21 @@ void main() {
         expect(find.byWidget(expectedIcon), findsOneWidget);
       },
     );
+
+    testWidgets(
+      'shows semanticsLabel when long pressed',
+      (tester) async {
+        const semanticsLabel = 'semantics';
+
+        await pumpWidget(tester, semanticsLabel: semanticsLabel);
+
+        final finder = find.byType(AppIconButton);
+        await tester.longPress(finder);
+        await tester.pump();
+
+        expect(find.text(semanticsLabel), findsOneWidget);
+      },
+    );
   });
 
   group('Interactions', () {

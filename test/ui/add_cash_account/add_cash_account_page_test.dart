@@ -7,7 +7,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:journexa_app/ui/add_cash_account/add_cash_account_page.dart';
 import 'package:journexa_app/ui/add_cash_account/bloc/add_cash_account_bloc.dart';
-import 'package:journexa_app/ui/add_cash_account/widgets/add_cash_account_form.dart';
+import 'package:journexa_app/ui/add_cash_account/widgets/add_cash_account_view.dart';
 import 'package:journexa_app/ui/shared/l10n/l10n.dart';
 import 'package:mocktail/mocktail.dart';
 
@@ -66,11 +66,11 @@ void main() {
     );
 
     testWidgets(
-      'has AddCashAccountForm',
+      'has AddCashAccountView',
       (tester) async {
         await pumpWidget(tester);
 
-        expect(find.byType(AddCashAccountForm), findsOneWidget);
+        expect(find.byType(AddCashAccountView), findsOneWidget);
       },
     );
 

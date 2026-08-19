@@ -3,7 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:journexa_app/di.dart';
 import 'package:journexa_app/domain/use_cases/account/add_cash_account.dart';
 import 'package:journexa_app/ui/add_cash_account/bloc/add_cash_account_bloc.dart';
-import 'package:journexa_app/ui/add_cash_account/widgets/add_cash_account_form.dart';
+import 'package:journexa_app/ui/add_cash_account/widgets/add_cash_account_view.dart';
 import 'package:journexa_app/ui/shared/l10n/l10n.dart';
 import 'package:journexa_app/ui/shared/widgets/app_responsive.dart';
 
@@ -31,7 +31,7 @@ class AddCashAccountPage extends StatelessWidget {
         ),
         body: Padding(
           padding: context.pagePadding,
-          child: const AddCashAccountForm(),
+          child: const AddCashAccountView(),
         ),
       ),
     );

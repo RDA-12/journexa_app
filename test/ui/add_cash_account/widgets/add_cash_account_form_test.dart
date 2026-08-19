@@ -1,14 +1,9 @@
-import 'package:bloc_test/bloc_test.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:journexa_app/ui/add_cash_account/bloc/add_cash_account_bloc.dart';
 import 'package:journexa_app/ui/add_cash_account/widgets/add_cash_account_form.dart';
 import 'package:journexa_app/ui/shared/l10n/l10n.dart';
 import 'package:journexa_app/ui/shared/widgets/app_button.dart';
-import 'package:journexa_app/ui/shared/widgets/app_toast.dart';
 import 'package:journexa_app/ui/shared/widgets/loading_indicator.dart';
-import 'package:mocktail/mocktail.dart';
 
 import '../../util.dart';
 
@@ -25,33 +20,19 @@ final expectedTranslations = {
   },
 };
 
-class MockAddCashAccountBloc extends Mock implements AddCashAccountBloc {}
-
 void main() {
-  late AddCashAccountBloc mockAddCashAccountBloc;
-
-  setUp(() {
-    mockAddCashAccountBloc = MockAddCashAccountBloc();
-    whenListen(
-      mockAddCashAccountBloc,
-      const Stream<AddCashAccountState>.empty(),
-      initialState: const AddCashAccountState.initial(),
-    );
-  });
-
   Future<void> pumpWidget(
     WidgetTester tester, {
     Locale locale = const Locale('en'),
-    VoidCallback? onSuccess,
+    void Function(String name)? onAddPressed,
+    bool isAdding = false,
   }) async {
     return pumpForWidgetTest(
       tester,
       locale: locale,
-      widget: BlocProvider.value(
-        value: mockAddCashAccountBloc,
-        child: AddCashAccountForm(
-          onSuccess: onSuccess,
-        ),
+      widget: AddCashAccountForm(
+        onAddPressed: onAddPressed,
+        isAdding: isAdding,
       ),
     );
   }
@@ -86,15 +67,9 @@ void main() {
 
       testWidgets(
         'has disabled button and shows LoadingIndicator '
-        'when state is loading',
+        'when isAdding is True',
         (tester) async {
-          whenListen(
-            mockAddCashAccountBloc,
-            const Stream<AddCashAccountState>.empty(),
-            initialState: const AddCashAccountState.loading(),
-          );
-
-          await pumpWidget(tester);
+          await pumpWidget(tester, isAdding: true);
 
           final buttonFinder = find.byType(FilledButton);
           final buttonWidget = tester.widget<FilledButton>(buttonFinder);
@@ -122,54 +97,22 @@ void main() {
       );
 
       testWidgets(
-        'add correct event to AddCashBloc when clicks save button',
+        'invokes onAddPressed when clicks save button',
         (tester) async {
+          String? name;
           const expectedName = 'Test';
 
-          await pumpWidget(tester);
+          await pumpWidget(tester, onAddPressed: (value) => name = value);
 
           final formFieldFinder = find.byType(TextFormField);
           await tester.enterText(formFieldFinder, expectedName);
           await tester.tap(find.byType(AppButton));
 
-          verify(
-            () => mockAddCashAccountBloc.add(
-              const AddCashAccountEvent.submit(name: expectedName),
-            ),
-          ).called(1);
+          expect(name, expectedName);
         },
       );
     },
   );
-
-  group('Side Effects', () {
-    testWidgets(
-      'calls onSuccess when cash account added',
-      (tester) async {
-        whenListen(
-          mockAddCashAccountBloc,
-          Stream.fromIterable(const [
-            AddCashAccountState.loading(),
-            AddCashAccountState.added(),
-          ]),
-        );
-        var success = false;
-
-        await pumpWidget(
-          tester,
-          onSuccess: () {
-            success = true;
-          },
-        );
-
-        await tester.pumpAndSettle(kToastDuration);
-
-        expect(success, isTrue);
-      },
-    );
-
-    // TODO(RDA): expect to shows toast when success/failure
-  });
 
   group('a11y', () {
     for (final locale in AppLocalizations.supportedLocales) {
@@ -201,7 +144,5 @@ void main() {
         },
       );
     }
-
-    // TODO(RDA): expect to shows toast when success/failure semantically
   });
 }

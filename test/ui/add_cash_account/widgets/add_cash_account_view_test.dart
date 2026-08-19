@@ -3,8 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:journexa_app/ui/add_cash_account/bloc/add_cash_account_bloc.dart';
-import 'package:journexa_app/ui/add_cash_account/widgets/add_cash_account_form.dart';
 import 'package:journexa_app/ui/add_cash_account/widgets/add_cash_account_view.dart';
+import 'package:journexa_app/ui/add_cash_account/widgets/cash_account_form.dart';
 import 'package:journexa_app/ui/shared/widgets/app_button.dart';
 import 'package:mocktail/mocktail.dart';
 
@@ -40,16 +40,16 @@ void main() {
 
   group('Render', () {
     testWidgets(
-      'shows AddCashAccountForm',
+      'shows CashAccountForm',
       (tester) async {
         await pumpWidget(tester);
 
-        expect(find.byType(AddCashAccountForm), findsOneWidget);
+        expect(find.byType(CashAccountForm), findsOneWidget);
       },
     );
 
     testWidgets(
-      'set isAdding true to AddCashAccountForm '
+      'set isAdding true to CashAccountForm '
       'when state is loading',
       (tester) async {
         whenListen(
@@ -59,9 +59,9 @@ void main() {
         );
         await pumpWidget(tester);
 
-        final finder = find.byType(AddCashAccountForm);
-        final widget = tester.widget<AddCashAccountForm>(finder);
-        expect(widget.isAdding, isTrue);
+        final finder = find.byType(CashAccountForm);
+        final widget = tester.widget<CashAccountForm>(finder);
+        expect(widget.isSaving, isTrue);
       },
     );
   });

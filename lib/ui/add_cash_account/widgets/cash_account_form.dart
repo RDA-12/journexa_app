@@ -4,25 +4,25 @@ import 'package:journexa_app/ui/shared/widgets/widgets.dart';
 
 /// Creates new form that allows user
 /// to add new cash account
-class AddCashAccountForm extends StatefulWidget {
-  /// Creates new [AddCashAccountForm]
-  const AddCashAccountForm({
+class CashAccountForm extends StatefulWidget {
+  /// Creates new [CashAccountForm]
+  const CashAccountForm({
     super.key,
-    this.onAddPressed,
-    this.isAdding = false,
+    this.onSavePressed,
+    this.isSaving = false,
   });
 
   /// Invoked when user pressed add button
-  final void Function(String name)? onAddPressed;
+  final void Function(String name)? onSavePressed;
 
   /// Whether to show loading indicator or not
-  final bool isAdding;
+  final bool isSaving;
 
   @override
-  State<AddCashAccountForm> createState() => _AddCashAccountFormState();
+  State<CashAccountForm> createState() => _CashAccountFormState();
 }
 
-class _AddCashAccountFormState extends State<AddCashAccountForm> {
+class _CashAccountFormState extends State<CashAccountForm> {
   final _formKey = GlobalKey<FormState>();
   final _nameController = TextEditingController();
 
@@ -49,16 +49,16 @@ class _AddCashAccountFormState extends State<AddCashAccountForm> {
           ),
           AppButton(
             label: context.l10n.addCashAccountButtonLabel,
-            icon: widget.isAdding
+            icon: widget.isSaving
                 ? const LoadingIndicator(size: 8)
                 : const Icon(Icons.add_rounded),
             type: ButtonType.filled,
-            onPressed: widget.isAdding
+            onPressed: widget.isSaving
                 ? null
                 : () {
                     if (!_formKey.currentState!.validate()) return;
                     final name = _nameController.text.trim();
-                    widget.onAddPressed?.call(name);
+                    widget.onSavePressed?.call(name);
                   },
           ),
         ],

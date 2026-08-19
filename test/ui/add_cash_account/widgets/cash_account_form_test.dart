@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:journexa_app/ui/add_cash_account/widgets/add_cash_account_form.dart';
+import 'package:journexa_app/ui/add_cash_account/widgets/cash_account_form.dart';
 import 'package:journexa_app/ui/shared/l10n/l10n.dart';
 import 'package:journexa_app/ui/shared/widgets/app_button.dart';
 import 'package:journexa_app/ui/shared/widgets/loading_indicator.dart';
@@ -24,15 +24,15 @@ void main() {
   Future<void> pumpWidget(
     WidgetTester tester, {
     Locale locale = const Locale('en'),
-    void Function(String name)? onAddPressed,
-    bool isAdding = false,
+    void Function(String name)? onSavePressed,
+    bool isSaving = false,
   }) async {
     return pumpForWidgetTest(
       tester,
       locale: locale,
-      widget: AddCashAccountForm(
-        onAddPressed: onAddPressed,
-        isAdding: isAdding,
+      widget: CashAccountForm(
+        onSavePressed: onSavePressed,
+        isSaving: isSaving,
       ),
     );
   }
@@ -67,9 +67,9 @@ void main() {
 
       testWidgets(
         'has disabled button and shows LoadingIndicator '
-        'when isAdding is True',
+        'when isSaving is True',
         (tester) async {
-          await pumpWidget(tester, isAdding: true);
+          await pumpWidget(tester, isSaving: true);
 
           final buttonFinder = find.byType(FilledButton);
           final buttonWidget = tester.widget<FilledButton>(buttonFinder);
@@ -97,12 +97,12 @@ void main() {
       );
 
       testWidgets(
-        'invokes onAddPressed when clicks save button',
+        'invokes onSavePressed when clicks save button',
         (tester) async {
           String? name;
           const expectedName = 'Test';
 
-          await pumpWidget(tester, onAddPressed: (value) => name = value);
+          await pumpWidget(tester, onSavePressed: (value) => name = value);
 
           final formFieldFinder = find.byType(TextFormField);
           await tester.enterText(formFieldFinder, expectedName);

@@ -2,13 +2,13 @@ import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:journexa_app/shared/app_exception.dart';
 import 'package:journexa_app/ui/add_cash_account/bloc/add_cash_account_bloc.dart';
-import 'package:journexa_app/ui/add_cash_account/widgets/add_cash_account_form.dart';
+import 'package:journexa_app/ui/add_cash_account/widgets/cash_account_form.dart';
 import 'package:journexa_app/ui/shared/l10n/l10n.dart';
 import 'package:journexa_app/ui/shared/widgets/widgets.dart';
 import 'package:toastification/toastification.dart';
 
 /// This [Widget] handles communication between [AddCashAccountBloc]
-/// with [AddCashAccountForm]
+/// with [CashAccountForm]
 class AddCashAccountView extends StatelessWidget {
   /// Creates new [AddCashAccountView]
   ///
@@ -57,9 +57,9 @@ class AddCashAccountView extends StatelessWidget {
           loading: () => true,
         );
 
-        return AddCashAccountForm(
-          isAdding: isLoading,
-          onAddPressed: (name) {
+        return CashAccountForm(
+          isSaving: isLoading,
+          onSavePressed: (name) {
             context.read<AddCashAccountBloc>().add(
               AddCashAccountEvent.submit(name: name),
             );

@@ -51,19 +51,37 @@ class _CashAccountsListViewState extends State<CashAccountsListView> {
 
   @override
   Widget build(BuildContext context) {
-    return BlocListener<CashAccountsBloc, CashAccountsState>(
-      listenWhen: (p, c) =>
-          p.recentlyDeletedAccount != c.recentlyDeletedAccount,
-      listener: (context, state) {
-        if (state.recentlyDeletedAccount == null) return;
-        context.showToast(
-          type: ToastificationType.info,
-          autoClose: true,
-          description: context.l10n.deleteAccountToastMessage(
-            state.recentlyDeletedAccount!.name,
-          ),
-        );
-      },
+    return MultiBlocListener(
+      listeners: [
+        BlocListener<CashAccountsBloc, CashAccountsState>(
+          listenWhen: (p, c) =>
+              p.recentlyDeletedAccount != c.recentlyDeletedAccount,
+          listener: (context, state) {
+            if (state.recentlyDeletedAccount == null) return;
+            context.showToast(
+              type: ToastificationType.info,
+              autoClose: true,
+              description: context.l10n.deleteAccountToastMessage(
+                state.recentlyDeletedAccount!.name,
+              ),
+            );
+          },
+        ),
+        BlocListener<CashAccountsBloc, CashAccountsState>(
+          listenWhen: (p, c) =>
+              p.recentlyUpdatedAccount != c.recentlyUpdatedAccount,
+          listener: (context, state) {
+            if (state.recentlyUpdatedAccount == null) return;
+            context.showToast(
+              type: ToastificationType.info,
+              autoClose: true,
+              description: context.l10n.updateAccountToastMessage(
+                state.recentlyUpdatedAccount!.name,
+              ),
+            );
+          },
+        ),
+      ],
       child: Column(
         spacing: 24,
         children: [
@@ -134,6 +152,11 @@ class _CashAccountsListViewState extends State<CashAccountsListView> {
                       onDeletePressed: (account) {
                         context.read<CashAccountsBloc>().add(
                           CashAccountsEvent.delete(account),
+                        );
+                      },
+                      onUpdatePressed: (account, name) {
+                        context.read<CashAccountsBloc>().add(
+                          CashAccountsEvent.update(account, name: name),
                         );
                       },
                     );

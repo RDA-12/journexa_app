@@ -667,4 +667,97 @@ void main() {
       },
     );
   });
+
+  group('getByCode', () {
+    test('returns success with correct Account', () async {
+      final result = await repository.getByCode(
+        userId: userId,
+        code: initialAccounts.first.code,
+        traceId: traceId,
+      );
+
+      expect(result, AppResult.success(initialAccounts.first));
+    });
+
+    test(
+      'returns failure with accountNotFound '
+      'when Account not found',
+      () async {
+        final result = await repository.getByCode(
+          userId: userId,
+          code: 'non-exist',
+          traceId: traceId,
+        );
+
+        expect(
+          result,
+          isA<AppResultFailure<Account>>().having(
+            (e) => e.error.code,
+            'error.code',
+            AppExceptionCode.accountNotFound,
+          ),
+        );
+      },
+    );
+
+    test(
+      'returns failure with serverException code '
+      'when firestore throws FirebaseException',
+      () async {
+        final doc = fakeFirestore.doc(
+          'users/$userId/accounts/${initialAccounts.first.code}',
+        );
+        whenCalling(Invocation.method(#get, null))
+            .on(doc)
+            .thenThrow(
+              FirebaseException(plugin: 'firestore'),
+            );
+
+        final result = await repository.getByCode(
+          userId: userId,
+          code: initialAccounts.first.code,
+          traceId: traceId,
+        );
+
+        expect(
+          result,
+          isA<AppResultFailure<Account>>().having(
+            (e) => e.error.code,
+            'error.code',
+            AppExceptionCode.serverException,
+          ),
+        );
+      },
+    );
+
+    test(
+      'returns failure with internalException code '
+      'when unexpected Exception thrown',
+      () async {
+        final doc = fakeFirestore.doc(
+          'users/$userId/accounts/${initialAccounts.first.code}',
+        );
+        whenCalling(Invocation.method(#get, null))
+            .on(doc)
+            .thenThrow(
+              Exception(),
+            );
+
+        final result = await repository.getByCode(
+          userId: userId,
+          code: initialAccounts.first.code,
+          traceId: traceId,
+        );
+
+        expect(
+          result,
+          isA<AppResultFailure<Account>>().having(
+            (e) => e.error.code,
+            'error.code',
+            AppExceptionCode.internalException,
+          ),
+        );
+      },
+    );
+  });
 }

@@ -17,7 +17,7 @@
   "errorAccountAlreadyExists": "{name} dengan nama tersebut sudah ada",
   "formErrorRequired": "Harus diisi",
   "addCashAccountNameLabel": "Nama",
-  "addCashAccountButtonLabel": "Tambah Kas",
+  "commonSaveLabel": "Simpan",
   "commonCash": "Kas",
   "addCashAccountSuccessMessage": "Kas ditambahkan",
   "addCashAccountSuccessTitle": "Kas berhasil ditambahkan",
@@ -42,5 +42,10 @@
   "commonDeletingLabel": "Menghapus",
   "deleteCashAccountDeletingSemanticsLabel": "Menghapus {name}",
   "cashAccountCardSemantics": "{name}, Saldo {balance}",
-  "deleteAccountToastMessage": "{name} telah dihapus"
+  "deleteAccountToastMessage": "{name} telah dihapus",
+  "commonUpdateLabel": "Perbarui",
+  "commonUpdatingLabel": "Memperbarui",
+  "updateCashAccountSemantics": "Perbarui {name}",
+  "updateCashAccountUpdatingSemanticsLabel": "Memperbarui {name}",
+  "updateAccountToastMessage": "{name} telah diperbarui"
 }

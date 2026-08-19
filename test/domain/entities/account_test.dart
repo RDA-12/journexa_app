@@ -191,4 +191,27 @@ void main() {
       }
     },
   );
+
+  group('update', () {
+    test('updates correct value', () {
+      final expected = Account(
+        code: '10.0001',
+        name: 'updated asset',
+        type: AccountType.asset,
+      );
+      final account = Account(
+        code: '10.0001',
+        name: 'asset',
+        type: AccountType.asset,
+      );
+
+      final result = account.update(name: 'updated asset');
+
+      expect(result, expected);
+
+      final noUpdate = account.update();
+
+      expect(noUpdate, account);
+    });
+  });
 }

@@ -43,9 +43,14 @@ abstract interface class IAccountRepository {
   });
 
   /// Deletes [Account] that has [code] in [userId] database.
-  ///
-  /// It will also delete all children of [code].
   Future<AppResult<Null>> deleteByCode({
+    required String userId,
+    required String code,
+    required String traceId,
+  });
+
+  /// Returns [Account] that has [code] in [userId] database.
+  Future<AppResult<Account>> getByCode({
     required String userId,
     required String code,
     required String traceId,

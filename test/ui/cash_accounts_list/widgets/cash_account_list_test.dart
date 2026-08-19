@@ -1,19 +1,22 @@
 import 'package:decimal/decimal.dart';
-import 'package:flutter/widgets.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:journexa_app/domain/entities/account.dart';
 import 'package:journexa_app/domain/entities/journal.dart';
+import 'package:journexa_app/ui/add_cash_account/widgets/cash_account_form.dart';
 import 'package:journexa_app/ui/cash_accounts_list/bloc/cash_accounts_bloc.dart';
 import 'package:journexa_app/ui/cash_accounts_list/widgets/cash_account_card.dart';
 import 'package:journexa_app/ui/cash_accounts_list/widgets/cash_accounts_list.dart';
 import 'package:journexa_app/ui/cash_accounts_list/widgets/delete_cash_button.dart';
+import 'package:journexa_app/ui/cash_accounts_list/widgets/update_cash_button.dart';
 import 'package:journexa_app/ui/shared/widgets/app_confirmation_dialog.dart';
+import 'package:journexa_app/ui/shared/widgets/widgets.dart';
 
 import '../../util.dart';
 
 void main() {
   final data = List.generate(
-    2,
+    3,
     (idx) {
       final accountBalance = AccountBalance(
         account: Account(
@@ -25,7 +28,8 @@ void main() {
       );
       return AccountBalanceWithState(
         accountBalance: accountBalance,
-        isDeleting: idx.isEven,
+        isDeleting: !(idx == 0) && idx.isEven,
+        isUpdating: !(idx == 0) && idx.isOdd,
       );
     },
   );
@@ -33,6 +37,7 @@ void main() {
   Future<void> pumpWidget(
     WidgetTester tester, {
     void Function(Account)? onDeletePressed,
+    void Function(Account, String)? onUpdatePressed,
   }) async {
     return pumpForWidgetTest(
       tester,
@@ -40,6 +45,7 @@ void main() {
       widget: CashAccountsList(
         data: data,
         onDeletePressed: onDeletePressed ?? (account) {},
+        onUpdatePressed: onUpdatePressed ?? (account, name) {},
       ),
     );
   }
@@ -61,9 +67,11 @@ void main() {
           final item = data[i];
           final accountBalance = item.accountBalance;
           final isDeleting = item.isDeleting;
+          final isUpdating = item.isUpdating;
           final widget = cards[i].widget as CashAccountCard;
           expect(widget.accountBalance, accountBalance);
           expect(widget.isDeleting, isDeleting);
+          expect(widget.isUpdating, isUpdating);
         }
       },
     );
@@ -80,8 +88,8 @@ void main() {
           onDeletePressed: (account) => deletedAccount = account,
         );
 
-        final deleteableData = data.last;
-        final deleteableCardFinder = find.byType(CashAccountCard).last;
+        final deleteableData = data.first;
+        final deleteableCardFinder = find.byType(CashAccountCard).first;
         final cardWidget = tester.widget<CashAccountCard>(
           deleteableCardFinder,
         );
@@ -91,6 +99,11 @@ void main() {
           of: deleteableCardFinder,
           matching: find.byType(DeleteCashButton),
         );
+        final deleteButtonWidget = tester.widget<DeleteCashButton>(
+          deleteButtonFinder,
+        );
+        expect(deleteButtonWidget.onDeletePressed, isNotNull);
+        expect(deleteButtonWidget.isDeleting, isFalse);
         await tester.tap(deleteButtonFinder);
         await tester.pump();
 
@@ -103,6 +116,62 @@ void main() {
         await tester.pump();
 
         expect(deletedAccount, deleteableData.accountBalance.account);
+      },
+    );
+
+    testWidgets(
+      'calls onUpdatePressed when CashAccountCard - UpdateCashButton '
+      'is pressed and user confirmed to save the update it',
+      (tester) async {
+        Account? updatedAccount;
+        String? updatedName;
+        const expectedName = 'new name';
+        await pumpWidget(
+          tester,
+          onUpdatePressed: (account, name) {
+            updatedAccount = account;
+            updatedName = name;
+          },
+        );
+
+        final updateableData = data.first;
+        final updatedableCardFinder = find.byType(CashAccountCard).first;
+        final cardWidget = tester.widget<CashAccountCard>(
+          updatedableCardFinder,
+        );
+        expect(cardWidget.accountBalance, updateableData.accountBalance);
+
+        final updateButtonFinder = find.descendant(
+          of: updatedableCardFinder,
+          matching: find.byType(UpdateCashButton),
+        );
+        final updateButtonWidget = tester.widget<UpdateCashButton>(
+          updateButtonFinder,
+        );
+        expect(updateButtonWidget.onUpdatePressed, isNotNull);
+        expect(updateButtonWidget.isUpdating, isFalse);
+        await tester.tap(updateButtonFinder);
+        await tester.pumpAndSettle();
+
+        final formFinder = find.byType(CashAccountForm);
+        expect(formFinder, findsOneWidget);
+        await tester.enterText(
+          find.descendant(
+            of: formFinder,
+            matching: find.byType(TextFormField),
+          ),
+          expectedName,
+        );
+        await tester.tap(
+          find.descendant(
+            of: formFinder,
+            matching: find.byType(AppButton),
+          ),
+        );
+        await tester.pumpAndSettle();
+
+        expect(updatedAccount, updateableData.accountBalance.account);
+        expect(updatedName, expectedName);
       },
     );
   });

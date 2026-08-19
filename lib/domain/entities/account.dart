@@ -168,4 +168,9 @@ sealed class Account with _$Account {
       return BalanceType.credit;
     }
   }
+
+  /// Update this [Account] based on args
+  Account update({String? name}) {
+    return copyWith(name: name ?? this.name);
+  }
 }

@@ -5,6 +5,7 @@ import 'package:journexa_app/domain/entities/account.dart';
 import 'package:journexa_app/domain/entities/journal.dart';
 import 'package:journexa_app/domain/use_cases/account/delete_account.dart';
 import 'package:journexa_app/domain/use_cases/account/get_all_cash_accounts.dart';
+import 'package:journexa_app/domain/use_cases/account/update_account.dart';
 import 'package:journexa_app/shared/app_exception.dart';
 import 'package:journexa_app/shared/app_result.dart';
 import 'package:journexa_app/shared/uid_generator.dart';
@@ -18,6 +19,8 @@ class MockGetAllCashAccounts extends Mock
 class MockUidGenerator extends Mock implements UidGenerator {}
 
 class MockDeleteAccountUseCase extends Mock implements DeleteAccountUseCase {}
+
+class MockUpdateAccountUseCase extends Mock implements UpdateAccountUseCase {}
 
 void main() {
   const traceId = 'traceId';
@@ -38,15 +41,24 @@ void main() {
       );
     },
   ).toList();
+  final updatedFirstAccount = cashAccounts.first.account.update(
+    name: 'new name',
+  );
 
   late GetAllCashAccountsUseCase mockGetAllCashAccounts;
   late UidGenerator mockUidGenerator;
   late DeleteAccountUseCase mockDeleteAccountUseCase;
+  late MockUpdateAccountUseCase mockUpdateAccountUseCase;
 
   setUpAll(() {
-    registerFallbackValue(const GetAllCashAccountsParams());
+    registerFallbackValue(
+      const GetAllCashAccountsParams(),
+    );
     registerFallbackValue(
       DeleteAccountParams(account: cashAccounts.first.account),
+    );
+    registerFallbackValue(
+      const UpdateAccountParams(code: '12345'),
     );
   });
 
@@ -71,12 +83,23 @@ void main() {
         traceId: traceId,
       ),
     ).thenAnswer((_) async => const AppResult.success(null));
+
+    mockUpdateAccountUseCase = MockUpdateAccountUseCase();
+    when(
+      () => mockUpdateAccountUseCase.execute(
+        any<UpdateAccountParams>(),
+        traceId: traceId,
+      ),
+    ).thenAnswer(
+      (_) async => AppResult.success(updatedFirstAccount),
+    );
   });
 
   CashAccountsBloc buildBloc() {
     return CashAccountsBloc(
       getAllCashAccounts: mockGetAllCashAccounts,
       deleteAccount: mockDeleteAccountUseCase,
+      updateAccount: mockUpdateAccountUseCase,
     )..customGenerator = mockUidGenerator;
   }
 
@@ -401,6 +424,220 @@ void main() {
             traceId: traceId,
           ),
         ).called(2);
+      },
+    );
+  });
+
+  group('update', () {
+    blocTest<CashAccountsBloc, CashAccountsState>(
+      'emits [new accountBalances, '
+      'loaded new accountBalances and recentlyUpdatedAccount] '
+      'when updateAccountUseCase returns success',
+      seed: () {
+        return CashAccountsState(
+          status: CashAccountsStatus.loaded,
+          accountBalances: cashAccountsWithState,
+        );
+      },
+      build: buildBloc,
+      act: (bloc) => bloc.add(
+        CashAccountsEvent.update(
+          cashAccounts.first.account,
+          name: updatedFirstAccount.name,
+        ),
+      ),
+      expect: () => <CashAccountsState>[
+        CashAccountsState(
+          status: CashAccountsStatus.loaded,
+          accountBalances: cashAccountsWithState.map((it) {
+            final isUpdating =
+                it.accountBalance.account.code ==
+                cashAccounts.first.account.code;
+            return it.copyWith(isUpdating: isUpdating);
+          }).toList(),
+        ),
+        CashAccountsState(
+          status: CashAccountsStatus.loaded,
+          accountBalances: cashAccountsWithState.map((it) {
+            final isUpdating =
+                it.accountBalance.account.code ==
+                cashAccounts.first.account.code;
+            if (!isUpdating) return it;
+            return it.copyWith(
+              isUpdating: false,
+              accountBalance: it.accountBalance.copyWith(
+                account: updatedFirstAccount,
+              ),
+            );
+          }).toList(),
+          recentlyUpdatedAccount: updatedFirstAccount,
+        ),
+      ],
+      verify: (_) {
+        verify(
+          () => mockUpdateAccountUseCase.execute(
+            UpdateAccountParams(
+              code: cashAccounts.first.account.code,
+              name: updatedFirstAccount.name,
+            ),
+            traceId: traceId,
+          ),
+        ).called(1);
+      },
+    );
+
+    blocTest<CashAccountsBloc, CashAccountsState>(
+      'emits [new accountBalances, updateFailure] '
+      'when updateAccountUseCase returns failure',
+      setUp: () {
+        when(
+          () => mockUpdateAccountUseCase.execute(
+            UpdateAccountParams(
+              code: cashAccounts.first.account.code,
+              name: updatedFirstAccount.name,
+            ),
+            traceId: traceId,
+          ),
+        ).thenAnswer(
+          (_) async => AppResult<Account>.failure(AppException.test()),
+        );
+      },
+      seed: () {
+        return CashAccountsState(
+          status: CashAccountsStatus.loaded,
+          accountBalances: cashAccountsWithState,
+        );
+      },
+      build: buildBloc,
+      act: (bloc) => bloc.add(
+        CashAccountsEvent.update(
+          cashAccounts.first.account,
+          name: updatedFirstAccount.name,
+        ),
+      ),
+      expect: () => <CashAccountsState>[
+        CashAccountsState(
+          status: CashAccountsStatus.loaded,
+          accountBalances: cashAccountsWithState.map((it) {
+            final isUpdating =
+                it.accountBalance.account.code ==
+                cashAccounts.first.account.code;
+            return it.copyWith(isUpdating: isUpdating);
+          }).toList(),
+        ),
+        CashAccountsState(
+          status: CashAccountsStatus.updateFailure,
+          updateException: AppException.test(),
+          accountBalances: cashAccountsWithState,
+        ),
+      ],
+      verify: (_) {
+        verify(
+          () => mockUpdateAccountUseCase.execute(
+            UpdateAccountParams(
+              code: cashAccounts.first.account.code,
+              name: updatedFirstAccount.name,
+            ),
+            traceId: traceId,
+          ),
+        ).called(1);
+      },
+    );
+
+    blocTest<CashAccountsBloc, CashAccountsState>(
+      'do nothing when account not found on accountBalances',
+      seed: () {
+        return const CashAccountsState(status: CashAccountsStatus.loaded);
+      },
+      build: buildBloc,
+      act: (bloc) => bloc.add(
+        CashAccountsEvent.update(
+          cashAccounts.first.account,
+          name: updatedFirstAccount.name,
+        ),
+      ),
+      expect: () => <CashAccountsState>[],
+      verify: (_) {
+        verifyZeroInteractions(mockUpdateAccountUseCase);
+      },
+    );
+
+    blocTest<CashAccountsBloc, CashAccountsState>(
+      'has restartable transformers',
+      setUp: () {
+        when(
+          () => mockUpdateAccountUseCase.execute(
+            any<UpdateAccountParams>(),
+            traceId: any(named: 'traceId'),
+          ),
+        ).thenAnswer((invocation) async {
+          await Future<void>.delayed(const Duration(milliseconds: 100));
+          return AppResult<Account>.success(updatedFirstAccount);
+        });
+      },
+      seed: () {
+        return CashAccountsState(
+          status: CashAccountsStatus.loaded,
+          accountBalances: cashAccountsWithState,
+        );
+      },
+      build: buildBloc,
+      wait: const Duration(milliseconds: 300),
+      act: (bloc) => bloc
+        ..add(
+          CashAccountsEvent.update(
+            cashAccounts.first.account,
+            name: 'lol',
+          ),
+        )
+        ..add(
+          CashAccountsEvent.update(
+            cashAccounts.first.account,
+            name: 'tester',
+          ),
+        )
+        ..add(
+          CashAccountsEvent.update(
+            cashAccounts.first.account,
+            name: updatedFirstAccount.name,
+          ),
+        ),
+      expect: () {
+        return <CashAccountsState>[
+          CashAccountsState(
+            status: CashAccountsStatus.loaded,
+            accountBalances: cashAccountsWithState.map((it) {
+              final isUpdating =
+                  it.accountBalance.account.code ==
+                  cashAccounts.first.account.code;
+              return it.copyWith(isUpdating: isUpdating);
+            }).toList(),
+          ),
+          CashAccountsState(
+            status: CashAccountsStatus.loaded,
+            accountBalances: cashAccountsWithState.map((it) {
+              final isUpdating =
+                  it.accountBalance.account.code ==
+                  cashAccounts.first.account.code;
+              if (!isUpdating) return it;
+              return it.copyWith(
+                isUpdating: false,
+                accountBalance: it.accountBalance.copyWith(
+                  account: updatedFirstAccount,
+                ),
+              );
+            }).toList(),
+            recentlyUpdatedAccount: updatedFirstAccount,
+          ),
+        ];
+      },
+      verify: (_) {
+        verify(
+          () => mockUpdateAccountUseCase.execute(
+            any<UpdateAccountParams>(),
+            traceId: traceId,
+          ),
+        ).called(3);
       },
     );
   });

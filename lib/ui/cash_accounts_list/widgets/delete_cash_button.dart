@@ -3,7 +3,6 @@ import 'package:journexa_app/domain/entities/account.dart';
 import 'package:journexa_app/ui/cash_accounts_list/widgets/delete_cash_confirmation_dialog.dart';
 import 'package:journexa_app/ui/shared/l10n/l10n.dart';
 import 'package:journexa_app/ui/shared/widgets/app_button.dart';
-import 'package:journexa_app/ui/shared/widgets/loading_indicator.dart';
 
 /// Creates [AppButton] with [ButtonColorType.danger]
 /// that will shows [DeleteCashConfirmationDialog]
@@ -30,9 +29,9 @@ class DeleteCashButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return AppButton(
-      type: ButtonType.filled,
+      type: ButtonType.text,
       color: ButtonColorType.danger,
-      onPressed: isDeleting
+      onPressed: isDeleting || onDeletePressed == null
           ? null
           : () async {
               final deleted = await DeleteCashConfirmationDialog.show(
@@ -44,9 +43,6 @@ class DeleteCashButton extends StatelessWidget {
                 onDeletePressed?.call();
               }
             },
-      icon: isDeleting
-          ? const LoadingIndicator()
-          : const Icon(Icons.delete_rounded),
       label: isDeleting
           ? context.l10n.commonDeletingLabel
           : context.l10n.commonDelete,

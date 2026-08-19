@@ -1,12 +1,15 @@
 import 'package:decimal/decimal.dart';
-import 'package:flutter/widgets.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:journexa_app/domain/entities/account.dart';
 import 'package:journexa_app/domain/entities/journal.dart';
+import 'package:journexa_app/ui/add_cash_account/widgets/cash_account_form.dart';
 import 'package:journexa_app/ui/cash_accounts_list/widgets/cash_account_card.dart';
 import 'package:journexa_app/ui/cash_accounts_list/widgets/delete_cash_button.dart';
+import 'package:journexa_app/ui/cash_accounts_list/widgets/update_cash_button.dart';
 import 'package:journexa_app/ui/shared/l10n/l10n.dart';
 import 'package:journexa_app/ui/shared/widgets/app_confirmation_dialog.dart';
+import 'package:journexa_app/ui/shared/widgets/widgets.dart';
 
 import '../../util.dart';
 
@@ -36,6 +39,8 @@ void main() {
     Locale locale = const Locale('en'),
     bool isDeleting = false,
     VoidCallback? onDeletePressed,
+    bool isUpdating = false,
+    void Function(String)? onUpdatePressed,
   }) async {
     return pumpForWidgetTest(
       tester,
@@ -44,6 +49,8 @@ void main() {
         accountBalance: accountBalance,
         isDeleting: isDeleting,
         onDeletePressed: onDeletePressed ?? () {},
+        isUpdating: isUpdating,
+        onUpdatePressed: onUpdatePressed ?? (v) {},
       ),
     );
   }
@@ -90,14 +97,78 @@ void main() {
     );
 
     testWidgets(
-      'shows DeleteCashButton as disabled when isDeleting is true',
+      'shows UpdateCashButton',
+      (tester) async {
+        await pumpWidget(tester);
+
+        final finder = find.byType(UpdateCashButton);
+        expect(finder, findsOneWidget);
+        final widget = tester.widget<UpdateCashButton>(finder);
+        expect(widget.account, accountBalance.account);
+      },
+    );
+
+    testWidgets(
+      'disabled DeleteCashButton when isDeleting is true',
       (tester) async {
         await pumpWidget(tester, isDeleting: true);
 
         final finder = find.byType(DeleteCashButton);
         expect(finder, findsOneWidget);
-        final widget = tester.widget<DeleteCashButton>(finder);
-        expect(widget.isDeleting, isTrue);
+        final buttonFinder = find.descendant(
+          of: finder,
+          matching: find.byType(AppButton),
+        );
+        final widget = tester.widget<AppButton>(buttonFinder);
+        expect(widget.onPressed, isNull);
+      },
+    );
+
+    testWidgets(
+      'disabled DeleteCashButton when isUpdating is true',
+      (tester) async {
+        await pumpWidget(tester, isUpdating: true);
+
+        final finder = find.byType(DeleteCashButton);
+        expect(finder, findsOneWidget);
+        final buttonFinder = find.descendant(
+          of: finder,
+          matching: find.byType(AppButton),
+        );
+        final widget = tester.widget<AppButton>(buttonFinder);
+        expect(widget.onPressed, isNull);
+      },
+    );
+
+    testWidgets(
+      'disabled UpdateCashButton when isDeleting is true',
+      (tester) async {
+        await pumpWidget(tester, isDeleting: true);
+
+        final finder = find.byType(UpdateCashButton);
+        expect(finder, findsOneWidget);
+        final buttonFinder = find.descendant(
+          of: finder,
+          matching: find.byType(AppButton),
+        );
+        final widget = tester.widget<AppButton>(buttonFinder);
+        expect(widget.onPressed, isNull);
+      },
+    );
+
+    testWidgets(
+      'disabled UpdateCashButton when isUpdating is true',
+      (tester) async {
+        await pumpWidget(tester, isUpdating: true);
+
+        final finder = find.byType(UpdateCashButton);
+        expect(finder, findsOneWidget);
+        final buttonFinder = find.descendant(
+          of: finder,
+          matching: find.byType(AppButton),
+        );
+        final widget = tester.widget<AppButton>(buttonFinder);
+        expect(widget.onPressed, isNull);
       },
     );
   });
@@ -128,6 +199,36 @@ void main() {
         await tester.pump();
 
         expect(isDeleted, isTrue);
+      },
+    );
+
+    testWidgets(
+      'calls onUpdatePressed with correct name '
+      'when UpdateCashButton pressed and user save the updated data',
+      (tester) async {
+        String? newName;
+        const expectedName = 'name';
+
+        await pumpWidget(
+          tester,
+          onUpdatePressed: (name) {
+            newName = name;
+          },
+        );
+
+        await tester.tap(find.byType(UpdateCashButton));
+        await tester.pumpAndSettle();
+
+        await tester.enterText(find.byType(TextFormField), expectedName);
+        await tester.tap(
+          find.descendant(
+            of: find.byType(CashAccountForm),
+            matching: find.byType(AppButton),
+          ),
+        );
+        await tester.pumpAndSettle();
+
+        expect(newName, expectedName);
       },
     );
   });

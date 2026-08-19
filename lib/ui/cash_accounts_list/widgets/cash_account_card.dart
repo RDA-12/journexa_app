@@ -3,6 +3,7 @@ import 'package:journexa_app/domain/entities/journal.dart';
 import 'package:journexa_app/shared/formatter/decimal_formatter.dart';
 import 'package:journexa_app/shared/formatter/string_formatter.dart';
 import 'package:journexa_app/ui/cash_accounts_list/widgets/delete_cash_button.dart';
+import 'package:journexa_app/ui/cash_accounts_list/widgets/update_cash_button.dart';
 import 'package:journexa_app/ui/shared/l10n/l10n.dart';
 import 'package:journexa_app/ui/shared/theme.dart';
 import 'package:journexa_app/ui/shared/widgets/app_card.dart';
@@ -13,7 +14,9 @@ class CashAccountCard extends StatelessWidget {
   const CashAccountCard({
     required this.onDeletePressed,
     required this.accountBalance,
+    required this.onUpdatePressed,
     this.isDeleting = false,
+    this.isUpdating = false,
     super.key,
   });
 
@@ -27,6 +30,14 @@ class CashAccountCard extends StatelessWidget {
   ///
   /// The [DeleteCashButton] handles the confirmation dialog under the hood.
   final VoidCallback onDeletePressed;
+
+  /// Invoke when [UpdateCashButton] is pressed.
+  ///
+  /// The [UpdateCashButton] handles the confirmation dialog under the hood.
+  final void Function(String) onUpdatePressed;
+
+  /// Whether this account is in process of updating
+  final bool isUpdating;
 
   @override
   Widget build(BuildContext context) {
@@ -47,7 +58,12 @@ class CashAccountCard extends StatelessWidget {
           DeleteCashButton(
             account: account,
             isDeleting: isDeleting,
-            onDeletePressed: onDeletePressed,
+            onDeletePressed: isDeleting || isUpdating ? null : onDeletePressed,
+          ),
+          UpdateCashButton(
+            account: account,
+            isUpdating: isUpdating,
+            onUpdatePressed: isDeleting || isUpdating ? null : onUpdatePressed,
           ),
         ],
       ),

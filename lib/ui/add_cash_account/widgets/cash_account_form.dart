@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:journexa_app/domain/entities/account.dart';
 import 'package:journexa_app/ui/shared/l10n/l10n.dart';
 import 'package:journexa_app/ui/shared/widgets/widgets.dart';
 
@@ -8,9 +9,13 @@ class CashAccountForm extends StatefulWidget {
   /// Creates new [CashAccountForm]
   const CashAccountForm({
     super.key,
+    this.initialAccount,
     this.onSavePressed,
     this.isSaving = false,
   });
+
+  /// Initial account to be showed
+  final Account? initialAccount;
 
   /// Invoked when user pressed add button
   final void Function(String name)? onSavePressed;
@@ -24,7 +29,15 @@ class CashAccountForm extends StatefulWidget {
 
 class _CashAccountFormState extends State<CashAccountForm> {
   final _formKey = GlobalKey<FormState>();
-  final _nameController = TextEditingController();
+  late final TextEditingController _nameController;
+
+  @override
+  void initState() {
+    super.initState();
+    _nameController = TextEditingController(
+      text: widget.initialAccount?.name ?? '',
+    );
+  }
 
   @override
   void dispose() {
@@ -48,7 +61,7 @@ class _CashAccountFormState extends State<CashAccountForm> {
             icon: const Icon(Icons.wallet_rounded),
           ),
           AppButton(
-            label: context.l10n.addCashAccountButtonLabel,
+            label: context.l10n.commonSaveLabel,
             icon: widget.isSaving
                 ? const LoadingIndicator(size: 8)
                 : const Icon(Icons.add_rounded),

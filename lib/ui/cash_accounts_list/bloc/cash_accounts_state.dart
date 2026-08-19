@@ -16,6 +16,9 @@ enum CashAccountsStatus {
 
   /// Failure status for delete event
   deleteFailure,
+
+  /// Failure status for update event
+  updateFailure,
 }
 
 /// Extends [AccountBalance] to includes state for UI
@@ -27,6 +30,9 @@ sealed class AccountBalanceWithState with _$AccountBalanceWithState {
 
     /// Whether this [AccountBalance] is in deleting process or not
     @Default(false) bool isDeleting,
+
+    /// Whether this [AccountBalance] is in updating process or not
+    @Default(false) bool isUpdating,
   }) = _AccountBalanceWithState;
 }
 
@@ -44,11 +50,17 @@ sealed class CashAccountsState with _$CashAccountsState {
     /// Recently deleted [Account]
     Account? recentlyDeletedAccount,
 
+    /// Recently updated [Account]
+    Account? recentlyUpdatedAccount,
+
     /// Exception that occurred when load or search event failed
     AppException? exception,
 
     /// Exception that occurred when delete event failed
     AppException? deleteException,
+
+    /// Exception that occurred when update event failed
+    AppException? updateException,
   }) = _CashAccountsState;
 
   const CashAccountsState._();

@@ -63,7 +63,7 @@ class AppLocalizationsId extends AppLocalizations {
   String get addCashAccountNameLabel => 'Nama';
 
   @override
-  String get addCashAccountButtonLabel => 'Tambah Kas';
+  String get commonSaveLabel => 'Simpan';
 
   @override
   String get commonCash => 'Kas';
@@ -153,5 +153,26 @@ class AppLocalizationsId extends AppLocalizations {
   @override
   String deleteAccountToastMessage(String name) {
     return '$name telah dihapus';
+  }
+
+  @override
+  String get commonUpdateLabel => 'Perbarui';
+
+  @override
+  String updateCashAccountSemantics(String name) {
+    return 'Perbarui $name';
+  }
+
+  @override
+  String get commonUpdatingLabel => 'Memperbarui';
+
+  @override
+  String updateCashAccountUpdatingSemanticsLabel(String name) {
+    return 'Memperbarui $name';
+  }
+
+  @override
+  String updateAccountToastMessage(String name) {
+    return '$name telah diperbarui';
   }
 }

@@ -310,4 +310,43 @@ class FirestoreAccountRepository with Loggable implements IAccountRepository {
       );
     }
   }
+
+  @override
+  Future<AppResult<Account>> getByCode({
+    required String userId,
+    required String code,
+    required String traceId,
+  }) async {
+    try {
+      logInfo('Start get account by code', traceId: traceId);
+      final doc = _db.doc('users/$userId/accounts/$code');
+      final snap = await doc.get();
+      if (!snap.exists) {
+        logWarning('Account not found', traceId: traceId);
+        return AppResult.failure(
+          AppException(
+            'Account $code not found',
+            code: AppExceptionCode.accountNotFound,
+          ),
+        );
+      }
+      logInfo('Account found. Mapping to domain model', traceId: traceId);
+      final account = FirestoreAccount.fromJson(snap.data()!).toDomain();
+      logInfo(
+        'Mapping succeeded. Get account by code success',
+        traceId: traceId,
+      );
+      return AppResult.success(account);
+    } on FirebaseException catch (e) {
+      logError('$e', traceId: traceId, error: e);
+      return AppResult.failure(
+        AppException('$e', code: AppExceptionCode.serverException),
+      );
+    } on Exception catch (e, st) {
+      logError('$e', traceId: traceId, error: e, stackTrace: st);
+      return AppResult.failure(
+        AppException('$e', code: AppExceptionCode.internalException),
+      );
+    }
+  }
 }

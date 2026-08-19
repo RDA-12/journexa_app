@@ -13,4 +13,10 @@ sealed class CashAccountsEvent with _$CashAccountsEvent {
 
   /// Event to delete [account]
   const factory CashAccountsEvent.delete(Account account) = _Delete;
+
+  /// Event to update [account] based on provided arguments
+  const factory CashAccountsEvent.update(
+    Account account, {
+    String? name,
+  }) = _Update;
 }

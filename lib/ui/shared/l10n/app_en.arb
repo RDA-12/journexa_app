@@ -74,9 +74,9 @@
   "@addCashAccountNameLabel": {
     "description": "Label for name field"
   },
-  "addCashAccountButtonLabel": "Add Cash",
-  "@addCashAccountButtonLabel": {
-    "description": "Label for add button on add cash account form"
+  "commonSaveLabel": "Save",
+  "@commonSaveLabel": {
+    "description": "Default label for save button"
   },
   "commonCash": "Cash",
   "@commonCash": {
@@ -217,6 +217,44 @@
   "deleteAccountToastMessage": "{name} has been deleted",
   "@deleteAccountToastMessage": {
     "description": "Message to be showed on toast when Account has been deleted",
+    "placeholders": {
+      "name": {
+        "type": "String",
+        "example": "Dompet Hitam"
+      }
+    }
+  },
+  "commonUpdateLabel": "Update",
+  "@commonUpdateLabel": {
+    "description": "Defauled label for update button"
+  },
+  "updateCashAccountSemantics": "Update {name}",
+  "@updateCashAccountSemantics": {
+    "description": "Semantics label for update cash account button",
+    "placeholders": {
+      "name": {
+        "type": "String",
+        "example": "dompet hitam"
+      }
+    }
+  },
+  "commonUpdatingLabel": "Updating",
+  "@commonUpdatingLabel": {
+    "description": "Default label when updating entity is in progress"
+  },
+  "updateCashAccountUpdatingSemanticsLabel": "Updating {name}",
+  "@updateCashAccountUpdatingSemanticsLabel": {
+    "description": "Semantics label for button when cash account update is in progress",
+    "placeholders": {
+      "name": {
+        "type": "String",
+        "example": "dompet hitam"
+      }
+    }
+  },
+  "updateAccountToastMessage": "{name} has been updated",
+  "@updateAccountToastMessage": {
+    "description": "Message to be showed on toast when Account has been updated",
     "placeholders": {
       "name": {
         "type": "String",

@@ -5,6 +5,7 @@ import 'package:journexa_app/domain/entities/account.dart';
 import 'package:journexa_app/domain/entities/journal.dart';
 import 'package:journexa_app/domain/use_cases/account/delete_account.dart';
 import 'package:journexa_app/domain/use_cases/account/get_all_cash_accounts.dart';
+import 'package:journexa_app/domain/use_cases/account/update_account.dart';
 import 'package:journexa_app/shared/app_exception.dart';
 import 'package:journexa_app/shared/app_logger.dart';
 import 'package:journexa_app/shared/app_result.dart';
@@ -22,6 +23,7 @@ class CashAccountsBloc extends Bloc<CashAccountsEvent, CashAccountsState>
   CashAccountsBloc({
     required this._getAllCashAccounts,
     required this._deleteAccount,
+    required this._updateAccount,
   }) : super(const CashAccountsState()) {
     on<_Load>((event, emit) async {
       return _onLoad(
@@ -44,6 +46,16 @@ class CashAccountsBloc extends Bloc<CashAccountsEvent, CashAccountsState>
       },
       transformer: droppable(),
     );
+    on<_Update>(
+      (event, emit) async {
+        return _onUpdate(
+          account: event.account,
+          emit: emit,
+          name: event.name,
+        );
+      },
+      transformer: restartable(),
+    );
   }
 
   @override
@@ -51,6 +63,7 @@ class CashAccountsBloc extends Bloc<CashAccountsEvent, CashAccountsState>
 
   final GetAllCashAccountsUseCase _getAllCashAccounts;
   final DeleteAccountUseCase _deleteAccount;
+  final UpdateAccountUseCase _updateAccount;
 
   Future<void> _onLoad({
     required Emitter<CashAccountsState> emit,
@@ -162,6 +175,81 @@ class CashAccountsBloc extends Bloc<CashAccountsEvent, CashAccountsState>
               final processed = it.accountBalance.account.code == account.code;
               if (!processed) return it;
               return it.copyWith(isDeleting: false);
+            }).toList(),
+          ),
+        );
+      },
+    );
+  }
+
+  Future<void> _onUpdate({
+    required Account account,
+    required Emitter<CashAccountsState> emit,
+    String? name,
+  }) async {
+    final traceId = generateUid();
+    logInfo('Checking account with code ${account.code}', traceId: traceId);
+    final accountIdx = state.accountBalances.indexWhere(
+      (it) => it.accountBalance.account.code == account.code,
+    );
+    if (accountIdx == -1) {
+      logInfo('Account not found. Skipping', traceId: traceId);
+      return;
+    }
+
+    logInfo(
+      'Starts updating account ${account.code}. '
+      'Emit new accountBalances with isUpdating = true',
+      traceId: traceId,
+    );
+    emit(
+      state.copyWith(
+        accountBalances: state.accountBalances.map((it) {
+          final isUpdating = it.accountBalance.account.code == account.code;
+          return it.copyWith(isUpdating: isUpdating);
+        }).toList(),
+      ),
+    );
+
+    final params = UpdateAccountParams(
+      code: account.code,
+      name: name,
+    );
+    final result = await _updateAccount.execute(params, traceId: traceId);
+    result.when(
+      success: (updated) {
+        logInfo(
+          'Updates account success. Emit loaded status',
+          traceId: traceId,
+        );
+        emit(
+          state.copyWith(
+            status: CashAccountsStatus.loaded,
+            accountBalances: state.accountBalances.map((it) {
+              final processed = it.accountBalance.account.code == account.code;
+              if (!processed) return it;
+              return it.copyWith(
+                isUpdating: false,
+                accountBalance: it.accountBalance.copyWith(account: updated),
+              );
+            }).toList(),
+            recentlyUpdatedAccount: updated,
+          ),
+        );
+      },
+      failure: (exc) {
+        logInfo(
+          'Update account failed. Emit updateFailure status',
+          traceId: traceId,
+        );
+        emit(
+          state.copyWith(
+            status: CashAccountsStatus.updateFailure,
+            updateException: exc,
+            accountBalances: state.accountBalances.map((it) {
+              final processed = it.accountBalance.account.code == account.code;
+              if (!processed) return it;
+              return it.copyWith(isUpdating: false);
             }).toList(),
           ),
         );

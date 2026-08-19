@@ -6,9 +6,11 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:journexa_app/domain/entities/account.dart';
 import 'package:journexa_app/domain/entities/journal.dart';
 import 'package:journexa_app/shared/app_exception.dart';
+import 'package:journexa_app/ui/add_cash_account/widgets/cash_account_form.dart';
 import 'package:journexa_app/ui/cash_accounts_list/bloc/cash_accounts_bloc.dart';
 import 'package:journexa_app/ui/cash_accounts_list/widgets/cash_accounts_list_view.dart';
 import 'package:journexa_app/ui/cash_accounts_list/widgets/delete_cash_button.dart';
+import 'package:journexa_app/ui/cash_accounts_list/widgets/update_cash_button.dart';
 import 'package:journexa_app/ui/cash_accounts_list/widgets/widgets.dart';
 import 'package:journexa_app/ui/shared/l10n/app_localizations.dart';
 import 'package:journexa_app/ui/shared/widgets/app_confirmation_dialog.dart';
@@ -315,6 +317,51 @@ void main() {
         verify(
           () => mockCashAccountsBloc.add(
             CashAccountsEvent.delete(expectedAccount),
+          ),
+        ).called(1);
+      },
+    );
+
+    testWidgets(
+      'add CashAccountsEvent.update when UpdateCashButton pressed',
+      (tester) async {
+        const expectedName = 'test';
+        whenListen(
+          mockCashAccountsBloc,
+          const Stream<CashAccountsState>.empty(),
+          initialState: CashAccountsState(
+            status: CashAccountsStatus.loaded,
+            accountBalances: accountBalancesWithState,
+          ),
+        );
+        await pumpWidget(tester);
+
+        final expectedAccount = accountBalances.first.account;
+
+        final updateButtonFinder = find.byType(UpdateCashButton).first;
+        await tester.tap(updateButtonFinder);
+        await tester.pumpAndSettle();
+
+        final formFinder = find.byType(CashAccountForm);
+        expect(formFinder, findsOneWidget);
+        await tester.enterText(
+          find.descendant(of: formFinder, matching: find.byType(TextFormField)),
+          expectedName,
+        );
+        final saveButtonFinder = find.descendant(
+          of: formFinder,
+          matching: find.byType(AppButton),
+        );
+        expect(saveButtonFinder, findsOneWidget);
+        await tester.tap(saveButtonFinder);
+        await tester.pumpAndSettle();
+
+        verify(
+          () => mockCashAccountsBloc.add(
+            CashAccountsEvent.update(
+              expectedAccount,
+              name: expectedName,
+            ),
           ),
         ).called(1);
       },

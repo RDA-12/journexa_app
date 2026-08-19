@@ -200,11 +200,11 @@ abstract class AppLocalizations {
   /// **'Name'**
   String get addCashAccountNameLabel;
 
-  /// Label for add button on add cash account form
+  /// Default label for save button
   ///
   /// In en, this message translates to:
-  /// **'Add Cash'**
-  String get addCashAccountButtonLabel;
+  /// **'Save'**
+  String get commonSaveLabel;
 
   /// Cash label
   ///
@@ -355,6 +355,36 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'{name} has been deleted'**
   String deleteAccountToastMessage(String name);
+
+  /// Defauled label for update button
+  ///
+  /// In en, this message translates to:
+  /// **'Update'**
+  String get commonUpdateLabel;
+
+  /// Semantics label for update cash account button
+  ///
+  /// In en, this message translates to:
+  /// **'Update {name}'**
+  String updateCashAccountSemantics(String name);
+
+  /// Default label when updating entity is in progress
+  ///
+  /// In en, this message translates to:
+  /// **'Updating'**
+  String get commonUpdatingLabel;
+
+  /// Semantics label for button when cash account update is in progress
+  ///
+  /// In en, this message translates to:
+  /// **'Updating {name}'**
+  String updateCashAccountUpdatingSemanticsLabel(String name);
+
+  /// Message to be showed on toast when Account has been updated
+  ///
+  /// In en, this message translates to:
+  /// **'{name} has been updated'**
+  String updateAccountToastMessage(String name);
 }
 
 class _AppLocalizationsDelegate

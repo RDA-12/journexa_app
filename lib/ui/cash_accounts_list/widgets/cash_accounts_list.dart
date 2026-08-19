@@ -10,16 +10,22 @@ class CashAccountsList extends StatelessWidget {
   const CashAccountsList({
     required this.data,
     required this.onDeletePressed,
+    required this.onUpdatePressed,
     super.key,
   });
 
   /// List of data to be showed
   final List<AccountBalanceWithState> data;
 
-  /// Invoke when delete button is pressed in [CashAccountCard]
+  /// Invoked when delete button is pressed in [CashAccountCard]
   ///
   /// It means the [Account] confirmed to be deleted
   final void Function(Account) onDeletePressed;
+
+  /// Invoked when update button is pressed in [CashAccountCard]
+  ///
+  /// It means the user confirmed to update the account name
+  final void Function(Account, String) onUpdatePressed;
 
   @override
   Widget build(BuildContext context) {
@@ -30,9 +36,14 @@ class CashAccountsList extends StatelessWidget {
         final item = data[index];
         final accountBalance = item.accountBalance;
         final isDeleting = item.isDeleting;
+        final isUpdating = item.isUpdating;
         return CashAccountCard(
           accountBalance: accountBalance,
           isDeleting: isDeleting,
+          isUpdating: isUpdating,
+          onUpdatePressed: (name) {
+            onUpdatePressed(accountBalance.account, name);
+          },
           onDeletePressed: () {
             onDeletePressed(accountBalance.account);
           },

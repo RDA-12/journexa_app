@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:journexa_app/domain/entities/account.dart';
 import 'package:journexa_app/ui/add_cash_account/widgets/cash_account_form.dart';
 import 'package:journexa_app/ui/shared/l10n/l10n.dart';
 import 'package:journexa_app/ui/shared/widgets/app_button.dart';
@@ -10,12 +11,12 @@ import '../../util.dart';
 final expectedTranslations = {
   'id': {
     'label': 'Nama',
-    'button': 'Tambah Kas',
+    'button': 'Simpan',
     'required': 'Wajib',
   },
   'en': {
     'label': 'Name',
-    'button': 'Add Cash',
+    'button': 'Save',
     'required': 'Required',
   },
 };
@@ -26,11 +27,13 @@ void main() {
     Locale locale = const Locale('en'),
     void Function(String name)? onSavePressed,
     bool isSaving = false,
+    Account? initialAccount,
   }) async {
     return pumpForWidgetTest(
       tester,
       locale: locale,
       widget: CashAccountForm(
+        initialAccount: initialAccount,
         onSavePressed: onSavePressed,
         isSaving: isSaving,
       ),
@@ -76,6 +79,22 @@ void main() {
           expect(buttonWidget.enabled, isFalse);
 
           expect(find.byType(LoadingIndicator), findsOneWidget);
+        },
+      );
+
+      testWidgets(
+        'shows initial account name when provided',
+        (tester) async {
+          await pumpWidget(
+            tester,
+            initialAccount: Account(
+              code: '10.0001',
+              name: 'name',
+              type: AccountType.asset,
+            ),
+          );
+
+          expect(find.text('name'), findsOneWidget);
         },
       );
     },

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:journexa_app/domain/entities/account.dart';
-import 'package:journexa_app/ui/cash_accounts_list/widgets/delete_cash_confirmation_dialog.dart';
+import 'package:journexa_app/ui/accounts/widgets/delete_cash_confirmation_dialog.dart';
 import 'package:journexa_app/ui/shared/l10n/app_localizations.dart';
 import 'package:journexa_app/ui/shared/widgets/app_button.dart';
 import 'package:journexa_app/ui/shared/widgets/app_confirmation_dialog.dart';

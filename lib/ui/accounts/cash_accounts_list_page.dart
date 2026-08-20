@@ -5,8 +5,8 @@ import 'package:journexa_app/di.dart';
 import 'package:journexa_app/domain/use_cases/account/delete_account.dart';
 import 'package:journexa_app/domain/use_cases/account/get_all_cash_accounts.dart';
 import 'package:journexa_app/domain/use_cases/account/update_account.dart';
-import 'package:journexa_app/ui/cash_accounts_list/bloc/cash_accounts_bloc.dart';
-import 'package:journexa_app/ui/cash_accounts_list/widgets/cash_accounts_list_view.dart';
+import 'package:journexa_app/ui/accounts/bloc/cash_accounts_bloc.dart';
+import 'package:journexa_app/ui/accounts/widgets/cash_accounts_list_view.dart';
 import 'package:journexa_app/ui/shared/l10n/l10n.dart';
 import 'package:journexa_app/ui/shared/widgets/app_responsive.dart';
 

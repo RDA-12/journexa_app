@@ -2,9 +2,9 @@ import 'package:bloc_test/bloc_test.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:journexa_app/ui/add_cash_account/bloc/add_cash_account_bloc.dart';
-import 'package:journexa_app/ui/add_cash_account/widgets/add_cash_account_view.dart';
-import 'package:journexa_app/ui/add_cash_account/widgets/cash_account_form.dart';
+import 'package:journexa_app/ui/accounts/bloc/add_cash_account_bloc.dart';
+import 'package:journexa_app/ui/accounts/widgets/add_cash_account_view.dart';
+import 'package:journexa_app/ui/accounts/widgets/cash_account_form.dart';
 import 'package:journexa_app/ui/shared/widgets/app_button.dart';
 import 'package:mocktail/mocktail.dart';
 

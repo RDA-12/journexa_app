@@ -9,7 +9,7 @@ import 'package:journexa_app/domain/use_cases/account/update_account.dart';
 import 'package:journexa_app/shared/app_exception.dart';
 import 'package:journexa_app/shared/app_result.dart';
 import 'package:journexa_app/shared/uid_generator.dart';
-import 'package:journexa_app/ui/cash_accounts_list/bloc/cash_accounts_bloc.dart';
+import 'package:journexa_app/ui/accounts/bloc/cash_accounts_bloc.dart';
 import 'package:journexa_app/ui/shared/event_transform/event_transform.dart';
 import 'package:mocktail/mocktail.dart';
 

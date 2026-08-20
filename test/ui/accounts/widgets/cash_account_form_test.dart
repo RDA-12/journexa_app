@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:journexa_app/domain/entities/account.dart';
-import 'package:journexa_app/ui/add_cash_account/widgets/cash_account_form.dart';
+import 'package:journexa_app/ui/accounts/widgets/cash_account_form.dart';
 import 'package:journexa_app/ui/shared/l10n/l10n.dart';
 import 'package:journexa_app/ui/shared/widgets/app_button.dart';
 import 'package:journexa_app/ui/shared/widgets/loading_indicator.dart';

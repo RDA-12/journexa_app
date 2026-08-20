@@ -4,7 +4,7 @@ import 'package:journexa_app/domain/use_cases/account/add_cash_account.dart';
 import 'package:journexa_app/shared/app_exception.dart';
 import 'package:journexa_app/shared/app_result.dart';
 import 'package:journexa_app/shared/uid_generator.dart';
-import 'package:journexa_app/ui/add_cash_account/bloc/add_cash_account_bloc.dart';
+import 'package:journexa_app/ui/accounts/bloc/add_cash_account_bloc.dart';
 import 'package:mocktail/mocktail.dart';
 
 class MockAddCashAccountUseCase extends Mock implements AddCashAccountUseCase {}

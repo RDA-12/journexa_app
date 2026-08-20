@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:journexa_app/shared/app_exception.dart';
-import 'package:journexa_app/ui/cash_accounts_list/bloc/cash_accounts_bloc.dart';
-import 'package:journexa_app/ui/cash_accounts_list/widgets/cash_accounts_list.dart';
+import 'package:journexa_app/ui/accounts/bloc/cash_accounts_bloc.dart';
+import 'package:journexa_app/ui/accounts/widgets/cash_accounts_list.dart';
 import 'package:journexa_app/ui/shared/l10n/l10n.dart';
 import 'package:journexa_app/ui/shared/widgets/app_empty_box.dart';
 import 'package:journexa_app/ui/shared/widgets/widgets.dart';

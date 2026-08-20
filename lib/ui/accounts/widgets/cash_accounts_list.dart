@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:journexa_app/domain/entities/account.dart';
-import 'package:journexa_app/ui/cash_accounts_list/bloc/cash_accounts_bloc.dart';
-import 'package:journexa_app/ui/cash_accounts_list/widgets/cash_account_card.dart';
+import 'package:journexa_app/ui/accounts/bloc/cash_accounts_bloc.dart';
+import 'package:journexa_app/ui/accounts/widgets/cash_account_card.dart';
 
 /// Creates new [ListView] contains list of [CashAccountCard]
 /// based on [data]

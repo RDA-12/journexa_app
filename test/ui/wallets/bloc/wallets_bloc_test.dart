@@ -252,8 +252,7 @@ void main() {
 
   group('delete', () {
     blocTest<WalletsBloc, WalletsState>(
-      'emits [new accountBalances, '
-      'loaded new accountBalances and recentlyDeletedAccount] '
+      'emits [new accountBalances, loaded new accountBalances with notice] '
       'when deleteAccountUseCase returns success',
       seed: () {
         return WalletsState(
@@ -272,13 +271,16 @@ void main() {
           accountBalances: walletsWithState.map((it) {
             final isDeleting =
                 it.accountBalance.account.code == wallets.first.account.code;
-            return it.copyWith(isDeleting: isDeleting);
+            if (!isDeleting) return it;
+            return it.copyWith(status: WalletStatus.deleting);
           }).toList(),
         ),
         WalletsState(
           status: WalletsStatus.loaded,
           accountBalances: walletsWithState.sublist(1),
-          recentlyDeletedAccount: wallets.first.account,
+          notice: WalletNotice.recentlyDeleted(
+            account: wallets.first.account,
+          ),
         ),
       ],
       verify: (_) {
@@ -292,7 +294,7 @@ void main() {
     );
 
     blocTest<WalletsBloc, WalletsState>(
-      'emits [new accountBalances, deleteFailure] '
+      'emits [new accountBalances, new idle accountBalances and failed notice] '
       'when deleteAccountUseCase returns failure',
       setUp: () {
         when(
@@ -321,13 +323,17 @@ void main() {
           accountBalances: walletsWithState.map((it) {
             final isDeleting =
                 it.accountBalance.account.code == wallets.first.account.code;
-            return it.copyWith(isDeleting: isDeleting);
+            if (!isDeleting) return it;
+            return it.copyWith(status: WalletStatus.deleting);
           }).toList(),
         ),
         WalletsState(
-          status: WalletsStatus.deleteFailure,
-          deleteException: AppException.test(),
+          status: WalletsStatus.loaded,
           accountBalances: walletsWithState,
+          notice: WalletNotice.deleteFailed(
+            account: wallets.first.account,
+            exception: AppException.test(),
+          ),
         ),
       ],
       verify: (_) {
@@ -355,80 +361,12 @@ void main() {
         verifyZeroInteractions(mockDeleteAccountUseCase);
       },
     );
-
-    blocTest<WalletsBloc, WalletsState>(
-      'drops duplicate events',
-      seed: () {
-        return WalletsState(
-          status: WalletsStatus.loaded,
-          accountBalances: walletsWithState,
-        );
-      },
-      build: buildBloc,
-      act: (bloc) => bloc
-        ..add(
-          WalletsEvent.delete(wallets.first.account),
-        )
-        ..add(
-          WalletsEvent.delete(wallets.first.account),
-        )
-        ..add(
-          WalletsEvent.delete(wallets.first.account),
-        )
-        ..add(
-          WalletsEvent.delete(wallets[1].account),
-        ),
-      wait: kDefaultDebounceDuration,
-      expect: () {
-        final firstDeletionAccounts = walletsWithState.map((it) {
-          final isDeleting =
-              it.accountBalance.account.code == wallets.first.account.code;
-          return it.copyWith(isDeleting: isDeleting);
-        }).toList();
-        final secondDeletionAccounts = firstDeletionAccounts.sublist(1).map(
-          (it) {
-            final isDeleting =
-                it.accountBalance.account.code == wallets[1].account.code;
-            return it.copyWith(isDeleting: isDeleting);
-          },
-        ).toList();
-        return <WalletsState>[
-          WalletsState(
-            status: WalletsStatus.loaded,
-            accountBalances: firstDeletionAccounts,
-          ),
-          WalletsState(
-            status: WalletsStatus.loaded,
-            accountBalances: firstDeletionAccounts.sublist(1),
-            recentlyDeletedAccount: wallets.first.account,
-          ),
-          WalletsState(
-            status: WalletsStatus.loaded,
-            accountBalances: secondDeletionAccounts,
-            recentlyDeletedAccount: wallets.first.account,
-          ),
-          WalletsState(
-            status: WalletsStatus.loaded,
-            accountBalances: secondDeletionAccounts.sublist(1),
-            recentlyDeletedAccount: wallets[1].account,
-          ),
-        ];
-      },
-      verify: (_) {
-        verify(
-          () => mockDeleteAccountUseCase.execute(
-            any<DeleteAccountParams>(),
-            traceId: traceId,
-          ),
-        ).called(2);
-      },
-    );
   });
 
   group('update', () {
     blocTest<WalletsBloc, WalletsState>(
-      'emits [new accountBalances, '
-      'loaded new accountBalances and recentlyUpdatedAccount] '
+      'emits [new updating accountBalances, '
+      'new accountBalances with updated notice] '
       'when updateAccountUseCase returns success',
       seed: () {
         return WalletsState(
@@ -449,7 +387,8 @@ void main() {
           accountBalances: walletsWithState.map((it) {
             final isUpdating =
                 it.accountBalance.account.code == wallets.first.account.code;
-            return it.copyWith(isUpdating: isUpdating);
+            if (!isUpdating) return it;
+            return it.copyWith(status: WalletStatus.updating);
           }).toList(),
         ),
         WalletsState(
@@ -459,13 +398,16 @@ void main() {
                 it.accountBalance.account.code == wallets.first.account.code;
             if (!isUpdating) return it;
             return it.copyWith(
-              isUpdating: false,
+              status: WalletStatus.idle,
               accountBalance: it.accountBalance.copyWith(
                 account: updatedFirstAccount,
               ),
             );
           }).toList(),
-          recentlyUpdatedAccount: updatedFirstAccount,
+          notice: WalletNotice.recentlyUpdated(
+            from: walletsWithState.first.accountBalance.account,
+            to: updatedFirstAccount,
+          ),
         ),
       ],
       verify: (_) {
@@ -482,7 +424,8 @@ void main() {
     );
 
     blocTest<WalletsBloc, WalletsState>(
-      'emits [new accountBalances, updateFailure] '
+      'emits [new accountBalances, '
+      'new accountBalances with idle status and updateFailure notice] '
       'when updateAccountUseCase returns failure',
       setUp: () {
         when(
@@ -516,13 +459,17 @@ void main() {
           accountBalances: walletsWithState.map((it) {
             final isUpdating =
                 it.accountBalance.account.code == wallets.first.account.code;
-            return it.copyWith(isUpdating: isUpdating);
+            if (!isUpdating) return it;
+            return it.copyWith(status: WalletStatus.updating);
           }).toList(),
         ),
         WalletsState(
-          status: WalletsStatus.updateFailure,
-          updateException: AppException.test(),
+          status: WalletsStatus.loaded,
           accountBalances: walletsWithState,
+          notice: WalletNotice.updateFailed(
+            account: wallets.first.account,
+            exception: AppException.test(),
+          ),
         ),
       ],
       verify: (_) {
@@ -553,83 +500,6 @@ void main() {
       expect: () => <WalletsState>[],
       verify: (_) {
         verifyZeroInteractions(mockUpdateAccountUseCase);
-      },
-    );
-
-    blocTest<WalletsBloc, WalletsState>(
-      'has restartable transformers',
-      setUp: () {
-        when(
-          () => mockUpdateAccountUseCase.execute(
-            any<UpdateAccountParams>(),
-            traceId: any(named: 'traceId'),
-          ),
-        ).thenAnswer((invocation) async {
-          await Future<void>.delayed(const Duration(milliseconds: 100));
-          return AppResult<Account>.success(updatedFirstAccount);
-        });
-      },
-      seed: () {
-        return WalletsState(
-          status: WalletsStatus.loaded,
-          accountBalances: walletsWithState,
-        );
-      },
-      build: buildBloc,
-      wait: const Duration(milliseconds: 300),
-      act: (bloc) => bloc
-        ..add(
-          WalletsEvent.update(
-            wallets.first.account,
-            name: 'lol',
-          ),
-        )
-        ..add(
-          WalletsEvent.update(
-            wallets.first.account,
-            name: 'tester',
-          ),
-        )
-        ..add(
-          WalletsEvent.update(
-            wallets.first.account,
-            name: updatedFirstAccount.name,
-          ),
-        ),
-      expect: () {
-        return <WalletsState>[
-          WalletsState(
-            status: WalletsStatus.loaded,
-            accountBalances: walletsWithState.map((it) {
-              final isUpdating =
-                  it.accountBalance.account.code == wallets.first.account.code;
-              return it.copyWith(isUpdating: isUpdating);
-            }).toList(),
-          ),
-          WalletsState(
-            status: WalletsStatus.loaded,
-            accountBalances: walletsWithState.map((it) {
-              final isUpdating =
-                  it.accountBalance.account.code == wallets.first.account.code;
-              if (!isUpdating) return it;
-              return it.copyWith(
-                isUpdating: false,
-                accountBalance: it.accountBalance.copyWith(
-                  account: updatedFirstAccount,
-                ),
-              );
-            }).toList(),
-            recentlyUpdatedAccount: updatedFirstAccount,
-          ),
-        ];
-      },
-      verify: (_) {
-        verify(
-          () => mockUpdateAccountUseCase.execute(
-            any<UpdateAccountParams>(),
-            traceId: traceId,
-          ),
-        ).called(3);
       },
     );
   });

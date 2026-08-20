@@ -1,5 +1,7 @@
+import 'package:bloc_test/bloc_test.dart';
 import 'package:decimal/decimal.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:journexa_app/domain/entities/account.dart';
 import 'package:journexa_app/domain/entities/journal.dart';
@@ -11,10 +13,15 @@ import 'package:journexa_app/ui/wallets/widgets/update_wallet_button.dart';
 import 'package:journexa_app/ui/wallets/widgets/wallet_card.dart';
 import 'package:journexa_app/ui/wallets/widgets/wallet_form.dart';
 import 'package:journexa_app/ui/wallets/widgets/wallets_list.dart';
+import 'package:mocktail/mocktail.dart';
 
 import '../../util.dart';
 
+class MockWalletsBloc extends Mock implements WalletsBloc {}
+
 void main() {
+  late WalletsBloc mockWalletsBloc;
+
   final data = List.generate(
     3,
     (idx) {
@@ -28,11 +35,26 @@ void main() {
       );
       return AccountBalanceWithState(
         accountBalance: accountBalance,
-        isDeleting: !(idx == 0) && idx.isEven,
-        isUpdating: !(idx == 0) && idx.isOdd,
+        status: idx == 0
+            ? WalletStatus.idle
+            : idx.isEven
+            ? WalletStatus.deleting
+            : WalletStatus.updating,
       );
     },
   );
+
+  setUp(() {
+    mockWalletsBloc = MockWalletsBloc();
+    whenListen(
+      mockWalletsBloc,
+      const Stream<WalletsState>.empty(),
+      initialState: WalletsState(
+        status: WalletsStatus.loaded,
+        accountBalances: data,
+      ),
+    );
+  });
 
   Future<void> pumpWidget(
     WidgetTester tester, {
@@ -42,10 +64,13 @@ void main() {
     return pumpForWidgetTest(
       tester,
       locale: const Locale('en'),
-      widget: WalletsList(
-        data: data,
-        onDeletePressed: onDeletePressed ?? (account) {},
-        onUpdatePressed: onUpdatePressed ?? (account, name) {},
+      widget: BlocProvider.value(
+        value: mockWalletsBloc,
+        child: WalletsList(
+          data: data,
+          onDeletePressed: onDeletePressed ?? (account) {},
+          onUpdatePressed: onUpdatePressed ?? (account, name) {},
+        ),
       ),
     );
   }
@@ -66,8 +91,8 @@ void main() {
         for (var i = 0; i < cards.length; i++) {
           final item = data[i];
           final accountBalance = item.accountBalance;
-          final isDeleting = item.isDeleting;
-          final isUpdating = item.isUpdating;
+          final isDeleting = item.status == WalletStatus.deleting;
+          final isUpdating = item.status == WalletStatus.updating;
           final widget = cards[i].widget as WalletCard;
           expect(widget.accountBalance, accountBalance);
           expect(widget.isDeleting, isDeleting);

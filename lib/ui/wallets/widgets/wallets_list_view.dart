@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:journexa_app/shared/app_exception.dart';
 import 'package:journexa_app/ui/shared/l10n/l10n.dart';
 import 'package:journexa_app/ui/shared/widgets/app_empty_box.dart';
 import 'package:journexa_app/ui/shared/widgets/widgets.dart';
@@ -55,62 +54,50 @@ class _WalletsListViewState extends State<WalletsListView> {
     return MultiBlocListener(
       listeners: [
         BlocListener<WalletsBloc, WalletsState>(
-          listenWhen: (p, c) =>
-              p.recentlyDeletedAccount != c.recentlyDeletedAccount,
+          listenWhen: (p, c) => p.notice != c.notice,
           listener: (context, state) {
-            if (state.recentlyDeletedAccount == null) return;
-            context.showToast(
-              type: ToastificationType.info,
-              autoClose: true,
-              description: context.l10n.deleteAccountToastMessage(
-                state.recentlyDeletedAccount!.name,
-              ),
-            );
-          },
-        ),
-        BlocListener<WalletsBloc, WalletsState>(
-          listenWhen: (p, c) =>
-              p.status == WalletsStatus.loading &&
-              c.status == WalletsStatus.deleteFailure,
-          listener: (context, state) {
-            final exc = state.exception;
-            context.showToast(
-              type: ToastificationType.error,
-              autoClose: true,
-              title: context.l10n.deleteWalletToastFailureTitle,
-              description:
-                  exc?.code.toLocalizedString(context) ??
-                  AppExceptionCode.internalException.toLocalizedString(context),
-            );
-          },
-        ),
-        BlocListener<WalletsBloc, WalletsState>(
-          listenWhen: (p, c) =>
-              p.recentlyUpdatedAccount != c.recentlyUpdatedAccount,
-          listener: (context, state) {
-            if (state.recentlyUpdatedAccount == null) return;
-            context.showToast(
-              type: ToastificationType.info,
-              autoClose: true,
-              description: context.l10n.updateAccountToastMessage(
-                state.recentlyUpdatedAccount!.name,
-              ),
-            );
-          },
-        ),
-        BlocListener<WalletsBloc, WalletsState>(
-          listenWhen: (p, c) =>
-              p.status == WalletsStatus.loading &&
-              c.status == WalletsStatus.updateFailure,
-          listener: (context, state) {
-            final exc = state.exception;
-            context.showToast(
-              type: ToastificationType.error,
-              autoClose: true,
-              title: context.l10n.updateWalletToastFailureTitle,
-              description:
-                  exc?.code.toLocalizedString(context) ??
-                  AppExceptionCode.internalException.toLocalizedString(context),
+            state.notice?.when(
+              recentlyDeleted: (account) {
+                context.showToast(
+                  autoClose: true,
+                  description: context.l10n.deleteAccountToastMessage(
+                    account.name,
+                  ),
+                );
+              },
+              recentlyUpdated: (from, to) {
+                context.showToast(
+                  autoClose: true,
+                  description: context.l10n.updateAccountToastMessage(
+                    from.name,
+                  ),
+                );
+              },
+              deleteFailed: (account, exc) {
+                context.showToast(
+                  autoClose: true,
+                  type: ToastificationType.error,
+                  title: context.l10n.deleteWalletToastFailureTitle,
+                  description: exc.code.toLocalizedString(
+                    context,
+                    data: {'code': account.code},
+                  ),
+                );
+              },
+              updateFailed: (account, exc) {
+                context.showToast(
+                  autoClose: true,
+                  type: ToastificationType.error,
+                  title: context.l10n.updateWalletToastFailureTitle,
+                  description: exc.code.toLocalizedString(
+                    context,
+                    data: {
+                      'code': account.code,
+                      'name': context.l10n.commonWallet,
+                    },
+                  ),
+                );
+              },
             );
           },
         ),
@@ -140,8 +127,8 @@ class _WalletsListViewState extends State<WalletsListView> {
               buildWhen: (p, c) =>
                   p.status == WalletsStatus.loading ||
                   c.status == WalletsStatus.loading,
-              builder: (context, state) {
-                if (state.status == WalletsStatus.loading) {
+              builder: (context, loadState) {
+                if (loadState.status == WalletsStatus.loading) {
                   return Center(
                     child: LoadingIndicator(
                       size: 32,
@@ -149,26 +136,22 @@ class _WalletsListViewState extends State<WalletsListView> {
                     ),
                   );
                 }
-                if (state.status == WalletsStatus.failure) {
+                if (loadState.status == WalletsStatus.failure) {
                   return Center(
                     child: AppExceptionBox(
                       title: context.l10n.walletsListFailureTitle,
-                      description: state.exception!.code.toLocalizedString(
+                      description: loadState.exception!.code.toLocalizedString(
                         context,
                       ),
                     ),
                   );
                 }
 
-                return BlocSelector<
-                  WalletsBloc,
-                  WalletsState,
-                  List<AccountBalanceWithState>
-                >(
-                  selector: (state) {
-                    return state.accountBalances;
-                  },
-                  builder: (context, accountBalances) {
+                return BlocBuilder<WalletsBloc, WalletsState>(
+                  buildWhen: (p, c) =>
+                      p.accountBalances.length != c.accountBalances.length,
+                  builder: (context, dataState) {
+                    final accountBalances = dataState.accountBalances;
                     if (accountBalances.isEmpty) {
                       return Center(
                         child: AppEmptyBox(

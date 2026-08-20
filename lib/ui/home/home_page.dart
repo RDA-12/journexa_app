@@ -18,7 +18,7 @@ class HomePage extends StatelessWidget {
             onPressed: () {
               unawaited(context.push('/wallet-accounts'));
             },
-            label: 'Wallet Accounts',
+            label: 'Wallets',
           ),
         ],
       ),

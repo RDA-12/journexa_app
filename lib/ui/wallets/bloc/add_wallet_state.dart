@@ -12,6 +12,6 @@ class AddWalletState with _$AddWalletState {
   /// State when new account is successfully added
   const factory AddWalletState.added() = _Added;
 
-  /// State when fails to add new wallet account
+  /// State when fails to add new wallet
   const factory AddWalletState.failure(AppException exc) = _Failure;
 }

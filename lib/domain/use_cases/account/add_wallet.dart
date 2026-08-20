@@ -50,7 +50,7 @@ class AddWalletUseCase
     required String traceId,
   }) async {
     logInfo(
-      'Start adding new wallet Account. Get current user id',
+      'Start adding new wallet. Get current user id',
       traceId: traceId,
       extras: params.extras,
     );

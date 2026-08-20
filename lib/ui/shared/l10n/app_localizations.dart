@@ -212,19 +212,19 @@ abstract class AppLocalizations {
   /// **'Wallet'**
   String get commonWallet;
 
-  /// Message to be showed when wallet account added successfully
+  /// Message to be showed when wallet added successfully
   ///
   /// In en, this message translates to:
   /// **'Wallet successfully added'**
   String get addWalletSuccessMessage;
 
-  /// Title for success state in add wallet account page
+  /// Title for success state in add wallet page
   ///
   /// In en, this message translates to:
   /// **'Wallet added'**
   String get addWalletSuccessTitle;
 
-  /// Title for error state in add wallet account page
+  /// Title for error state in add wallet page
   ///
   /// In en, this message translates to:
   /// **'Failed to add wallet'**
@@ -236,7 +236,7 @@ abstract class AppLocalizations {
   /// **'Required'**
   String get commonRequired;
 
-  /// Title for add wallet account page
+  /// Title for add wallet page
   ///
   /// In en, this message translates to:
   /// **'Add New Wallet'**
@@ -248,25 +248,25 @@ abstract class AppLocalizations {
   /// **'Account with code {code} not found'**
   String errorAccountNotFound(String code);
 
-  /// Title for error state in wallet accounts list page
+  /// Title for error state in wallets list page
   ///
   /// In en, this message translates to:
   /// **'Failed to get wallet data'**
   String get walletsListFailureTitle;
 
-  /// Semantics label for loading state in wallet accounts list page
+  /// Semantics label for loading state in wallets list page
   ///
   /// In en, this message translates to:
   /// **'Loading wallet data'**
   String get walletsListLoadingSemantics;
 
-  /// Title for wallet accounts list page
+  /// Title for wallets list page
   ///
   /// In en, this message translates to:
   /// **'Wallet List'**
   String get walletsListTitle;
 
-  /// Label for search input on wallet accounts list
+  /// Label for search input on wallets list
   ///
   /// In en, this message translates to:
   /// **'Search Wallet'**
@@ -284,7 +284,7 @@ abstract class AppLocalizations {
   /// **'No wallet data was found'**
   String get walletsListEmptyDescription;
 
-  /// Semantics label for add button on wallet accounts list
+  /// Semantics label for add button on wallets list
   ///
   /// In en, this message translates to:
   /// **'Add New Wallet'**
@@ -302,19 +302,19 @@ abstract class AppLocalizations {
   /// **'Cancel'**
   String get commonCancelLabel;
 
-  /// Title for delete wallet account dialog
+  /// Title for delete wallet dialog
   ///
   /// In en, this message translates to:
   /// **'Delete {name}?'**
   String deleteWalletDialogTitle(String name);
 
-  /// Content for delete wallet account dialog
+  /// Content for delete wallet dialog
   ///
   /// In en, this message translates to:
   /// **'Data that related to {name} will still exist. But, {name} will no longer be able to be used for future transactions'**
   String deleteWalletDialogContent(String name);
 
-  /// Confirm label for delete wallet account dialog
+  /// Confirm label for delete wallet dialog
   ///
   /// In en, this message translates to:
   /// **'Delete'**
@@ -326,7 +326,7 @@ abstract class AppLocalizations {
   /// **'Delete'**
   String get commonDelete;
 
-  /// Semantics label for delete wallet account button
+  /// Semantics label for delete wallet button
   ///
   /// In en, this message translates to:
   /// **'Delete {name}'**
@@ -338,7 +338,7 @@ abstract class AppLocalizations {
   /// **'Deleting'**
   String get commonDeletingLabel;
 
-  /// Semantics label for button when wallet account deletion is in progress
+  /// Semantics label for button when wallet deletion is in progress
   ///
   /// In en, this message translates to:
   /// **'Deleting {name}'**
@@ -362,7 +362,7 @@ abstract class AppLocalizations {
   /// **'Update'**
   String get commonUpdateLabel;
 
-  /// Semantics label for update wallet account button
+  /// Semantics label for update wallet button
   ///
   /// In en, this message translates to:
   /// **'Update {name}'**
@@ -374,7 +374,7 @@ abstract class AppLocalizations {
   /// **'Updating'**
   String get commonUpdatingLabel;
 
-  /// Semantics label for button when wallet account update is in progress
+  /// Semantics label for button when wallet update is in progress
   ///
   /// In en, this message translates to:
   /// **'Updating {name}'**
@@ -386,13 +386,13 @@ abstract class AppLocalizations {
   /// **'{name} has been updated'**
   String updateAccountToastMessage(String name);
 
-  /// Title for error state in delete wallet account toast
+  /// Title for error state in delete wallet toast
   ///
   /// In en, this message translates to:
   /// **'Failed to delete wallet data'**
   String get deleteWalletToastFailureTitle;
 
-  /// Title for error state in update wallet account toast
+  /// Title for error state in update wallet toast
   ///
   /// In en, this message translates to:
   /// **'Failed to update wallet data'**

@@ -84,15 +84,15 @@
   },
   "addWalletSuccessMessage": "Wallet successfully added",
   "@addWalletSuccessMessage": {
-    "description": "Message to be showed when wallet account added successfully"
+    "description": "Message to be showed when wallet added successfully"
   },
   "addWalletSuccessTitle": "Wallet added",
   "@addWalletSuccessTitle": {
-    "description": "Title for success state in add wallet account page"
+    "description": "Title for success state in add wallet page"
   },
   "addWalletFailureTitle": "Failed to add wallet",
   "@addWalletFailureTitle": {
-    "description": "Title for error state in add wallet account page"
+    "description": "Title for error state in add wallet page"
   },
   "commonRequired": "Required",
   "@commonRequired": {
@@ -100,7 +100,7 @@
   },
   "addWalletTitle": "Add New Wallet",
   "@addWalletTitle": {
-    "description": "Title for add wallet account page"
+    "description": "Title for add wallet page"
   },
   "errorAccountNotFound": "Account with code {code} not found",
   "@errorAccountNotFound": {
@@ -114,19 +114,19 @@
   },
   "walletsListFailureTitle": "Failed to get wallet data",
   "@walletsListFailureTitle": {
-    "description": "Title for error state in wallet accounts list page"
+    "description": "Title for error state in wallets list page"
   },
   "walletsListLoadingSemantics": "Loading wallet data",
   "@walletsListLoadingSemantics": {
-    "description": "Semantics label for loading state in wallet accounts list page"
+    "description": "Semantics label for loading state in wallets list page"
   },
   "walletsListTitle": "Wallet List",
   "@walletsListTitle": {
-    "description": "Title for wallet accounts list page"
+    "description": "Title for wallets list page"
   },
   "walletsListSearchLabel": "Search Wallet",
   "@walletsListSearchLabel": {
-    "description": "Label for search input on wallet accounts list"
+    "description": "Label for search input on wallets list"
   },
   "commonEmptyTitle": "Data Not Found",
   "@commonEmptyTitle": {
@@ -138,7 +138,7 @@
   },
   "walletsListAddButtonSemantics": "Add New Wallet",
   "@walletsListAddButtonSemantics": {
-    "description": "Semantics label for add button on wallet accounts list"
+    "description": "Semantics label for add button on wallets list"
   },
   "commonConfirmLabel": "OK",
   "@commonConfirmLabel": {
@@ -150,7 +150,7 @@
   },
   "deleteWalletDialogTitle": "Delete {name}?",
   "@deleteWalletDialogTitle": {
-    "description": "Title for delete wallet account dialog",
+    "description": "Title for delete wallet dialog",
     "placeholders": {
       "name": {
         "type": "String",
@@ -160,7 +160,7 @@
   },
   "deleteWalletDialogContent": "Data that related to {name} will still exist. But, {name} will no longer be able to be used for future transactions",
   "@deleteWalletDialogContent": {
-    "description": "Content for delete wallet account dialog",
+    "description": "Content for delete wallet dialog",
     "placeholders": {
       "name": {
         "type": "String",
@@ -170,7 +170,7 @@
   },
   "deleteWalletDialogConfirmLabel": "Delete",
   "@deleteWalletDialogConfirmLabel": {
-    "description": "Confirm label for delete wallet account dialog"
+    "description": "Confirm label for delete wallet dialog"
   },
   "commonDelete": "Delete",
   "@commonDelete": {
@@ -178,7 +178,7 @@
   },
   "deleteWalletSemantics": "Delete {name}",
   "@deleteWalletSemantics": {
-    "description": "Semantics label for delete wallet account button",
+    "description": "Semantics label for delete wallet button",
     "placeholders": {
       "name": {
         "type": "String",
@@ -192,7 +192,7 @@
   },
   "deleteWalletDeletingSemanticsLabel": "Deleting {name}",
   "@deleteWalletDeletingSemanticsLabel": {
-    "description": "Semantics label for button when wallet account deletion is in progress",
+    "description": "Semantics label for button when wallet deletion is in progress",
     "placeholders": {
       "name": {
         "type": "String",
@@ -230,7 +230,7 @@
   },
   "updateWalletSemantics": "Update {name}",
   "@updateWalletSemantics": {
-    "description": "Semantics label for update wallet account button",
+    "description": "Semantics label for update wallet button",
     "placeholders": {
       "name": {
         "type": "String",
@@ -244,7 +244,7 @@
   },
   "updateWalletUpdatingSemanticsLabel": "Updating {name}",
   "@updateWalletUpdatingSemanticsLabel": {
-    "description": "Semantics label for button when wallet account update is in progress",
+    "description": "Semantics label for button when wallet update is in progress",
     "placeholders": {
       "name": {
         "type": "String",
@@ -264,10 +264,10 @@
   },
   "deleteWalletToastFailureTitle": "Failed to delete wallet data",
   "@deleteWalletToastFailureTitle": {
-    "description": "Title for error state in delete wallet account toast"
+    "description": "Title for error state in delete wallet toast"
   },
   "updateWalletToastFailureTitle": "Failed to update wallet data",
   "@updateWalletToastFailureTitle": {
-    "description": "Title for error state in update wallet account toast"
+    "description": "Title for error state in update wallet toast"
   }
 }

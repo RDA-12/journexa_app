@@ -47,7 +47,7 @@ void main() {
   group('submit', () {
     blocTest<AddWalletBloc, AddWalletState>(
       'emits [AddWalletState.loading, AddWalletState.added] '
-      'when add wallet account succeeded',
+      'when add wallet succeeded',
       build: buildBloc,
       act: (bloc) => bloc.add(AddWalletEvent.submit(name: params.name)),
       expect: () => const <AddWalletState>[
@@ -64,7 +64,7 @@ void main() {
 
     blocTest<AddWalletBloc, AddWalletState>(
       'emits [AddWalletState.loading, AddWalletState.failure] '
-      'when add wallet account failed',
+      'when add wallet failed',
       setUp: () {
         when(
           () => mockAddWallet.execute(params, traceId: traceId),

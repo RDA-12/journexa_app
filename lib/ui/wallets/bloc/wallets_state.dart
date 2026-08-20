@@ -44,7 +44,7 @@ sealed class WalletsState with _$WalletsState {
     /// Status of the state
     @Default(WalletsStatus.initial) WalletsStatus status,
 
-    /// List of wallet accounts with their balances
+    /// List of wallets with their balances
     @Default([]) List<AccountBalanceWithState> accountBalances,
 
     /// Recently deleted [Account]

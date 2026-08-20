@@ -18,7 +18,7 @@ sealed class GetAllWalletsParams with _$GetAllWalletsParams {
   }) = _GetAllWalletsParams;
 }
 
-/// Use case to get all Wallet Accounts saved on
+/// Use case to get all Wallets saved on
 /// current user database
 @lazySingleton
 class GetAllWalletsUseCase
@@ -38,7 +38,7 @@ class GetAllWalletsUseCase
   final IAccountRepository _accountRepository;
   final IJournalRepository _journalRepository;
 
-  /// Execute getting all wallet Account from current user
+  /// Execute getting all wallet from current user
   @override
   Future<AppResult<List<AccountBalance>>> execute(
     GetAllWalletsParams params, {
@@ -56,7 +56,7 @@ class GetAllWalletsUseCase
 
     final userId = currentUserIdResult.valueOrNull!;
     logInfo(
-      'Got current user id. Starts getting wallet accounts',
+      'Got current user id. Starts getting wallets',
       traceId: traceId,
     );
     const parentCode = '10.0000';
@@ -68,13 +68,13 @@ class GetAllWalletsUseCase
     );
     final accountsExc = accountsResult.errorOrNull;
     if (accountsExc != null) {
-      logInfo('Failed to get wallet accounts', traceId: traceId);
+      logInfo('Failed to get wallets', traceId: traceId);
       return AppResult.failure(accountsExc);
     }
 
     final accounts = accountsResult.valueOrNull!;
     logInfo(
-      'Got ${accounts.length} wallet accounts. Starts getting accounts balance',
+      'Got ${accounts.length} wallets. Starts getting accounts balance',
       traceId: traceId,
     );
     final currentBalanceResult = await _journalRepository.getCurrentBalance(

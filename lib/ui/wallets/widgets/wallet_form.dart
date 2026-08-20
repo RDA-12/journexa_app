@@ -4,7 +4,7 @@ import 'package:journexa_app/ui/shared/l10n/l10n.dart';
 import 'package:journexa_app/ui/shared/widgets/widgets.dart';
 
 /// Creates new form that allows user
-/// to add new wallet account
+/// to add new wallet
 class WalletForm extends StatefulWidget {
   /// Creates new [WalletForm]
   const WalletForm({

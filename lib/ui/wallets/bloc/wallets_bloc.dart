@@ -16,7 +16,7 @@ part 'wallets_event.dart';
 part 'wallets_state.dart';
 part 'wallets_bloc.freezed.dart';
 
-/// Bloc to get all wallet accounts current user have
+/// Bloc to get all wallets current user have
 class WalletsBloc extends Bloc<WalletsEvent, WalletsState>
     with GenerateUid, Loggable {
   /// Creates new [WalletsBloc]
@@ -71,7 +71,7 @@ class WalletsBloc extends Bloc<WalletsEvent, WalletsState>
   }) async {
     final traceId = generateUid();
     logInfo(
-      'Starts getting wallet accounts for current user. '
+      'Starts getting wallets for current user. '
       'Emit loading status',
       traceId: traceId,
     );
@@ -84,7 +84,7 @@ class WalletsBloc extends Bloc<WalletsEvent, WalletsState>
     result.when(
       success: (accountBalances) {
         logInfo(
-          'Get wallet accounts succeeded. Emit loaded status',
+          'Get wallets succeeded. Emit loaded status',
           traceId: traceId,
         );
         emit(
@@ -98,7 +98,7 @@ class WalletsBloc extends Bloc<WalletsEvent, WalletsState>
       },
       failure: (exc) {
         logInfo(
-          'Get wallet accounts failed. Emit failure status',
+          'Get wallets failed. Emit failure status',
           traceId: traceId,
         );
         emit(

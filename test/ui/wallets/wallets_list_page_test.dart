@@ -137,7 +137,7 @@ void main() {
   group('Side Effects', () {
     testWidgets(
       'add WalletsBlocEvent.load '
-      'after going back from add wallet account page',
+      'after going back from add wallet page',
       (tester) async {
         await pumpWidget(
           tester,

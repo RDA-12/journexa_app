@@ -7,7 +7,7 @@ import 'package:journexa_app/ui/shared/widgets/app_responsive.dart';
 import 'package:journexa_app/ui/wallets/bloc/add_wallet_bloc.dart';
 import 'package:journexa_app/ui/wallets/widgets/add_wallet_view.dart';
 
-/// Page to add new wallet account
+/// Page to add new wallet
 class AddWalletPage extends StatelessWidget {
   /// Creates new [AddWalletPage]
   const AddWalletPage({super.key, this.addWalletBloc});

@@ -10,7 +10,7 @@ part 'add_wallet_event.dart';
 part 'add_wallet_state.dart';
 part 'add_wallet_bloc.freezed.dart';
 
-/// Bloc to handle creating new wallet account
+/// Bloc to handle creating new wallet
 class AddWalletBloc extends Bloc<AddWalletEvent, AddWalletState>
     with Loggable, GenerateUid {
   /// Creates new [AddWalletBloc]
@@ -35,7 +35,7 @@ class AddWalletBloc extends Bloc<AddWalletEvent, AddWalletState>
   }) async {
     final traceId = generateUid();
     logInfo(
-      'Start adding new wallet account. Emit loading state',
+      'Start adding new wallet. Emit loading state',
       traceId: traceId,
     );
     emit(const AddWalletState.loading());
@@ -47,14 +47,14 @@ class AddWalletBloc extends Bloc<AddWalletEvent, AddWalletState>
     result.when(
       success: (_) {
         logInfo(
-          'Add new wallet account succeeded. Emit added state',
+          'Add new wallet succeeded. Emit added state',
           traceId: traceId,
         );
         emit(const AddWalletState.added());
       },
       failure: (exc) {
         logInfo(
-          'Add new wallet account failed. Emit failure state',
+          'Add new wallet failed. Emit failure state',
           traceId: traceId,
         );
         emit(AddWalletState.failure(exc));

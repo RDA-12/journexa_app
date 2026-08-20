@@ -3,7 +3,7 @@ import 'package:journexa_app/domain/entities/account.dart';
 import 'package:journexa_app/ui/shared/l10n/l10n.dart';
 import 'package:journexa_app/ui/shared/widgets/app_confirmation_dialog.dart';
 
-/// Creates [AppConfirmationDialog] for confirm deleting wallet account
+/// Creates [AppConfirmationDialog] for confirm deleting wallet
 class DeleteWalletConfirmationDialog extends StatelessWidget {
   /// Creates new [DeleteWalletConfirmationDialog]
   ///

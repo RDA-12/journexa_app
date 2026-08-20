@@ -679,6 +679,37 @@ void main() {
       expect(result, AppResult.success(initialAccounts.first));
     });
 
+    test('returns success with correct Account that have parent', () async {
+      final result = await repository.getByCode(
+        userId: userId,
+        code: initialAccounts[1].code,
+        traceId: traceId,
+      );
+
+      expect(result, AppResult.success(initialAccounts[1]));
+    });
+
+    test('returns failure with accountNotFound code '
+        'when parent doesnt exists', () async {
+      await fakeFirestore
+          .doc('users/$userId/accounts/${initialAccounts[1].code}')
+          .update({'parentCode': 'non-exist'});
+      final result = await repository.getByCode(
+        userId: userId,
+        code: initialAccounts[1].code,
+        traceId: traceId,
+      );
+
+      expect(
+        result,
+        isA<AppResultFailure<Account>>().having(
+          (e) => e.error.code,
+          'error.code',
+          AppExceptionCode.accountNotFound,
+        ),
+      );
+    });
+
     test(
       'returns failure with accountNotFound '
       'when Account not found',

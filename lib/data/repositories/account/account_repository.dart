@@ -330,8 +330,31 @@ class FirestoreAccountRepository with Loggable implements IAccountRepository {
           ),
         );
       }
-      logInfo('Account found. Mapping to domain model', traceId: traceId);
-      final account = FirestoreAccount.fromJson(snap.data()!).toDomain();
+      logInfo('Account found', traceId: traceId);
+      final firestoreAccount = FirestoreAccount.fromJson(snap.data()!);
+      Account? parent;
+      if (firestoreAccount.parentCode != null) {
+        logInfo('Account has parent. Get the parent', traceId: traceId);
+        final parentDoc = _db.doc(
+          'users/$userId/accounts/${firestoreAccount.parentCode}',
+        );
+        final parentSnap = await parentDoc.get();
+        if (!parentSnap.exists) {
+          logWarning('Parent account not found', traceId: traceId);
+          return AppResult.failure(
+            AppException(
+              'Parent account ${firestoreAccount.parentCode} not found',
+              code: AppExceptionCode.accountNotFound,
+            ),
+          );
+        }
+        logInfo('Parent account found', traceId: traceId);
+        final parentFirestoreAccount = FirestoreAccount.fromJson(
+          parentSnap.data()!,
+        );
+        parent = parentFirestoreAccount.toDomain();
+      }
+      final account = firestoreAccount.toDomain().copyWith(parent: parent);
       logInfo(
         'Mapping succeeded. Get account by code success',
         traceId: traceId,

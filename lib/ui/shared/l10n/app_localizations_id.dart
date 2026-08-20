@@ -49,7 +49,7 @@ class AppLocalizationsId extends AppLocalizations {
   String get appLogoLabel => 'Logo Journexa';
 
   @override
-  String get splashBoxLabel => 'Membuka aplikasi Journexa';
+  String get splashBoxLabel => 'Membuka aplidompeti Journexa';
 
   @override
   String errorAccountAlreadyExists(String name) {
@@ -60,28 +60,28 @@ class AppLocalizationsId extends AppLocalizations {
   String get formErrorRequired => 'Harus diisi';
 
   @override
-  String get addCashAccountNameLabel => 'Nama';
+  String get addWalletNameLabel => 'Nama';
 
   @override
   String get commonSaveLabel => 'Simpan';
 
   @override
-  String get commonCash => 'Kas';
+  String get commonWallet => 'Dompet';
 
   @override
-  String get addCashAccountSuccessMessage => 'Kas ditambahkan';
+  String get addWalletSuccessMessage => 'Dompet ditambahkan';
 
   @override
-  String get addCashAccountSuccessTitle => 'Kas berhasil ditambahkan';
+  String get addWalletSuccessTitle => 'Dompet berhasil ditambahkan';
 
   @override
-  String get addCashAccountFailureTitle => 'Gagal menambahkan kas';
+  String get addWalletFailureTitle => 'Gagal menambahkan dompet';
 
   @override
   String get commonRequired => 'Wajib';
 
   @override
-  String get addCashAccountTitle => 'Tambah Kas Baru';
+  String get addWalletTitle => 'Tambah Dompet Baru';
 
   @override
   String errorAccountNotFound(String code) {
@@ -89,26 +89,26 @@ class AppLocalizationsId extends AppLocalizations {
   }
 
   @override
-  String get cashAccountsListFailureTitle => 'Gagal mendapatkan data kas';
+  String get walletsListFailureTitle => 'Gagal mendapatkan data dompet';
 
   @override
-  String get cashAccountsListLoadingSemantics => 'Memuat data kas';
+  String get walletsListLoadingSemantics => 'Memuat data dompet';
 
   @override
-  String get cashAccountsListTitle => 'Daftar Kas';
+  String get walletsListTitle => 'Daftar Dompet';
 
   @override
-  String get cashAccountsListSearchLabel => 'Cari Kas';
+  String get walletsListSearchLabel => 'Cari Dompet';
 
   @override
   String get commonEmptyTitle => 'Data Tidak Ditemukan';
 
   @override
-  String get cashAccountsListEmptyDescription =>
-      'Tidak ada data kas yang ditemukan';
+  String get walletsListEmptyDescription =>
+      'Tidak ada data dompet yang ditemukan';
 
   @override
-  String get cashAccountsListAddButtonSemantics => 'Tambah Kas Baru';
+  String get walletsListAddButtonSemantics => 'Tambah Dompet Baru';
 
   @override
   String get commonConfirmLabel => 'OK';
@@ -117,23 +117,23 @@ class AppLocalizationsId extends AppLocalizations {
   String get commonCancelLabel => 'Batal';
 
   @override
-  String deleteCashAccountDialogTitle(String name) {
+  String deleteWalletDialogTitle(String name) {
     return 'Hapus $name?';
   }
 
   @override
-  String deleteCashAccountDialogContent(String name) {
+  String deleteWalletDialogContent(String name) {
     return 'Data yang terikat dengan $name akan tetap ada. Tapi, $name tidak akan bisa digunakan lagi untuk transaksi selanjutnya';
   }
 
   @override
-  String get deleteCashAccountDialogConfirmLabel => 'Hapus';
+  String get deleteWalletDialogConfirmLabel => 'Hapus';
 
   @override
   String get commonDelete => 'Hapus';
 
   @override
-  String deleteCashAccountSemantics(String name) {
+  String deleteWalletSemantics(String name) {
     return 'Hapus $name';
   }
 
@@ -141,12 +141,12 @@ class AppLocalizationsId extends AppLocalizations {
   String get commonDeletingLabel => 'Menghapus';
 
   @override
-  String deleteCashAccountDeletingSemanticsLabel(String name) {
+  String deleteWalletDeletingSemanticsLabel(String name) {
     return 'Menghapus $name';
   }
 
   @override
-  String cashAccountCardSemantics(String name, String balance) {
+  String walletAccountCardSemantics(String name, String balance) {
     return '$name, Saldo $balance';
   }
 
@@ -159,7 +159,7 @@ class AppLocalizationsId extends AppLocalizations {
   String get commonUpdateLabel => 'Perbarui';
 
   @override
-  String updateCashAccountSemantics(String name) {
+  String updateWalletSemantics(String name) {
     return 'Perbarui $name';
   }
 
@@ -167,7 +167,7 @@ class AppLocalizationsId extends AppLocalizations {
   String get commonUpdatingLabel => 'Memperbarui';
 
   @override
-  String updateCashAccountUpdatingSemanticsLabel(String name) {
+  String updateWalletUpdatingSemanticsLabel(String name) {
     return 'Memperbarui $name';
   }
 
@@ -177,8 +177,8 @@ class AppLocalizationsId extends AppLocalizations {
   }
 
   @override
-  String get deleteCashAccountToastFailureTitle => 'Gagal menghapus data kas';
+  String get deleteWalletToastFailureTitle => 'Gagal menghapus data dompet';
 
   @override
-  String get updateCashAccountToastFailureTitle => 'Gagal memperbarui data kas';
+  String get updateWalletToastFailureTitle => 'Gagal memperbarui data dompet';
 }

@@ -60,28 +60,28 @@ class AppLocalizationsEn extends AppLocalizations {
   String get formErrorRequired => 'Required';
 
   @override
-  String get addCashAccountNameLabel => 'Name';
+  String get addWalletNameLabel => 'Name';
 
   @override
   String get commonSaveLabel => 'Save';
 
   @override
-  String get commonCash => 'Cash';
+  String get commonWallet => 'Wallet';
 
   @override
-  String get addCashAccountSuccessMessage => 'Cash successfully added';
+  String get addWalletSuccessMessage => 'Wallet successfully added';
 
   @override
-  String get addCashAccountSuccessTitle => 'Cash added';
+  String get addWalletSuccessTitle => 'Wallet added';
 
   @override
-  String get addCashAccountFailureTitle => 'Failed to add cash';
+  String get addWalletFailureTitle => 'Failed to add wallet';
 
   @override
   String get commonRequired => 'Required';
 
   @override
-  String get addCashAccountTitle => 'Add New Cash';
+  String get addWalletTitle => 'Add New Wallet';
 
   @override
   String errorAccountNotFound(String code) {
@@ -89,25 +89,25 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
-  String get cashAccountsListFailureTitle => 'Failed to get cash data';
+  String get walletsListFailureTitle => 'Failed to get wallet data';
 
   @override
-  String get cashAccountsListLoadingSemantics => 'Loading cash data';
+  String get walletsListLoadingSemantics => 'Loading wallet data';
 
   @override
-  String get cashAccountsListTitle => 'Cash List';
+  String get walletsListTitle => 'Wallet List';
 
   @override
-  String get cashAccountsListSearchLabel => 'Search Cash';
+  String get walletsListSearchLabel => 'Search Wallet';
 
   @override
   String get commonEmptyTitle => 'Data Not Found';
 
   @override
-  String get cashAccountsListEmptyDescription => 'No cash data was found';
+  String get walletsListEmptyDescription => 'No wallet data was found';
 
   @override
-  String get cashAccountsListAddButtonSemantics => 'Add New Cash';
+  String get walletsListAddButtonSemantics => 'Add New Wallet';
 
   @override
   String get commonConfirmLabel => 'OK';
@@ -116,23 +116,23 @@ class AppLocalizationsEn extends AppLocalizations {
   String get commonCancelLabel => 'Cancel';
 
   @override
-  String deleteCashAccountDialogTitle(String name) {
+  String deleteWalletDialogTitle(String name) {
     return 'Delete $name?';
   }
 
   @override
-  String deleteCashAccountDialogContent(String name) {
+  String deleteWalletDialogContent(String name) {
     return 'Data that related to $name will still exist. But, $name will no longer be able to be used for future transactions';
   }
 
   @override
-  String get deleteCashAccountDialogConfirmLabel => 'Delete';
+  String get deleteWalletDialogConfirmLabel => 'Delete';
 
   @override
   String get commonDelete => 'Delete';
 
   @override
-  String deleteCashAccountSemantics(String name) {
+  String deleteWalletSemantics(String name) {
     return 'Delete $name';
   }
 
@@ -140,12 +140,12 @@ class AppLocalizationsEn extends AppLocalizations {
   String get commonDeletingLabel => 'Deleting';
 
   @override
-  String deleteCashAccountDeletingSemanticsLabel(String name) {
+  String deleteWalletDeletingSemanticsLabel(String name) {
     return 'Deleting $name';
   }
 
   @override
-  String cashAccountCardSemantics(String name, String balance) {
+  String walletAccountCardSemantics(String name, String balance) {
     return '$name, Balance $balance';
   }
 
@@ -158,7 +158,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get commonUpdateLabel => 'Update';
 
   @override
-  String updateCashAccountSemantics(String name) {
+  String updateWalletSemantics(String name) {
     return 'Update $name';
   }
 
@@ -166,7 +166,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get commonUpdatingLabel => 'Updating';
 
   @override
-  String updateCashAccountUpdatingSemanticsLabel(String name) {
+  String updateWalletUpdatingSemanticsLabel(String name) {
     return 'Updating $name';
   }
 
@@ -176,8 +176,8 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
-  String get deleteCashAccountToastFailureTitle => 'Failed to delete cash data';
+  String get deleteWalletToastFailureTitle => 'Failed to delete wallet data';
 
   @override
-  String get updateCashAccountToastFailureTitle => 'Failed to update cash data';
+  String get updateWalletToastFailureTitle => 'Failed to update wallet data';
 }

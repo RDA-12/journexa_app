@@ -8,7 +8,7 @@ import '../../util.dart';
 
 const expectedTranslations = {
   'id': {
-    'label': 'Membuka aplikasi Journexa',
+    'label': 'Membuka aplidompeti Journexa',
   },
   'en': {
     'label': 'Opening Journexa app',

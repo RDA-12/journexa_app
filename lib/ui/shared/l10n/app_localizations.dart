@@ -198,7 +198,7 @@ abstract class AppLocalizations {
   ///
   /// In en, this message translates to:
   /// **'Name'**
-  String get addCashAccountNameLabel;
+  String get addWalletNameLabel;
 
   /// Default label for save button
   ///
@@ -206,29 +206,29 @@ abstract class AppLocalizations {
   /// **'Save'**
   String get commonSaveLabel;
 
-  /// Cash label
+  /// Wallet label
   ///
   /// In en, this message translates to:
-  /// **'Cash'**
-  String get commonCash;
+  /// **'Wallet'**
+  String get commonWallet;
 
-  /// Message to be showed when cash account added successfully
+  /// Message to be showed when wallet account added successfully
   ///
   /// In en, this message translates to:
-  /// **'Cash successfully added'**
-  String get addCashAccountSuccessMessage;
+  /// **'Wallet successfully added'**
+  String get addWalletSuccessMessage;
 
-  /// Title for success state in add cash account page
+  /// Title for success state in add wallet account page
   ///
   /// In en, this message translates to:
-  /// **'Cash added'**
-  String get addCashAccountSuccessTitle;
+  /// **'Wallet added'**
+  String get addWalletSuccessTitle;
 
-  /// Title for error state in add cash account page
+  /// Title for error state in add wallet account page
   ///
   /// In en, this message translates to:
-  /// **'Failed to add cash'**
-  String get addCashAccountFailureTitle;
+  /// **'Failed to add wallet'**
+  String get addWalletFailureTitle;
 
   /// Label for required, usually for semantics
   ///
@@ -236,11 +236,11 @@ abstract class AppLocalizations {
   /// **'Required'**
   String get commonRequired;
 
-  /// Title for add cash account page
+  /// Title for add wallet account page
   ///
   /// In en, this message translates to:
-  /// **'Add New Cash'**
-  String get addCashAccountTitle;
+  /// **'Add New Wallet'**
+  String get addWalletTitle;
 
   /// Message for when an account is not found
   ///
@@ -248,29 +248,29 @@ abstract class AppLocalizations {
   /// **'Account with code {code} not found'**
   String errorAccountNotFound(String code);
 
-  /// Title for error state in cash accounts list page
+  /// Title for error state in wallet accounts list page
   ///
   /// In en, this message translates to:
-  /// **'Failed to get cash data'**
-  String get cashAccountsListFailureTitle;
+  /// **'Failed to get wallet data'**
+  String get walletsListFailureTitle;
 
-  /// Semantics label for loading state in cash accounts list page
+  /// Semantics label for loading state in wallet accounts list page
   ///
   /// In en, this message translates to:
-  /// **'Loading cash data'**
-  String get cashAccountsListLoadingSemantics;
+  /// **'Loading wallet data'**
+  String get walletsListLoadingSemantics;
 
-  /// Title for cash accounts list page
+  /// Title for wallet accounts list page
   ///
   /// In en, this message translates to:
-  /// **'Cash List'**
-  String get cashAccountsListTitle;
+  /// **'Wallet List'**
+  String get walletsListTitle;
 
-  /// Label for search input on cash accounts list
+  /// Label for search input on wallet accounts list
   ///
   /// In en, this message translates to:
-  /// **'Search Cash'**
-  String get cashAccountsListSearchLabel;
+  /// **'Search Wallet'**
+  String get walletsListSearchLabel;
 
   /// Default title to shows data not found
   ///
@@ -278,17 +278,17 @@ abstract class AppLocalizations {
   /// **'Data Not Found'**
   String get commonEmptyTitle;
 
-  /// Description to be showed when cash data is empty
+  /// Description to be showed when wallet data is empty
   ///
   /// In en, this message translates to:
-  /// **'No cash data was found'**
-  String get cashAccountsListEmptyDescription;
+  /// **'No wallet data was found'**
+  String get walletsListEmptyDescription;
 
-  /// Semantics label for add button on cash accounts list
+  /// Semantics label for add button on wallet accounts list
   ///
   /// In en, this message translates to:
-  /// **'Add New Cash'**
-  String get cashAccountsListAddButtonSemantics;
+  /// **'Add New Wallet'**
+  String get walletsListAddButtonSemantics;
 
   /// Default label for confirm button
   ///
@@ -302,23 +302,23 @@ abstract class AppLocalizations {
   /// **'Cancel'**
   String get commonCancelLabel;
 
-  /// Title for delete cash account dialog
+  /// Title for delete wallet account dialog
   ///
   /// In en, this message translates to:
   /// **'Delete {name}?'**
-  String deleteCashAccountDialogTitle(String name);
+  String deleteWalletDialogTitle(String name);
 
-  /// Content for delete cash account dialog
+  /// Content for delete wallet account dialog
   ///
   /// In en, this message translates to:
   /// **'Data that related to {name} will still exist. But, {name} will no longer be able to be used for future transactions'**
-  String deleteCashAccountDialogContent(String name);
+  String deleteWalletDialogContent(String name);
 
-  /// Confirm label for delete cash account dialog
+  /// Confirm label for delete wallet account dialog
   ///
   /// In en, this message translates to:
   /// **'Delete'**
-  String get deleteCashAccountDialogConfirmLabel;
+  String get deleteWalletDialogConfirmLabel;
 
   /// Default label for delete
   ///
@@ -326,11 +326,11 @@ abstract class AppLocalizations {
   /// **'Delete'**
   String get commonDelete;
 
-  /// Semantics label for delete cash account button
+  /// Semantics label for delete wallet account button
   ///
   /// In en, this message translates to:
   /// **'Delete {name}'**
-  String deleteCashAccountSemantics(String name);
+  String deleteWalletSemantics(String name);
 
   /// Default label when deleting entity is in progress
   ///
@@ -338,17 +338,17 @@ abstract class AppLocalizations {
   /// **'Deleting'**
   String get commonDeletingLabel;
 
-  /// Semantics label for button when cash account deletion is in progress
+  /// Semantics label for button when wallet account deletion is in progress
   ///
   /// In en, this message translates to:
   /// **'Deleting {name}'**
-  String deleteCashAccountDeletingSemanticsLabel(String name);
+  String deleteWalletDeletingSemanticsLabel(String name);
 
-  /// Semantics label for CashAccountCard widget
+  /// Semantics label for WalletCard widget
   ///
   /// In en, this message translates to:
   /// **'{name}, Balance {balance}'**
-  String cashAccountCardSemantics(String name, String balance);
+  String walletAccountCardSemantics(String name, String balance);
 
   /// Message to be showed on toast when Account has been deleted
   ///
@@ -362,11 +362,11 @@ abstract class AppLocalizations {
   /// **'Update'**
   String get commonUpdateLabel;
 
-  /// Semantics label for update cash account button
+  /// Semantics label for update wallet account button
   ///
   /// In en, this message translates to:
   /// **'Update {name}'**
-  String updateCashAccountSemantics(String name);
+  String updateWalletSemantics(String name);
 
   /// Default label when updating entity is in progress
   ///
@@ -374,11 +374,11 @@ abstract class AppLocalizations {
   /// **'Updating'**
   String get commonUpdatingLabel;
 
-  /// Semantics label for button when cash account update is in progress
+  /// Semantics label for button when wallet account update is in progress
   ///
   /// In en, this message translates to:
   /// **'Updating {name}'**
-  String updateCashAccountUpdatingSemanticsLabel(String name);
+  String updateWalletUpdatingSemanticsLabel(String name);
 
   /// Message to be showed on toast when Account has been updated
   ///
@@ -386,17 +386,17 @@ abstract class AppLocalizations {
   /// **'{name} has been updated'**
   String updateAccountToastMessage(String name);
 
-  /// Title for error state in delete cash account toast
+  /// Title for error state in delete wallet account toast
   ///
   /// In en, this message translates to:
-  /// **'Failed to delete cash data'**
-  String get deleteCashAccountToastFailureTitle;
+  /// **'Failed to delete wallet data'**
+  String get deleteWalletToastFailureTitle;
 
-  /// Title for error state in update cash account toast
+  /// Title for error state in update wallet account toast
   ///
   /// In en, this message translates to:
-  /// **'Failed to update cash data'**
-  String get updateCashAccountToastFailureTitle;
+  /// **'Failed to update wallet data'**
+  String get updateWalletToastFailureTitle;
 }
 
 class _AppLocalizationsDelegate

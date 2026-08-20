@@ -62,7 +62,7 @@
     "placeholders": {
       "name": {
         "type": "String",
-        "example": "Cash"
+        "example": "Wallet"
       }
     }
   },
@@ -70,37 +70,37 @@
   "@formErrorRequired": {
     "description": "Message showed when a TextField is required but the value is empty"
   },
-  "addCashAccountNameLabel": "Name",
-  "@addCashAccountNameLabel": {
+  "addWalletNameLabel": "Name",
+  "@addWalletNameLabel": {
     "description": "Label for name field"
   },
   "commonSaveLabel": "Save",
   "@commonSaveLabel": {
     "description": "Default label for save button"
   },
-  "commonCash": "Cash",
-  "@commonCash": {
-    "description": "Cash label"
+  "commonWallet": "Wallet",
+  "@commonWallet": {
+    "description": "Wallet label"
   },
-  "addCashAccountSuccessMessage": "Cash successfully added",
-  "@addCashAccountSuccessMessage": {
-    "description": "Message to be showed when cash account added successfully"
+  "addWalletSuccessMessage": "Wallet successfully added",
+  "@addWalletSuccessMessage": {
+    "description": "Message to be showed when wallet account added successfully"
   },
-  "addCashAccountSuccessTitle": "Cash added",
-  "@addCashAccountSuccessTitle": {
-    "description": "Title for success state in add cash account page"
+  "addWalletSuccessTitle": "Wallet added",
+  "@addWalletSuccessTitle": {
+    "description": "Title for success state in add wallet account page"
   },
-  "addCashAccountFailureTitle": "Failed to add cash",
-  "@addCashAccountFailureTitle": {
-    "description": "Title for error state in add cash account page"
+  "addWalletFailureTitle": "Failed to add wallet",
+  "@addWalletFailureTitle": {
+    "description": "Title for error state in add wallet account page"
   },
   "commonRequired": "Required",
   "@commonRequired": {
     "description": "Label for required, usually for semantics"
   },
-  "addCashAccountTitle": "Add New Cash",
-  "@addCashAccountTitle": {
-    "description": "Title for add cash account page"
+  "addWalletTitle": "Add New Wallet",
+  "@addWalletTitle": {
+    "description": "Title for add wallet account page"
   },
   "errorAccountNotFound": "Account with code {code} not found",
   "@errorAccountNotFound": {
@@ -112,33 +112,33 @@
       }
     }
   },
-  "cashAccountsListFailureTitle": "Failed to get cash data",
-  "@cashAccountsListFailureTitle": {
-    "description": "Title for error state in cash accounts list page"
+  "walletsListFailureTitle": "Failed to get wallet data",
+  "@walletsListFailureTitle": {
+    "description": "Title for error state in wallet accounts list page"
   },
-  "cashAccountsListLoadingSemantics": "Loading cash data",
-  "@cashAccountsListLoadingSemantics": {
-    "description": "Semantics label for loading state in cash accounts list page"
+  "walletsListLoadingSemantics": "Loading wallet data",
+  "@walletsListLoadingSemantics": {
+    "description": "Semantics label for loading state in wallet accounts list page"
   },
-  "cashAccountsListTitle": "Cash List",
-  "@cashAccountsListTitle": {
-    "description": "Title for cash accounts list page"
+  "walletsListTitle": "Wallet List",
+  "@walletsListTitle": {
+    "description": "Title for wallet accounts list page"
   },
-  "cashAccountsListSearchLabel": "Search Cash",
-  "@cashAccountsListSearchLabel": {
-    "description": "Label for search input on cash accounts list"
+  "walletsListSearchLabel": "Search Wallet",
+  "@walletsListSearchLabel": {
+    "description": "Label for search input on wallet accounts list"
   },
   "commonEmptyTitle": "Data Not Found",
   "@commonEmptyTitle": {
     "description": "Default title to shows data not found"
   },
-  "cashAccountsListEmptyDescription": "No cash data was found",
-  "@cashAccountsListEmptyDescription": {
-    "description": "Description to be showed when cash data is empty"
+  "walletsListEmptyDescription": "No wallet data was found",
+  "@walletsListEmptyDescription": {
+    "description": "Description to be showed when wallet data is empty"
   },
-  "cashAccountsListAddButtonSemantics": "Add New Cash",
-  "@cashAccountsListAddButtonSemantics": {
-    "description": "Semantics label for add button on cash accounts list"
+  "walletsListAddButtonSemantics": "Add New Wallet",
+  "@walletsListAddButtonSemantics": {
+    "description": "Semantics label for add button on wallet accounts list"
   },
   "commonConfirmLabel": "OK",
   "@commonConfirmLabel": {
@@ -148,9 +148,9 @@
   "@commonCancelLabel": {
     "description": "Default label for cancel button"
   },
-  "deleteCashAccountDialogTitle": "Delete {name}?",
-  "@deleteCashAccountDialogTitle": {
-    "description": "Title for delete cash account dialog",
+  "deleteWalletDialogTitle": "Delete {name}?",
+  "@deleteWalletDialogTitle": {
+    "description": "Title for delete wallet account dialog",
     "placeholders": {
       "name": {
         "type": "String",
@@ -158,9 +158,9 @@
       }
     }
   },
-  "deleteCashAccountDialogContent": "Data that related to {name} will still exist. But, {name} will no longer be able to be used for future transactions",
-  "@deleteCashAccountDialogContent": {
-    "description": "Content for delete cash account dialog",
+  "deleteWalletDialogContent": "Data that related to {name} will still exist. But, {name} will no longer be able to be used for future transactions",
+  "@deleteWalletDialogContent": {
+    "description": "Content for delete wallet account dialog",
     "placeholders": {
       "name": {
         "type": "String",
@@ -168,17 +168,17 @@
       }
     }
   },
-  "deleteCashAccountDialogConfirmLabel": "Delete",
-  "@deleteCashAccountDialogConfirmLabel": {
-    "description": "Confirm label for delete cash account dialog"
+  "deleteWalletDialogConfirmLabel": "Delete",
+  "@deleteWalletDialogConfirmLabel": {
+    "description": "Confirm label for delete wallet account dialog"
   },
   "commonDelete": "Delete",
   "@commonDelete": {
     "description": "Default label for delete"
   },
-  "deleteCashAccountSemantics": "Delete {name}",
-  "@deleteCashAccountSemantics": {
-    "description": "Semantics label for delete cash account button",
+  "deleteWalletSemantics": "Delete {name}",
+  "@deleteWalletSemantics": {
+    "description": "Semantics label for delete wallet account button",
     "placeholders": {
       "name": {
         "type": "String",
@@ -190,9 +190,9 @@
   "@commonDeletingLabel": {
     "description": "Default label when deleting entity is in progress"
   },
-  "deleteCashAccountDeletingSemanticsLabel": "Deleting {name}",
-  "@deleteCashAccountDeletingSemanticsLabel": {
-    "description": "Semantics label for button when cash account deletion is in progress",
+  "deleteWalletDeletingSemanticsLabel": "Deleting {name}",
+  "@deleteWalletDeletingSemanticsLabel": {
+    "description": "Semantics label for button when wallet account deletion is in progress",
     "placeholders": {
       "name": {
         "type": "String",
@@ -200,9 +200,9 @@
       }
     }
   },
-  "cashAccountCardSemantics": "{name}, Balance {balance}",
-  "@cashAccountCardSemantics": {
-    "description": "Semantics label for CashAccountCard widget",
+  "walletAccountCardSemantics": "{name}, Balance {balance}",
+  "@walletAccountCardSemantics": {
+    "description": "Semantics label for WalletCard widget",
     "placeholders": {
       "name": {
         "type": "String",
@@ -228,9 +228,9 @@
   "@commonUpdateLabel": {
     "description": "Defauled label for update button"
   },
-  "updateCashAccountSemantics": "Update {name}",
-  "@updateCashAccountSemantics": {
-    "description": "Semantics label for update cash account button",
+  "updateWalletSemantics": "Update {name}",
+  "@updateWalletSemantics": {
+    "description": "Semantics label for update wallet account button",
     "placeholders": {
       "name": {
         "type": "String",
@@ -242,9 +242,9 @@
   "@commonUpdatingLabel": {
     "description": "Default label when updating entity is in progress"
   },
-  "updateCashAccountUpdatingSemanticsLabel": "Updating {name}",
-  "@updateCashAccountUpdatingSemanticsLabel": {
-    "description": "Semantics label for button when cash account update is in progress",
+  "updateWalletUpdatingSemanticsLabel": "Updating {name}",
+  "@updateWalletUpdatingSemanticsLabel": {
+    "description": "Semantics label for button when wallet account update is in progress",
     "placeholders": {
       "name": {
         "type": "String",
@@ -262,12 +262,12 @@
       }
     }
   },
-  "deleteCashAccountToastFailureTitle": "Failed to delete cash data",
-  "@deleteCashAccountToastFailureTitle": {
-    "description": "Title for error state in delete cash account toast"
+  "deleteWalletToastFailureTitle": "Failed to delete wallet data",
+  "@deleteWalletToastFailureTitle": {
+    "description": "Title for error state in delete wallet account toast"
   },
-  "updateCashAccountToastFailureTitle": "Failed to update cash data",
-  "@updateCashAccountToastFailureTitle": {
-    "description": "Title for error state in update cash account toast"
+  "updateWalletToastFailureTitle": "Failed to update wallet data",
+  "@updateWalletToastFailureTitle": {
+    "description": "Title for error state in update wallet account toast"
   }
 }

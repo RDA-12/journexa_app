@@ -12,7 +12,8 @@ const Map<String, Map<AppExceptionCode, String>> expectedTranslations = {
     AppExceptionCode.serverException: 'Terjadi kesalahan di server',
     AppExceptionCode.unauthenticated:
         'Anda belum login. Silakan login untuk melanjutkan.',
-    AppExceptionCode.accountAlreadyExists: 'Kas dengan nama tersebut sudah ada',
+    AppExceptionCode.accountAlreadyExists:
+        'Dompet dengan nama tersebut sudah ada',
     AppExceptionCode.accountNotFound:
         'Akun dengan kode 1234 tidak dapat ditemukan',
   },
@@ -23,14 +24,14 @@ const Map<String, Map<AppExceptionCode, String>> expectedTranslations = {
     AppExceptionCode.unauthenticated:
         'You are not logged in. Please login to continue.',
     AppExceptionCode.accountAlreadyExists:
-        'Kas with provided name already exists',
+        'Dompet with provided name already exists',
     AppExceptionCode.accountNotFound: 'Account with code 1234 not found',
   },
 };
 
 final additionalData = <AppExceptionCode, Map<String, dynamic>>{
   AppExceptionCode.accountAlreadyExists: {
-    'name': 'Kas',
+    'name': 'Dompet',
   },
   AppExceptionCode.accountNotFound: {
     'code': '1234',

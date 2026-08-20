@@ -19,7 +19,7 @@ sealed class DeleteAccountParams with _$DeleteAccountParams {
   }) = _DeleteAccountsParams;
 }
 
-/// Use Case to delete a cash account in current user database
+/// Use Case to delete a wallet account in current user database
 @lazySingleton
 class DeleteAccountUseCase
     with Loggable

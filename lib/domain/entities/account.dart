@@ -7,7 +7,7 @@ part 'account.freezed.dart';
 enum AccountType {
   /// Asset account
   ///
-  /// Typically uses to holds value like cash, bank, accounts receivable, etc
+  /// Typically uses to holds value like wallet, bank, accounts receivable, etc
   asset,
 
   /// Revenue account

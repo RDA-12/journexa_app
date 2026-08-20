@@ -16,9 +16,9 @@ class HomePage extends StatelessWidget {
         children: [
           AppButton(
             onPressed: () {
-              unawaited(context.push('/cash-accounts'));
+              unawaited(context.push('/wallet-accounts'));
             },
-            label: 'Cash Accounts',
+            label: 'Wallet Accounts',
           ),
         ],
       ),

@@ -349,4 +349,76 @@ class FirestoreAccountRepository with Loggable implements IAccountRepository {
       );
     }
   }
+
+  @override
+  Future<AppResult<Null>> update({
+    required String userId,
+    required Account updatedAccount,
+    required String traceId,
+  }) async {
+    try {
+      final firestoreAccount = FirestoreAccount.fromDomain(updatedAccount);
+      logInfo(
+        'Starts checking the account',
+        traceId: traceId,
+        extras: firestoreAccount.toJson(),
+      );
+      final doc = _db.doc('users/$userId/accounts/${updatedAccount.code}');
+      final snap = await doc.get();
+      if (!snap.exists) {
+        logWarning('Account not found', traceId: traceId);
+        return AppResult.failure(
+          AppException(
+            'Account ${updatedAccount.code} not found',
+            code: AppExceptionCode.accountNotFound,
+          ),
+        );
+      }
+
+      logInfo(
+        'Account found. Start checking updated name',
+        traceId: traceId,
+        extras: firestoreAccount.toJson(),
+      );
+      final query = _db
+          .collection('users/$userId/accounts')
+          .where('code', isNotEqualTo: updatedAccount.code)
+          .where('name', isEqualTo: updatedAccount.name);
+      final accountsSnap = await query.get();
+      if (accountsSnap.docs.isNotEmpty) {
+        logInfo(
+          'Name already exists',
+          traceId: traceId,
+          extras: {
+            'name': updatedAccount.name,
+          },
+        );
+        return const AppResult.failure(
+          AppException(
+            'Account name already exists',
+            code: AppExceptionCode.accountAlreadyExists,
+          ),
+        );
+      }
+
+      logInfo('Name not found. Start updating the account', traceId: traceId);
+      await doc.update(firestoreAccount.toJson());
+      logInfo(
+        'Account updated. Update account success',
+        traceId: traceId,
+        extras: firestoreAccount.toJson(),
+      );
+      return const AppResult.success(null);
+    } on FirebaseException catch (e) {
+      logError('$e', traceId: traceId, error: e);
+      return AppResult.failure(
+        AppException('$e', code: AppExceptionCode.serverException),
+      );
+    } on Exception catch (e, st) {
+      logError('$e', traceId: traceId, error: e, stackTrace: st);
+      return AppResult.failure(
+        AppException('$e', code: AppExceptionCode.internalException),
+      );
+    }
+  }
 }

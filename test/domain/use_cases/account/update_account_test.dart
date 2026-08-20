@@ -50,8 +50,11 @@ void main() {
       ),
     ).thenAnswer((_) async => AppResult.success(account));
     when(
-      () =>
-          mockAccountRepository.save(userId, updatedAccount, traceId: traceId),
+      () => mockAccountRepository.update(
+        userId: userId,
+        updatedAccount: updatedAccount,
+        traceId: traceId,
+      ),
     ).thenAnswer((_) async => const AppResult.success(null));
 
     useCase = UpdateAccountUseCase(
@@ -82,13 +85,16 @@ void main() {
     ).called(1);
   });
 
-  test('calls AccountRepository.save once '
+  test('calls AccountRepository.update once '
       'to save updated Account', () async {
     await useCase.execute(params, traceId: traceId);
 
     verify(
-      () =>
-          mockAccountRepository.save(userId, updatedAccount, traceId: traceId),
+      () => mockAccountRepository.update(
+        userId: userId,
+        updatedAccount: updatedAccount,
+        traceId: traceId,
+      ),
     ).called(1);
   });
 
@@ -139,11 +145,11 @@ void main() {
   });
 
   test('returns failure '
-      'when AccountRepository.save failed', () async {
+      'when AccountRepository.update failed', () async {
     when(
-      () => mockAccountRepository.save(
-        userId,
-        updatedAccount,
+      () => mockAccountRepository.update(
+        userId: userId,
+        updatedAccount: updatedAccount,
         traceId: traceId,
       ),
     ).thenAnswer((_) async => AppResult<Null>.failure(AppException.test()));

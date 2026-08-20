@@ -55,4 +55,11 @@ abstract interface class IAccountRepository {
     required String code,
     required String traceId,
   });
+
+  /// Update [updatedAccount] to [userId] database.
+  Future<AppResult<Null>> update({
+    required String userId,
+    required Account updatedAccount,
+    required String traceId,
+  });
 }

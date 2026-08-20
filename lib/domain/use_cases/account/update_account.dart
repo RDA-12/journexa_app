@@ -78,9 +78,9 @@ class UpdateAccountUseCase
     final updatedAccount = account.update(
       name: params.name,
     );
-    final saveResult = await _accountRepository.save(
-      userId,
-      updatedAccount,
+    final saveResult = await _accountRepository.update(
+      userId: userId,
+      updatedAccount: updatedAccount,
       traceId: traceId,
     );
     final saveExc = saveResult.errorOrNull;

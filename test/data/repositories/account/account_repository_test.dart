@@ -760,4 +760,140 @@ void main() {
       },
     );
   });
+
+  group('update', () {
+    test('returns success and update correct account', () async {
+      final updatedAccount = initialAccounts.first.copyWith(
+        name: 'Updated name',
+      );
+      final expectedFirestoreAccount = FirestoreAccount.fromDomain(
+        updatedAccount,
+      );
+
+      final result = await repository.update(
+        userId: userId,
+        updatedAccount: updatedAccount,
+        traceId: traceId,
+      );
+
+      expect(result, const AppResult.success(null));
+
+      final snap = await fakeFirestore
+          .collection('users/$userId/accounts')
+          .where('code', isEqualTo: updatedAccount.code)
+          .get();
+      expect(snap.docs.length, 1);
+
+      final actual = FirestoreAccount.fromJson(snap.docs.first.data());
+      expect(actual, expectedFirestoreAccount);
+    });
+
+    test(
+      'returns failure with accountNotFound code '
+      'when account code is not found',
+      () async {
+        const nonExistCode = '10.1001';
+
+        final result = await repository.update(
+          userId: userId,
+          updatedAccount: initialAccounts.first.copyWith(code: nonExistCode),
+          traceId: traceId,
+        );
+
+        expect(
+          result,
+          isA<AppResultFailure<void>>().having(
+            (e) => e.error.code,
+            'error.code',
+            AppExceptionCode.accountNotFound,
+          ),
+        );
+      },
+    );
+
+    test(
+      'returns failure with accountAlreadyExists code '
+      'when updated name is exists',
+      () async {
+        final duplicateAccount = initialAccounts.first.copyWith(
+          name: initialAccounts.last.name,
+        );
+
+        final result = await repository.update(
+          userId: userId,
+          updatedAccount: duplicateAccount,
+          traceId: traceId,
+        );
+
+        expect(
+          result,
+          isA<AppResultFailure<void>>().having(
+            (e) => e.error.code,
+            'error.code',
+            AppExceptionCode.accountAlreadyExists,
+          ),
+        );
+      },
+    );
+
+    test(
+      'returns failure with serverException code '
+      'when firestore throws FirebaseException',
+      () async {
+        final doc = fakeFirestore.doc(
+          'users/$userId/accounts/${initialAccounts.first.code}',
+        );
+        whenCalling(Invocation.method(#update, null))
+            .on(doc)
+            .thenThrow(
+              FirebaseException(plugin: 'firestore'),
+            );
+
+        final result = await repository.update(
+          userId: userId,
+          updatedAccount: initialAccounts.first,
+          traceId: traceId,
+        );
+
+        expect(
+          result,
+          isA<AppResultFailure<void>>().having(
+            (e) => e.error.code,
+            'error.code',
+            AppExceptionCode.serverException,
+          ),
+        );
+      },
+    );
+
+    test(
+      'returns failure with internalException code '
+      'when unexpected Exception thrown',
+      () async {
+        final doc = fakeFirestore.doc(
+          'users/$userId/accounts/${initialAccounts.first.code}',
+        );
+        whenCalling(Invocation.method(#update, null))
+            .on(doc)
+            .thenThrow(
+              Exception(),
+            );
+
+        final result = await repository.update(
+          userId: userId,
+          updatedAccount: initialAccounts.first,
+          traceId: traceId,
+        );
+
+        expect(
+          result,
+          isA<AppResultFailure<void>>().having(
+            (e) => e.error.code,
+            'error.code',
+            AppExceptionCode.internalException,
+          ),
+        );
+      },
+    );
+  });
 }

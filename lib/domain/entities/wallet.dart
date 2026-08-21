@@ -41,6 +41,27 @@ sealed class Wallet with _$Wallet {
         code: AppExceptionCode.internalException,
       );
     }
+    final assetParent = kSystemDefinedAccounts.firstWhere(
+      (it) => it.code == '10.0000',
+    );
+    if (account.parent != assetParent) {
+      throw AppException(
+        'Wallet account must have asset parent. Got: ${account.parent?.code}',
+        code: AppExceptionCode.internalException,
+      );
+    }
+  }
+
+  /// Returns updated [Wallet] based on provided arguments
+  Wallet update({String? name}) {
+    var updated = this;
+    if (name != null) {
+      updated = updated.copyWith(
+        name: name,
+        account: updated.account.copyWith(name: name),
+      );
+    }
+    return updated;
   }
 }
 

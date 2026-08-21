@@ -104,10 +104,10 @@ sealed class Account with _$Account {
   }) = _Account;
 
   /// Creates new [Account] to helps testing
-  factory Account.test() => Account(
-    code: '10.0000',
+  factory Account.test([AccountType type = AccountType.asset]) => Account(
+    code: '${type.prefixCode}0.0000',
     name: 'test',
-    type: AccountType.asset,
+    type: type,
   );
 
   /// Creates new [Account] which code is derived from parent code

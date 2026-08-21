@@ -199,4 +199,9 @@ class AppLocalizationsId extends AppLocalizations {
 
   @override
   String get addIncomeCategoryTitle => 'Tambah Kategori Pendapatan';
+
+  @override
+  String errorWalletNameAlreadyExists(String name) {
+    return 'Dompet dengan nama $name sudah ada';
+  }
 }

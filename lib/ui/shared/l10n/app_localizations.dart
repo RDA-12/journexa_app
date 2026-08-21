@@ -427,6 +427,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Add Income Category'**
   String get addIncomeCategoryTitle;
+
+  /// Message to be showed when users trying to creates wallet with same name
+  ///
+  /// In en, this message translates to:
+  /// **'Wallet with name {name} already exists'**
+  String errorWalletNameAlreadyExists(String name);
 }
 
 class _AppLocalizationsDelegate

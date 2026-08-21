@@ -35,5 +35,7 @@ extension AppExceptionCodeX on AppExceptionCode {
     AppExceptionCode.accountNotFound => context.l10n.errorAccountNotFound(
       data['code'] as String,
     ),
+    AppExceptionCode.walletNameAlreadyExists =>
+      context.l10n.errorWalletNameAlreadyExists(data['name'] as String),
   };
 }

@@ -1,0 +1,44 @@
+import 'package:freezed_annotation/freezed_annotation.dart';
+import 'package:journexa_app/domain/entities/account.dart';
+import 'package:journexa_app/shared/app_exception.dart';
+
+part 'wallet.freezed.dart';
+
+/// Representing single wallet data users owned
+@freezed
+sealed class Wallet with _$Wallet {
+  /// Creates new [Wallet]
+  factory Wallet({
+    /// Unique ID of this [Wallet]
+    required String id,
+
+    /// Name of the [Wallet]
+    required String name,
+
+    /// Accounting [Account] connected to this [Wallet]
+    required Account account,
+  }) = _Wallet;
+
+  /// Creates new [Wallet] for testing purposes
+  factory Wallet.test() => Wallet(
+    id: 'id',
+    name: 'test',
+    account: Account.test(),
+  );
+
+  Wallet._() {
+    if (account.type != AccountType.asset) {
+      throw AppException(
+        'Wallet must have asset typed Account. Got: ${account.type}',
+        code: AppExceptionCode.internalException,
+      );
+    }
+    if (name != account.name) {
+      throw AppException(
+        'Account name must match Wallet name. '
+        'Wallet name: $name, Account name: ${account.name}',
+        code: AppExceptionCode.internalException,
+      );
+    }
+  }
+}

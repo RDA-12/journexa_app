@@ -196,4 +196,9 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get addIncomeCategoryTitle => 'Add Income Category';
+
+  @override
+  String errorWalletNameAlreadyExists(String name) {
+    return 'Wallet with name $name already exists';
+  }
 }

@@ -1,5 +1,6 @@
 import 'package:flutter/foundation.dart';
 import 'package:journexa_app/domain/entities/account.dart';
+import 'package:journexa_app/domain/entities/wallet.dart';
 
 /// Possibles codes for [AppException]
 enum AppExceptionCode {
@@ -20,6 +21,9 @@ enum AppExceptionCode {
 
   /// [Account] not found
   accountNotFound,
+
+  /// Code when creating new [Wallet] with existing name
+  walletNameAlreadyExists,
 }
 
 /// Base exception class for the application

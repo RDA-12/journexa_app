@@ -289,5 +289,15 @@
   "addIncomeCategoryTitle": "Add Income Category",
   "@addIncomeCategoryTitle": {
     "description": "Title for add income category page"
+  },
+  "errorWalletNameAlreadyExists": "Wallet with name {name} already exists",
+  "@errorWalletNameAlreadyExists": {
+    "description": "Message to be showed when users trying to creates wallet with same name",
+    "placeholders": {
+      "name": {
+        "type": "String",
+        "example": "dompet hitam"
+      }
+    }
   }
 }

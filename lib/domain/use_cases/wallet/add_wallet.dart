@@ -1,11 +1,14 @@
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:injectable/injectable.dart';
 import 'package:journexa_app/domain/entities/account.dart';
+import 'package:journexa_app/domain/entities/wallet.dart';
 import 'package:journexa_app/domain/repositories/i_account_repository.dart';
 import 'package:journexa_app/domain/repositories/i_auth_repository.dart';
+import 'package:journexa_app/domain/repositories/i_wallet_respository.dart';
 import 'package:journexa_app/domain/use_cases/base_use_case.dart';
 import 'package:journexa_app/shared/app_logger.dart';
 import 'package:journexa_app/shared/app_result.dart';
+import 'package:journexa_app/shared/uid_generator.dart';
 
 part 'add_wallet.freezed.dart';
 
@@ -29,12 +32,13 @@ sealed class AddWalletParams with _$AddWalletParams {
 /// Use case for adding new [Account] to current user database.
 @lazySingleton
 class AddWalletUseCase
-    with Loggable
+    with Loggable, GenerateUid
     implements FutureBaseUseCase<AddWalletParams, Null> {
   /// Creates new [AddWalletUseCase]
   AddWalletUseCase({
     required this._accountRepository,
     required this._authRepository,
+    required this._walletRepository,
   });
 
   @override
@@ -42,6 +46,7 @@ class AddWalletUseCase
 
   final IAuthRepository _authRepository;
   final IAccountRepository _accountRepository;
+  final IWalletRepository _walletRepository;
 
   /// Starts executing [AddWalletUseCase]
   @override
@@ -65,10 +70,12 @@ class AddWalletUseCase
       );
       return AppResult.failure(getCurrentUserIdExc);
     }
-    logInfo('userId obtained', traceId: traceId);
-    final userId = getCurrentUserIdResult.valueOrNull!;
 
-    logInfo('Get parent Account for asset', traceId: traceId);
+    logInfo(
+      'userId obtained. Start finding parent Asset Account',
+      traceId: traceId,
+    );
+    final userId = getCurrentUserIdResult.valueOrNull!;
     final parentAssetAccount = kSystemDefinedAccounts.firstWhere(
       (it) => it.code == '10.0000',
     );
@@ -91,27 +98,35 @@ class AddWalletUseCase
       );
       return AppResult.failure(getChildrenCountExc);
     }
+
     final childrenCount = getChildrenCountResult.valueOrNull!;
     logInfo(
-      'children count obtained. Creating new Account object',
+      'children count obtained. Creating new Wallet object',
       traceId: traceId,
     );
-
     final newAccount = Account.user(
       parent: parentAssetAccount,
       name: params.name,
       currentChildrenCount: childrenCount,
     );
-    logInfo('New Account created. Saving Account', traceId: traceId);
+    final wallet = Wallet(
+      id: generateUid(),
+      name: params.name,
+      account: newAccount,
+    );
 
-    final saveResult = await _accountRepository.save(
-      userId,
-      newAccount,
+    logInfo(
+      'New wallet object created. Save wallet',
+      traceId: traceId,
+    );
+    final saveResult = await _walletRepository.save(
+      userId: userId,
+      wallet: wallet,
       traceId: traceId,
     );
     return saveResult.when(
       success: (_) {
-        logInfo('new Account saved successfully. Done.', traceId: traceId);
+        logInfo('new Wallet saved successfully. Done.', traceId: traceId);
         return const AppResult<Null>.success(null);
       },
       failure: (exc) {

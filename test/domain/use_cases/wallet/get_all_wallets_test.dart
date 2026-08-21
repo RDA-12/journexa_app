@@ -5,7 +5,7 @@ import 'package:journexa_app/domain/entities/journal.dart';
 import 'package:journexa_app/domain/repositories/i_account_repository.dart';
 import 'package:journexa_app/domain/repositories/i_auth_repository.dart';
 import 'package:journexa_app/domain/repositories/i_journal_repository.dart';
-import 'package:journexa_app/domain/use_cases/account/get_all_wallets.dart';
+import 'package:journexa_app/domain/use_cases/wallet/get_all_wallets.dart';
 import 'package:journexa_app/shared/app_exception.dart';
 import 'package:journexa_app/shared/app_result.dart';
 import 'package:mocktail/mocktail.dart';

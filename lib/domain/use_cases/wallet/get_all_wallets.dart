@@ -1,9 +1,10 @@
+import 'package:decimal/decimal.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:injectable/injectable.dart';
-import 'package:journexa_app/domain/entities/journal.dart';
-import 'package:journexa_app/domain/repositories/i_account_repository.dart';
+import 'package:journexa_app/domain/entities/wallet.dart';
 import 'package:journexa_app/domain/repositories/i_auth_repository.dart';
 import 'package:journexa_app/domain/repositories/i_journal_repository.dart';
+import 'package:journexa_app/domain/repositories/i_wallet_respository.dart';
 import 'package:journexa_app/domain/use_cases/base_use_case.dart';
 import 'package:journexa_app/shared/app_logger.dart';
 import 'package:journexa_app/shared/app_result.dart';
@@ -23,10 +24,10 @@ sealed class GetAllWalletsParams with _$GetAllWalletsParams {
 @lazySingleton
 class GetAllWalletsUseCase
     with Loggable
-    implements FutureBaseUseCase<GetAllWalletsParams, List<AccountBalance>> {
+    implements FutureBaseUseCase<GetAllWalletsParams, List<WalletWithBalance>> {
   /// Creates new [GetAllWalletsUseCase]
   GetAllWalletsUseCase({
-    required this._accountRepository,
+    required this._walletRepository,
     required this._authRepository,
     required this._journalRepository,
   });
@@ -35,12 +36,12 @@ class GetAllWalletsUseCase
   String get logTag => 'GetAllWalletUseCase';
 
   final IAuthRepository _authRepository;
-  final IAccountRepository _accountRepository;
+  final IWalletRepository _walletRepository;
   final IJournalRepository _journalRepository;
 
   /// Execute getting all wallet from current user
   @override
-  Future<AppResult<List<AccountBalance>>> execute(
+  Future<AppResult<List<WalletWithBalance>>> execute(
     GetAllWalletsParams params, {
     required String traceId,
   }) async {
@@ -59,22 +60,21 @@ class GetAllWalletsUseCase
       'Got current user id. Starts getting wallets',
       traceId: traceId,
     );
-    const parentCode = '10.0000';
-    final accountsResult = await _accountRepository.getByParentCode(
+    final walletsResult = await _walletRepository.getAll(
       userId: userId,
-      parentCode: parentCode,
       query: params.query,
       traceId: traceId,
     );
-    final accountsExc = accountsResult.errorOrNull;
+    final accountsExc = walletsResult.errorOrNull;
     if (accountsExc != null) {
       logInfo('Failed to get wallets', traceId: traceId);
       return AppResult.failure(accountsExc);
     }
 
-    final accounts = accountsResult.valueOrNull!;
+    final wallets = walletsResult.valueOrNull!;
+    final accounts = wallets.map((it) => it.account).toList();
     logInfo(
-      'Got ${accounts.length} wallets. Starts getting accounts balance',
+      'Got ${wallets.length} wallets. Starts getting accounts balance',
       traceId: traceId,
     );
     final currentBalanceResult = await _journalRepository.getCurrentBalance(
@@ -91,10 +91,22 @@ class GetAllWalletsUseCase
     final balanceMap = currentBalanceResult.valueOrNull!;
     logInfo(
       'Got ${balanceMap.length} accounts balance. '
-      'Converts Map to List',
+      'Merge it with wallets to creates WalletWithBalance object',
       traceId: traceId,
     );
-    final accountBalances = balanceMap.values.toList();
-    return AppResult.success(accountBalances);
+    final walletWithBalance = wallets.map((wallet) {
+      final balance = balanceMap[wallet.account.code];
+      if (balance == null) {
+        return WalletWithBalance(
+          wallet: wallet,
+          balance: Decimal.zero,
+        );
+      }
+      return WalletWithBalance(
+        wallet: wallet,
+        balance: balance.balance,
+      );
+    }).toList();
+    return AppResult.success(walletWithBalance);
   }
 }

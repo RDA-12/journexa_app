@@ -1,7 +1,7 @@
 import 'package:bloc/bloc.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:journexa_app/domain/entities/account.dart';
-import 'package:journexa_app/domain/entities/journal.dart';
+import 'package:journexa_app/domain/entities/wallet.dart';
 import 'package:journexa_app/domain/use_cases/account/delete_account.dart';
 import 'package:journexa_app/domain/use_cases/account/update_account.dart';
 import 'package:journexa_app/domain/use_cases/wallet/get_all_wallets.dart';
@@ -79,7 +79,7 @@ class WalletsBloc extends Bloc<WalletsEvent, WalletsState>
       traceId: traceId,
     );
     result.when(
-      success: (accountBalances) {
+      success: (walletWithBalances) {
         logInfo(
           'Get wallets succeeded. Emit loaded status',
           traceId: traceId,
@@ -87,8 +87,8 @@ class WalletsBloc extends Bloc<WalletsEvent, WalletsState>
         emit(
           state.copyWith(
             status: WalletsStatus.loaded,
-            accountBalances: accountBalances
-                .map((it) => AccountBalanceWithState(accountBalance: it))
+            walletWithBalances: walletWithBalances
+                .map((it) => WalletWithBalanceState(walletWithBalance: it))
                 .toList(),
           ),
         );
@@ -113,12 +113,12 @@ class WalletsBloc extends Bloc<WalletsEvent, WalletsState>
     required Emitter<WalletsState> emit,
   }) async {
     final traceId = generateUid();
-    final accountIdx = state.accountBalances.indexWhere(
-      (it) => it.accountBalance.account.code == account.code,
+    final accountIdx = state.walletWithBalances.indexWhere(
+      (it) => it.walletWithBalance.wallet.account.code == account.code,
     );
     if (accountIdx == -1) {
       logInfo(
-        'Account with code ${account.code} not found in accountBalances. '
+        'Wallet with code ${account.code} not found in walletWithBalances. '
         'Early return',
         traceId: traceId,
       );
@@ -127,13 +127,14 @@ class WalletsBloc extends Bloc<WalletsEvent, WalletsState>
 
     logInfo(
       'Starts deleting account with code ${account.code}. '
-      'Emit new accountBalances with status deleting on the Account',
+      'Emit new walletWithBalances with status deleting on the Account',
       traceId: traceId,
     );
     emit(
       state.copyWith(
-        accountBalances: state.accountBalances.map((it) {
-          final isDeleting = it.accountBalance.account.code == account.code;
+        walletWithBalances: state.walletWithBalances.map((it) {
+          final isDeleting =
+              it.walletWithBalance.wallet.account.code == account.code;
           if (!isDeleting) return it;
           return it.copyWith(status: WalletStatus.deleting);
         }).toList(),
@@ -147,15 +148,18 @@ class WalletsBloc extends Bloc<WalletsEvent, WalletsState>
       success: (_) {
         logInfo(
           'Deletes account success. '
-          'Filter account from accountBalances. '
+          'Filter account from walletWithBalances. '
           'Emit with recentlyDeleted notice',
           traceId: traceId,
         );
         emit(
           state.copyWith(
             status: WalletsStatus.loaded,
-            accountBalances: state.accountBalances
-                .where((it) => it.accountBalance.account.code != account.code)
+            walletWithBalances: state.walletWithBalances
+                .where(
+                  (it) =>
+                      it.walletWithBalance.wallet.account.code != account.code,
+                )
                 .toList(),
             notice: WalletNotice.recentlyDeleted(account: account),
           ),
@@ -170,8 +174,9 @@ class WalletsBloc extends Bloc<WalletsEvent, WalletsState>
         emit(
           state.copyWith(
             status: WalletsStatus.loaded,
-            accountBalances: state.accountBalances.map((it) {
-              final processed = it.accountBalance.account.code == account.code;
+            walletWithBalances: state.walletWithBalances.map((it) {
+              final processed =
+                  it.walletWithBalance.wallet.account.code == account.code;
               if (!processed) return it;
               return it.copyWith(status: WalletStatus.idle);
             }).toList(),
@@ -192,24 +197,26 @@ class WalletsBloc extends Bloc<WalletsEvent, WalletsState>
   }) async {
     final traceId = generateUid();
     logInfo('Checking account with code ${account.code}', traceId: traceId);
-    final accountIdx = state.accountBalances.indexWhere(
-      (it) => it.accountBalance.account.code == account.code,
+    final accountIdx = state.walletWithBalances.indexWhere(
+      (it) => it.walletWithBalance.wallet.account.code == account.code,
     );
     if (accountIdx == -1) {
       logInfo('Account not found. Skipping', traceId: traceId);
       return;
     }
-    final oldAccount = state.accountBalances[accountIdx].accountBalance.account;
+    final oldAccount =
+        state.walletWithBalances[accountIdx].walletWithBalance.wallet.account;
 
     logInfo(
       'Starts updating account ${account.code}. '
-      'Emit new accountBalances with status updateing on the Account',
+      'Emit new walletWithBalances with status updateing on the Account',
       traceId: traceId,
     );
     emit(
       state.copyWith(
-        accountBalances: state.accountBalances.map((it) {
-          final isUpdating = it.accountBalance.account.code == account.code;
+        walletWithBalances: state.walletWithBalances.map((it) {
+          final isUpdating =
+              it.walletWithBalance.wallet.account.code == account.code;
           if (!isUpdating) return it;
           return it.copyWith(status: WalletStatus.updating);
         }).toList(),
@@ -231,12 +238,18 @@ class WalletsBloc extends Bloc<WalletsEvent, WalletsState>
         emit(
           state.copyWith(
             status: WalletsStatus.loaded,
-            accountBalances: state.accountBalances.map((it) {
-              final processed = it.accountBalance.account.code == account.code;
+            walletWithBalances: state.walletWithBalances.map((it) {
+              final processed =
+                  it.walletWithBalance.wallet.account.code == account.code;
               if (!processed) return it;
               return it.copyWith(
                 status: WalletStatus.idle,
-                accountBalance: it.accountBalance.copyWith(account: updated),
+                walletWithBalance: it.walletWithBalance.copyWith(
+                  wallet: it.walletWithBalance.wallet.copyWith(
+                    name: updated.name,
+                    account: updated,
+                  ),
+                ),
               );
             }).toList(),
             notice: WalletNotice.recentlyUpdated(
@@ -255,8 +268,9 @@ class WalletsBloc extends Bloc<WalletsEvent, WalletsState>
         emit(
           state.copyWith(
             status: WalletsStatus.loaded,
-            accountBalances: state.accountBalances.map((it) {
-              final processed = it.accountBalance.account.code == account.code;
+            walletWithBalances: state.walletWithBalances.map((it) {
+              final processed =
+                  it.walletWithBalance.wallet.account.code == account.code;
               if (!processed) return it;
               return it.copyWith(
                 status: WalletStatus.idle,

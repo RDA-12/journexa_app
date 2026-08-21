@@ -1,7 +1,7 @@
 import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:journexa_app/domain/entities/account.dart';
+import 'package:journexa_app/domain/entities/wallet.dart';
 import 'package:journexa_app/ui/wallets/bloc/wallets_bloc.dart';
 import 'package:journexa_app/ui/wallets/widgets/wallet_card.dart';
 
@@ -20,17 +20,17 @@ class WalletsList extends StatelessWidget {
   });
 
   /// List of data to be showed
-  final List<AccountBalanceWithState> data;
+  final List<WalletWithBalanceState> data;
 
   /// Invoked when delete button is pressed in [WalletCard]
   ///
-  /// It means the [Account] confirmed to be deleted
-  final void Function(Account) onDeletePressed;
+  /// It means the [Wallet] confirmed to be deleted
+  final void Function(Wallet) onDeletePressed;
 
   /// Invoked when update button is pressed in [WalletCard]
   ///
   /// It means the user confirmed to update the account name
-  final void Function(Account, String) onUpdatePressed;
+  final void Function(Wallet, String) onUpdatePressed;
 
   @override
   Widget build(BuildContext context) {
@@ -39,34 +39,30 @@ class WalletsList extends StatelessWidget {
       separatorBuilder: (_, _) => const SizedBox(height: 8),
       itemBuilder: (context, index) {
         final item = data[index];
-        return BlocSelector<
-          WalletsBloc,
-          WalletsState,
-          AccountBalanceWithState?
-        >(
+        return BlocSelector<WalletsBloc, WalletsState, WalletWithBalanceState?>(
           selector: (state) {
-            return state.accountBalances.firstWhereOrNull(
+            return state.walletWithBalances.firstWhereOrNull(
               (it) =>
-                  it.accountBalance.account.code ==
-                  item.accountBalance.account.code,
+                  it.walletWithBalance.wallet.id ==
+                  item.walletWithBalance.wallet.id,
             );
           },
           builder: (context, wallet) {
             if (wallet == null) {
               return const SizedBox.shrink();
             }
-            final accountBalance = wallet.accountBalance;
+            final walletWithBalance = wallet.walletWithBalance;
             final isDeleting = wallet.status == WalletStatus.deleting;
             final isUpdating = wallet.status == WalletStatus.updating;
             return WalletCard(
-              accountBalance: accountBalance,
+              walletWithBalance: walletWithBalance,
               isDeleting: isDeleting,
               isUpdating: isUpdating,
               onUpdatePressed: (name) {
-                onUpdatePressed(accountBalance.account, name);
+                onUpdatePressed(walletWithBalance.wallet, name);
               },
               onDeletePressed: () {
-                onDeletePressed(accountBalance.account);
+                onDeletePressed(walletWithBalance.wallet);
               },
             );
           },

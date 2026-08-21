@@ -81,4 +81,76 @@ class FirestoreWalletRepository with Loggable implements IWalletRepository {
       );
     }
   }
+
+  @override
+  Future<AppResult<List<Wallet>>> getAll({
+    required String userId,
+    required String traceId,
+    String? query,
+  }) async {
+    try {
+      maybeThrowException(this, Invocation.method(#getAll, null));
+      logInfo(
+        'Start fetching Wallets',
+        traceId: traceId,
+        extras: {'query': query},
+      );
+      Query<Map<String, Object?>> walletsQuery = _db.collection(
+        'users/$userId/wallets',
+      );
+      if (query != null) {
+        walletsQuery = walletsQuery
+            .where('nameLower', isGreaterThanOrEqualTo: query)
+            .where('nameLower', isLessThanOrEqualTo: '$query~');
+      }
+      final walletsSnap = await walletsQuery.get();
+      logInfo(
+        'Wallets fetched. Start fetch each Wallet Account',
+        traceId: traceId,
+      );
+      final result = <Wallet>[];
+      for (final doc in walletsSnap.docs) {
+        final walletFirestore = FirestoreWallet.fromJson(doc.data());
+        logInfo(
+          'Fetch account for wallet ${walletFirestore.name}',
+          traceId: traceId,
+          extras: {'wallet': walletFirestore.toJson()},
+        );
+        final accountDoc = _db.doc(
+          'users/$userId/accounts/${walletFirestore.accountCode}',
+        );
+        final accountSnap = await accountDoc.get();
+        if (!accountSnap.exists) {
+          logWarning(
+            'Account ${walletFirestore.accountCode} not found',
+            traceId: traceId,
+          );
+          continue;
+        }
+        final accountFirestore = FirestoreAccount.fromJson(accountSnap.data()!);
+        logInfo(
+          'Account found',
+          traceId: traceId,
+          extras: accountFirestore.toJson(),
+        );
+        result.add(walletFirestore.toDomain(accountFirestore.toDomain()));
+      }
+      logInfo(
+        'Successfully fetched wallets',
+        traceId: traceId,
+        extras: {'count': result.length},
+      );
+      return AppResult.success(result);
+    } on FirebaseException catch (e) {
+      logError('$e', traceId: traceId, error: e);
+      return AppResult.failure(
+        AppException('$e', code: AppExceptionCode.serverException),
+      );
+    } on Exception catch (e, st) {
+      logError('$e', traceId: traceId, error: e, stackTrace: st);
+      return AppResult.failure(
+        AppException('$e', code: AppExceptionCode.internalException),
+      );
+    }
+  }
 }

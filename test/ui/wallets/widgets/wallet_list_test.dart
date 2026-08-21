@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:journexa_app/domain/entities/account.dart';
-import 'package:journexa_app/domain/entities/journal.dart';
+import 'package:journexa_app/domain/entities/wallet.dart';
 import 'package:journexa_app/ui/shared/widgets/app_confirmation_dialog.dart';
 import 'package:journexa_app/ui/shared/widgets/widgets.dart';
 import 'package:journexa_app/ui/wallets/bloc/wallets_bloc.dart';
@@ -25,16 +25,20 @@ void main() {
   final data = List.generate(
     3,
     (idx) {
-      final accountBalance = AccountBalance(
-        account: Account(
-          code: '10.000${idx + 1}',
+      final walletWithBalance = WalletWithBalance(
+        wallet: Wallet(
+          id: '$idx',
           name: 'asset $idx',
-          type: AccountType.asset,
+          account: Account(
+            code: '10.000${idx + 1}',
+            name: 'asset $idx',
+            type: AccountType.asset,
+          ),
         ),
         balance: Decimal.fromInt(idx * 1000),
       );
-      return AccountBalanceWithState(
-        accountBalance: accountBalance,
+      return WalletWithBalanceState(
+        walletWithBalance: walletWithBalance,
         status: idx == 0
             ? WalletStatus.idle
             : idx.isEven
@@ -51,15 +55,15 @@ void main() {
       const Stream<WalletsState>.empty(),
       initialState: WalletsState(
         status: WalletsStatus.loaded,
-        accountBalances: data,
+        walletWithBalances: data,
       ),
     );
   });
 
   Future<void> pumpWidget(
     WidgetTester tester, {
-    void Function(Account)? onDeletePressed,
-    void Function(Account, String)? onUpdatePressed,
+    void Function(Wallet)? onDeletePressed,
+    void Function(Wallet, String)? onUpdatePressed,
   }) async {
     return pumpForWidgetTest(
       tester,
@@ -90,11 +94,11 @@ void main() {
         final cards = cardFinder.evaluate().toList();
         for (var i = 0; i < cards.length; i++) {
           final item = data[i];
-          final accountBalance = item.accountBalance;
+          final walletWithBalance = item.walletWithBalance;
           final isDeleting = item.status == WalletStatus.deleting;
           final isUpdating = item.status == WalletStatus.updating;
           final widget = cards[i].widget as WalletCard;
-          expect(widget.accountBalance, accountBalance);
+          expect(widget.walletWithBalance, walletWithBalance);
           expect(widget.isDeleting, isDeleting);
           expect(widget.isUpdating, isUpdating);
         }
@@ -107,10 +111,10 @@ void main() {
       'calls onDeletePressed when WalletCard - DeleteWalletButton '
       'is pressed and user confirmed to delete it',
       (tester) async {
-        Account? deletedAccount;
+        Wallet? deletedWallet;
         await pumpWidget(
           tester,
-          onDeletePressed: (account) => deletedAccount = account,
+          onDeletePressed: (account) => deletedWallet = account,
         );
 
         final deleteableData = data.first;
@@ -118,7 +122,7 @@ void main() {
         final cardWidget = tester.widget<WalletCard>(
           deleteableCardFinder,
         );
-        expect(cardWidget.accountBalance, deleteableData.accountBalance);
+        expect(cardWidget.walletWithBalance, deleteableData.walletWithBalance);
 
         final deleteButtonFinder = find.descendant(
           of: deleteableCardFinder,
@@ -140,7 +144,7 @@ void main() {
         );
         await tester.pump();
 
-        expect(deletedAccount, deleteableData.accountBalance.account);
+        expect(deletedWallet, deleteableData.walletWithBalance.wallet);
       },
     );
 
@@ -148,13 +152,13 @@ void main() {
       'calls onUpdatePressed when WalletCard - UpdateWalletButton '
       'is pressed and user confirmed to save the update it',
       (tester) async {
-        Account? updatedAccount;
+        Wallet? updatedWallet;
         String? updatedName;
         const expectedName = 'new name';
         await pumpWidget(
           tester,
           onUpdatePressed: (account, name) {
-            updatedAccount = account;
+            updatedWallet = account;
             updatedName = name;
           },
         );
@@ -164,7 +168,7 @@ void main() {
         final cardWidget = tester.widget<WalletCard>(
           updatedableCardFinder,
         );
-        expect(cardWidget.accountBalance, updateableData.accountBalance);
+        expect(cardWidget.walletWithBalance, updateableData.walletWithBalance);
 
         final updateButtonFinder = find.descendant(
           of: updatedableCardFinder,
@@ -195,7 +199,7 @@ void main() {
         );
         await tester.pumpAndSettle();
 
-        expect(updatedAccount, updateableData.accountBalance.account);
+        expect(updatedWallet, updateableData.walletWithBalance.wallet);
         expect(updatedName, expectedName);
       },
     );

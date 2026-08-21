@@ -169,4 +169,106 @@ void main() {
       },
     );
   });
+
+  group(
+    'getAll',
+    () {
+      test(
+        'returns success with correct Wallets',
+        () async {
+          final result = await repository.getAll(
+            userId: userId,
+            traceId: traceId,
+          );
+
+          expect(result, AppResult.success(initialWallets));
+        },
+      );
+
+      test(
+        'returns success with correct Wallets when query provided',
+        () async {
+          final expectedWallet = Wallet(
+            id: 'expected',
+            name: 'expected name',
+            account: Account(
+              code: '10.1000',
+              name: 'expected name',
+              type: AccountType.asset,
+            ),
+          );
+          final walletDoc = fakeFirestore.doc(
+            'users/$userId/wallets/${expectedWallet.id}',
+          );
+          await walletDoc.set(
+            FirestoreWallet.fromDomain(expectedWallet).toJson(),
+          );
+          final accountDoc = fakeFirestore.doc(
+            'users/$userId/accounts/${expectedWallet.account.code}',
+          );
+          await accountDoc.set(
+            FirestoreAccount.fromDomain(expectedWallet.account).toJson(),
+          );
+
+          final result = await repository.getAll(
+            userId: userId,
+            query: 'expected',
+            traceId: traceId,
+          );
+
+          expect(result, AppResult.success([expectedWallet]));
+        },
+      );
+
+      test(
+        'returns failure with serverException code '
+        'when firestore throws FirebaseException',
+        () async {
+          whenCalling(Invocation.method(#getAll, null))
+              .on(repository)
+              .thenThrow(
+                FirebaseException(plugin: 'firestore'),
+              );
+
+          final result = await repository.getAll(
+            userId: userId,
+            traceId: traceId,
+          );
+
+          expect(
+            result,
+            isA<AppResultFailure<List<Wallet>>>().having(
+              (e) => e.error.code,
+              'error.code',
+              AppExceptionCode.serverException,
+            ),
+          );
+        },
+      );
+
+      test(
+        'returns failure with internalException code '
+        'when firestore throws Exception',
+        () async {
+          whenCalling(
+            Invocation.method(#getAll, null),
+          ).on(repository).thenThrow(Exception());
+
+          final result = await repository.getAll(
+            userId: userId,
+            traceId: traceId,
+          );
+
+          expect(
+            result,
+            isA<AppResultFailure<List<Wallet>>>().having(
+              (e) => e.error.code,
+              'error.code',
+              AppExceptionCode.internalException,
+            ),
+          );
+        },
+      );
+    },
+  );
 }

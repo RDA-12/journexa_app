@@ -57,11 +57,11 @@ class _WalletsListViewState extends State<WalletsListView> {
           listenWhen: (p, c) => p.notice != c.notice,
           listener: (context, state) {
             state.notice?.when(
-              recentlyDeleted: (account) {
+              recentlyDeleted: (wallet) {
                 context.showToast(
                   autoClose: true,
                   description: context.l10n.deleteAccountToastMessage(
-                    account.name,
+                    wallet.name,
                   ),
                 );
               },
@@ -73,18 +73,18 @@ class _WalletsListViewState extends State<WalletsListView> {
                   ),
                 );
               },
-              deleteFailed: (account, exc) {
+              deleteFailed: (wallet, exc) {
                 context.showToast(
                   autoClose: true,
                   type: ToastificationType.error,
                   title: context.l10n.deleteWalletToastFailureTitle,
                   description: exc.code.toLocalizedString(
                     context,
-                    data: {'code': account.code},
+                    data: {'code': wallet.code},
                   ),
                 );
               },
-              updateFailed: (account, exc) {
+              updateFailed: (wallet, exc) {
                 context.showToast(
                   autoClose: true,
                   type: ToastificationType.error,
@@ -92,7 +92,7 @@ class _WalletsListViewState extends State<WalletsListView> {
                   description: exc.code.toLocalizedString(
                     context,
                     data: {
-                      'code': account.code,
+                      'code': wallet.code,
                       'name': context.l10n.commonWallet,
                     },
                   ),
@@ -149,10 +149,11 @@ class _WalletsListViewState extends State<WalletsListView> {
 
                 return BlocBuilder<WalletsBloc, WalletsState>(
                   buildWhen: (p, c) =>
-                      p.accountBalances.length != c.accountBalances.length,
+                      p.walletWithBalances.length !=
+                      c.walletWithBalances.length,
                   builder: (context, dataState) {
-                    final accountBalances = dataState.accountBalances;
-                    if (accountBalances.isEmpty) {
+                    final walletBalances = dataState.walletWithBalances;
+                    if (walletBalances.isEmpty) {
                       return Center(
                         child: AppEmptyBox(
                           title: context.l10n.commonEmptyTitle,
@@ -162,15 +163,15 @@ class _WalletsListViewState extends State<WalletsListView> {
                     }
 
                     return WalletsList(
-                      data: accountBalances,
-                      onDeletePressed: (account) {
+                      data: walletBalances,
+                      onDeletePressed: (wallet) {
                         context.read<WalletsBloc>().add(
-                          WalletsEvent.delete(account),
+                          WalletsEvent.delete(wallet.account),
                         );
                       },
-                      onUpdatePressed: (account, name) {
+                      onUpdatePressed: (wallet, name) {
                         context.read<WalletsBloc>().add(
-                          WalletsEvent.update(account, name: name),
+                          WalletsEvent.update(wallet.account, name: name),
                         );
                       },
                     );

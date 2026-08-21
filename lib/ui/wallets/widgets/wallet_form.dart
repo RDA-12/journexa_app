@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:journexa_app/domain/entities/account.dart';
+import 'package:journexa_app/domain/entities/wallet.dart';
 import 'package:journexa_app/ui/shared/l10n/l10n.dart';
 import 'package:journexa_app/ui/shared/widgets/widgets.dart';
 
@@ -9,13 +9,13 @@ class WalletForm extends StatefulWidget {
   /// Creates new [WalletForm]
   const WalletForm({
     super.key,
-    this.initialAccount,
+    this.initialWallet,
     this.onSavePressed,
     this.isSaving = false,
   });
 
   /// Initial account to be showed
-  final Account? initialAccount;
+  final Wallet? initialWallet;
 
   /// Invoked when user pressed add button
   final void Function(String name)? onSavePressed;
@@ -35,7 +35,7 @@ class _WalletFormState extends State<WalletForm> {
   void initState() {
     super.initState();
     _nameController = TextEditingController(
-      text: widget.initialAccount?.name ?? '',
+      text: widget.initialWallet?.name ?? '',
     );
   }
 

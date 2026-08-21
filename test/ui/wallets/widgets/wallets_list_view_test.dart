@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:journexa_app/domain/entities/account.dart';
-import 'package:journexa_app/domain/entities/journal.dart';
+import 'package:journexa_app/domain/entities/wallet.dart';
 import 'package:journexa_app/shared/app_exception.dart';
 import 'package:journexa_app/ui/shared/l10n/app_localizations.dart';
 import 'package:journexa_app/ui/shared/widgets/app_confirmation_dialog.dart';
@@ -44,18 +44,22 @@ final expectedTranslations = {
 };
 
 void main() {
-  final accountBalances = List.generate(5, (idx) {
-    return AccountBalance(
-      account: Account(
-        code: '10.000${idx + 1}',
+  final walletWithBalances = List.generate(5, (idx) {
+    return WalletWithBalance(
+      wallet: Wallet(
+        id: '$idx',
         name: 'asset $idx',
-        type: AccountType.asset,
+        account: Account(
+          code: '10.000${idx + 1}',
+          name: 'asset $idx',
+          type: AccountType.asset,
+        ),
       ),
       balance: Decimal.zero,
     );
   });
-  final accountBalancesWithState = accountBalances
-      .map((it) => AccountBalanceWithState(accountBalance: it))
+  final walletWithBalancesState = walletWithBalances
+      .map((it) => WalletWithBalanceState(walletWithBalance: it))
       .toList();
 
   late WalletsBloc mockWalletsBloc;
@@ -113,7 +117,7 @@ void main() {
           const Stream<WalletsState>.empty(),
           initialState: WalletsState(
             status: WalletsStatus.loaded,
-            accountBalances: accountBalancesWithState,
+            walletWithBalances: walletWithBalancesState,
           ),
         );
 
@@ -122,7 +126,7 @@ void main() {
         final finder = find.byType(WalletsList);
         expect(finder, findsOneWidget);
         final widget = tester.widget<WalletsList>(finder);
-        expect(widget.data, accountBalancesWithState);
+        expect(widget.data, walletWithBalancesState);
       },
     );
 
@@ -162,7 +166,7 @@ void main() {
             const Stream<WalletsState>.empty(),
             initialState: WalletsState(
               status: WalletsStatus.loaded,
-              accountBalances: accountBalancesWithState,
+              walletWithBalances: walletWithBalancesState,
             ),
           );
 
@@ -295,12 +299,12 @@ void main() {
           const Stream<WalletsState>.empty(),
           initialState: WalletsState(
             status: WalletsStatus.loaded,
-            accountBalances: accountBalancesWithState,
+            walletWithBalances: walletWithBalancesState,
           ),
         );
         await pumpWidget(tester);
 
-        final expectedAccount = accountBalances.first.account;
+        final expectedAccount = walletWithBalances.first.wallet.account;
 
         final deleteButtonFinder = find.byType(DeleteWalletButton).first;
         await tester.tap(deleteButtonFinder);
@@ -331,12 +335,12 @@ void main() {
           const Stream<WalletsState>.empty(),
           initialState: WalletsState(
             status: WalletsStatus.loaded,
-            accountBalances: accountBalancesWithState,
+            walletWithBalances: walletWithBalancesState,
           ),
         );
         await pumpWidget(tester);
 
-        final expectedAccount = accountBalances.first.account;
+        final expectedAccount = walletWithBalances.first.wallet.account;
 
         final updateButtonFinder = find.byType(UpdateWalletButton).first;
         await tester.tap(updateButtonFinder);
@@ -399,7 +403,7 @@ void main() {
             const Stream<WalletsState>.empty(),
             initialState: WalletsState(
               status: WalletsStatus.loaded,
-              accountBalances: accountBalancesWithState,
+              walletWithBalances: walletWithBalancesState,
             ),
           );
 
@@ -421,7 +425,7 @@ void main() {
             const Stream<WalletsState>.empty(),
             initialState: WalletsState(
               status: WalletsStatus.loaded,
-              accountBalances: accountBalancesWithState,
+              walletWithBalances: walletWithBalancesState,
             ),
           );
 

@@ -2,15 +2,16 @@ import 'package:decimal/decimal.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:journexa_app/domain/entities/account.dart';
 import 'package:journexa_app/domain/entities/journal.dart';
-import 'package:journexa_app/domain/repositories/i_account_repository.dart';
+import 'package:journexa_app/domain/entities/wallet.dart';
 import 'package:journexa_app/domain/repositories/i_auth_repository.dart';
 import 'package:journexa_app/domain/repositories/i_journal_repository.dart';
+import 'package:journexa_app/domain/repositories/i_wallet_respository.dart';
 import 'package:journexa_app/domain/use_cases/wallet/get_all_wallets.dart';
 import 'package:journexa_app/shared/app_exception.dart';
 import 'package:journexa_app/shared/app_result.dart';
 import 'package:mocktail/mocktail.dart';
 
-class MockAccountRepository extends Mock implements IAccountRepository {}
+class MockWalletRepository extends Mock implements IWalletRepository {}
 
 class MockAuthRepository extends Mock implements IAuthRepository {}
 
@@ -35,6 +36,15 @@ void main() {
       parent: parent,
     ),
   );
+  final wallets = accounts
+      .map(
+        (it) => Wallet(
+          id: it.code,
+          name: it.name,
+          account: it,
+        ),
+      )
+      .toList();
   final accountBalancesMap = Map<String, AccountBalance>.fromIterable(
     accounts.map(
       (it) => AccountBalance(
@@ -44,11 +54,17 @@ void main() {
     ),
     key: (it) => (it as AccountBalance).account.code,
   );
-  final accountBalances = accountBalancesMap.values.toList();
+  final walletWithBalance = wallets.map((it) {
+    final balance = accountBalancesMap[it.account.code];
+    if (balance == null) {
+      return WalletWithBalance(wallet: it, balance: Decimal.zero);
+    }
+    return WalletWithBalance(wallet: it, balance: balance.balance);
+  }).toList();
 
   late IAuthRepository mockAuthRepository;
-  late IAccountRepository mockAccountRepository;
   late IJournalRepository mockJournalRepository;
+  late IWalletRepository mockWalletRepository;
   late GetAllWalletsUseCase useCase;
 
   setUp(() {
@@ -57,15 +73,14 @@ void main() {
       () => mockAuthRepository.getCurrentUserId(traceId: traceId),
     ).thenAnswer((_) async => const AppResult.success(userId));
 
-    mockAccountRepository = MockAccountRepository();
+    mockWalletRepository = MockWalletRepository();
     when(
-      () => mockAccountRepository.getByParentCode(
+      () => mockWalletRepository.getAll(
         userId: userId,
-        parentCode: expectedParentCode,
         traceId: traceId,
         query: any(named: 'query'),
       ),
-    ).thenAnswer((_) async => AppResult.success(accounts));
+    ).thenAnswer((_) async => AppResult.success(wallets));
 
     mockJournalRepository = MockJournalRepository();
     when(
@@ -80,7 +95,7 @@ void main() {
 
     useCase = GetAllWalletsUseCase(
       authRepository: mockAuthRepository,
-      accountRepository: mockAccountRepository,
+      walletRepository: mockWalletRepository,
       journalRepository: mockJournalRepository,
     );
   });
@@ -101,7 +116,7 @@ void main() {
   );
 
   test(
-    'calls AccountRepository.getByParentCode once '
+    'calls WalletRepository.getAll once '
     'with correct args',
     () async {
       await useCase.execute(
@@ -110,9 +125,8 @@ void main() {
       );
 
       verify(
-        () => mockAccountRepository.getByParentCode(
+        () => mockWalletRepository.getAll(
           userId: userId,
-          parentCode: expectedParentCode,
           traceId: traceId,
         ),
       ).called(1);
@@ -120,7 +134,7 @@ void main() {
   );
 
   test(
-    'calls AccountRepository.getByParentCode once '
+    'calls WalletRepository.getAll once '
     'with correct args when query provided',
     () async {
       await useCase.execute(
@@ -129,9 +143,8 @@ void main() {
       );
 
       verify(
-        () => mockAccountRepository.getByParentCode(
+        () => mockWalletRepository.getAll(
           userId: userId,
-          parentCode: expectedParentCode,
           traceId: traceId,
           query: 'query',
         ),
@@ -168,7 +181,7 @@ void main() {
 
       expect(
         result,
-        AppResult.success(accountBalances),
+        AppResult.success(walletWithBalance),
       );
     },
   );
@@ -188,22 +201,21 @@ void main() {
 
       expect(
         result,
-        AppResult<List<AccountBalance>>.failure(
+        AppResult<List<WalletWithBalance>>.failure(
           AppException.test(),
         ),
       );
-      verifyZeroInteractions(mockAccountRepository);
+      verifyZeroInteractions(mockWalletRepository);
     },
   );
 
   test(
     'returns failure '
-    'when AccountRepository.getByParentCode failed',
+    'when WalletRepository.getAll failed',
     () async {
       when(
-        () => mockAccountRepository.getByParentCode(
+        () => mockWalletRepository.getAll(
           userId: userId,
-          parentCode: expectedParentCode,
           traceId: traceId,
         ),
       ).thenAnswer((_) async => AppResult.failure(AppException.test()));
@@ -215,7 +227,7 @@ void main() {
 
       expect(
         result,
-        AppResult<List<AccountBalance>>.failure(AppException.test()),
+        AppResult<List<WalletWithBalance>>.failure(AppException.test()),
       );
       verifyZeroInteractions(mockJournalRepository);
     },
@@ -244,7 +256,7 @@ void main() {
 
       expect(
         result,
-        AppResult<List<AccountBalance>>.failure(AppException.test()),
+        AppResult<List<WalletWithBalance>>.failure(AppException.test()),
       );
     },
   );

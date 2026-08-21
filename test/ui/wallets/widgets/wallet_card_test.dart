@@ -2,7 +2,7 @@ import 'package:decimal/decimal.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:journexa_app/domain/entities/account.dart';
-import 'package:journexa_app/domain/entities/journal.dart';
+import 'package:journexa_app/domain/entities/wallet.dart';
 import 'package:journexa_app/ui/shared/l10n/l10n.dart';
 import 'package:journexa_app/ui/shared/widgets/app_confirmation_dialog.dart';
 import 'package:journexa_app/ui/shared/widgets/widgets.dart';
@@ -25,12 +25,17 @@ final expectedTranslations = {
 };
 
 void main() {
-  final accountBalance = AccountBalance(
-    account: Account(
-      code: '10.0001',
+  final walletWithBalance = WalletWithBalance(
+    wallet: Wallet(
+      id: 'id',
       name: 'Dompet Hitam',
-      type: AccountType.asset,
+      account: Account(
+        code: '10.0001',
+        name: 'Dompet Hitam',
+        type: AccountType.asset,
+      ),
     ),
+
     balance: Decimal.fromInt(10000),
   );
 
@@ -46,7 +51,7 @@ void main() {
       tester,
       locale: locale,
       widget: WalletCard(
-        accountBalance: accountBalance,
+        walletWithBalance: walletWithBalance,
         isDeleting: isDeleting,
         onDeletePressed: onDeletePressed ?? () {},
         isUpdating: isUpdating,
@@ -61,7 +66,7 @@ void main() {
       (tester) async {
         await pumpWidget(tester);
 
-        expect(find.text(accountBalance.account.name), findsOneWidget);
+        expect(find.text(walletWithBalance.wallet.name), findsOneWidget);
       },
     );
 
@@ -92,7 +97,7 @@ void main() {
         final finder = find.byType(DeleteWalletButton);
         expect(finder, findsOneWidget);
         final widget = tester.widget<DeleteWalletButton>(finder);
-        expect(widget.account, accountBalance.account);
+        expect(widget.wallet, walletWithBalance.wallet);
       },
     );
 
@@ -104,7 +109,7 @@ void main() {
         final finder = find.byType(UpdateWalletButton);
         expect(finder, findsOneWidget);
         final widget = tester.widget<UpdateWalletButton>(finder);
-        expect(widget.account, accountBalance.account);
+        expect(widget.wallet, walletWithBalance.wallet);
       },
     );
 

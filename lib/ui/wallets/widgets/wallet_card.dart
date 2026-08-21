@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:journexa_app/domain/entities/journal.dart';
+import 'package:journexa_app/domain/entities/wallet.dart';
 import 'package:journexa_app/shared/formatter/decimal_formatter.dart';
 import 'package:journexa_app/shared/formatter/string_formatter.dart';
 import 'package:journexa_app/ui/shared/l10n/l10n.dart';
@@ -8,22 +8,22 @@ import 'package:journexa_app/ui/shared/widgets/app_card.dart';
 import 'package:journexa_app/ui/wallets/widgets/delete_wallet_button.dart';
 import 'package:journexa_app/ui/wallets/widgets/update_wallet_button.dart';
 
-/// Creates new [Card] to shows [AccountBalance] data
+/// Creates new [Card] to shows [WalletWithBalance] data
 class WalletCard extends StatelessWidget {
   /// Creates new [WalletCard]
   const WalletCard({
     required this.onDeletePressed,
-    required this.accountBalance,
+    required this.walletWithBalance,
     required this.onUpdatePressed,
     this.isDeleting = false,
     this.isUpdating = false,
     super.key,
   });
 
-  /// [AccountBalance] data that will be showed
-  final AccountBalance accountBalance;
+  /// [WalletWithBalance] data that will be showed
+  final WalletWithBalance walletWithBalance;
 
-  /// Whether this account is in process of deleting
+  /// Whether this wallet is in process of deleting
   final bool isDeleting;
 
   /// Invoke when [DeleteWalletButton] is pressed.
@@ -36,13 +36,13 @@ class WalletCard extends StatelessWidget {
   /// The [UpdateWalletButton] handles the confirmation dialog under the hood.
   final void Function(String) onUpdatePressed;
 
-  /// Whether this account is in process of updating
+  /// Whether this wallet is in process of updating
   final bool isUpdating;
 
   @override
   Widget build(BuildContext context) {
-    final account = accountBalance.account;
-    final balance = accountBalance.balance;
+    final wallet = walletWithBalance.wallet;
+    final balance = walletWithBalance.balance;
     final languageCode = context.languageCode;
     final balanceString = balance.idrCurrency(languageCode);
 
@@ -50,18 +50,18 @@ class WalletCard extends StatelessWidget {
       leading: CircleAvatar(
         backgroundColor: context.color.primaryContainer,
         radius: 24,
-        child: Text(account.name.initials),
+        child: Text(wallet.name.initials),
       ),
       bottom: Row(
         mainAxisAlignment: MainAxisAlignment.end,
         children: [
           DeleteWalletButton(
-            account: account,
+            wallet: wallet,
             isDeleting: isDeleting,
             onDeletePressed: isDeleting || isUpdating ? null : onDeletePressed,
           ),
           UpdateWalletButton(
-            account: account,
+            wallet: wallet,
             isUpdating: isUpdating,
             onUpdatePressed: isDeleting || isUpdating ? null : onUpdatePressed,
           ),
@@ -71,7 +71,7 @@ class WalletCard extends StatelessWidget {
         container: true,
         excludeSemantics: true,
         label: context.l10n.walletAccountCardSemantics(
-          account.name,
+          wallet.name,
           balanceString,
         ),
         child: Column(
@@ -80,7 +80,7 @@ class WalletCard extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              account.name,
+              wallet.name,
               style: context.text.bodySmall,
             ),
             Text(

@@ -1,3 +1,4 @@
+import 'package:decimal/decimal.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:journexa_app/domain/entities/account.dart';
 import 'package:journexa_app/shared/app_exception.dart';
@@ -41,4 +42,17 @@ sealed class Wallet with _$Wallet {
       );
     }
   }
+}
+
+/// Represents wallet with its balance
+@freezed
+sealed class WalletWithBalance with _$WalletWithBalance {
+  /// Creates new [WalletWithBalance]
+  const factory WalletWithBalance({
+    /// The wallet
+    required Wallet wallet,
+
+    /// This wallet balance
+    required Decimal balance,
+  }) = _WalletWithBalance;
 }

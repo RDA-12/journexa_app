@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:journexa_app/domain/entities/account.dart';
+import 'package:journexa_app/domain/entities/wallet.dart';
 import 'package:journexa_app/ui/shared/l10n/app_localizations.dart';
 import 'package:journexa_app/ui/wallets/widgets/update_wallet_button.dart';
 import 'package:journexa_app/ui/wallets/widgets/wallet_form.dart';
@@ -23,10 +24,14 @@ final expectedTranslations = {
 };
 
 void main() {
-  final account = Account(
-    code: '10.0001',
+  final wallet = Wallet(
+    id: 'id',
     name: 'dompet hitam',
-    type: AccountType.asset,
+    account: Account(
+      code: '10.0001',
+      name: 'dompet hitam',
+      type: AccountType.asset,
+    ),
   );
 
   Future<void> pumpWidget(
@@ -39,7 +44,7 @@ void main() {
       tester,
       locale: locale,
       widget: UpdateWalletButton(
-        account: account,
+        wallet: wallet,
         isUpdating: isUpdating,
         onUpdatePressed: onUpdatePressed,
       ),
@@ -97,7 +102,7 @@ void main() {
         final finder = find.byType(WalletForm);
         expect(finder, findsOneWidget);
         final widget = tester.widget<WalletForm>(finder);
-        expect(widget.initialAccount, account);
+        expect(widget.initialWallet, wallet);
       },
     );
 

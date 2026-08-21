@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:journexa_app/domain/entities/account.dart';
+import 'package:journexa_app/domain/entities/wallet.dart';
 import 'package:journexa_app/ui/shared/l10n/l10n.dart';
 import 'package:journexa_app/ui/shared/widgets/app_button.dart';
 import 'package:journexa_app/ui/shared/widgets/loading_indicator.dart';
@@ -27,13 +28,13 @@ void main() {
     Locale locale = const Locale('en'),
     void Function(String name)? onSavePressed,
     bool isSaving = false,
-    Account? initialAccount,
+    Wallet? initialWallet,
   }) async {
     return pumpForWidgetTest(
       tester,
       locale: locale,
       widget: WalletForm(
-        initialAccount: initialAccount,
+        initialWallet: initialWallet,
         onSavePressed: onSavePressed,
         isSaving: isSaving,
       ),
@@ -87,10 +88,14 @@ void main() {
         (tester) async {
           await pumpWidget(
             tester,
-            initialAccount: Account(
-              code: '10.0001',
+            initialWallet: Wallet(
+              id: 'id',
               name: 'name',
-              type: AccountType.asset,
+              account: Account(
+                code: '10.0001',
+                name: 'name',
+                type: AccountType.asset,
+              ),
             ),
           );
 

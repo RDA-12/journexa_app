@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:journexa_app/domain/entities/account.dart';
+import 'package:journexa_app/domain/entities/wallet.dart';
 import 'package:journexa_app/ui/shared/l10n/app_localizations.dart';
 import 'package:journexa_app/ui/shared/widgets/app_button.dart';
 import 'package:journexa_app/ui/shared/widgets/app_confirmation_dialog.dart';
@@ -30,10 +31,14 @@ final expectedTranslations = {
 };
 
 void main() {
-  final account = Account(
-    code: '10.0001',
+  final wallet = Wallet(
+    id: 'id',
     name: 'dompet hitam',
-    type: AccountType.asset,
+    account: Account(
+      code: '10.0001',
+      name: 'dompet hitam',
+      type: AccountType.asset,
+    ),
   );
 
   Future<void> pumpWidget(
@@ -45,7 +50,7 @@ void main() {
       tester,
       locale: locale,
       widget: DeleteWalletConfirmationDialog(
-        account: account,
+        wallet: wallet,
         onDeleted: onDeleted ?? (val) {},
       ),
     );
@@ -138,7 +143,7 @@ void main() {
               onPressed: () async {
                 final result = await DeleteWalletConfirmationDialog.show(
                   context,
-                  account: account,
+                  wallet: wallet,
                 );
                 if (!context.mounted) return;
                 onResult?.call(result);

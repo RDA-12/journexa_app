@@ -48,7 +48,7 @@ void main() {
   group('submit', () {
     blocTest<AddIncomeCategoryBloc, AddIncomeCategoryState>(
       'emits [AddIncomeCategoryState.loading, AddIncomeCategoryState.added] '
-      'when add wallet succeeded',
+      'when add income category succeeded',
       build: buildBloc,
       act: (bloc) => bloc.add(AddIncomeCategoryEvent.submit(name: params.name)),
       expect: () => const <AddIncomeCategoryState>[
@@ -65,7 +65,7 @@ void main() {
 
     blocTest<AddIncomeCategoryBloc, AddIncomeCategoryState>(
       'emits [AddIncomeCategoryState.loading, AddIncomeCategoryState.failure] '
-      'when add wallet failed',
+      'when add income category failed',
       setUp: () {
         when(
           () => mockAddIncomeCategory.execute(params, traceId: traceId),

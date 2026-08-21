@@ -22,6 +22,12 @@ void main() {
         code: '10.000${index + 1}',
         name: 'wallet $index',
         type: AccountType.asset,
+        parent: Account(
+          code: '10.0000',
+          name: 'asset',
+          type: AccountType.asset,
+          isSystemAccount: true,
+        ),
       ),
     );
   });
@@ -31,6 +37,16 @@ void main() {
 
   setUp(() async {
     fakeFirestore = FakeFirebaseFirestore();
+    final parent = Account(
+      code: '10.0000',
+      name: 'asset',
+      type: AccountType.asset,
+    );
+    final parentFirestore = FirestoreAccount.fromDomain(parent);
+    final parentDoc = fakeFirestore.doc(
+      'users/$userId/accounts/${parent.code}',
+    );
+    await parentDoc.set(parentFirestore.toJson());
     for (final wallet in initialWallets) {
       final walletFirestore = FirestoreWallet.fromDomain(wallet);
       final walletDoc = fakeFirestore.doc('users/$userId/wallets/${wallet.id}');
@@ -84,10 +100,8 @@ void main() {
           'users/$userId/accounts/${newWallet.account.code}',
         );
         final accountSnapshot = await accountDocRef.get();
-        expect(
-          accountSnapshot.data(),
-          FirestoreAccount.fromDomain(newWallet.account).toJson(),
-        );
+        final firestoreAccount = FirestoreAccount.fromDomain(newWallet.account);
+        expect(accountSnapshot.data(), firestoreAccount.toJson());
       },
     );
 
@@ -193,6 +207,12 @@ void main() {
             code: '10.1000',
             name: 'expected name',
             type: AccountType.asset,
+            parent: Account(
+              code: '10.0000',
+              name: 'asset',
+              type: AccountType.asset,
+              isSystemAccount: true,
+            ),
           ),
         );
         final walletDoc = fakeFirestore.doc(

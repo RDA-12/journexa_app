@@ -25,4 +25,11 @@ abstract interface class IWalletRepository {
     required Wallet wallet,
     required String traceId,
   });
+
+  /// Update [updatedWallet] within [userId] database
+  Future<AppResult<Null>> update({
+    required String userId,
+    required Wallet updatedWallet,
+    required String traceId,
+  });
 }

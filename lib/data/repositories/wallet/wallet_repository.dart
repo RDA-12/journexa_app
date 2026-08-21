@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:injectable/injectable.dart';
 import 'package:journexa_app/data/repositories/account/account.dart';
 import 'package:journexa_app/data/repositories/wallet/firestore_wallet.dart';
+import 'package:journexa_app/domain/entities/account.dart';
 import 'package:journexa_app/domain/entities/wallet.dart';
 import 'package:journexa_app/domain/repositories/i_wallet_respository.dart';
 import 'package:journexa_app/shared/app_exception.dart';
@@ -109,6 +110,9 @@ class FirestoreWalletRepository with Loggable implements IWalletRepository {
         traceId: traceId,
       );
       final result = <Wallet>[];
+      final parentAccount = kSystemDefinedAccounts.firstWhere(
+        (it) => it.code == '10.0000',
+      );
       for (final doc in walletsSnap.docs) {
         final walletFirestore = FirestoreWallet.fromJson(doc.data());
         logInfo(
@@ -133,7 +137,13 @@ class FirestoreWalletRepository with Loggable implements IWalletRepository {
           traceId: traceId,
           extras: accountFirestore.toJson(),
         );
-        result.add(walletFirestore.toDomain(accountFirestore.toDomain()));
+        result.add(
+          walletFirestore.toDomain(
+            accountFirestore.toDomain().copyWith(
+              parent: parentAccount,
+            ),
+          ),
+        );
       }
       logInfo(
         'Successfully fetched wallets',
@@ -197,5 +207,15 @@ class FirestoreWalletRepository with Loggable implements IWalletRepository {
         AppException('$e', code: AppExceptionCode.internalException),
       );
     }
+  }
+
+  @override
+  Future<AppResult<Null>> update({
+    required String userId,
+    required Wallet updatedWallet,
+    required String traceId,
+  }) {
+    // TODO: implement update
+    throw UnimplementedError();
   }
 }

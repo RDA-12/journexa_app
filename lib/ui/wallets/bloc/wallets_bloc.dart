@@ -1,10 +1,9 @@
 import 'package:bloc/bloc.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
-import 'package:journexa_app/domain/entities/account.dart';
 import 'package:journexa_app/domain/entities/wallet.dart';
-import 'package:journexa_app/domain/use_cases/account/update_account.dart';
 import 'package:journexa_app/domain/use_cases/wallet/delete_wallet.dart';
 import 'package:journexa_app/domain/use_cases/wallet/get_all_wallets.dart';
+import 'package:journexa_app/domain/use_cases/wallet/update_wallet.dart';
 import 'package:journexa_app/shared/app_exception.dart';
 import 'package:journexa_app/shared/app_logger.dart';
 import 'package:journexa_app/shared/app_result.dart';
@@ -22,7 +21,7 @@ class WalletsBloc extends Bloc<WalletsEvent, WalletsState>
   WalletsBloc({
     required this._getAllWallets,
     required this._deleteWallet,
-    required this._updateAccount,
+    required this._updateWallet,
   }) : super(const WalletsState()) {
     on<_Load>((event, emit) async {
       return _onLoad(
@@ -47,7 +46,7 @@ class WalletsBloc extends Bloc<WalletsEvent, WalletsState>
     on<_Update>(
       (event, emit) async {
         return _onUpdate(
-          account: event.account,
+          wallet: event.wallet,
           emit: emit,
           name: event.name,
         );
@@ -60,7 +59,7 @@ class WalletsBloc extends Bloc<WalletsEvent, WalletsState>
 
   final GetAllWalletsUseCase _getAllWallets;
   final DeleteWalletUseCase _deleteWallet;
-  final UpdateAccountUseCase _updateAccount;
+  final UpdateWalletUseCase _updateWallet;
 
   Future<void> _onLoad({
     required Emitter<WalletsState> emit,
@@ -186,69 +185,64 @@ class WalletsBloc extends Bloc<WalletsEvent, WalletsState>
   }
 
   Future<void> _onUpdate({
-    required Account account,
+    required Wallet wallet,
     required Emitter<WalletsState> emit,
     String? name,
   }) async {
     final traceId = generateUid();
-    logInfo('Checking account with code ${account.code}', traceId: traceId);
-    final accountIdx = state.walletWithBalances.indexWhere(
-      (it) => it.walletWithBalance.wallet.account.code == account.code,
+    logInfo('Checking wallet with id ${wallet.id}', traceId: traceId);
+    final walletIdx = state.walletWithBalances.indexWhere(
+      (it) => it.walletWithBalance.wallet.id == wallet.id,
     );
-    if (accountIdx == -1) {
-      logInfo('Account not found. Skipping', traceId: traceId);
+    if (walletIdx == -1) {
+      logInfo('Wallet not found. Skipping', traceId: traceId);
       return;
     }
-    final oldAccount =
-        state.walletWithBalances[accountIdx].walletWithBalance.wallet.account;
+    final oldWallet =
+        state.walletWithBalances[walletIdx].walletWithBalance.wallet;
 
     logInfo(
-      'Starts updating account ${account.code}. '
-      'Emit new walletWithBalances with status updateing on the Account',
+      'Starts updating wallet ${wallet.id}. '
+      'Emit new walletWithBalances with status updateing on the Wallet',
       traceId: traceId,
     );
     emit(
       state.copyWith(
         walletWithBalances: state.walletWithBalances.map((it) {
-          final isUpdating =
-              it.walletWithBalance.wallet.account.code == account.code;
+          final isUpdating = it.walletWithBalance.wallet.id == wallet.id;
           if (!isUpdating) return it;
           return it.copyWith(status: WalletStatus.updating);
         }).toList(),
       ),
     );
 
-    final params = UpdateAccountParams(
-      code: account.code,
+    final params = UpdateWalletParams(
+      wallet: wallet,
       name: name,
     );
-    final result = await _updateAccount.execute(params, traceId: traceId);
+    final result = await _updateWallet.execute(params, traceId: traceId);
     result.when(
       success: (updated) {
         logInfo(
-          'Updates account success. '
-          'Emit updated account with idle status and recentlyUpdated notice',
+          'Updates wallet success. '
+          'Emit updated wallet with idle status and recentlyUpdated notice',
           traceId: traceId,
         );
         emit(
           state.copyWith(
             status: WalletsStatus.loaded,
             walletWithBalances: state.walletWithBalances.map((it) {
-              final processed =
-                  it.walletWithBalance.wallet.account.code == account.code;
+              final processed = it.walletWithBalance.wallet.id == wallet.id;
               if (!processed) return it;
               return it.copyWith(
                 status: WalletStatus.idle,
                 walletWithBalance: it.walletWithBalance.copyWith(
-                  wallet: it.walletWithBalance.wallet.copyWith(
-                    name: updated.name,
-                    account: updated,
-                  ),
+                  wallet: updated,
                 ),
               );
             }).toList(),
             notice: WalletNotice.recentlyUpdated(
-              from: oldAccount,
+              from: oldWallet,
               to: updated,
             ),
           ),
@@ -256,22 +250,21 @@ class WalletsBloc extends Bloc<WalletsEvent, WalletsState>
       },
       failure: (exc) {
         logInfo(
-          'Update account failed. '
-          'Emit idel status on the Account and updateFailed notice',
+          'Update wallet failed. '
+          'Emit idel status on the Wallet and updateFailed notice',
           traceId: traceId,
         );
         emit(
           state.copyWith(
             status: WalletsStatus.loaded,
             walletWithBalances: state.walletWithBalances.map((it) {
-              final processed =
-                  it.walletWithBalance.wallet.account.code == account.code;
+              final processed = it.walletWithBalance.wallet.id == wallet.id;
               if (!processed) return it;
               return it.copyWith(
                 status: WalletStatus.idle,
               );
             }).toList(),
-            notice: WalletNotice.updateFailed(account: account, exception: exc),
+            notice: WalletNotice.updateFailed(wallet: wallet, exception: exc),
           ),
         );
       },

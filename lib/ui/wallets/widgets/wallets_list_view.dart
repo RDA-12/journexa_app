@@ -92,7 +92,7 @@ class _WalletsListViewState extends State<WalletsListView> {
                   description: exc.code.toLocalizedString(
                     context,
                     data: {
-                      'code': wallet.code,
+                      'code': wallet.account.code,
                       'name': context.l10n.commonWallet,
                     },
                   ),
@@ -171,7 +171,7 @@ class _WalletsListViewState extends State<WalletsListView> {
                       },
                       onUpdatePressed: (wallet, name) {
                         context.read<WalletsBloc>().add(
-                          WalletsEvent.update(wallet.account, name: name),
+                          WalletsEvent.update(wallet, name: name),
                         );
                       },
                     );

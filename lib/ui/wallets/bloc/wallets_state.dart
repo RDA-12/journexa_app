@@ -42,11 +42,11 @@ sealed class WalletNotice with _$WalletNotice {
 
   /// Creates new [WalletNotice] as updated notice
   const factory WalletNotice.recentlyUpdated({
-    /// Old [Account]
-    required Account from,
+    /// Old [Wallet]
+    required Wallet from,
 
-    /// New updated [Account]
-    required Account to,
+    /// New updated [Wallet]
+    required Wallet to,
   }) = _WalletNoticeRecentlyUpdated;
 
   /// Creates new [WalletNotice] as delete failed notice
@@ -60,8 +60,8 @@ sealed class WalletNotice with _$WalletNotice {
 
   /// Creates new [WalletNotice] as update failed notice
   const factory WalletNotice.updateFailed({
-    /// [Account] that meant to be updated
-    required Account account,
+    /// [Wallet] that meant to be updated
+    required Wallet wallet,
 
     /// Exception that occurred when update event failed
     required AppException exception,

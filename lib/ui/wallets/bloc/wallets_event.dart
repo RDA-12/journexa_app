@@ -14,9 +14,9 @@ sealed class WalletsEvent with _$WalletsEvent {
   /// Event to delete [wallet]
   const factory WalletsEvent.delete(Wallet wallet) = _Delete;
 
-  /// Event to update [account] based on provided arguments
+  /// Event to update [wallet] based on provided arguments
   const factory WalletsEvent.update(
-    Account account, {
+    Wallet wallet, {
     String? name,
   }) = _Update;
 }

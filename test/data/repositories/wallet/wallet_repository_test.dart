@@ -14,6 +14,9 @@ void main() {
   const userId = 'userId';
   const traceId = 'traceId';
 
+  final parent = kSystemDefinedAccounts.firstWhere(
+    (it) => it.code == '10.0000',
+  );
   final initialWallets = List.generate(5, (index) {
     return Wallet(
       id: '$index',
@@ -22,12 +25,7 @@ void main() {
         code: '10.000${index + 1}',
         name: 'wallet $index',
         type: AccountType.asset,
-        parent: Account(
-          code: '10.0000',
-          name: 'asset',
-          type: AccountType.asset,
-          isSystemAccount: true,
-        ),
+        parent: parent,
       ),
     );
   });
@@ -37,11 +35,6 @@ void main() {
 
   setUp(() async {
     fakeFirestore = FakeFirebaseFirestore();
-    final parent = Account(
-      code: '10.0000',
-      name: 'asset',
-      type: AccountType.asset,
-    );
     final parentFirestore = FirestoreAccount.fromDomain(parent);
     final parentDoc = fakeFirestore.doc(
       'users/$userId/accounts/${parent.code}',
@@ -73,6 +66,7 @@ void main() {
         code: '10.1000',
         name: 'new wallet',
         type: AccountType.asset,
+        parent: parent,
       ),
     );
 
@@ -207,12 +201,7 @@ void main() {
             code: '10.1000',
             name: 'expected name',
             type: AccountType.asset,
-            parent: Account(
-              code: '10.0000',
-              name: 'asset',
-              type: AccountType.asset,
-              isSystemAccount: true,
-            ),
+            parent: parent,
           ),
         );
         final walletDoc = fakeFirestore.doc(
@@ -327,6 +316,7 @@ void main() {
             code: '10.0100',
             name: 'non-existent',
             type: AccountType.asset,
+            parent: parent,
           ),
         );
 
@@ -388,6 +378,99 @@ void main() {
         final result = await repository.delete(
           userId: userId,
           wallet: initialWallets.first,
+          traceId: traceId,
+        );
+
+        expect(
+          result,
+          isA<AppResultFailure<Null>>().having(
+            (e) => e.error.code,
+            'error.code',
+            AppExceptionCode.internalException,
+          ),
+        );
+      },
+    );
+  });
+
+  group('update', () {
+    final updatedWallet = initialWallets.first.update(name: 'new name');
+    test(
+      'returns success when succeeded',
+      () async {
+        final result = await repository.update(
+          userId: userId,
+          updatedWallet: updatedWallet,
+          traceId: traceId,
+        );
+
+        expect(result, const AppResult.success(null));
+      },
+    );
+
+    test(
+      'update both Wallet and Account',
+      () async {
+        await repository.update(
+          userId: userId,
+          updatedWallet: updatedWallet,
+          traceId: traceId,
+        );
+
+        final walletDoc = await fakeFirestore
+            .doc('users/$userId/wallets/${updatedWallet.id}')
+            .get();
+        expect(
+          walletDoc.data(),
+          FirestoreWallet.fromDomain(updatedWallet).toJson(),
+        );
+
+        final accountDoc = await fakeFirestore
+            .doc('users/$userId/accounts/${updatedWallet.account.code}')
+            .get();
+        expect(
+          accountDoc.data(),
+          FirestoreAccount.fromDomain(updatedWallet.account).toJson(),
+        );
+      },
+    );
+
+    test(
+      'returns failure with serverException '
+      'when firestore throws FirebaseException',
+      () async {
+        whenCalling(
+          Invocation.method(#update, null),
+        ).on(repository).thenThrow(FirebaseException(plugin: 'firestore'));
+
+        final result = await repository.update(
+          userId: userId,
+          updatedWallet: updatedWallet,
+          traceId: traceId,
+        );
+
+        expect(
+          result,
+          isA<AppResultFailure<Null>>().having(
+            (e) => e.error.code,
+            'error.code',
+            AppExceptionCode.serverException,
+          ),
+        );
+      },
+    );
+
+    test(
+      'returns failure with internalException '
+      'when firestore throws Exception',
+      () async {
+        whenCalling(
+          Invocation.method(#update, null),
+        ).on(repository).thenThrow(Exception());
+
+        final result = await repository.update(
+          userId: userId,
+          updatedWallet: updatedWallet,
           traceId: traceId,
         );
 

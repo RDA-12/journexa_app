@@ -214,8 +214,45 @@ class FirestoreWalletRepository with Loggable implements IWalletRepository {
     required String userId,
     required Wallet updatedWallet,
     required String traceId,
-  }) {
-    // TODO: implement update
-    throw UnimplementedError();
+  }) async {
+    try {
+      maybeThrowException(this, Invocation.method(#update, null));
+      final walletFirestore = FirestoreWallet.fromDomain(updatedWallet);
+      final accountFirestore = FirestoreAccount.fromDomain(
+        updatedWallet.account,
+      );
+
+      logInfo(
+        'Starts updating wallet',
+        traceId: traceId,
+        extras: {
+          'wallet': walletFirestore.toJson(),
+          'account': accountFirestore.toJson(),
+        },
+      );
+      final batch = _db.batch();
+      final walletRef = _db.doc('users/$userId/wallets/${updatedWallet.id}');
+      batch.set(walletRef, walletFirestore.toJson());
+      final accountRef = _db.doc(
+        'users/$userId/accounts/${updatedWallet.account.code}',
+      );
+      batch.set(accountRef, accountFirestore.toJson());
+      await batch.commit();
+      logInfo(
+        'Successfully updated wallet and account',
+        traceId: traceId,
+      );
+      return const AppResult.success(null);
+    } on FirebaseException catch (e) {
+      logError('$e', traceId: traceId, error: e);
+      return AppResult.failure(
+        AppException('$e', code: AppExceptionCode.serverException),
+      );
+    } on Exception catch (e, st) {
+      logError('$e', traceId: traceId, error: e, stackTrace: st);
+      return AppResult.failure(
+        AppException('$e', code: AppExceptionCode.internalException),
+      );
+    }
   }
 }

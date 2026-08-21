@@ -3,9 +3,9 @@ import 'package:decimal/decimal.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:journexa_app/domain/entities/account.dart';
 import 'package:journexa_app/domain/entities/wallet.dart';
-import 'package:journexa_app/domain/use_cases/account/update_account.dart';
 import 'package:journexa_app/domain/use_cases/wallet/delete_wallet.dart';
 import 'package:journexa_app/domain/use_cases/wallet/get_all_wallets.dart';
+import 'package:journexa_app/domain/use_cases/wallet/update_wallet.dart';
 import 'package:journexa_app/shared/app_exception.dart';
 import 'package:journexa_app/shared/app_result.dart';
 import 'package:journexa_app/shared/uid_generator.dart';
@@ -19,10 +19,13 @@ class MockUidGenerator extends Mock implements UidGenerator {}
 
 class MockDeleteWalletUseCase extends Mock implements DeleteWalletUseCase {}
 
-class MockUpdateAccountUseCase extends Mock implements UpdateAccountUseCase {}
+class MockUpdateWalletUseCase extends Mock implements UpdateWalletUseCase {}
 
 void main() {
   const traceId = 'traceId';
+  final assetParent = kSystemDefinedAccounts.firstWhere(
+    (it) => it.code == '10.0000',
+  );
   final wallets = List.generate(5, (idx) {
     return WalletWithBalance(
       wallet: Wallet(
@@ -32,6 +35,7 @@ void main() {
           code: '10.000${idx + 1}',
           name: 'asset $idx',
           type: AccountType.asset,
+          parent: assetParent,
         ),
       ),
       balance: Decimal.fromInt(idx * 1000),
@@ -44,14 +48,17 @@ void main() {
       );
     },
   ).toList();
-  final updatedFirstAccount = wallets.first.wallet.account.update(
+  final updatedFirstWallet = wallets.first.wallet.copyWith(
     name: 'new name',
+    account: wallets.first.wallet.account.copyWith(
+      name: 'new name',
+    ),
   );
 
   late GetAllWalletsUseCase mockGetAllWallets;
   late UidGenerator mockUidGenerator;
   late DeleteWalletUseCase mockDeleteWalletUseCase;
-  late MockUpdateAccountUseCase mockUpdateAccountUseCase;
+  late MockUpdateWalletUseCase mockUpdateWalletUseCase;
 
   setUpAll(() {
     registerFallbackValue(
@@ -61,7 +68,7 @@ void main() {
       DeleteWalletParams(wallet: wallets.first.wallet),
     );
     registerFallbackValue(
-      const UpdateAccountParams(code: '12345'),
+      UpdateWalletParams(wallet: wallets.first.wallet),
     );
   });
 
@@ -87,14 +94,14 @@ void main() {
       ),
     ).thenAnswer((_) async => const AppResult.success(null));
 
-    mockUpdateAccountUseCase = MockUpdateAccountUseCase();
+    mockUpdateWalletUseCase = MockUpdateWalletUseCase();
     when(
-      () => mockUpdateAccountUseCase.execute(
-        any<UpdateAccountParams>(),
+      () => mockUpdateWalletUseCase.execute(
+        any<UpdateWalletParams>(),
         traceId: traceId,
       ),
     ).thenAnswer(
-      (_) async => AppResult.success(updatedFirstAccount),
+      (_) async => AppResult.success(updatedFirstWallet),
     );
   });
 
@@ -102,7 +109,7 @@ void main() {
     return WalletsBloc(
       getAllWallets: mockGetAllWallets,
       deleteWallet: mockDeleteWalletUseCase,
-      updateAccount: mockUpdateAccountUseCase,
+      updateWallet: mockUpdateWalletUseCase,
     )..customGenerator = mockUidGenerator;
   }
 
@@ -277,8 +284,7 @@ void main() {
           status: WalletsStatus.loaded,
           walletWithBalances: walletsWithState.map((it) {
             final isDeleting =
-                it.walletWithBalance.wallet.account.code ==
-                deletedWallet.account.code;
+                it.walletWithBalance.wallet.id == deletedWallet.id;
             if (!isDeleting) return it;
             return it.copyWith(status: WalletStatus.deleting);
           }).toList(),
@@ -331,8 +337,7 @@ void main() {
           status: WalletsStatus.loaded,
           walletWithBalances: walletsWithState.map((it) {
             final isDeleting =
-                it.walletWithBalance.wallet.account.code ==
-                deletedWallet.account.code;
+                it.walletWithBalance.wallet.id == deletedWallet.id;
             if (!isDeleting) return it;
             return it.copyWith(status: WalletStatus.deleting);
           }).toList(),
@@ -377,7 +382,7 @@ void main() {
     blocTest<WalletsBloc, WalletsState>(
       'emits [new updating walletWithBalances, '
       'new walletWithBalances with updated notice] '
-      'when updateAccountUseCase returns success',
+      'when updateWalletUseCase returns success',
       seed: () {
         return WalletsState(
           status: WalletsStatus.loaded,
@@ -387,8 +392,8 @@ void main() {
       build: buildBloc,
       act: (bloc) => bloc.add(
         WalletsEvent.update(
-          wallets.first.wallet.account,
-          name: updatedFirstAccount.name,
+          wallets.first.wallet,
+          name: updatedFirstWallet.name,
         ),
       ),
       expect: () => <WalletsState>[
@@ -396,8 +401,7 @@ void main() {
           status: WalletsStatus.loaded,
           walletWithBalances: walletsWithState.map((it) {
             final isUpdating =
-                it.walletWithBalance.wallet.account.code ==
-                wallets.first.wallet.account.code;
+                it.walletWithBalance.wallet.id == wallets.first.wallet.id;
             if (!isUpdating) return it;
             return it.copyWith(status: WalletStatus.updating);
           }).toList(),
@@ -406,31 +410,27 @@ void main() {
           status: WalletsStatus.loaded,
           walletWithBalances: walletsWithState.map((it) {
             final isUpdating =
-                it.walletWithBalance.wallet.account.code ==
-                wallets.first.wallet.account.code;
+                it.walletWithBalance.wallet.id == wallets.first.wallet.id;
             if (!isUpdating) return it;
             return it.copyWith(
               status: WalletStatus.idle,
               walletWithBalance: it.walletWithBalance.copyWith(
-                wallet: it.walletWithBalance.wallet.copyWith(
-                  name: updatedFirstAccount.name,
-                  account: updatedFirstAccount,
-                ),
+                wallet: updatedFirstWallet,
               ),
             );
           }).toList(),
           notice: WalletNotice.recentlyUpdated(
-            from: walletsWithState.first.walletWithBalance.wallet.account,
-            to: updatedFirstAccount,
+            from: walletsWithState.first.walletWithBalance.wallet,
+            to: updatedFirstWallet,
           ),
         ),
       ],
       verify: (_) {
         verify(
-          () => mockUpdateAccountUseCase.execute(
-            UpdateAccountParams(
-              code: wallets.first.wallet.account.code,
-              name: updatedFirstAccount.name,
+          () => mockUpdateWalletUseCase.execute(
+            UpdateWalletParams(
+              wallet: wallets.first.wallet,
+              name: updatedFirstWallet.name,
             ),
             traceId: traceId,
           ),
@@ -441,18 +441,18 @@ void main() {
     blocTest<WalletsBloc, WalletsState>(
       'emits [new walletWithBalances, '
       'new walletWithBalances with idle status and updateFailure notice] '
-      'when updateAccountUseCase returns failure',
+      'when updateWalletUseCase returns failure',
       setUp: () {
         when(
-          () => mockUpdateAccountUseCase.execute(
-            UpdateAccountParams(
-              code: wallets.first.wallet.account.code,
-              name: updatedFirstAccount.name,
+          () => mockUpdateWalletUseCase.execute(
+            UpdateWalletParams(
+              wallet: wallets.first.wallet,
+              name: updatedFirstWallet.name,
             ),
             traceId: traceId,
           ),
         ).thenAnswer(
-          (_) async => AppResult<Account>.failure(AppException.test()),
+          (_) async => AppResult<Wallet>.failure(AppException.test()),
         );
       },
       seed: () {
@@ -464,8 +464,8 @@ void main() {
       build: buildBloc,
       act: (bloc) => bloc.add(
         WalletsEvent.update(
-          wallets.first.wallet.account,
-          name: updatedFirstAccount.name,
+          wallets.first.wallet,
+          name: updatedFirstWallet.name,
         ),
       ),
       expect: () => <WalletsState>[
@@ -473,8 +473,7 @@ void main() {
           status: WalletsStatus.loaded,
           walletWithBalances: walletsWithState.map((it) {
             final isUpdating =
-                it.walletWithBalance.wallet.account.code ==
-                wallets.first.wallet.account.code;
+                it.walletWithBalance.wallet.id == wallets.first.wallet.id;
             if (!isUpdating) return it;
             return it.copyWith(status: WalletStatus.updating);
           }).toList(),
@@ -483,17 +482,17 @@ void main() {
           status: WalletsStatus.loaded,
           walletWithBalances: walletsWithState,
           notice: WalletNotice.updateFailed(
-            account: wallets.first.wallet.account,
+            wallet: wallets.first.wallet,
             exception: AppException.test(),
           ),
         ),
       ],
       verify: (_) {
         verify(
-          () => mockUpdateAccountUseCase.execute(
-            UpdateAccountParams(
-              code: wallets.first.wallet.account.code,
-              name: updatedFirstAccount.name,
+          () => mockUpdateWalletUseCase.execute(
+            UpdateWalletParams(
+              wallet: wallets.first.wallet,
+              name: updatedFirstWallet.name,
             ),
             traceId: traceId,
           ),
@@ -509,13 +508,13 @@ void main() {
       build: buildBloc,
       act: (bloc) => bloc.add(
         WalletsEvent.update(
-          wallets.first.wallet.account,
-          name: updatedFirstAccount.name,
+          wallets.first.wallet,
+          name: updatedFirstWallet.name,
         ),
       ),
       expect: () => <WalletsState>[],
       verify: (_) {
-        verifyZeroInteractions(mockUpdateAccountUseCase);
+        verifyZeroInteractions(mockUpdateWalletUseCase);
       },
     );
   });

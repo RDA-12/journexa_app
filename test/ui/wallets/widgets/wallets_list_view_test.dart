@@ -44,6 +44,9 @@ final expectedTranslations = {
 };
 
 void main() {
+  final assetParent = kSystemDefinedAccounts.firstWhere(
+    (it) => it.code == '10.0000',
+  );
   final walletWithBalances = List.generate(5, (idx) {
     return WalletWithBalance(
       wallet: Wallet(
@@ -53,6 +56,7 @@ void main() {
           code: '10.000${idx + 1}',
           name: 'asset $idx',
           type: AccountType.asset,
+          parent: assetParent,
         ),
       ),
       balance: Decimal.zero,
@@ -340,7 +344,7 @@ void main() {
         );
         await pumpWidget(tester);
 
-        final expectedAccount = walletWithBalances.first.wallet.account;
+        final expectedWallet = walletWithBalances.first.wallet;
 
         final updateButtonFinder = find.byType(UpdateWalletButton).first;
         await tester.tap(updateButtonFinder);
@@ -363,7 +367,7 @@ void main() {
         verify(
           () => mockWalletsBloc.add(
             WalletsEvent.update(
-              expectedAccount,
+              expectedWallet,
               name: expectedName,
             ),
           ),

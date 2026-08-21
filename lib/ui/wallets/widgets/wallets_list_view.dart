@@ -80,7 +80,7 @@ class _WalletsListViewState extends State<WalletsListView> {
                   title: context.l10n.deleteWalletToastFailureTitle,
                   description: exc.code.toLocalizedString(
                     context,
-                    data: {'code': wallet.code},
+                    data: {'code': wallet.account.code},
                   ),
                 );
               },
@@ -166,7 +166,7 @@ class _WalletsListViewState extends State<WalletsListView> {
                       data: walletBalances,
                       onDeletePressed: (wallet) {
                         context.read<WalletsBloc>().add(
-                          WalletsEvent.delete(wallet.account),
+                          WalletsEvent.delete(wallet),
                         );
                       },
                       onUpdatePressed: (wallet, name) {

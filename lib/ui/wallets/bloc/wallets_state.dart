@@ -36,8 +36,8 @@ enum WalletStatus {
 sealed class WalletNotice with _$WalletNotice {
   /// Creates new [WalletNotice] as deleted notice
   const factory WalletNotice.recentlyDeleted({
-    /// The [Account] that was recently deleted
-    required Account account,
+    /// The [Wallet] that was recently deleted
+    required Wallet wallet,
   }) = _WalletNoticeRecentlyDeleted;
 
   /// Creates new [WalletNotice] as updated notice
@@ -51,8 +51,8 @@ sealed class WalletNotice with _$WalletNotice {
 
   /// Creates new [WalletNotice] as delete failed notice
   const factory WalletNotice.deleteFailed({
-    /// [Account] that meant to be deleted
-    required Account account,
+    /// [Wallet] that meant to be deleted
+    required Wallet wallet,
 
     /// Exception that occurred when delete event failed
     required AppException exception,

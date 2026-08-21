@@ -304,7 +304,7 @@ void main() {
         );
         await pumpWidget(tester);
 
-        final expectedAccount = walletWithBalances.first.wallet.account;
+        final expectedWallet = walletWithBalances.first.wallet;
 
         final deleteButtonFinder = find.byType(DeleteWalletButton).first;
         await tester.tap(deleteButtonFinder);
@@ -320,7 +320,7 @@ void main() {
 
         verify(
           () => mockWalletsBloc.add(
-            WalletsEvent.delete(expectedAccount),
+            WalletsEvent.delete(expectedWallet),
           ),
         ).called(1);
       },

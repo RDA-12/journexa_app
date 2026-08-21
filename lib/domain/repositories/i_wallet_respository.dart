@@ -18,4 +18,11 @@ abstract interface class IWalletRepository {
     required String traceId,
     String? query,
   });
+
+  /// Delete [wallet] within [userId] database
+  Future<AppResult<Null>> delete({
+    required String userId,
+    required Wallet wallet,
+    required String traceId,
+  });
 }

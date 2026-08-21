@@ -11,8 +11,8 @@ sealed class WalletsEvent with _$WalletsEvent {
   /// It uses debounce transformer to prevent rapid calls
   const factory WalletsEvent.search({String? query}) = _Search;
 
-  /// Event to delete [account]
-  const factory WalletsEvent.delete(Account account) = _Delete;
+  /// Event to delete [wallet]
+  const factory WalletsEvent.delete(Wallet wallet) = _Delete;
 
   /// Event to update [account] based on provided arguments
   const factory WalletsEvent.update(

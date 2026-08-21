@@ -3,8 +3,8 @@ import 'package:decimal/decimal.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:journexa_app/domain/entities/account.dart';
 import 'package:journexa_app/domain/entities/wallet.dart';
-import 'package:journexa_app/domain/use_cases/account/delete_account.dart';
 import 'package:journexa_app/domain/use_cases/account/update_account.dart';
+import 'package:journexa_app/domain/use_cases/wallet/delete_wallet.dart';
 import 'package:journexa_app/domain/use_cases/wallet/get_all_wallets.dart';
 import 'package:journexa_app/shared/app_exception.dart';
 import 'package:journexa_app/shared/app_result.dart';
@@ -17,7 +17,7 @@ class MockGetAllWallets extends Mock implements GetAllWalletsUseCase {}
 
 class MockUidGenerator extends Mock implements UidGenerator {}
 
-class MockDeleteAccountUseCase extends Mock implements DeleteAccountUseCase {}
+class MockDeleteWalletUseCase extends Mock implements DeleteWalletUseCase {}
 
 class MockUpdateAccountUseCase extends Mock implements UpdateAccountUseCase {}
 
@@ -50,7 +50,7 @@ void main() {
 
   late GetAllWalletsUseCase mockGetAllWallets;
   late UidGenerator mockUidGenerator;
-  late DeleteAccountUseCase mockDeleteAccountUseCase;
+  late DeleteWalletUseCase mockDeleteWalletUseCase;
   late MockUpdateAccountUseCase mockUpdateAccountUseCase;
 
   setUpAll(() {
@@ -58,7 +58,7 @@ void main() {
       const GetAllWalletsParams(),
     );
     registerFallbackValue(
-      DeleteAccountParams(account: wallets.first.wallet.account),
+      DeleteWalletParams(wallet: wallets.first.wallet),
     );
     registerFallbackValue(
       const UpdateAccountParams(code: '12345'),
@@ -79,10 +79,10 @@ void main() {
       (_) async => AppResult.success(wallets),
     );
 
-    mockDeleteAccountUseCase = MockDeleteAccountUseCase();
+    mockDeleteWalletUseCase = MockDeleteWalletUseCase();
     when(
-      () => mockDeleteAccountUseCase.execute(
-        any<DeleteAccountParams>(),
+      () => mockDeleteWalletUseCase.execute(
+        any<DeleteWalletParams>(),
         traceId: traceId,
       ),
     ).thenAnswer((_) async => const AppResult.success(null));
@@ -101,7 +101,7 @@ void main() {
   WalletsBloc buildBloc() {
     return WalletsBloc(
       getAllWallets: mockGetAllWallets,
-      deleteAccount: mockDeleteAccountUseCase,
+      deleteWallet: mockDeleteWalletUseCase,
       updateAccount: mockUpdateAccountUseCase,
     )..customGenerator = mockUidGenerator;
   }
@@ -255,10 +255,12 @@ void main() {
   });
 
   group('delete', () {
+    final deletedWallet = wallets.first.wallet;
+
     blocTest<WalletsBloc, WalletsState>(
       'emits [new walletWithBalances, '
       'loaded new walletWithBalances with notice] '
-      'when deleteAccountUseCase returns success',
+      'when deleteWalletUseCase returns success',
       seed: () {
         return WalletsState(
           status: WalletsStatus.loaded,
@@ -267,7 +269,7 @@ void main() {
       },
       build: buildBloc,
       act: (bloc) => bloc.add(
-        WalletsEvent.delete(wallets.first.wallet.account),
+        WalletsEvent.delete(deletedWallet),
       ),
       wait: kDefaultDebounceDuration,
       expect: () => <WalletsState>[
@@ -276,7 +278,7 @@ void main() {
           walletWithBalances: walletsWithState.map((it) {
             final isDeleting =
                 it.walletWithBalance.wallet.account.code ==
-                wallets.first.wallet.account.code;
+                deletedWallet.account.code;
             if (!isDeleting) return it;
             return it.copyWith(status: WalletStatus.deleting);
           }).toList(),
@@ -285,14 +287,14 @@ void main() {
           status: WalletsStatus.loaded,
           walletWithBalances: walletsWithState.sublist(1),
           notice: WalletNotice.recentlyDeleted(
-            account: wallets.first.wallet.account,
+            wallet: deletedWallet,
           ),
         ),
       ],
       verify: (_) {
         verify(
-          () => mockDeleteAccountUseCase.execute(
-            DeleteAccountParams(account: wallets.first.wallet.account),
+          () => mockDeleteWalletUseCase.execute(
+            DeleteWalletParams(wallet: deletedWallet),
             traceId: traceId,
           ),
         ).called(1);
@@ -302,11 +304,11 @@ void main() {
     blocTest<WalletsBloc, WalletsState>(
       'emits [new walletWithBalances, '
       'new idle walletWithBalances and failed notice] '
-      'when deleteAccountUseCase returns failure',
+      'when deleteWalletUseCase returns failure',
       setUp: () {
         when(
-          () => mockDeleteAccountUseCase.execute(
-            DeleteAccountParams(account: wallets.first.wallet.account),
+          () => mockDeleteWalletUseCase.execute(
+            DeleteWalletParams(wallet: deletedWallet),
             traceId: traceId,
           ),
         ).thenAnswer(
@@ -321,7 +323,7 @@ void main() {
       },
       build: buildBloc,
       act: (bloc) => bloc.add(
-        WalletsEvent.delete(wallets.first.wallet.account),
+        WalletsEvent.delete(deletedWallet),
       ),
       wait: kDefaultDebounceDuration,
       expect: () => <WalletsState>[
@@ -330,7 +332,7 @@ void main() {
           walletWithBalances: walletsWithState.map((it) {
             final isDeleting =
                 it.walletWithBalance.wallet.account.code ==
-                wallets.first.wallet.account.code;
+                deletedWallet.account.code;
             if (!isDeleting) return it;
             return it.copyWith(status: WalletStatus.deleting);
           }).toList(),
@@ -339,15 +341,15 @@ void main() {
           status: WalletsStatus.loaded,
           walletWithBalances: walletsWithState,
           notice: WalletNotice.deleteFailed(
-            account: wallets.first.wallet.account,
+            wallet: deletedWallet,
             exception: AppException.test(),
           ),
         ),
       ],
       verify: (_) {
         verify(
-          () => mockDeleteAccountUseCase.execute(
-            DeleteAccountParams(account: wallets.first.wallet.account),
+          () => mockDeleteWalletUseCase.execute(
+            DeleteWalletParams(wallet: deletedWallet),
             traceId: traceId,
           ),
         ).called(1);
@@ -361,12 +363,12 @@ void main() {
       },
       build: buildBloc,
       act: (bloc) => bloc.add(
-        WalletsEvent.delete(wallets.first.wallet.account),
+        WalletsEvent.delete(deletedWallet),
       ),
       wait: kDefaultDebounceDuration,
       expect: () => <WalletsState>[],
       verify: (_) {
-        verifyZeroInteractions(mockDeleteAccountUseCase);
+        verifyZeroInteractions(mockDeleteWalletUseCase);
       },
     );
   });

@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:journexa_app/di.dart';
-import 'package:journexa_app/domain/use_cases/account/delete_account.dart';
 import 'package:journexa_app/domain/use_cases/account/update_account.dart';
+import 'package:journexa_app/domain/use_cases/wallet/delete_wallet.dart';
 import 'package:journexa_app/domain/use_cases/wallet/get_all_wallets.dart';
 import 'package:journexa_app/ui/shared/l10n/l10n.dart';
 import 'package:journexa_app/ui/shared/widgets/app_responsive.dart';
@@ -30,7 +30,7 @@ class WalletsListPage extends StatelessWidget {
           (walletsBloc ??
                 WalletsBloc(
                   getAllWallets: getIt<GetAllWalletsUseCase>(),
-                  deleteAccount: getIt<DeleteAccountUseCase>(),
+                  deleteWallet: getIt<DeleteWalletUseCase>(),
                   updateAccount: getIt<UpdateAccountUseCase>(),
                 ))
             ..add(const WalletsEvent.load()),

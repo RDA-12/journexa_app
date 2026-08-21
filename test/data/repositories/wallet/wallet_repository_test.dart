@@ -271,4 +271,118 @@ void main() {
       );
     },
   );
+
+  group('delete', () {
+    test(
+      'returns success and delete correct Wallet and the Account',
+      () async {
+        final deletedWallet = initialWallets.first;
+
+        final result = await repository.delete(
+          userId: userId,
+          wallet: deletedWallet,
+          traceId: traceId,
+        );
+
+        expect(result, const AppResult.success(null));
+
+        final walletDocRef = fakeFirestore.doc(
+          'users/$userId/wallets/${deletedWallet.id}',
+        );
+        final walletSnapshot = await walletDocRef.get();
+        expect(walletSnapshot.exists, isFalse);
+
+        final accountDocRef = fakeFirestore.doc(
+          'users/$userId/accounts/${deletedWallet.account.code}',
+        );
+        final accountSnapshot = await accountDocRef.get();
+        expect(accountSnapshot.exists, isFalse);
+      },
+    );
+
+    test(
+      'do nothing when wallet does not exist',
+      () async {
+        final nonExistentWallet = Wallet(
+          id: 'non-existent',
+          name: 'non-existent',
+          account: Account(
+            code: '10.0100',
+            name: 'non-existent',
+            type: AccountType.asset,
+          ),
+        );
+
+        final result = await repository.delete(
+          userId: userId,
+          wallet: nonExistentWallet,
+          traceId: traceId,
+        );
+
+        expect(result, const AppResult.success(null));
+
+        final walletDocRef = fakeFirestore.doc(
+          'users/$userId/wallets/${nonExistentWallet.id}',
+        );
+        final walletSnapshot = await walletDocRef.get();
+        expect(walletSnapshot.exists, isFalse);
+
+        final accountDocRef = fakeFirestore.doc(
+          'users/$userId/accounts/${nonExistentWallet.account.code}',
+        );
+        final accountSnapshot = await accountDocRef.get();
+        expect(accountSnapshot.exists, isFalse);
+      },
+    );
+
+    test(
+      'returns failure with serverException '
+      'when firestore throws FirebaseException',
+      () async {
+        whenCalling(
+          Invocation.method(#delete, null),
+        ).on(repository).thenThrow(FirebaseException(plugin: 'firestore'));
+
+        final result = await repository.delete(
+          userId: userId,
+          wallet: initialWallets.first,
+          traceId: traceId,
+        );
+
+        expect(
+          result,
+          isA<AppResultFailure<Null>>().having(
+            (e) => e.error.code,
+            'error.code',
+            AppExceptionCode.serverException,
+          ),
+        );
+      },
+    );
+
+    test(
+      'returns failure with internalException '
+      'when firestore throws Exception',
+      () async {
+        whenCalling(
+          Invocation.method(#delete, null),
+        ).on(repository).thenThrow(Exception());
+
+        final result = await repository.delete(
+          userId: userId,
+          wallet: initialWallets.first,
+          traceId: traceId,
+        );
+
+        expect(
+          result,
+          isA<AppResultFailure<Null>>().having(
+            (e) => e.error.code,
+            'error.code',
+            AppExceptionCode.internalException,
+          ),
+        );
+      },
+    );
+  });
 }

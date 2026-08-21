@@ -153,4 +153,49 @@ class FirestoreWalletRepository with Loggable implements IWalletRepository {
       );
     }
   }
+
+  @override
+  Future<AppResult<Null>> delete({
+    required String userId,
+    required Wallet wallet,
+    required String traceId,
+  }) async {
+    try {
+      maybeThrowException(this, Invocation.method(#delete, null));
+      final walletFirestore = FirestoreWallet.fromDomain(wallet);
+      final accountFirestore = FirestoreAccount.fromDomain(wallet.account);
+      logInfo(
+        'Starts deleting wallet',
+        traceId: traceId,
+        extras: {
+          'wallet': walletFirestore.toJson(),
+          'account': accountFirestore.toJson(),
+        },
+      );
+
+      final batch = _db.batch();
+      final walletRef = _db.doc('users/$userId/wallets/${wallet.id}');
+      batch.delete(walletRef);
+      final accountRef = _db.doc(
+        'users/$userId/accounts/${wallet.account.code}',
+      );
+      batch.delete(accountRef);
+      await batch.commit();
+      logInfo(
+        'Successfully deleted wallet and account',
+        traceId: traceId,
+      );
+      return const AppResult.success(null);
+    } on FirebaseException catch (e) {
+      logError('$e', traceId: traceId, error: e);
+      return AppResult.failure(
+        AppException('$e', code: AppExceptionCode.serverException),
+      );
+    } on Exception catch (e, st) {
+      logError('$e', traceId: traceId, error: e, stackTrace: st);
+      return AppResult.failure(
+        AppException('$e', code: AppExceptionCode.internalException),
+      );
+    }
+  }
 }

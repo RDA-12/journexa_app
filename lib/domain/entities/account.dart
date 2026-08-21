@@ -70,6 +70,12 @@ final kSystemDefinedAccounts = [
     type: AccountType.asset,
     isSystemAccount: true,
   ),
+  Account(
+    code: '40.0000',
+    name: 'revenue',
+    type: AccountType.revenue,
+    isSystemAccount: true,
+  ),
 ];
 
 /// Represent single account in a double-entry accounting system

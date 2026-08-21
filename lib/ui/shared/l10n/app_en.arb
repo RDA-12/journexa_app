@@ -269,5 +269,25 @@
   "updateWalletToastFailureTitle": "Failed to update wallet data",
   "@updateWalletToastFailureTitle": {
     "description": "Title for error state in update wallet toast"
+  },
+  "addIncomeCategoryNameLabel": "Name",
+  "@addIncomeCategoryNameLabel": {
+    "description": "Label for name field on add income category"
+  },
+  "addIncomeCategorySuccessMessage": "Income category successfully added",
+  "@addIncomeCategorySuccessMessage": {
+    "description": "Message to be showed when income category added successfully"
+  },
+  "addIncomeCategorySuccessTitle": "Income category added",
+  "@addIncomeCategorySuccessTitle": {
+    "description": "Title for success state in add income category page"
+  },
+  "addIncomeCategoryFailureTitle": "Failed to add income category",
+  "@addIncomeCategoryFailureTitle": {
+    "description": "Title for error state in add income category page"
+  },
+  "addIncomeCategoryTitle": "Add Income Category",
+  "@addIncomeCategoryTitle": {
+    "description": "Title for add income category page"
   }
 }

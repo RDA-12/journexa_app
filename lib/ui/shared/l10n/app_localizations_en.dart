@@ -180,4 +180,20 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get updateWalletToastFailureTitle => 'Failed to update wallet data';
+
+  @override
+  String get addIncomeCategoryNameLabel => 'Name';
+
+  @override
+  String get addIncomeCategorySuccessMessage =>
+      'Income category successfully added';
+
+  @override
+  String get addIncomeCategorySuccessTitle => 'Income category added';
+
+  @override
+  String get addIncomeCategoryFailureTitle => 'Failed to add income category';
+
+  @override
+  String get addIncomeCategoryTitle => 'Add Income Category';
 }

@@ -397,6 +397,36 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Failed to update wallet data'**
   String get updateWalletToastFailureTitle;
+
+  /// Label for name field on add income category
+  ///
+  /// In en, this message translates to:
+  /// **'Name'**
+  String get addIncomeCategoryNameLabel;
+
+  /// Message to be showed when income category added successfully
+  ///
+  /// In en, this message translates to:
+  /// **'Income category successfully added'**
+  String get addIncomeCategorySuccessMessage;
+
+  /// Title for success state in add income category page
+  ///
+  /// In en, this message translates to:
+  /// **'Income category added'**
+  String get addIncomeCategorySuccessTitle;
+
+  /// Title for error state in add income category page
+  ///
+  /// In en, this message translates to:
+  /// **'Failed to add income category'**
+  String get addIncomeCategoryFailureTitle;
+
+  /// Title for add income category page
+  ///
+  /// In en, this message translates to:
+  /// **'Add Income Category'**
+  String get addIncomeCategoryTitle;
 }
 
 class _AppLocalizationsDelegate

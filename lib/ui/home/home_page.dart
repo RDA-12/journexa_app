@@ -20,6 +20,12 @@ class HomePage extends StatelessWidget {
             },
             label: 'Wallets',
           ),
+          AppButton(
+            onPressed: () {
+              unawaited(context.push('/add-income-category'));
+            },
+            label: 'Income Category',
+          ),
         ],
       ),
     );

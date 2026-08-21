@@ -49,5 +49,10 @@
   "updateWalletUpdatingSemanticsLabel": "Memperbarui {name}",
   "updateAccountToastMessage": "{name} telah diperbarui",
   "deleteWalletToastFailureTitle": "Gagal menghapus data dompet",
-  "updateWalletToastFailureTitle": "Gagal memperbarui data dompet"
+  "updateWalletToastFailureTitle": "Gagal memperbarui data dompet",
+  "addIncomeCategoryNameLabel": "Nama",
+  "addIncomeCategorySuccessMessage": "Kategori pendapatan berhasil ditambahkan",
+  "addIncomeCategorySuccessTitle": "Kategori pendapatan berhasil ditambahkan",
+  "addIncomeCategoryFailureTitle": "Gagal menambahkan kategori pendapatan",
+  "addIncomeCategoryTitle": "Tambah Kategori Pendapatan"
 }

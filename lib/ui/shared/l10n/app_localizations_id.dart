@@ -181,4 +181,22 @@ class AppLocalizationsId extends AppLocalizations {
 
   @override
   String get updateWalletToastFailureTitle => 'Gagal memperbarui data dompet';
+
+  @override
+  String get addIncomeCategoryNameLabel => 'Nama';
+
+  @override
+  String get addIncomeCategorySuccessMessage =>
+      'Kategori pendapatan berhasil ditambahkan';
+
+  @override
+  String get addIncomeCategorySuccessTitle =>
+      'Kategori pendapatan berhasil ditambahkan';
+
+  @override
+  String get addIncomeCategoryFailureTitle =>
+      'Gagal menambahkan kategori pendapatan';
+
+  @override
+  String get addIncomeCategoryTitle => 'Tambah Kategori Pendapatan';
 }

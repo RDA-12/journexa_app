@@ -48,7 +48,7 @@ class InitializeAccountsUseCase
     );
     final initializedResult = await _accountRepository.ensureSaved(
       userId,
-      accounts: kSystemDefinedAccounts,
+      accounts: SystemDefinedAccount.accounts,
       traceId: traceId,
     );
     logInfo(

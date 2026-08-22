@@ -30,7 +30,7 @@ void main() {
     when(
       () => mockAccountRepository.ensureSaved(
         userId,
-        accounts: kSystemDefinedAccounts,
+        accounts: SystemDefinedAccount.accounts,
         traceId: traceId,
       ),
     ).thenAnswer((_) async => const AppResult.success(null));
@@ -53,7 +53,7 @@ void main() {
       verify(
         () => mockAccountRepository.ensureSaved(
           userId,
-          accounts: kSystemDefinedAccounts,
+          accounts: SystemDefinedAccount.accounts,
           traceId: traceId,
         ),
       ).called(1);
@@ -67,7 +67,7 @@ void main() {
       when(
         () => mockAccountRepository.ensureSaved(
           userId,
-          accounts: kSystemDefinedAccounts,
+          accounts: SystemDefinedAccount.accounts,
           traceId: traceId,
         ),
       ).thenAnswer(
@@ -82,7 +82,7 @@ void main() {
       verify(
         () => mockAccountRepository.ensureSaved(
           userId,
-          accounts: kSystemDefinedAccounts,
+          accounts: SystemDefinedAccount.accounts,
           traceId: traceId,
         ),
       ).called(1);

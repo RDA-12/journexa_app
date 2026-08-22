@@ -44,9 +44,7 @@ final expectedTranslations = {
 };
 
 void main() {
-  final assetParent = kSystemDefinedAccounts.firstWhere(
-    (it) => it.code == '10.0000',
-  );
+  final assetParent = SystemDefinedAccount.rootAsset;
   final walletWithBalances = List.generate(5, (idx) {
     return WalletWithBalance(
       wallet: Wallet(

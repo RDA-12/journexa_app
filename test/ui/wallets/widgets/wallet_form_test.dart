@@ -95,6 +95,7 @@ void main() {
                 code: '10.0001',
                 name: 'name',
                 type: AccountType.asset,
+                parent: SystemDefinedAccount.rootAsset,
               ),
             ),
           );

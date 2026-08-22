@@ -115,9 +115,7 @@ void main() {
         code: nextCode,
         name: params.name,
         type: AccountType.asset,
-        parent: kSystemDefinedAccounts.firstWhere(
-          (it) => it.code == '10.0000',
-        ),
+        parent: SystemDefinedAccount.rootAsset,
       );
       final expected = Wallet(
         id: walletId,

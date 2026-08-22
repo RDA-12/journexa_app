@@ -111,7 +111,7 @@ void main() {
   });
 
   group('Account.user', () {
-    final parents = kSystemDefinedAccounts;
+    final parents = SystemDefinedAccount.accounts;
 
     for (final parent in parents) {
       test('creates correct Account based on ${parent.type}', () {

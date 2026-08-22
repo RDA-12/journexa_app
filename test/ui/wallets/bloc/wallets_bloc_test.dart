@@ -23,9 +23,7 @@ class MockUpdateWalletUseCase extends Mock implements UpdateWalletUseCase {}
 
 void main() {
   const traceId = 'traceId';
-  final assetParent = kSystemDefinedAccounts.firstWhere(
-    (it) => it.code == '10.0000',
-  );
+  final assetParent = SystemDefinedAccount.rootAsset;
   final wallets = List.generate(5, (idx) {
     return WalletWithBalance(
       wallet: Wallet(

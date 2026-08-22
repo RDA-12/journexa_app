@@ -64,9 +64,7 @@ class AddIncomeCategoryUseCase
     logInfo('userId obtained', traceId: traceId);
     final userId = getCurrentUserIdResult.valueOrNull!;
     logInfo('Get parent Account for revenue', traceId: traceId);
-    final parentAssetAccount = kSystemDefinedAccounts.firstWhere(
-      (it) => it.code == '40.0000',
-    );
+    final parentRevenueAccount = SystemDefinedAccount.rootRevenue;
     logInfo(
       'Revenue parent Account obtained. Get children count',
       traceId: traceId,
@@ -75,7 +73,7 @@ class AddIncomeCategoryUseCase
     final getChildrenCountResult = await _accountRepository
         .getChildrenCountByParentCode(
           userId: userId,
-          parentCode: parentAssetAccount.code,
+          parentCode: parentRevenueAccount.code,
           traceId: traceId,
         );
     final getChildrenCountExc = getChildrenCountResult.errorOrNull;
@@ -93,7 +91,7 @@ class AddIncomeCategoryUseCase
     );
 
     final newAccount = Account.user(
-      parent: parentAssetAccount,
+      parent: parentRevenueAccount,
       name: params.name,
       currentChildrenCount: childrenCount,
     );

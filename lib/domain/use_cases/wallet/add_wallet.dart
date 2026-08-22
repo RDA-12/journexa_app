@@ -76,9 +76,7 @@ class AddWalletUseCase
       traceId: traceId,
     );
     final userId = getCurrentUserIdResult.valueOrNull!;
-    final parentAssetAccount = kSystemDefinedAccounts.firstWhere(
-      (it) => it.code == '10.0000',
-    );
+    final parentAssetAccount = SystemDefinedAccount.rootAsset;
     logInfo(
       'Asset parent Account obtained. Get children count',
       traceId: traceId,

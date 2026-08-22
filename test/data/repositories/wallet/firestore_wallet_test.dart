@@ -7,12 +7,12 @@ import 'package:journexa_app/domain/entities/wallet.dart';
 void main() {
   group('fromDomain', () {
     test('returns correct FirestoreWallet', () {
-      const expectedAccount = FirestoreAccount(
-        code: '10.0000',
+      final expectedAccount = FirestoreAccount(
+        code: '10.0001',
         name: 'Asset',
         nameLower: 'asset',
         type: AccountType.asset,
-        parentCode: '10.0001',
+        parentCode: SystemDefinedAccount.rootAsset.code,
         isSystemAccount: true,
         // ignore: avoid_redundant_argument_values need explicit for testing
         isDeleted: false,
@@ -23,17 +23,11 @@ void main() {
         nameLower: 'asset',
         accountCode: expectedAccount.code,
       );
-      final parent = Account(
-        code: expectedAccount.parentCode!,
-        name: 'parent ${expectedAccount.name}',
-        type: expectedAccount.type,
-        isSystemAccount: true,
-      );
       final domainAccount = Account(
         code: expectedAccount.code,
         name: expectedAccount.name,
         type: expectedAccount.type,
-        parent: parent,
+        parent: SystemDefinedAccount.rootAsset,
         isSystemAccount: expectedAccount.isSystemAccount,
       );
       final domainWallet = Wallet(
@@ -51,10 +45,11 @@ void main() {
   group('toDomain', () {
     test('returns correct Wallet', () {
       final expectedAccount = Account(
-        code: '10.0000',
+        code: '10.0001',
         name: 'asset',
         type: AccountType.asset,
         isSystemAccount: true,
+        parent: SystemDefinedAccount.rootAsset,
       );
       final expected = Wallet(
         id: 'id',
@@ -67,7 +62,6 @@ void main() {
         nameLower: expectedAccount.name.toLowerCase(),
         type: expectedAccount.type,
         isSystemAccount: expectedAccount.isSystemAccount,
-        isDeleted: true,
       );
       final firestoreWallet = FirestoreWallet(
         id: expected.id,

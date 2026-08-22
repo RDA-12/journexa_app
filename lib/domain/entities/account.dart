@@ -63,20 +63,26 @@ enum BalanceType {
 }
 
 /// Holds system defined accounts
-final kSystemDefinedAccounts = [
-  Account(
+abstract class SystemDefinedAccount {
+  /// Root asset account.
+  static Account get rootAsset => Account(
     code: '10.0000',
     name: 'asset',
     type: AccountType.asset,
     isSystemAccount: true,
-  ),
-  Account(
+  );
+
+  /// Root revenue account.
+  static Account get rootRevenue => Account(
     code: '40.0000',
     name: 'revenue',
     type: AccountType.revenue,
     isSystemAccount: true,
-  ),
-];
+  );
+
+  /// All system defined accounts
+  static List<Account> get accounts => [rootAsset, rootRevenue];
+}
 
 /// Represent single account in a double-entry accounting system
 @freezed

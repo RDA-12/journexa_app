@@ -110,9 +110,7 @@ class FirestoreWalletRepository with Loggable implements IWalletRepository {
         traceId: traceId,
       );
       final result = <Wallet>[];
-      final parentAccount = kSystemDefinedAccounts.firstWhere(
-        (it) => it.code == '10.0000',
-      );
+      final parentAccount = SystemDefinedAccount.rootAsset;
       for (final doc in walletsSnap.docs) {
         final walletFirestore = FirestoreWallet.fromJson(doc.data());
         logInfo(

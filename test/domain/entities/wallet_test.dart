@@ -4,9 +4,7 @@ import 'package:journexa_app/domain/entities/wallet.dart';
 import 'package:journexa_app/shared/app_exception.dart';
 
 void main() {
-  final assetParent = kSystemDefinedAccounts.firstWhere(
-    (it) => it.code == '10.0000',
-  );
+  final assetParent = SystemDefinedAccount.rootAsset;
   group('constructor', () {
     test(
       'throws AppException when connected Account is not an asset',

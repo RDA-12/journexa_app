@@ -10,15 +10,21 @@ void main() {
       const debounceDuration = Duration(milliseconds: 100);
       final states = <int>[];
       final bloc = CounterBloc(debounce(duration: debounceDuration))
-        ..stream.listen(states.add)
-        ..add(Increment())
-        ..add(Increment())
-        ..add(Increment());
+        ..stream.listen(states.add);
+      final events = [Increment(), Increment(), Increment()];
 
-      await wait(debounceDuration + const Duration(milliseconds: 1));
+      /// Simulates multiple events occurred rapidly
+      for (final event in events) {
+        bloc.add(event);
+        await wait(const Duration(milliseconds: 1));
+      }
+
+      /// Waits for last event debounce duration finished
+      await wait(debounceDuration);
 
       /// Allowing dart to flush pending microtasks
       await tick();
+
       expect(bloc.onCalls, [Increment()]);
       expect(states, <int>[]);
 

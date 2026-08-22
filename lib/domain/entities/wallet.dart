@@ -24,7 +24,7 @@ sealed class Wallet with _$Wallet {
   factory Wallet.test() => Wallet(
     id: 'id',
     name: 'test',
-    account: Account.test(),
+    account: Account.test().copyWith(parent: SystemDefinedAccount.rootAsset),
   );
 
   Wallet._() {
@@ -41,9 +41,7 @@ sealed class Wallet with _$Wallet {
         code: AppExceptionCode.internalException,
       );
     }
-    final assetParent = kSystemDefinedAccounts.firstWhere(
-      (it) => it.code == '10.0000',
-    );
+    final assetParent = SystemDefinedAccount.rootAsset;
     if (account.parent != assetParent) {
       throw AppException(
         'Wallet account must have asset parent. Got: ${account.parent?.code}',

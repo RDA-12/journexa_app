@@ -22,7 +22,7 @@ void main() {
       code: '10.0001',
       name: 'asset 1',
       type: AccountType.asset,
-      parent: kSystemDefinedAccounts.firstWhere((it) => it.code == '10.0000'),
+      parent: SystemDefinedAccount.rootAsset,
     ),
   );
   final params = UpdateWalletParams(

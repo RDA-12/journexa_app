@@ -14,9 +14,7 @@ void main() {
   const userId = 'userId';
   const traceId = 'traceId';
 
-  final parent = kSystemDefinedAccounts.firstWhere(
-    (it) => it.code == '10.0000',
-  );
+  final parent = SystemDefinedAccount.rootAsset;
   final initialWallets = List.generate(5, (index) {
     return Wallet(
       id: '$index',

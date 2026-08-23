@@ -16,4 +16,18 @@ abstract interface class IIncomeCategoryRepository {
     required String traceId,
     String? query,
   });
+
+  /// Delete [category] from [userId] database
+  Future<AppResult<Null>> delete({
+    required String userId,
+    required IncomeCategory category,
+    required String traceId,
+  });
+
+  /// Update [updatedCategory] in [userId] database
+  Future<AppResult<Null>> update({
+    required String userId,
+    required IncomeCategory updatedCategory,
+    required String traceId,
+  });
 }

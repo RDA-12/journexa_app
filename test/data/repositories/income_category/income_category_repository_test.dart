@@ -258,4 +258,213 @@ void main() {
       },
     );
   });
+
+  group('delete', () {
+    test(
+      'returns success and delete correct Category and the Account',
+      () async {
+        final deletedCategory = initialCategories.first;
+
+        final result = await repository.delete(
+          userId: userId,
+          category: deletedCategory,
+          traceId: traceId,
+        );
+
+        expect(result, const AppResult.success(null));
+
+        final categoryDocRef = fakeFirestore.doc(
+          'users/$userId/incomeCategories/${deletedCategory.id}',
+        );
+        final categorySnapshot = await categoryDocRef.get();
+        expect(categorySnapshot.exists, isFalse);
+
+        final accountDocRef = fakeFirestore.doc(
+          'users/$userId/accounts/${deletedCategory.account.code}',
+        );
+        final accountSnapshot = await accountDocRef.get();
+        expect(accountSnapshot.exists, isFalse);
+      },
+    );
+
+    test(
+      'do nothing when category does not exist',
+      () async {
+        final nonExistentCategory = IncomeCategory(
+          id: 'non-existent',
+          name: 'non-existent',
+          icon: 'icon',
+          account: Account(
+            code: '40.0100',
+            name: 'non-existent',
+            type: AccountType.revenue,
+            parent: parentAccount,
+          ),
+        );
+
+        final result = await repository.delete(
+          userId: userId,
+          category: nonExistentCategory,
+          traceId: traceId,
+        );
+
+        expect(result, const AppResult.success(null));
+
+        final categoryDocRef = fakeFirestore.doc(
+          'users/$userId/incomeCategories/${nonExistentCategory.id}',
+        );
+        final categorySnapshot = await categoryDocRef.get();
+        expect(categorySnapshot.exists, isFalse);
+
+        final accountDocRef = fakeFirestore.doc(
+          'users/$userId/accounts/${nonExistentCategory.account.code}',
+        );
+        final accountSnapshot = await accountDocRef.get();
+        expect(accountSnapshot.exists, isFalse);
+      },
+    );
+
+    test(
+      'returns failure with serverException '
+      'when firestore throws FirebaseException',
+      () async {
+        whenCalling(
+          Invocation.method(#delete, null),
+        ).on(repository).thenThrow(FirebaseException(plugin: 'firestore'));
+
+        final result = await repository.delete(
+          userId: userId,
+          category: initialCategories.first,
+          traceId: traceId,
+        );
+
+        expect(
+          result,
+          isA<AppResultFailure<Null>>().having(
+            (e) => e.error.code,
+            'error.code',
+            AppExceptionCode.serverException,
+          ),
+        );
+      },
+    );
+
+    test(
+      'returns failure with internalException '
+      'when firestore throws Exception',
+      () async {
+        whenCalling(
+          Invocation.method(#delete, null),
+        ).on(repository).thenThrow(Exception());
+
+        final result = await repository.delete(
+          userId: userId,
+          category: initialCategories.first,
+          traceId: traceId,
+        );
+
+        expect(
+          result,
+          isA<AppResultFailure<Null>>().having(
+            (e) => e.error.code,
+            'error.code',
+            AppExceptionCode.internalException,
+          ),
+        );
+      },
+    );
+  });
+
+  group('update', () {
+    final updatedCategory = initialCategories.first.update(name: 'new name');
+    test(
+      'returns success when succeeded',
+      () async {
+        final result = await repository.update(
+          userId: userId,
+          updatedCategory: updatedCategory,
+          traceId: traceId,
+        );
+
+        expect(result, const AppResult.success(null));
+      },
+    );
+
+    test(
+      'update both Category and Account',
+      () async {
+        await repository.update(
+          userId: userId,
+          updatedCategory: updatedCategory,
+          traceId: traceId,
+        );
+
+        final categoryDoc = await fakeFirestore
+            .doc('users/$userId/incomeCategories/${updatedCategory.id}')
+            .get();
+        expect(
+          categoryDoc.data(),
+          FirestoreIncomeCategory.fromDomain(updatedCategory).toJson(),
+        );
+
+        final accountDoc = await fakeFirestore
+            .doc('users/$userId/accounts/${updatedCategory.account.code}')
+            .get();
+        expect(
+          accountDoc.data(),
+          FirestoreAccount.fromDomain(updatedCategory.account).toJson(),
+        );
+      },
+    );
+
+    test(
+      'returns failure with serverException '
+      'when firestore throws FirebaseException',
+      () async {
+        whenCalling(
+          Invocation.method(#update, null),
+        ).on(repository).thenThrow(FirebaseException(plugin: 'firestore'));
+
+        final result = await repository.update(
+          userId: userId,
+          updatedCategory: updatedCategory,
+          traceId: traceId,
+        );
+
+        expect(
+          result,
+          isA<AppResultFailure<Null>>().having(
+            (e) => e.error.code,
+            'error.code',
+            AppExceptionCode.serverException,
+          ),
+        );
+      },
+    );
+
+    test(
+      'returns failure with internalException '
+      'when firestore throws Exception',
+      () async {
+        whenCalling(
+          Invocation.method(#update, null),
+        ).on(repository).thenThrow(Exception());
+
+        final result = await repository.update(
+          userId: userId,
+          updatedCategory: updatedCategory,
+          traceId: traceId,
+        );
+
+        expect(
+          result,
+          isA<AppResultFailure<Null>>().having(
+            (e) => e.error.code,
+            'error.code',
+            AppExceptionCode.internalException,
+          ),
+        );
+      },
+    );
+  });
 }

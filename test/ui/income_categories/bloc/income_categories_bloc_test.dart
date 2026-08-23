@@ -2,9 +2,9 @@ import 'package:bloc_test/bloc_test.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:journexa_app/domain/entities/account.dart';
 import 'package:journexa_app/domain/entities/income_category.dart';
-import 'package:journexa_app/domain/use_cases/account/delete_account.dart';
-import 'package:journexa_app/domain/use_cases/account/update_account.dart';
+import 'package:journexa_app/domain/use_cases/income_category/delete_income_category.dart';
 import 'package:journexa_app/domain/use_cases/income_category/get_all_income_categories.dart';
+import 'package:journexa_app/domain/use_cases/income_category/update_income_category.dart';
 import 'package:journexa_app/shared/app_exception.dart';
 import 'package:journexa_app/shared/app_result.dart';
 import 'package:journexa_app/shared/uid_generator.dart';
@@ -17,9 +17,11 @@ class MockGetAllIncomeCategories extends Mock
 
 class MockUidGenerator extends Mock implements UidGenerator {}
 
-class MockDeleteIncomeCategory extends Mock implements DeleteAccountUseCase {}
+class MockDeleteIncomeCategory extends Mock
+    implements DeleteIncomeCategoryUseCase {}
 
-class MockUpdateIncomeCategory extends Mock implements UpdateAccountUseCase {}
+class MockUpdateIncomeCategory extends Mock
+    implements UpdateIncomeCategoryUseCase {}
 
 void main() {
   const traceId = 'traceId';
@@ -46,18 +48,21 @@ void main() {
 
   late GetAllIncomeCategoriesUseCase mockGetAllIncomeCategories;
   late UidGenerator mockUidGenerator;
-  late DeleteAccountUseCase mockDeleteIncomeCategory;
-  late UpdateAccountUseCase mockUpdateIncomeCategory;
+  late DeleteIncomeCategoryUseCase mockDeleteIncomeCategory;
+  late UpdateIncomeCategoryUseCase mockUpdateIncomeCategory;
 
   setUpAll(() {
     registerFallbackValue(
       const GetAllIncomeCategoriesParams(),
     );
     registerFallbackValue(
-      DeleteAccountParams(account: incomeCategories.first.account),
+      DeleteIncomeCategoryParams(category: incomeCategories.first),
     );
     registerFallbackValue(
-      const UpdateAccountParams(code: '12345'),
+      UpdateIncomeCategoryParams(
+        category: incomeCategories.first,
+        name: 'new name',
+      ),
     );
   });
 
@@ -78,7 +83,7 @@ void main() {
     mockDeleteIncomeCategory = MockDeleteIncomeCategory();
     when(
       () => mockDeleteIncomeCategory.execute(
-        any<DeleteAccountParams>(),
+        any<DeleteIncomeCategoryParams>(),
         traceId: traceId,
       ),
     ).thenAnswer((_) async => const AppResult.success(null));
@@ -86,11 +91,11 @@ void main() {
     mockUpdateIncomeCategory = MockUpdateIncomeCategory();
     when(
       () => mockUpdateIncomeCategory.execute(
-        any<UpdateAccountParams>(),
+        any<UpdateIncomeCategoryParams>(),
         traceId: traceId,
       ),
     ).thenAnswer(
-      (_) async => AppResult.success(updatedFirstCategory.account),
+      (_) async => AppResult.success(updatedFirstCategory),
     );
   });
 
@@ -288,7 +293,7 @@ void main() {
       verify: (_) {
         verify(
           () => mockDeleteIncomeCategory.execute(
-            DeleteAccountParams(account: incomeCategories.first.account),
+            DeleteIncomeCategoryParams(category: incomeCategories.first),
             traceId: traceId,
           ),
         ).called(1);
@@ -301,7 +306,7 @@ void main() {
       setUp: () {
         when(
           () => mockDeleteIncomeCategory.execute(
-            DeleteAccountParams(account: incomeCategories.first.account),
+            DeleteIncomeCategoryParams(category: incomeCategories.first),
             traceId: traceId,
           ),
         ).thenAnswer(
@@ -341,7 +346,9 @@ void main() {
       verify: (_) {
         verify(
           () => mockDeleteIncomeCategory.execute(
-            DeleteAccountParams(account: incomeCategories.first.account),
+            DeleteIncomeCategoryParams(
+              category: incomeCategories.first,
+            ),
             traceId: traceId,
           ),
         ).called(1);
@@ -415,8 +422,8 @@ void main() {
       verify: (_) {
         verify(
           () => mockUpdateIncomeCategory.execute(
-            UpdateAccountParams(
-              code: incomeCategories.first.account.code,
+            UpdateIncomeCategoryParams(
+              category: incomeCategories.first,
               name: updatedFirstCategory.name,
             ),
             traceId: traceId,
@@ -432,14 +439,14 @@ void main() {
       setUp: () {
         when(
           () => mockUpdateIncomeCategory.execute(
-            UpdateAccountParams(
-              code: incomeCategories.first.account.code,
+            UpdateIncomeCategoryParams(
+              category: incomeCategories.first,
               name: updatedFirstCategory.name,
             ),
             traceId: traceId,
           ),
         ).thenAnswer(
-          (_) async => AppResult<Account>.failure(AppException.test()),
+          (_) async => AppResult<IncomeCategory>.failure(AppException.test()),
         );
       },
       seed: () {
@@ -477,8 +484,8 @@ void main() {
       verify: (_) {
         verify(
           () => mockUpdateIncomeCategory.execute(
-            UpdateAccountParams(
-              code: incomeCategories.first.account.code,
+            UpdateIncomeCategoryParams(
+              category: incomeCategories.first,
               name: updatedFirstCategory.name,
             ),
             traceId: traceId,

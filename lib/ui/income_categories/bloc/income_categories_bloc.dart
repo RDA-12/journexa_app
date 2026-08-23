@@ -1,9 +1,9 @@
 import 'package:bloc/bloc.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:journexa_app/domain/entities/income_category.dart';
-import 'package:journexa_app/domain/use_cases/account/delete_account.dart';
-import 'package:journexa_app/domain/use_cases/account/update_account.dart';
+import 'package:journexa_app/domain/use_cases/income_category/delete_income_category.dart';
 import 'package:journexa_app/domain/use_cases/income_category/get_all_income_categories.dart';
+import 'package:journexa_app/domain/use_cases/income_category/update_income_category.dart';
 import 'package:journexa_app/shared/app_exception.dart';
 import 'package:journexa_app/shared/app_logger.dart';
 import 'package:journexa_app/shared/app_result.dart';
@@ -59,8 +59,8 @@ class IncomeCategoriesBloc
   String get logTag => 'IncomeCategoriesBloc';
 
   final GetAllIncomeCategoriesUseCase _getAllIncomeCategories;
-  final UpdateAccountUseCase _updateIncomeCategory;
-  final DeleteAccountUseCase _deleteIncomeCategory;
+  final UpdateIncomeCategoryUseCase _updateIncomeCategory;
+  final DeleteIncomeCategoryUseCase _deleteIncomeCategory;
 
   Future<void> _onLoad({
     required Emitter<IncomeCategoriesState> emit,
@@ -140,7 +140,7 @@ class IncomeCategoriesBloc
       ),
     );
     final result = await _deleteIncomeCategory.execute(
-      DeleteAccountParams(account: category.account),
+      DeleteIncomeCategoryParams(category: category),
       traceId: traceId,
     );
     result.when(
@@ -216,8 +216,8 @@ class IncomeCategoriesBloc
       ),
     );
 
-    final params = UpdateAccountParams(
-      code: category.account.code,
+    final params = UpdateIncomeCategoryParams(
+      category: category,
       name: name,
     );
     final result = await _updateIncomeCategory.execute(
@@ -239,18 +239,12 @@ class IncomeCategoriesBloc
               if (!processed) return it;
               return it.copyWith(
                 status: IncomeCategoryStatus.idle,
-                category: it.category.copyWith(
-                  name: params.name ?? category.name,
-                  account: updated,
-                ),
+                category: updated,
               );
             }).toList(),
             notice: IncomeCategoryNotice.recentlyUpdated(
               from: oldIncomeCategory,
-              to: category.copyWith(
-                name: params.name ?? category.name,
-                account: updated,
-              ),
+              to: updated,
             ),
           ),
         );

@@ -172,4 +172,102 @@ class FirestoreIncomeCategoryRepository
       );
     }
   }
+
+  @override
+  Future<AppResult<Null>> delete({
+    required String userId,
+    required IncomeCategory category,
+    required String traceId,
+  }) async {
+    try {
+      maybeThrowException(this, Invocation.method(#delete, null));
+      final categoryFirestore = FirestoreIncomeCategory.fromDomain(category);
+      final accountFirestore = FirestoreAccount.fromDomain(category.account);
+      logInfo(
+        'Starts deleting category',
+        traceId: traceId,
+        extras: {
+          'category': categoryFirestore.toJson(),
+          'account': accountFirestore.toJson(),
+        },
+      );
+
+      final batch = _db.batch();
+      final categoryRef = _db.doc(
+        'users/$userId/incomeCategories/${category.id}',
+      );
+      batch.delete(categoryRef);
+      final accountRef = _db.doc(
+        'users/$userId/accounts/${category.account.code}',
+      );
+      batch.delete(accountRef);
+      await batch.commit();
+      logInfo(
+        'Successfully deleted category and account',
+        traceId: traceId,
+      );
+      return const AppResult.success(null);
+    } on FirebaseException catch (e) {
+      logError('$e', traceId: traceId, error: e);
+      return AppResult.failure(
+        AppException('$e', code: AppExceptionCode.serverException),
+      );
+    } on Exception catch (e, st) {
+      logError('$e', traceId: traceId, error: e, stackTrace: st);
+      return AppResult.failure(
+        AppException('$e', code: AppExceptionCode.internalException),
+      );
+    }
+  }
+
+  @override
+  Future<AppResult<Null>> update({
+    required String userId,
+    required IncomeCategory updatedCategory,
+    required String traceId,
+  }) async {
+    try {
+      maybeThrowException(this, Invocation.method(#update, null));
+      final categoryFirestore = FirestoreIncomeCategory.fromDomain(
+        updatedCategory,
+      );
+      final accountFirestore = FirestoreAccount.fromDomain(
+        updatedCategory.account,
+      );
+
+      logInfo(
+        'Starts updating category',
+        traceId: traceId,
+        extras: {
+          'category': categoryFirestore.toJson(),
+          'account': accountFirestore.toJson(),
+        },
+      );
+      final batch = _db.batch();
+      final categoryRef = _db.doc(
+        'users/$userId/incomeCategories/${updatedCategory.id}',
+      );
+      batch.set(categoryRef, categoryFirestore.toJson());
+      final accountRef = _db.doc(
+        'users/$userId/accounts/${updatedCategory.account.code}',
+      );
+      batch.set(accountRef, accountFirestore.toJson());
+      await batch.commit();
+      logInfo(
+        'Successfully updated category and account',
+        traceId: traceId,
+      );
+      return const AppResult.success(null);
+    } on FirebaseException catch (e) {
+      logError('$e', traceId: traceId, error: e);
+      return AppResult.failure(
+        AppException('$e', code: AppExceptionCode.serverException),
+      );
+    } on Exception catch (e, st) {
+      logError('$e', traceId: traceId, error: e, stackTrace: st);
+      return AppResult.failure(
+        AppException('$e', code: AppExceptionCode.internalException),
+      );
+    }
+  }
 }

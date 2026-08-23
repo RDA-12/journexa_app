@@ -1,8 +1,8 @@
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:injectable/injectable.dart';
-import 'package:journexa_app/domain/entities/account.dart';
-import 'package:journexa_app/domain/repositories/i_account_repository.dart';
+import 'package:journexa_app/domain/entities/income_category.dart';
 import 'package:journexa_app/domain/repositories/i_auth_repository.dart';
+import 'package:journexa_app/domain/repositories/i_income_category.dart';
 import 'package:journexa_app/domain/use_cases/base_use_case.dart';
 import 'package:journexa_app/shared/app_logger.dart';
 import 'package:journexa_app/shared/app_result.dart';
@@ -22,10 +22,11 @@ sealed class GetAllIncomeCategoriesParams with _$GetAllIncomeCategoriesParams {
 @lazySingleton
 class GetAllIncomeCategoriesUseCase
     with Loggable
-    implements FutureBaseUseCase<GetAllIncomeCategoriesParams, List<Account>> {
+    implements
+        FutureBaseUseCase<GetAllIncomeCategoriesParams, List<IncomeCategory>> {
   /// Creates new [GetAllIncomeCategoriesUseCase]
   GetAllIncomeCategoriesUseCase({
-    required this._accountRepository,
+    required this._incomeCategoryRepository,
     required this._authRepository,
   });
 
@@ -33,11 +34,11 @@ class GetAllIncomeCategoriesUseCase
   String get logTag => 'GetAllIncomeCategoriesUseCase';
 
   final IAuthRepository _authRepository;
-  final IAccountRepository _accountRepository;
+  final IIncomeCategoryRepository _incomeCategoryRepository;
 
   /// Execute getting all income categories from current user
   @override
-  Future<AppResult<List<Account>>> execute(
+  Future<AppResult<List<IncomeCategory>>> execute(
     GetAllIncomeCategoriesParams params, {
     required String traceId,
   }) async {
@@ -56,10 +57,8 @@ class GetAllIncomeCategoriesUseCase
       'Got current user id. Starts getting income categories',
       traceId: traceId,
     );
-    const parentCode = '40.0000';
-    final accountsResult = await _accountRepository.getByParentCode(
+    final accountsResult = await _incomeCategoryRepository.getAll(
       userId: userId,
-      parentCode: parentCode,
       query: params.query,
       traceId: traceId,
     );

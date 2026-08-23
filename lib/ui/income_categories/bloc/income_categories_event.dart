@@ -10,11 +10,11 @@ class IncomeCategoriesEvent with _$IncomeCategoriesEvent {
   const factory IncomeCategoriesEvent.search({required String query}) = _Search;
 
   /// Event to delete an income category
-  const factory IncomeCategoriesEvent.delete(Account category) = _Delete;
+  const factory IncomeCategoriesEvent.delete(IncomeCategory category) = _Delete;
 
   /// Event to update an income category based on provided arguments
   const factory IncomeCategoriesEvent.update(
-    Account category, {
+    IncomeCategory category, {
     String? name,
   }) = _Update;
 }

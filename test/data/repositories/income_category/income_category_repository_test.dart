@@ -157,4 +157,105 @@ void main() {
       },
     );
   });
+
+  group('getAll', () {
+    test(
+      'returns success with correct categories',
+      () async {
+        final result = await repository.getAll(
+          userId: userId,
+          traceId: traceId,
+        );
+
+        expect(result, AppResult.success(initialCategories));
+      },
+    );
+
+    test(
+      'returns success with correct categories when query provided',
+      () async {
+        final expectedCategory = IncomeCategory(
+          id: 'expected',
+          name: 'expected name',
+          icon: 'icon',
+          account: Account(
+            code: '40.1000',
+            name: 'expected name',
+            type: AccountType.revenue,
+            parent: parentAccount,
+          ),
+        );
+        final categoryDoc = fakeFirestore.doc(
+          'users/$userId/incomeCategories/${expectedCategory.id}',
+        );
+        await categoryDoc.set(
+          FirestoreIncomeCategory.fromDomain(expectedCategory).toJson(),
+        );
+        final accountDoc = fakeFirestore.doc(
+          'users/$userId/accounts/${expectedCategory.account.code}',
+        );
+        await accountDoc.set(
+          FirestoreAccount.fromDomain(expectedCategory.account).toJson(),
+        );
+
+        final result = await repository.getAll(
+          userId: userId,
+          query: 'expected',
+          traceId: traceId,
+        );
+
+        expect(result, AppResult.success([expectedCategory]));
+      },
+    );
+
+    test(
+      'returns failure with serverException code '
+      'when firestore throws FirebaseException',
+      () async {
+        whenCalling(Invocation.method(#getAll, null))
+            .on(repository)
+            .thenThrow(
+              FirebaseException(plugin: 'firestore'),
+            );
+
+        final result = await repository.getAll(
+          userId: userId,
+          traceId: traceId,
+        );
+
+        expect(
+          result,
+          isA<AppResultFailure<List<IncomeCategory>>>().having(
+            (e) => e.error.code,
+            'error.code',
+            AppExceptionCode.serverException,
+          ),
+        );
+      },
+    );
+
+    test(
+      'returns failure with internalException code '
+      'when firestore throws Exception',
+      () async {
+        whenCalling(
+          Invocation.method(#getAll, null),
+        ).on(repository).thenThrow(Exception());
+
+        final result = await repository.getAll(
+          userId: userId,
+          traceId: traceId,
+        );
+
+        expect(
+          result,
+          isA<AppResultFailure<List<IncomeCategory>>>().having(
+            (e) => e.error.code,
+            'error.code',
+            AppExceptionCode.internalException,
+          ),
+        );
+      },
+    );
+  });
 }

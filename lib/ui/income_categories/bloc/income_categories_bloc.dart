@@ -1,6 +1,6 @@
 import 'package:bloc/bloc.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
-import 'package:journexa_app/domain/entities/account.dart';
+import 'package:journexa_app/domain/entities/income_category.dart';
 import 'package:journexa_app/domain/use_cases/account/delete_account.dart';
 import 'package:journexa_app/domain/use_cases/account/update_account.dart';
 import 'package:journexa_app/domain/use_cases/income_category/get_all_income_categories.dart';
@@ -21,8 +21,8 @@ class IncomeCategoriesBloc
   /// Creates new [IncomeCategoriesBloc]
   IncomeCategoriesBloc({
     required this._getAllIncomeCategories,
-    required this._deleteAccount,
-    required this._updateAccount,
+    required this._deleteIncomeCategory,
+    required this._updateIncomeCategory,
   }) : super(const IncomeCategoriesState()) {
     on<_Load>((event, emit) async {
       return _onLoad(
@@ -41,13 +41,13 @@ class IncomeCategoriesBloc
     );
     on<_Delete>(
       (event, emit) async {
-        return _onDelete(account: event.category, emit: emit);
+        return _onDelete(category: event.category, emit: emit);
       },
     );
     on<_Update>(
       (event, emit) async {
         return _onUpdate(
-          account: event.category,
+          category: event.category,
           emit: emit,
           name: event.name,
         );
@@ -59,8 +59,8 @@ class IncomeCategoriesBloc
   String get logTag => 'IncomeCategoriesBloc';
 
   final GetAllIncomeCategoriesUseCase _getAllIncomeCategories;
-  final UpdateAccountUseCase _updateAccount;
-  final DeleteAccountUseCase _deleteAccount;
+  final UpdateAccountUseCase _updateIncomeCategory;
+  final DeleteAccountUseCase _deleteIncomeCategory;
 
   Future<void> _onLoad({
     required Emitter<IncomeCategoriesState> emit,
@@ -79,7 +79,7 @@ class IncomeCategoriesBloc
       traceId: traceId,
     );
     result.when(
-      success: (accounts) {
+      success: (categories) {
         logInfo(
           'Get income categories succeeded. Emit loaded status',
           traceId: traceId,
@@ -87,8 +87,8 @@ class IncomeCategoriesBloc
         emit(
           state.copyWith(
             status: IncomeCategoriesStatus.loaded,
-            accounts: accounts
-                .map((it) => AccountWithState(account: it))
+            categories: categories
+                .map((it) => IncomeCategoryWithState(category: it))
                 .toList(),
           ),
         );
@@ -109,16 +109,16 @@ class IncomeCategoriesBloc
   }
 
   Future<void> _onDelete({
-    required Account account,
+    required IncomeCategory category,
     required Emitter<IncomeCategoriesState> emit,
   }) async {
     final traceId = generateUid();
-    final accountIdx = state.accounts.indexWhere(
-      (it) => it.account.code == account.code,
+    final categoryIdx = state.categories.indexWhere(
+      (it) => it.category.id == category.id,
     );
-    if (accountIdx == -1) {
+    if (categoryIdx == -1) {
       logInfo(
-        'Account with code ${account.code} not found in accounts. '
+        'IncomeCategory with id ${category.id} not found in categories. '
         'Early return',
         traceId: traceId,
       );
@@ -126,57 +126,57 @@ class IncomeCategoriesBloc
     }
 
     logInfo(
-      'Starts deleting account with code ${account.code}. '
-      'Emit new accounts with status deleting on the Account',
+      'Starts deleting category with id ${category.id}. '
+      'Emit new categories with status deleting on the IncomeCategory',
       traceId: traceId,
     );
     emit(
       state.copyWith(
-        accounts: state.accounts.map((it) {
-          final isDeleting = it.account.code == account.code;
+        categories: state.categories.map((it) {
+          final isDeleting = it.category.id == category.id;
           if (!isDeleting) return it;
           return it.copyWith(status: IncomeCategoryStatus.deleting);
         }).toList(),
       ),
     );
-    final result = await _deleteAccount.execute(
-      DeleteAccountParams(account: account),
+    final result = await _deleteIncomeCategory.execute(
+      DeleteAccountParams(account: category.account),
       traceId: traceId,
     );
     result.when(
       success: (_) {
         logInfo(
-          'Deletes account success. '
-          'Filter account from accounts. '
+          'Deletes category success. '
+          'Filter category from categories. '
           'Emit with recentlyDeleted notice',
           traceId: traceId,
         );
         emit(
           state.copyWith(
             status: IncomeCategoriesStatus.loaded,
-            accounts: state.accounts
-                .where((it) => it.account.code != account.code)
+            categories: state.categories
+                .where((it) => it.category.id != category.id)
                 .toList(),
-            notice: IncomeCategoryNotice.recentlyDeleted(account: account),
+            notice: IncomeCategoryNotice.recentlyDeleted(category: category),
           ),
         );
       },
       failure: (exc) {
         logInfo(
-          'Delete account failed. '
-          'Emit idle status on the Account with deleteFailed notice',
+          'Delete category failed. '
+          'Emit idle status on the IncomeCategory with deleteFailed notice',
           traceId: traceId,
         );
         emit(
           state.copyWith(
             status: IncomeCategoriesStatus.loaded,
-            accounts: state.accounts.map((it) {
-              final processed = it.account.code == account.code;
+            categories: state.categories.map((it) {
+              final processed = it.category.id == category.id;
               if (!processed) return it;
               return it.copyWith(status: IncomeCategoryStatus.idle);
             }).toList(),
             notice: IncomeCategoryNotice.deleteFailed(
-              account: account,
+              category: category,
               exception: exc,
             ),
           ),
@@ -186,30 +186,30 @@ class IncomeCategoriesBloc
   }
 
   Future<void> _onUpdate({
-    required Account account,
+    required IncomeCategory category,
     required Emitter<IncomeCategoriesState> emit,
     String? name,
   }) async {
     final traceId = generateUid();
-    logInfo('Checking account with code ${account.code}', traceId: traceId);
-    final accountIdx = state.accounts.indexWhere(
-      (it) => it.account.code == account.code,
+    logInfo('Checking category with id ${category.id}', traceId: traceId);
+    final categoryIdx = state.categories.indexWhere(
+      (it) => it.category.id == category.id,
     );
-    if (accountIdx == -1) {
-      logInfo('Account not found. Skipping', traceId: traceId);
+    if (categoryIdx == -1) {
+      logInfo('IncomeCategory not found. Skipping', traceId: traceId);
       return;
     }
-    final oldAccount = state.accounts[accountIdx].account;
+    final oldIncomeCategory = state.categories[categoryIdx].category;
 
     logInfo(
-      'Starts updating account ${account.code}. '
-      'Emit new accounts with status updateing on the Account',
+      'Starts updating category ${category.id}. '
+      'Emit new categories with status updateing on the IncomeCategory',
       traceId: traceId,
     );
     emit(
       state.copyWith(
-        accounts: state.accounts.map((it) {
-          final isUpdating = it.account.code == account.code;
+        categories: state.categories.map((it) {
+          final isUpdating = it.category.id == category.id;
           if (!isUpdating) return it;
           return it.copyWith(status: IncomeCategoryStatus.updating);
         }).toList(),
@@ -217,53 +217,62 @@ class IncomeCategoriesBloc
     );
 
     final params = UpdateAccountParams(
-      code: account.code,
+      code: category.account.code,
       name: name,
     );
-    final result = await _updateAccount.execute(params, traceId: traceId);
+    final result = await _updateIncomeCategory.execute(
+      params,
+      traceId: traceId,
+    );
     result.when(
       success: (updated) {
         logInfo(
-          'Updates account success. '
-          'Emit updated account with idle status and recentlyUpdated notice',
+          'Updates category success. '
+          'Emit updated category with idle status and recentlyUpdated notice',
           traceId: traceId,
         );
         emit(
           state.copyWith(
             status: IncomeCategoriesStatus.loaded,
-            accounts: state.accounts.map((it) {
-              final processed = it.account.code == account.code;
+            categories: state.categories.map((it) {
+              final processed = it.category.id == category.id;
               if (!processed) return it;
               return it.copyWith(
                 status: IncomeCategoryStatus.idle,
-                account: updated,
+                category: it.category.copyWith(
+                  name: params.name ?? category.name,
+                  account: updated,
+                ),
               );
             }).toList(),
             notice: IncomeCategoryNotice.recentlyUpdated(
-              from: oldAccount,
-              to: updated,
+              from: oldIncomeCategory,
+              to: category.copyWith(
+                name: params.name ?? category.name,
+                account: updated,
+              ),
             ),
           ),
         );
       },
       failure: (exc) {
         logInfo(
-          'Update account failed. '
-          'Emit idle status on the Account and updateFailed notice',
+          'Update category failed. '
+          'Emit idle status on the IncomeCategory and updateFailed notice',
           traceId: traceId,
         );
         emit(
           state.copyWith(
             status: IncomeCategoriesStatus.loaded,
-            accounts: state.accounts.map((it) {
-              final processed = it.account.code == account.code;
+            categories: state.categories.map((it) {
+              final processed = it.category.id == category.id;
               if (!processed) return it;
               return it.copyWith(
                 status: IncomeCategoryStatus.idle,
               );
             }).toList(),
             notice: IncomeCategoryNotice.updateFailed(
-              account: account,
+              category: category,
               exception: exc,
             ),
           ),

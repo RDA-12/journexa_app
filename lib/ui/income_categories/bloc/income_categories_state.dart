@@ -17,7 +17,7 @@ enum IncomeCategoriesStatus {
   failure,
 }
 
-/// Status for [AccountWithState]
+/// Status for [IncomeCategoryWithState]
 enum IncomeCategoryStatus {
   /// Idle status
   idle,
@@ -36,23 +36,23 @@ enum IncomeCategoryStatus {
 sealed class IncomeCategoryNotice with _$IncomeCategoryNotice {
   /// Creates new [IncomeCategoryNotice] as deleted notice
   const factory IncomeCategoryNotice.recentlyDeleted({
-    /// The [Account] that was recently deleted
-    required Account account,
+    /// The [IncomeCategory] that was recently deleted
+    required IncomeCategory category,
   }) = _IncomeCategoryNoticeRecentlyDeleted;
 
   /// Creates new [IncomeCategoryNotice] as updated notice
   const factory IncomeCategoryNotice.recentlyUpdated({
-    /// Old [Account]
-    required Account from,
+    /// Old [IncomeCategory]
+    required IncomeCategory from,
 
-    /// New updated [Account]
-    required Account to,
+    /// New updated [IncomeCategory]
+    required IncomeCategory to,
   }) = _IncomeCategoryNoticeRecentlyUpdated;
 
   /// Creates new [IncomeCategoryNotice] as delete failed notice
   const factory IncomeCategoryNotice.deleteFailed({
-    /// [Account] that meant to be deleted
-    required Account account,
+    /// [IncomeCategory] that meant to be deleted
+    required IncomeCategory category,
 
     /// Exception that occurred when delete event failed
     required AppException exception,
@@ -60,24 +60,24 @@ sealed class IncomeCategoryNotice with _$IncomeCategoryNotice {
 
   /// Creates new [IncomeCategoryNotice] as update failed notice
   const factory IncomeCategoryNotice.updateFailed({
-    /// [Account] that meant to be updated
-    required Account account,
+    /// [IncomeCategory] that meant to be updated
+    required IncomeCategory category,
 
     /// Exception that occurred when update event failed
     required AppException exception,
   }) = _IncomeCategoryNoticeUpdateFailed;
 }
 
-/// Extends [Account] to includes state for UI
+/// Extends [IncomeCategory] to includes state for UI
 @freezed
-sealed class AccountWithState with _$AccountWithState {
-  const factory AccountWithState({
-    /// The [Account]
-    required Account account,
+sealed class IncomeCategoryWithState with _$IncomeCategoryWithState {
+  const factory IncomeCategoryWithState({
+    /// The [IncomeCategory]
+    required IncomeCategory category,
 
     /// Status for UI
     @Default(IncomeCategoryStatus.idle) IncomeCategoryStatus status,
-  }) = _AccountWithState;
+  }) = _IncomeCategoryWithState;
 }
 
 /// States of [IncomeCategoriesBloc]
@@ -88,8 +88,8 @@ sealed class IncomeCategoriesState with _$IncomeCategoriesState {
     /// Status of the state
     @Default(IncomeCategoriesStatus.initial) IncomeCategoriesStatus status,
 
-    /// List of wallets with their balances
-    @Default([]) List<AccountWithState> accounts,
+    /// List of income categories with their balances
+    @Default([]) List<IncomeCategoryWithState> categories,
 
     /// Exception that occurred when load or search event failed
     AppException? exception,

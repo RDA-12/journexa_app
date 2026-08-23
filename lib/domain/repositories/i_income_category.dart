@@ -9,4 +9,11 @@ abstract interface class IIncomeCategoryRepository {
     required IncomeCategory category,
     required String traceId,
   });
+
+  /// Get all [IncomeCategory] from [userId] database
+  Future<AppResult<List<IncomeCategory>>> getAll({
+    required String userId,
+    required String traceId,
+    String? query,
+  });
 }

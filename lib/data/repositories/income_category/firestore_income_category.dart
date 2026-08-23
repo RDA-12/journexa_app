@@ -10,9 +10,21 @@ part 'firestore_income_category.g.dart';
 sealed class FirestoreIncomeCategory with _$FirestoreIncomeCategory {
   /// Creates new [FirestoreIncomeCategory]
   const factory FirestoreIncomeCategory({
+    /// Unique ID of the category
     required String id,
+
+    /// Name of the category
     required String name,
+
+    /// Lowercase name of the category
+    ///
+    /// Used for search
+    required String nameLower,
+
+    /// Icon of the category
     required String icon,
+
+    /// Account code of the category
     required String accountCode,
   }) = _FirestoreIncomeCategory;
   const FirestoreIncomeCategory._();
@@ -22,6 +34,7 @@ sealed class FirestoreIncomeCategory with _$FirestoreIncomeCategory {
     return FirestoreIncomeCategory(
       id: domain.id,
       name: domain.name,
+      nameLower: domain.name.toLowerCase(),
       icon: domain.icon,
       accountCode: domain.account.code,
     );

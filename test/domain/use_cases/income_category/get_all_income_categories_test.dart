@@ -1,13 +1,15 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:journexa_app/domain/entities/account.dart';
-import 'package:journexa_app/domain/repositories/i_account_repository.dart';
+import 'package:journexa_app/domain/entities/income_category.dart';
 import 'package:journexa_app/domain/repositories/i_auth_repository.dart';
+import 'package:journexa_app/domain/repositories/i_income_category.dart';
 import 'package:journexa_app/domain/use_cases/income_category/get_all_income_categories.dart';
 import 'package:journexa_app/shared/app_exception.dart';
 import 'package:journexa_app/shared/app_result.dart';
 import 'package:mocktail/mocktail.dart';
 
-class MockAccountRepository extends Mock implements IAccountRepository {}
+class MockIncomeCategoryRepository extends Mock
+    implements IIncomeCategoryRepository {}
 
 class MockAuthRepository extends Mock implements IAuthRepository {}
 
@@ -30,9 +32,19 @@ void main() {
       parent: parent,
     ),
   );
+  final categories = accounts
+      .map(
+        (it) => IncomeCategory(
+          id: it.code,
+          name: it.name,
+          icon: '',
+          account: it,
+        ),
+      )
+      .toList();
 
   late IAuthRepository mockAuthRepository;
-  late IAccountRepository mockAccountRepository;
+  late IIncomeCategoryRepository mockIncomeCategoryRepository;
   late GetAllIncomeCategoriesUseCase useCase;
 
   setUp(() {
@@ -41,19 +53,18 @@ void main() {
       () => mockAuthRepository.getCurrentUserId(traceId: traceId),
     ).thenAnswer((_) async => const AppResult.success(userId));
 
-    mockAccountRepository = MockAccountRepository();
+    mockIncomeCategoryRepository = MockIncomeCategoryRepository();
     when(
-      () => mockAccountRepository.getByParentCode(
+      () => mockIncomeCategoryRepository.getAll(
         userId: userId,
-        parentCode: expectedParentCode,
         traceId: traceId,
         query: any(named: 'query'),
       ),
-    ).thenAnswer((_) async => AppResult.success(accounts));
+    ).thenAnswer((_) async => AppResult.success(categories));
 
     useCase = GetAllIncomeCategoriesUseCase(
       authRepository: mockAuthRepository,
-      accountRepository: mockAccountRepository,
+      incomeCategoryRepository: mockIncomeCategoryRepository,
     );
   });
 
@@ -73,7 +84,7 @@ void main() {
   );
 
   test(
-    'calls AccountRepository.getByParentCode once '
+    'calls IncomeCategoryRepository.getAll once '
     'with correct args',
     () async {
       await useCase.execute(
@@ -82,9 +93,8 @@ void main() {
       );
 
       verify(
-        () => mockAccountRepository.getByParentCode(
+        () => mockIncomeCategoryRepository.getAll(
           userId: userId,
-          parentCode: expectedParentCode,
           traceId: traceId,
         ),
       ).called(1);
@@ -92,7 +102,7 @@ void main() {
   );
 
   test(
-    'calls AccountRepository.getByParentCode once '
+    'calls IncomeCategoryRepository.getAll once '
     'with correct args when query provided',
     () async {
       await useCase.execute(
@@ -101,9 +111,8 @@ void main() {
       );
 
       verify(
-        () => mockAccountRepository.getByParentCode(
+        () => mockIncomeCategoryRepository.getAll(
           userId: userId,
-          parentCode: expectedParentCode,
           traceId: traceId,
           query: 'query',
         ),
@@ -112,14 +121,14 @@ void main() {
   );
 
   test(
-    'returns correct AccountBalances when all operations are successful',
+    'returns correct categories when all operations are successful',
     () async {
       final result = await useCase.execute(
         const GetAllIncomeCategoriesParams(),
         traceId: traceId,
       );
 
-      expect(result, AppResult.success(accounts));
+      expect(result, AppResult.success(categories));
     },
   );
 
@@ -138,22 +147,21 @@ void main() {
 
       expect(
         result,
-        AppResult<List<Account>>.failure(
+        AppResult<List<IncomeCategory>>.failure(
           AppException.test(),
         ),
       );
-      verifyZeroInteractions(mockAccountRepository);
+      verifyZeroInteractions(mockIncomeCategoryRepository);
     },
   );
 
   test(
     'returns failure '
-    'when AccountRepository.getByParentCode failed',
+    'when IncomeCategoryRepository.getAll failed',
     () async {
       when(
-        () => mockAccountRepository.getByParentCode(
+        () => mockIncomeCategoryRepository.getAll(
           userId: userId,
-          parentCode: expectedParentCode,
           traceId: traceId,
         ),
       ).thenAnswer((_) async => AppResult.failure(AppException.test()));
@@ -163,7 +171,10 @@ void main() {
         traceId: traceId,
       );
 
-      expect(result, AppResult<List<Account>>.failure(AppException.test()));
+      expect(
+        result,
+        AppResult<List<IncomeCategory>>.failure(AppException.test()),
+      );
     },
   );
 }

@@ -47,4 +47,16 @@ sealed class IncomeCategory with _$IncomeCategory {
       );
     }
   }
+
+  /// Returns updated of this based on provided parameters.
+  IncomeCategory update({String? name}) {
+    var updated = this;
+    if (name != null) {
+      updated = updated.copyWith(
+        name: name,
+        account: account.copyWith(name: name),
+      );
+    }
+    return updated;
+  }
 }

@@ -61,4 +61,22 @@ void main() {
       },
     );
   });
+
+  group('update', () {
+    test(
+      'return new IncomeCategory and its Account '
+      'when name is updated',
+      () {
+        final expected = IncomeCategory.test().copyWith(
+          name: 'new name',
+          account: IncomeCategory.test().account.copyWith(name: 'new name'),
+        );
+
+        final original = IncomeCategory.test();
+        final updated = original.update(name: 'new name');
+
+        expect(updated, expected);
+      },
+    );
+  });
 }

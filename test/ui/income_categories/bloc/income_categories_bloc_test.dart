@@ -1,6 +1,7 @@
 import 'package:bloc_test/bloc_test.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:journexa_app/domain/entities/account.dart';
+import 'package:journexa_app/domain/entities/income_category.dart';
 import 'package:journexa_app/domain/use_cases/account/delete_account.dart';
 import 'package:journexa_app/domain/use_cases/account/update_account.dart';
 import 'package:journexa_app/domain/use_cases/income_category/get_all_income_categories.dart';
@@ -16,39 +17,44 @@ class MockGetAllIncomeCategories extends Mock
 
 class MockUidGenerator extends Mock implements UidGenerator {}
 
-class MockDeleteAccountUseCase extends Mock implements DeleteAccountUseCase {}
+class MockDeleteIncomeCategory extends Mock implements DeleteAccountUseCase {}
 
-class MockUpdateAccountUseCase extends Mock implements UpdateAccountUseCase {}
+class MockUpdateIncomeCategory extends Mock implements UpdateAccountUseCase {}
 
 void main() {
   const traceId = 'traceId';
   final incomeCategories = List.generate(5, (idx) {
-    return Account(
-      code: '40.000${idx + 1}',
-      name: 'income $idx',
-      type: AccountType.revenue,
+    return IncomeCategory(
+      id: '$idx',
+      name: 'name $idx',
+      icon: 'icon',
+      account: Account.user(
+        parent: SystemDefinedAccount.rootRevenue,
+        name: 'name $idx',
+        currentChildrenCount: idx,
+      ),
     );
   });
   final incomeCategoriesWithState = incomeCategories
       .map(
-        (it) => AccountWithState(account: it),
+        (it) => IncomeCategoryWithState(category: it),
       )
       .toList();
-  final updatedFirstAccount = incomeCategories.first.update(
+  final updatedFirstCategory = incomeCategories.first.update(
     name: 'new name',
   );
 
   late GetAllIncomeCategoriesUseCase mockGetAllIncomeCategories;
   late UidGenerator mockUidGenerator;
-  late DeleteAccountUseCase mockDeleteAccountUseCase;
-  late MockUpdateAccountUseCase mockUpdateAccountUseCase;
+  late DeleteAccountUseCase mockDeleteIncomeCategory;
+  late UpdateAccountUseCase mockUpdateIncomeCategory;
 
   setUpAll(() {
     registerFallbackValue(
       const GetAllIncomeCategoriesParams(),
     );
     registerFallbackValue(
-      DeleteAccountParams(account: incomeCategories.first),
+      DeleteAccountParams(account: incomeCategories.first.account),
     );
     registerFallbackValue(
       const UpdateAccountParams(code: '12345'),
@@ -69,30 +75,30 @@ void main() {
       (_) async => AppResult.success(incomeCategories),
     );
 
-    mockDeleteAccountUseCase = MockDeleteAccountUseCase();
+    mockDeleteIncomeCategory = MockDeleteIncomeCategory();
     when(
-      () => mockDeleteAccountUseCase.execute(
+      () => mockDeleteIncomeCategory.execute(
         any<DeleteAccountParams>(),
         traceId: traceId,
       ),
     ).thenAnswer((_) async => const AppResult.success(null));
 
-    mockUpdateAccountUseCase = MockUpdateAccountUseCase();
+    mockUpdateIncomeCategory = MockUpdateIncomeCategory();
     when(
-      () => mockUpdateAccountUseCase.execute(
+      () => mockUpdateIncomeCategory.execute(
         any<UpdateAccountParams>(),
         traceId: traceId,
       ),
     ).thenAnswer(
-      (_) async => AppResult.success(updatedFirstAccount),
+      (_) async => AppResult.success(updatedFirstCategory.account),
     );
   });
 
   IncomeCategoriesBloc buildBloc() {
     return IncomeCategoriesBloc(
       getAllIncomeCategories: mockGetAllIncomeCategories,
-      deleteAccount: mockDeleteAccountUseCase,
-      updateAccount: mockUpdateAccountUseCase,
+      deleteIncomeCategory: mockDeleteIncomeCategory,
+      updateIncomeCategory: mockUpdateIncomeCategory,
     )..customGenerator = mockUidGenerator;
   }
 
@@ -104,7 +110,7 @@ void main() {
   group('load', () {
     blocTest<IncomeCategoriesBloc, IncomeCategoriesState>(
       'emits [loading, loaded] '
-      'with correct account balances '
+      'with correct categories '
       'when getAllIncomeCategoriesUseCase returns success',
       build: buildBloc,
       act: (bloc) => bloc.add(const IncomeCategoriesEvent.load()),
@@ -112,7 +118,7 @@ void main() {
         const IncomeCategoriesState(status: IncomeCategoriesStatus.loading),
         IncomeCategoriesState(
           status: IncomeCategoriesStatus.loaded,
-          accounts: incomeCategoriesWithState,
+          categories: incomeCategoriesWithState,
         ),
       ],
       verify: (_) {
@@ -135,7 +141,8 @@ void main() {
             traceId: traceId,
           ),
         ).thenAnswer(
-          (_) async => AppResult<List<Account>>.failure(AppException.test()),
+          (_) async =>
+              AppResult<List<IncomeCategory>>.failure(AppException.test()),
         );
       },
       build: buildBloc,
@@ -171,7 +178,7 @@ void main() {
         const IncomeCategoriesState(status: IncomeCategoriesStatus.loading),
         IncomeCategoriesState(
           status: IncomeCategoriesStatus.loaded,
-          accounts: incomeCategoriesWithState,
+          categories: incomeCategoriesWithState,
         ),
       ],
       verify: (_) {
@@ -186,7 +193,7 @@ void main() {
 
     blocTest<IncomeCategoriesBloc, IncomeCategoriesState>(
       'emits [loading, loaded] '
-      'with correct account balances '
+      'with correct categories '
       'when getAllIncomeCategoriesUseCase returns success',
       build: buildBloc,
       act: (bloc) =>
@@ -196,7 +203,7 @@ void main() {
         const IncomeCategoriesState(status: IncomeCategoriesStatus.loading),
         IncomeCategoriesState(
           status: IncomeCategoriesStatus.loaded,
-          accounts: incomeCategoriesWithState,
+          categories: incomeCategoriesWithState,
         ),
       ],
       verify: (_) {
@@ -219,7 +226,8 @@ void main() {
             traceId: traceId,
           ),
         ).thenAnswer(
-          (_) async => AppResult<List<Account>>.failure(AppException.test()),
+          (_) async =>
+              AppResult<List<IncomeCategory>>.failure(AppException.test()),
         );
       },
       build: buildBloc,
@@ -246,12 +254,12 @@ void main() {
 
   group('delete', () {
     blocTest<IncomeCategoriesBloc, IncomeCategoriesState>(
-      'emits [new accountBalances, loaded new accountBalances with notice] '
-      'when deleteAccountUseCase returns success',
+      'emits [new categories, loaded new categories with notice] '
+      'when deleteIncomeCategory returns success',
       seed: () {
         return IncomeCategoriesState(
           status: IncomeCategoriesStatus.loaded,
-          accounts: incomeCategoriesWithState,
+          categories: incomeCategoriesWithState,
         );
       },
       build: buildBloc,
@@ -262,24 +270,25 @@ void main() {
       expect: () => <IncomeCategoriesState>[
         IncomeCategoriesState(
           status: IncomeCategoriesStatus.loaded,
-          accounts: incomeCategoriesWithState.map((it) {
-            final isDeleting = it.account.code == incomeCategories.first.code;
+          categories: incomeCategoriesWithState.map((it) {
+            final isDeleting =
+                it.category.id == incomeCategoriesWithState.first.category.id;
             if (!isDeleting) return it;
             return it.copyWith(status: IncomeCategoryStatus.deleting);
           }).toList(),
         ),
         IncomeCategoriesState(
           status: IncomeCategoriesStatus.loaded,
-          accounts: incomeCategoriesWithState.sublist(1),
+          categories: incomeCategoriesWithState.sublist(1),
           notice: IncomeCategoryNotice.recentlyDeleted(
-            account: incomeCategories.first,
+            category: incomeCategories.first,
           ),
         ),
       ],
       verify: (_) {
         verify(
-          () => mockDeleteAccountUseCase.execute(
-            DeleteAccountParams(account: incomeCategories.first),
+          () => mockDeleteIncomeCategory.execute(
+            DeleteAccountParams(account: incomeCategories.first.account),
             traceId: traceId,
           ),
         ).called(1);
@@ -287,12 +296,12 @@ void main() {
     );
 
     blocTest<IncomeCategoriesBloc, IncomeCategoriesState>(
-      'emits [new accountBalances, new idle accountBalances and failed notice] '
-      'when deleteAccountUseCase returns failure',
+      'emits [new categories, new idle categories and failed notice] '
+      'when deleteIncomeCategory returns failure',
       setUp: () {
         when(
-          () => mockDeleteAccountUseCase.execute(
-            DeleteAccountParams(account: incomeCategories.first),
+          () => mockDeleteIncomeCategory.execute(
+            DeleteAccountParams(account: incomeCategories.first.account),
             traceId: traceId,
           ),
         ).thenAnswer(
@@ -302,7 +311,7 @@ void main() {
       seed: () {
         return IncomeCategoriesState(
           status: IncomeCategoriesStatus.loaded,
-          accounts: incomeCategoriesWithState,
+          categories: incomeCategoriesWithState,
         );
       },
       build: buildBloc,
@@ -313,25 +322,26 @@ void main() {
       expect: () => <IncomeCategoriesState>[
         IncomeCategoriesState(
           status: IncomeCategoriesStatus.loaded,
-          accounts: incomeCategoriesWithState.map((it) {
-            final isDeleting = it.account.code == incomeCategories.first.code;
+          categories: incomeCategoriesWithState.map((it) {
+            final isDeleting =
+                it.category.id == incomeCategoriesWithState.first.category.id;
             if (!isDeleting) return it;
             return it.copyWith(status: IncomeCategoryStatus.deleting);
           }).toList(),
         ),
         IncomeCategoriesState(
           status: IncomeCategoriesStatus.loaded,
-          accounts: incomeCategoriesWithState,
+          categories: incomeCategoriesWithState,
           notice: IncomeCategoryNotice.deleteFailed(
-            account: incomeCategories.first,
+            category: incomeCategories.first,
             exception: AppException.test(),
           ),
         ),
       ],
       verify: (_) {
         verify(
-          () => mockDeleteAccountUseCase.execute(
-            DeleteAccountParams(account: incomeCategories.first),
+          () => mockDeleteIncomeCategory.execute(
+            DeleteAccountParams(account: incomeCategories.first.account),
             traceId: traceId,
           ),
         ).called(1);
@@ -339,7 +349,7 @@ void main() {
     );
 
     blocTest<IncomeCategoriesBloc, IncomeCategoriesState>(
-      'do nothing when account not found on accountBalances',
+      'do nothing when category not found on categories',
       seed: () {
         return const IncomeCategoriesState(
           status: IncomeCategoriesStatus.loaded,
@@ -352,60 +362,62 @@ void main() {
       wait: kDefaultDebounceDuration,
       expect: () => <IncomeCategoriesState>[],
       verify: (_) {
-        verifyZeroInteractions(mockDeleteAccountUseCase);
+        verifyZeroInteractions(mockDeleteIncomeCategory);
       },
     );
   });
 
   group('update', () {
     blocTest<IncomeCategoriesBloc, IncomeCategoriesState>(
-      'emits [new updating accountBalances, '
-      'new accountBalances with updated notice] '
-      'when updateAccountUseCase returns success',
+      'emits [new updating categories, '
+      'new categories with updated notice] '
+      'when updateIncomeCategory returns success',
       seed: () {
         return IncomeCategoriesState(
           status: IncomeCategoriesStatus.loaded,
-          accounts: incomeCategoriesWithState,
+          categories: incomeCategoriesWithState,
         );
       },
       build: buildBloc,
       act: (bloc) => bloc.add(
         IncomeCategoriesEvent.update(
           incomeCategories.first,
-          name: updatedFirstAccount.name,
+          name: updatedFirstCategory.name,
         ),
       ),
       expect: () => <IncomeCategoriesState>[
         IncomeCategoriesState(
           status: IncomeCategoriesStatus.loaded,
-          accounts: incomeCategoriesWithState.map((it) {
-            final isUpdating = it.account.code == incomeCategories.first.code;
+          categories: incomeCategoriesWithState.map((it) {
+            final isUpdating =
+                it.category.id == incomeCategoriesWithState.first.category.id;
             if (!isUpdating) return it;
             return it.copyWith(status: IncomeCategoryStatus.updating);
           }).toList(),
         ),
         IncomeCategoriesState(
           status: IncomeCategoriesStatus.loaded,
-          accounts: incomeCategoriesWithState.map((it) {
-            final isUpdating = it.account.code == incomeCategories.first.code;
+          categories: incomeCategoriesWithState.map((it) {
+            final isUpdating =
+                it.category.id == incomeCategoriesWithState.first.category.id;
             if (!isUpdating) return it;
             return it.copyWith(
               status: IncomeCategoryStatus.idle,
-              account: updatedFirstAccount,
+              category: updatedFirstCategory,
             );
           }).toList(),
           notice: IncomeCategoryNotice.recentlyUpdated(
-            from: incomeCategoriesWithState.first.account,
-            to: updatedFirstAccount,
+            from: incomeCategoriesWithState.first.category,
+            to: updatedFirstCategory,
           ),
         ),
       ],
       verify: (_) {
         verify(
-          () => mockUpdateAccountUseCase.execute(
+          () => mockUpdateIncomeCategory.execute(
             UpdateAccountParams(
-              code: incomeCategories.first.code,
-              name: updatedFirstAccount.name,
+              code: incomeCategories.first.account.code,
+              name: updatedFirstCategory.name,
             ),
             traceId: traceId,
           ),
@@ -414,15 +426,15 @@ void main() {
     );
 
     blocTest<IncomeCategoriesBloc, IncomeCategoriesState>(
-      'emits [new accountBalances, '
-      'new accountBalances with idle status and updateFailure notice] '
-      'when updateAccountUseCase returns failure',
+      'emits [new categories, '
+      'new categories with idle status and updateFailure notice] '
+      'when updateIncomeCategory returns failure',
       setUp: () {
         when(
-          () => mockUpdateAccountUseCase.execute(
+          () => mockUpdateIncomeCategory.execute(
             UpdateAccountParams(
-              code: incomeCategories.first.code,
-              name: updatedFirstAccount.name,
+              code: incomeCategories.first.account.code,
+              name: updatedFirstCategory.name,
             ),
             traceId: traceId,
           ),
@@ -433,40 +445,41 @@ void main() {
       seed: () {
         return IncomeCategoriesState(
           status: IncomeCategoriesStatus.loaded,
-          accounts: incomeCategoriesWithState,
+          categories: incomeCategoriesWithState,
         );
       },
       build: buildBloc,
       act: (bloc) => bloc.add(
         IncomeCategoriesEvent.update(
           incomeCategories.first,
-          name: updatedFirstAccount.name,
+          name: updatedFirstCategory.name,
         ),
       ),
       expect: () => <IncomeCategoriesState>[
         IncomeCategoriesState(
           status: IncomeCategoriesStatus.loaded,
-          accounts: incomeCategoriesWithState.map((it) {
-            final isUpdating = it.account.code == incomeCategories.first.code;
+          categories: incomeCategoriesWithState.map((it) {
+            final isUpdating =
+                it.category.id == incomeCategoriesWithState.first.category.id;
             if (!isUpdating) return it;
             return it.copyWith(status: IncomeCategoryStatus.updating);
           }).toList(),
         ),
         IncomeCategoriesState(
           status: IncomeCategoriesStatus.loaded,
-          accounts: incomeCategoriesWithState,
+          categories: incomeCategoriesWithState,
           notice: IncomeCategoryNotice.updateFailed(
-            account: incomeCategories.first,
+            category: incomeCategories.first,
             exception: AppException.test(),
           ),
         ),
       ],
       verify: (_) {
         verify(
-          () => mockUpdateAccountUseCase.execute(
+          () => mockUpdateIncomeCategory.execute(
             UpdateAccountParams(
-              code: incomeCategories.first.code,
-              name: updatedFirstAccount.name,
+              code: incomeCategories.first.account.code,
+              name: updatedFirstCategory.name,
             ),
             traceId: traceId,
           ),
@@ -475,7 +488,7 @@ void main() {
     );
 
     blocTest<IncomeCategoriesBloc, IncomeCategoriesState>(
-      'do nothing when account not found on accountBalances',
+      'do nothing when account not found on categories',
       seed: () {
         return const IncomeCategoriesState(
           status: IncomeCategoriesStatus.loaded,
@@ -485,12 +498,12 @@ void main() {
       act: (bloc) => bloc.add(
         IncomeCategoriesEvent.update(
           incomeCategories.first,
-          name: updatedFirstAccount.name,
+          name: updatedFirstCategory.name,
         ),
       ),
       expect: () => <IncomeCategoriesState>[],
       verify: (_) {
-        verifyZeroInteractions(mockUpdateAccountUseCase);
+        verifyZeroInteractions(mockUpdateIncomeCategory);
       },
     );
   });

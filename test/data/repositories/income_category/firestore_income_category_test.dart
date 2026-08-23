@@ -8,7 +8,8 @@ void main() {
     test('returns correct FirestoreIncomeCategory', () {
       const expected = FirestoreIncomeCategory(
         id: 'id',
-        name: 'name',
+        name: 'Name',
+        nameLower: 'name',
         icon: 'icon',
         accountCode: '40.1001',
       );
@@ -32,7 +33,8 @@ void main() {
     test('returns correct IncomeCategory', () {
       const firestoreIncomeCategory = FirestoreIncomeCategory(
         id: 'id',
-        name: 'name',
+        name: 'Name',
+        nameLower: 'name',
         icon: 'icon',
         accountCode: '40.1001',
       );
@@ -44,7 +46,7 @@ void main() {
       );
       final expected = IncomeCategory(
         id: 'id',
-        name: 'name',
+        name: 'Name',
         icon: 'icon',
         account: account,
       );

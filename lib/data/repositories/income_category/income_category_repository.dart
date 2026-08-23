@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:injectable/injectable.dart';
 import 'package:journexa_app/data/repositories/account/firestore_account.dart';
 import 'package:journexa_app/data/repositories/income_category/firestore_income_category.dart';
+import 'package:journexa_app/domain/entities/account.dart';
 import 'package:journexa_app/domain/entities/income_category.dart';
 import 'package:journexa_app/domain/repositories/i_income_category.dart';
 import 'package:journexa_app/shared/app_exception.dart';
@@ -80,6 +81,85 @@ class FirestoreIncomeCategoryRepository
         traceId: traceId,
       );
       return const AppResult.success(null);
+    } on FirebaseException catch (e) {
+      logError('$e', traceId: traceId, error: e);
+      return AppResult.failure(
+        AppException('$e', code: AppExceptionCode.serverException),
+      );
+    } on Exception catch (e, st) {
+      logError('$e', traceId: traceId, error: e, stackTrace: st);
+      return AppResult.failure(
+        AppException('$e', code: AppExceptionCode.internalException),
+      );
+    }
+  }
+
+  @override
+  Future<AppResult<List<IncomeCategory>>> getAll({
+    required String userId,
+    required String traceId,
+    String? query,
+  }) async {
+    try {
+      maybeThrowException(this, Invocation.method(#getAll, null));
+      logInfo(
+        'Start fetching categories',
+        traceId: traceId,
+        extras: {'query': query},
+      );
+      Query<Map<String, Object?>> categoriesQuery = _db.collection(
+        'users/$userId/incomeCategories',
+      );
+      if (query != null) {
+        categoriesQuery = categoriesQuery
+            .where('nameLower', isGreaterThanOrEqualTo: query)
+            .where('nameLower', isLessThanOrEqualTo: '$query~');
+      }
+      final categoriesSnap = await categoriesQuery.get();
+      logInfo(
+        'categories fetched. Start fetch each category account',
+        traceId: traceId,
+      );
+      final result = <IncomeCategory>[];
+      final parentAccount = SystemDefinedAccount.rootRevenue;
+      for (final doc in categoriesSnap.docs) {
+        final categoryFirestore = FirestoreIncomeCategory.fromJson(doc.data());
+        logInfo(
+          'Fetch account for category ${categoryFirestore.name}',
+          traceId: traceId,
+          extras: {'category': categoryFirestore.toJson()},
+        );
+        final accountDoc = _db.doc(
+          'users/$userId/accounts/${categoryFirestore.accountCode}',
+        );
+        final accountSnap = await accountDoc.get();
+        if (!accountSnap.exists) {
+          logWarning(
+            'Account ${categoryFirestore.accountCode} not found',
+            traceId: traceId,
+          );
+          continue;
+        }
+        final accountFirestore = FirestoreAccount.fromJson(accountSnap.data()!);
+        logInfo(
+          'Account found',
+          traceId: traceId,
+          extras: accountFirestore.toJson(),
+        );
+        result.add(
+          categoryFirestore.toDomain(
+            accountFirestore.toDomain().copyWith(
+              parent: parentAccount,
+            ),
+          ),
+        );
+      }
+      logInfo(
+        'Successfully fetched categories',
+        traceId: traceId,
+        extras: {'count': result.length},
+      );
+      return AppResult.success(result);
     } on FirebaseException catch (e) {
       logError('$e', traceId: traceId, error: e);
       return AppResult.failure(

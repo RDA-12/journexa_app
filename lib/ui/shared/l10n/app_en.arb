@@ -299,5 +299,15 @@
         "example": "dompet hitam"
       }
     }
+  },
+  "errorCategoryAlreadyExists": "Category with name {name} already exists",
+  "@errorCategoryAlreadyExists": {
+    "description": "Message to be showed when users trying to creates income category with same name",
+    "placeholders": {
+      "name": {
+        "type": "String",
+        "example": "dompet hitam"
+      }
+    }
   }
 }

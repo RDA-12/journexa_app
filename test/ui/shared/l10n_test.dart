@@ -18,6 +18,8 @@ const Map<String, Map<AppExceptionCode, String>> expectedTranslations = {
         'Akun dengan kode 1234 tidak dapat ditemukan',
     AppExceptionCode.walletNameAlreadyExists:
         'Dompet dengan nama Dompet sudah ada',
+    AppExceptionCode.categoryNameAlreadyExists:
+        'Kategori dengan nama Gaji sudah ada',
   },
   'en': {
     AppExceptionCode.internalException: 'Internal exception error',
@@ -30,6 +32,8 @@ const Map<String, Map<AppExceptionCode, String>> expectedTranslations = {
     AppExceptionCode.accountNotFound: 'Account with code 1234 not found',
     AppExceptionCode.walletNameAlreadyExists:
         'Wallet with name Dompet already exists',
+    AppExceptionCode.categoryNameAlreadyExists:
+        'Category with name Gaji already exists',
   },
 };
 
@@ -42,6 +46,9 @@ final additionalData = <AppExceptionCode, Map<String, dynamic>>{
   },
   AppExceptionCode.accountNotFound: {
     'code': '1234',
+  },
+  AppExceptionCode.categoryNameAlreadyExists: {
+    'name': 'Gaji',
   },
 };
 

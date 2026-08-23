@@ -1,31 +1,51 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:journexa_app/domain/entities/account.dart';
+import 'package:journexa_app/domain/entities/income_category.dart';
 import 'package:journexa_app/domain/repositories/i_account_repository.dart';
 import 'package:journexa_app/domain/repositories/i_auth_repository.dart';
+import 'package:journexa_app/domain/repositories/i_income_category.dart';
 import 'package:journexa_app/domain/use_cases/income_category/add_income_category.dart';
 import 'package:journexa_app/shared/app_exception.dart';
 import 'package:journexa_app/shared/app_result.dart';
+import 'package:journexa_app/shared/uid_generator.dart';
 import 'package:mocktail/mocktail.dart';
 
 class MockAuthRepository extends Mock implements IAuthRepository {}
 
 class MockAccountRepository extends Mock implements IAccountRepository {}
 
+class MockIncomeCategoryRepository extends Mock
+    implements IIncomeCategoryRepository {}
+
+class MockUidGenerator extends Mock implements UidGenerator {}
+
 void main() {
   const traceId = 'trace';
   const userId = 'userId';
   const currentChildrenCount = 10;
-  const nextCode = '40.0011';
   const params = AddIncomeCategoryParams(
     name: 'salary',
+  );
+  final expectedCategory = IncomeCategory(
+    id: 'id',
+    name: params.name,
+    icon: 'icon',
+    account: Account.user(
+      parent: SystemDefinedAccount.rootRevenue,
+      name: params.name,
+      currentChildrenCount: currentChildrenCount,
+    ),
   );
 
   late IAuthRepository mockAuthRepository;
   late IAccountRepository mockAccountRepository;
+  late IIncomeCategoryRepository mockIncomeCategoryRepository;
+  late UidGenerator mockUidGenerator;
   late AddIncomeCategoryUseCase useCase;
 
   setUpAll(() {
     registerFallbackValue(Account.test());
+    registerFallbackValue(IncomeCategory.test());
   });
 
   setUp(() {
@@ -46,20 +66,26 @@ void main() {
     ).thenAnswer(
       (_) async => const AppResult.success(currentChildrenCount),
     );
+
+    mockIncomeCategoryRepository = MockIncomeCategoryRepository();
     when(
-      () => mockAccountRepository.save(
-        any<String>(),
-        any<Account>(),
+      () => mockIncomeCategoryRepository.save(
+        userId: any<String>(named: 'userId'),
+        category: any<IncomeCategory>(named: 'category'),
         traceId: traceId,
       ),
     ).thenAnswer(
       (_) async => const AppResult.success(null),
     );
 
+    mockUidGenerator = MockUidGenerator();
+    when(mockUidGenerator.generateUid).thenReturn(expectedCategory.id);
+
     useCase = AddIncomeCategoryUseCase(
       authRepository: mockAuthRepository,
       accountRepository: mockAccountRepository,
-    );
+      incomeCategoryRepository: mockIncomeCategoryRepository,
+    )..customGenerator = mockUidGenerator;
   });
 
   test(
@@ -91,27 +117,15 @@ void main() {
   );
 
   test(
-    'calls AccountRepository.save once '
-    'with correct userId and Account',
+    'calls IncomeCategoryRepository.save once '
+    'with correct userId and IncomeCategory',
     () async {
-      final expectedAccount = Account(
-        code: nextCode,
-        name: params.name,
-        type: AccountType.revenue,
-        parent: Account(
-          code: '40.0000',
-          name: 'revenue',
-          type: AccountType.revenue,
-          isSystemAccount: true,
-        ),
-      );
-
       await useCase.execute(params, traceId: traceId);
 
       verify(
-        () => mockAccountRepository.save(
-          userId,
-          expectedAccount,
+        () => mockIncomeCategoryRepository.save(
+          userId: userId,
+          category: expectedCategory,
           traceId: traceId,
         ),
       ).called(1);
@@ -141,6 +155,7 @@ void main() {
 
       expect(result, AppResult<Null>.failure(AppException.test()));
       verifyZeroInteractions(mockAccountRepository);
+      verifyZeroInteractions(mockIncomeCategoryRepository);
     },
   );
 
@@ -169,17 +184,18 @@ void main() {
         ),
       ).called(1);
       verifyNoMoreInteractions(mockAccountRepository);
+      verifyZeroInteractions(mockIncomeCategoryRepository);
     },
   );
 
   test(
     'return AppResult.failure '
-    'when AccountRepository.save failed',
+    'when IncomeCategoryRepository.save failed',
     () async {
       when(
-        () => mockAccountRepository.save(
-          any<String>(),
-          any<Account>(),
+        () => mockIncomeCategoryRepository.save(
+          userId: userId,
+          category: any<IncomeCategory>(named: 'category'),
           traceId: traceId,
         ),
       ).thenAnswer(
@@ -197,9 +213,9 @@ void main() {
         ),
       ).called(1);
       verify(
-        () => mockAccountRepository.save(
-          userId,
-          any<Account>(),
+        () => mockIncomeCategoryRepository.save(
+          userId: userId,
+          category: expectedCategory,
           traceId: traceId,
         ),
       ).called(1);

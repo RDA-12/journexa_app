@@ -204,4 +204,9 @@ class AppLocalizationsId extends AppLocalizations {
   String errorWalletNameAlreadyExists(String name) {
     return 'Dompet dengan nama $name sudah ada';
   }
+
+  @override
+  String errorCategoryAlreadyExists(String name) {
+    return 'Kategori dengan nama $name sudah ada';
+  }
 }

@@ -1,5 +1,6 @@
 import 'package:flutter/foundation.dart';
 import 'package:journexa_app/domain/entities/account.dart';
+import 'package:journexa_app/domain/entities/income_category.dart';
 import 'package:journexa_app/domain/entities/wallet.dart';
 
 /// Possibles codes for [AppException]
@@ -24,6 +25,9 @@ enum AppExceptionCode {
 
   /// Code when creating new [Wallet] with existing name
   walletNameAlreadyExists,
+
+  /// Code when create new [IncomeCategory] with existing name
+  categoryNameAlreadyExists,
 }
 
 /// Base exception class for the application

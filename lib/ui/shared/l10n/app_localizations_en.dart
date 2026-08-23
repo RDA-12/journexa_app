@@ -201,4 +201,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String errorWalletNameAlreadyExists(String name) {
     return 'Wallet with name $name already exists';
   }
+
+  @override
+  String errorCategoryAlreadyExists(String name) {
+    return 'Category with name $name already exists';
+  }
 }

@@ -433,6 +433,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Wallet with name {name} already exists'**
   String errorWalletNameAlreadyExists(String name);
+
+  /// Message to be showed when users trying to creates income category with same name
+  ///
+  /// In en, this message translates to:
+  /// **'Category with name {name} already exists'**
+  String errorCategoryAlreadyExists(String name);
 }
 
 class _AppLocalizationsDelegate

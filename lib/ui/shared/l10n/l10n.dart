@@ -37,5 +37,7 @@ extension AppExceptionCodeX on AppExceptionCode {
     ),
     AppExceptionCode.walletNameAlreadyExists =>
       context.l10n.errorWalletNameAlreadyExists(data['name'] as String),
+    AppExceptionCode.categoryNameAlreadyExists =>
+      context.l10n.errorCategoryAlreadyExists(data['name'] as String),
   };
 }

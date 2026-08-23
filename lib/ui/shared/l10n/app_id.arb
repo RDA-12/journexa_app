@@ -55,5 +55,6 @@
   "addIncomeCategorySuccessTitle": "Kategori pendapatan berhasil ditambahkan",
   "addIncomeCategoryFailureTitle": "Gagal menambahkan kategori pendapatan",
   "addIncomeCategoryTitle": "Tambah Kategori Pendapatan",
-  "errorWalletNameAlreadyExists": "Dompet dengan nama {name} sudah ada"
+  "errorWalletNameAlreadyExists": "Dompet dengan nama {name} sudah ada",
+  "errorCategoryAlreadyExists": "Kategori dengan nama {name} sudah ada"
 }

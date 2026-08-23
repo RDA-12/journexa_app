@@ -1,11 +1,14 @@
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:injectable/injectable.dart';
 import 'package:journexa_app/domain/entities/account.dart';
+import 'package:journexa_app/domain/entities/income_category.dart';
 import 'package:journexa_app/domain/repositories/i_account_repository.dart';
 import 'package:journexa_app/domain/repositories/i_auth_repository.dart';
+import 'package:journexa_app/domain/repositories/i_income_category.dart';
 import 'package:journexa_app/domain/use_cases/base_use_case.dart';
 import 'package:journexa_app/shared/app_logger.dart';
 import 'package:journexa_app/shared/app_result.dart';
+import 'package:journexa_app/shared/uid_generator.dart';
 
 part 'add_income_category.freezed.dart';
 
@@ -25,16 +28,18 @@ sealed class AddIncomeCategoryParams with _$AddIncomeCategoryParams {
 /// Use case to creates new income category
 @lazySingleton
 class AddIncomeCategoryUseCase
-    with Loggable
+    with Loggable, GenerateUid
     implements FutureBaseUseCase<AddIncomeCategoryParams, Null> {
   /// Creates new [AddIncomeCategoryUseCase]
   AddIncomeCategoryUseCase({
     required this._authRepository,
     required this._accountRepository,
+    required this._incomeCategoryRepository,
   });
 
   final IAuthRepository _authRepository;
   final IAccountRepository _accountRepository;
+  final IIncomeCategoryRepository _incomeCategoryRepository;
 
   @override
   String get logTag => 'AddIncomeCategoryUseCase';
@@ -86,7 +91,7 @@ class AddIncomeCategoryUseCase
     }
     final childrenCount = getChildrenCountResult.valueOrNull!;
     logInfo(
-      'children count obtained. Creating new Account object',
+      'children count obtained. Creating new Account and IncomeCategory object',
       traceId: traceId,
     );
 
@@ -95,20 +100,29 @@ class AddIncomeCategoryUseCase
       name: params.name,
       currentChildrenCount: childrenCount,
     );
-    logInfo('New Account created. Saving Account', traceId: traceId);
+    final newCategory = IncomeCategory(
+      id: generateUid(),
+      name: params.name,
+      icon: 'icon',
+      account: newAccount,
+    );
+    logInfo('New objects created. Saving IncomeCategory', traceId: traceId);
 
-    final saveResult = await _accountRepository.save(
-      userId,
-      newAccount,
+    final saveResult = await _incomeCategoryRepository.save(
+      userId: userId,
+      category: newCategory,
       traceId: traceId,
     );
     return saveResult.when(
       success: (_) {
-        logInfo('new Account saved successfully. Done.', traceId: traceId);
+        logInfo(
+          'new IncomeCategory saved successfully. Done.',
+          traceId: traceId,
+        );
         return const AppResult<Null>.success(null);
       },
       failure: (exc) {
-        logInfo('Failed to save new Account', traceId: traceId);
+        logInfo('Failed to save new IncomeCategory', traceId: traceId);
         return AppResult.failure(exc);
       },
     );

@@ -3,7 +3,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:journexa_app/domain/entities/account.dart';
 import 'package:journexa_app/domain/entities/wallet.dart';
 import 'package:journexa_app/ui/shared/l10n/app_localizations.dart';
-import 'package:journexa_app/ui/shared/widgets/app_confirmation_dialog.dart';
+import 'package:journexa_app/ui/shared/widgets/app_dialog.dart';
 import 'package:journexa_app/ui/wallets/widgets/delete_wallet_button.dart';
 
 import '../../util.dart';
@@ -27,10 +27,10 @@ void main() {
   final wallet = Wallet(
     id: 'id',
     name: 'dompet hitam',
-    account: Account(
-      code: '10.0001',
+    account: Account.user(
+      parent: SystemDefinedAccount.rootAsset,
       name: 'dompet hitam',
-      type: AccountType.asset,
+      currentChildrenCount: 0,
     ),
   );
 
@@ -102,19 +102,19 @@ void main() {
 
   group('Interactions', () {
     testWidgets(
-      'shows AppConfirmationDialog when pressed',
+      'shows AppDialog when pressed',
       (tester) async {
         await pumpWidget(tester, onDeletePressed: () {});
 
         await tester.tap(find.byType(DeleteWalletButton));
         await tester.pump();
 
-        expect(find.byType(AppConfirmationDialog), findsOneWidget);
+        expect(find.byType(AppDialog), findsOneWidget);
       },
     );
 
     testWidgets(
-      'calls onDeletePressed when AppConfirmationDialog confirmed',
+      'calls onDeletePressed when AppDialog confirmed',
       (tester) async {
         var deleted = false;
         await pumpWidget(
@@ -127,17 +127,17 @@ void main() {
         await tester.tap(find.byType(DeleteWalletButton));
         await tester.pump();
 
-        expect(find.byType(AppConfirmationDialog), findsOneWidget);
+        expect(find.byType(AppDialog), findsOneWidget);
 
         await tester.tap(
           find.descendant(
-            of: find.byType(AppConfirmationDialog),
+            of: find.byType(AppDialog),
             matching: find.text('Delete'),
           ),
         );
         await tester.pump();
 
-        expect(find.byType(AppConfirmationDialog), findsNothing);
+        expect(find.byType(AppDialog), findsNothing);
         expect(deleted, isTrue);
       },
     );

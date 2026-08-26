@@ -4,7 +4,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:journexa_app/domain/entities/account.dart';
 import 'package:journexa_app/domain/entities/wallet.dart';
 import 'package:journexa_app/ui/shared/l10n/l10n.dart';
-import 'package:journexa_app/ui/shared/widgets/app_confirmation_dialog.dart';
+import 'package:journexa_app/ui/shared/widgets/app_dialog.dart';
 import 'package:journexa_app/ui/shared/widgets/widgets.dart';
 import 'package:journexa_app/ui/wallets/widgets/delete_wallet_button.dart';
 import 'package:journexa_app/ui/wallets/widgets/update_wallet_button.dart';
@@ -29,10 +29,10 @@ void main() {
     wallet: Wallet(
       id: 'id',
       name: 'Dompet Hitam',
-      account: Account(
-        code: '10.0001',
+      account: Account.user(
+        parent: SystemDefinedAccount.rootAsset,
         name: 'Dompet Hitam',
-        type: AccountType.asset,
+        currentChildrenCount: 0,
       ),
     ),
 
@@ -197,7 +197,7 @@ void main() {
 
         await tester.tap(
           find.descendant(
-            of: find.byType(AppConfirmationDialog),
+            of: find.byType(AppDialog),
             matching: find.text('Delete'),
           ),
         );

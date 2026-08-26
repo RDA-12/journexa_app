@@ -2,10 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:journexa_app/domain/entities/wallet.dart';
 import 'package:journexa_app/ui/shared/l10n/l10n.dart';
 import 'package:journexa_app/ui/shared/widgets/app_button.dart';
-import 'package:journexa_app/ui/wallets/widgets/delete_wallet_confirmation_dialog.dart';
+import 'package:journexa_app/ui/shared/widgets/app_dialog.dart';
 
 /// Creates [AppButton] with [ButtonColorType.danger]
-/// that will shows [DeleteWalletConfirmationDialog]
+/// that will shows [AppDialog] to shows confirmation
+/// of deleting wallet
 class DeleteWalletButton extends StatelessWidget {
   /// Creates new [DeleteWalletButton]
   const DeleteWalletButton({
@@ -34,10 +35,15 @@ class DeleteWalletButton extends StatelessWidget {
       onPressed: isDeleting || onDeletePressed == null
           ? null
           : () async {
-              final deleted = await DeleteWalletConfirmationDialog.show(
-                context,
-                wallet: wallet,
-              );
+              final deleted =
+                  await context.showConfirmationDialog(
+                    title: context.l10n.deleteWalletDialogTitle(wallet.name),
+                    content: context.l10n.deleteWalletDialogContent(
+                      wallet.name,
+                    ),
+                    confirmLabel: context.l10n.commonDelete,
+                  ) ??
+                  false;
               if (!context.mounted) return;
               if (deleted) {
                 onDeletePressed?.call();

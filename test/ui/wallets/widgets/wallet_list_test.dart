@@ -5,7 +5,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:journexa_app/domain/entities/account.dart';
 import 'package:journexa_app/domain/entities/wallet.dart';
-import 'package:journexa_app/ui/shared/widgets/app_confirmation_dialog.dart';
+import 'package:journexa_app/ui/shared/widgets/app_dialog.dart';
 import 'package:journexa_app/ui/shared/widgets/widgets.dart';
 import 'package:journexa_app/ui/wallets/bloc/wallets_bloc.dart';
 import 'package:journexa_app/ui/wallets/widgets/delete_wallet_button.dart';
@@ -29,10 +29,10 @@ void main() {
         wallet: Wallet(
           id: '$idx',
           name: 'asset $idx',
-          account: Account(
-            code: '10.000${idx + 1}',
+          account: Account.user(
+            parent: SystemDefinedAccount.rootAsset,
             name: 'asset $idx',
-            type: AccountType.asset,
+            currentChildrenCount: idx,
           ),
         ),
         balance: Decimal.fromInt(idx * 1000),
@@ -138,7 +138,7 @@ void main() {
 
         await tester.tap(
           find.descendant(
-            of: find.byType(AppConfirmationDialog),
+            of: find.byType(AppDialog),
             matching: find.text('Delete'),
           ),
         );

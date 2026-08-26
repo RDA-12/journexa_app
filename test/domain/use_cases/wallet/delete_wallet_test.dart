@@ -18,10 +18,10 @@ void main() {
   final wallet = Wallet(
     id: 'id',
     name: 'asset',
-    account: Account(
-      code: '10.0001',
+    account: Account.user(
+      parent: SystemDefinedAccount.rootAsset,
       name: 'asset',
-      type: AccountType.asset,
+      currentChildrenCount: 0,
     ),
   );
   final params = DeleteWalletParams(wallet: wallet);

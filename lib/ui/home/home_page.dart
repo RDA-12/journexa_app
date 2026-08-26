@@ -22,7 +22,7 @@ class HomePage extends StatelessWidget {
           ),
           AppButton(
             onPressed: () {
-              unawaited(context.push('/add-income-category'));
+              unawaited(context.push('/income-categories'));
             },
             label: 'Income Category',
           ),

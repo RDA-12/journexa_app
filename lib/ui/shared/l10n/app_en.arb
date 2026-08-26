@@ -309,5 +309,29 @@
         "example": "dompet hitam"
       }
     }
+  },
+  "incomeCategoriesListFailureTitle": "Failed to get income categories data",
+  "@incomeCategoriesListFailureTitle": {
+    "description": "Title for error state in income categories list page"
+  },
+  "incomeCategoriesListLoadingSemantics": "Loading income categories data",
+  "@incomeCategoriesListLoadingSemantics": {
+    "description": "Semantics label for loading state in income categories list page"
+  },
+  "incomeCategoriesListTitle": "Income Categories List",
+  "@incomeCategoriesListTitle": {
+    "description": "Title for income categories list page"
+  },
+  "incomeCategoriesListSearchLabel": "Search Income Category",
+  "@incomeCategoriesListSearchLabel": {
+    "description": "Label for search input on income categories list"
+  },
+  "incomeCategoriesListEmptyDescription": "No income categories data was found",
+  "@incomeCategoriesListEmptyDescription": {
+    "description": "Description to be showed when income categories data is empty"
+  },
+  "incomeCategoriesListAddButtonSemantics": "Add Income Category",
+  "@incomeCategoriesListAddButtonSemantics": {
+    "description": "Semantics label for add button on income categories list"
   }
 }

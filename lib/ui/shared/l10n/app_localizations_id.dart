@@ -209,4 +209,26 @@ class AppLocalizationsId extends AppLocalizations {
   String errorCategoryAlreadyExists(String name) {
     return 'Kategori dengan nama $name sudah ada';
   }
+
+  @override
+  String get incomeCategoriesListFailureTitle =>
+      'Gagal mendapatkan data kategori pendapatan';
+
+  @override
+  String get incomeCategoriesListLoadingSemantics =>
+      'Memuat data kategori pendapatan';
+
+  @override
+  String get incomeCategoriesListTitle => 'Daftar Kategori Pendapatan';
+
+  @override
+  String get incomeCategoriesListSearchLabel => 'Cari Kategori Pendapatan';
+
+  @override
+  String get incomeCategoriesListEmptyDescription =>
+      'Tidak ada data kategori pendapatan yang ditemukan';
+
+  @override
+  String get incomeCategoriesListAddButtonSemantics =>
+      'Tambah Kategori Pendapatan';
 }

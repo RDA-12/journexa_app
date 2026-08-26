@@ -439,6 +439,42 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Category with name {name} already exists'**
   String errorCategoryAlreadyExists(String name);
+
+  /// Title for error state in income categories list page
+  ///
+  /// In en, this message translates to:
+  /// **'Failed to get income categories data'**
+  String get incomeCategoriesListFailureTitle;
+
+  /// Semantics label for loading state in income categories list page
+  ///
+  /// In en, this message translates to:
+  /// **'Loading income categories data'**
+  String get incomeCategoriesListLoadingSemantics;
+
+  /// Title for income categories list page
+  ///
+  /// In en, this message translates to:
+  /// **'Income Categories List'**
+  String get incomeCategoriesListTitle;
+
+  /// Label for search input on income categories list
+  ///
+  /// In en, this message translates to:
+  /// **'Search Income Category'**
+  String get incomeCategoriesListSearchLabel;
+
+  /// Description to be showed when income categories data is empty
+  ///
+  /// In en, this message translates to:
+  /// **'No income categories data was found'**
+  String get incomeCategoriesListEmptyDescription;
+
+  /// Semantics label for add button on income categories list
+  ///
+  /// In en, this message translates to:
+  /// **'Add Income Category'**
+  String get incomeCategoriesListAddButtonSemantics;
 }
 
 class _AppLocalizationsDelegate

@@ -206,4 +206,25 @@ class AppLocalizationsEn extends AppLocalizations {
   String errorCategoryAlreadyExists(String name) {
     return 'Category with name $name already exists';
   }
+
+  @override
+  String get incomeCategoriesListFailureTitle =>
+      'Failed to get income categories data';
+
+  @override
+  String get incomeCategoriesListLoadingSemantics =>
+      'Loading income categories data';
+
+  @override
+  String get incomeCategoriesListTitle => 'Income Categories List';
+
+  @override
+  String get incomeCategoriesListSearchLabel => 'Search Income Category';
+
+  @override
+  String get incomeCategoriesListEmptyDescription =>
+      'No income categories data was found';
+
+  @override
+  String get incomeCategoriesListAddButtonSemantics => 'Add Income Category';
 }

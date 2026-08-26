@@ -56,5 +56,11 @@
   "addIncomeCategoryFailureTitle": "Gagal menambahkan kategori pendapatan",
   "addIncomeCategoryTitle": "Tambah Kategori Pendapatan",
   "errorWalletNameAlreadyExists": "Dompet dengan nama {name} sudah ada",
-  "errorCategoryAlreadyExists": "Kategori dengan nama {name} sudah ada"
+  "errorCategoryAlreadyExists": "Kategori dengan nama {name} sudah ada",
+  "incomeCategoriesListFailureTitle": "Gagal mendapatkan data kategori pendapatan",
+  "incomeCategoriesListLoadingSemantics": "Memuat data kategori pendapatan",
+  "incomeCategoriesListTitle": "Daftar Kategori Pendapatan",
+  "incomeCategoriesListSearchLabel": "Cari Kategori Pendapatan",
+  "incomeCategoriesListEmptyDescription": "Tidak ada data kategori pendapatan yang ditemukan",
+  "incomeCategoriesListAddButtonSemantics": "Tambah Kategori Pendapatan"
 }

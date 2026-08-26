@@ -9,12 +9,12 @@ import 'package:journexa_app/shared/app_exception.dart';
 import 'package:journexa_app/ui/shared/l10n/app_localizations.dart';
 import 'package:journexa_app/ui/shared/widgets/app_dialog.dart';
 import 'package:journexa_app/ui/shared/widgets/app_empty_box.dart';
+import 'package:journexa_app/ui/shared/widgets/app_list_view.dart';
 import 'package:journexa_app/ui/shared/widgets/widgets.dart';
 import 'package:journexa_app/ui/wallets/bloc/wallets_bloc.dart';
 import 'package:journexa_app/ui/wallets/widgets/delete_wallet_button.dart';
 import 'package:journexa_app/ui/wallets/widgets/update_wallet_button.dart';
 import 'package:journexa_app/ui/wallets/widgets/wallet_form.dart';
-import 'package:journexa_app/ui/wallets/widgets/wallets_list.dart';
 import 'package:journexa_app/ui/wallets/widgets/wallets_list_view.dart';
 import 'package:mocktail/mocktail.dart';
 
@@ -111,7 +111,7 @@ void main() {
     );
 
     testWidgets(
-      'shows WalletList with correct accounts balance '
+      'shows AppListView with correct wallets '
       'when state is loaded',
       (tester) async {
         whenListen(
@@ -125,10 +125,12 @@ void main() {
 
         await pumpWidget(tester);
 
-        final finder = find.byType(WalletsList);
+        final finder = find.byType(AppListView<WalletWithBalanceState>);
         expect(finder, findsOneWidget);
-        final widget = tester.widget<WalletsList>(finder);
-        expect(widget.data, walletWithBalancesState);
+        final widget = tester.widget<AppListView<WalletWithBalanceState>>(
+          finder,
+        );
+        expect(widget.items, walletWithBalancesState);
       },
     );
 
@@ -305,6 +307,7 @@ void main() {
           ),
         );
         await pumpWidget(tester);
+        await tester.pumpAndSettle();
 
         final expectedWallet = walletWithBalances.first.wallet;
 
@@ -341,6 +344,7 @@ void main() {
           ),
         );
         await pumpWidget(tester);
+        await tester.pumpAndSettle();
 
         final expectedWallet = walletWithBalances.first.wallet;
 

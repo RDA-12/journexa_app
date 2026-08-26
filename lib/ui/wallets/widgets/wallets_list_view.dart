@@ -1,10 +1,12 @@
+import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:journexa_app/ui/shared/l10n/l10n.dart';
 import 'package:journexa_app/ui/shared/widgets/app_empty_box.dart';
+import 'package:journexa_app/ui/shared/widgets/app_list_view.dart';
 import 'package:journexa_app/ui/shared/widgets/widgets.dart';
 import 'package:journexa_app/ui/wallets/bloc/wallets_bloc.dart';
-import 'package:journexa_app/ui/wallets/widgets/wallets_list.dart';
+import 'package:journexa_app/ui/wallets/widgets/wallet_card.dart';
 import 'package:toastification/toastification.dart';
 
 /// Creates [Widget] that reacts to [WalletsBloc]'s state changes
@@ -162,16 +164,50 @@ class _WalletsListViewState extends State<WalletsListView> {
                       );
                     }
 
-                    return WalletsList(
-                      data: walletBalances,
-                      onDeletePressed: (wallet) {
-                        context.read<WalletsBloc>().add(
-                          WalletsEvent.delete(wallet),
-                        );
-                      },
-                      onUpdatePressed: (wallet, name) {
-                        context.read<WalletsBloc>().add(
-                          WalletsEvent.update(wallet, name: name),
+                    return AppListView(
+                      items: walletBalances,
+                      itemBuilder: (context, index) {
+                        final item = walletBalances[index];
+                        return BlocSelector<
+                          WalletsBloc,
+                          WalletsState,
+                          WalletWithBalanceState?
+                        >(
+                          selector: (state) {
+                            return state.walletWithBalances.firstWhereOrNull(
+                              (it) =>
+                                  it.walletWithBalance.wallet.id ==
+                                  item.walletWithBalance.wallet.id,
+                            );
+                          },
+                          builder: (context, wallet) {
+                            if (wallet == null) {
+                              return const SizedBox.shrink();
+                            }
+                            final walletWithBalance = wallet.walletWithBalance;
+                            final isDeleting =
+                                wallet.status == WalletStatus.deleting;
+                            final isUpdating =
+                                wallet.status == WalletStatus.updating;
+                            return WalletCard(
+                              walletWithBalance: walletWithBalance,
+                              isDeleting: isDeleting,
+                              isUpdating: isUpdating,
+                              onUpdatePressed: (name) {
+                                context.read<WalletsBloc>().add(
+                                  WalletsEvent.update(
+                                    walletWithBalance.wallet,
+                                    name: name,
+                                  ),
+                                );
+                              },
+                              onDeletePressed: () {
+                                context.read<WalletsBloc>().add(
+                                  WalletsEvent.delete(walletWithBalance.wallet),
+                                );
+                              },
+                            );
+                          },
                         );
                       },
                     );

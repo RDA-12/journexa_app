@@ -80,8 +80,16 @@ abstract class SystemDefinedAccount {
     isSystemAccount: true,
   );
 
+  /// Root expense account.
+  static Account get rootExpense => Account(
+    code: '50.0000',
+    name: 'expense',
+    type: AccountType.expense,
+    isSystemAccount: true,
+  );
+
   /// All system defined accounts
-  static List<Account> get accounts => [rootAsset, rootRevenue];
+  static List<Account> get accounts => [rootAsset, rootRevenue, rootExpense];
 }
 
 /// Represent single account in a double-entry accounting system

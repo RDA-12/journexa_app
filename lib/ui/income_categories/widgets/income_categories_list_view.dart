@@ -136,8 +136,31 @@ class _IncomeCategoriesListViewState extends State<IncomeCategoriesListView> {
                           if (incomeCategory == null) {
                             return const SizedBox.shrink();
                           }
+                          final isDeleting =
+                              incomeCategory.status ==
+                              IncomeCategoryStatus.deleting;
+                          final isUpdating =
+                              incomeCategory.status ==
+                              IncomeCategoryStatus.updating;
                           return IncomeCategoryTile(
                             category: incomeCategory.category,
+                            isDeleting: isDeleting,
+                            isUpdating: isUpdating,
+                            onDeletePressed: () {
+                              context.read<IncomeCategoriesBloc>().add(
+                                IncomeCategoriesEvent.delete(
+                                  incomeCategory.category,
+                                ),
+                              );
+                            },
+                            onUpdatePressed: ({required icon, required name}) {
+                              context.read<IncomeCategoriesBloc>().add(
+                                IncomeCategoriesEvent.update(
+                                  incomeCategory.category,
+                                  name: name,
+                                ),
+                              );
+                            },
                           );
                         },
                       );

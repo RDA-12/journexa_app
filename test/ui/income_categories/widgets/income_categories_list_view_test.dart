@@ -7,6 +7,7 @@ import 'package:journexa_app/domain/entities/income_category.dart';
 import 'package:journexa_app/shared/app_exception.dart';
 import 'package:journexa_app/ui/income_categories/bloc/income_categories_bloc.dart';
 import 'package:journexa_app/ui/income_categories/widgets/income_categories_list_view.dart';
+import 'package:journexa_app/ui/income_categories/widgets/income_category_form.dart';
 import 'package:journexa_app/ui/shared/l10n/app_localizations.dart';
 import 'package:journexa_app/ui/shared/widgets/app_empty_box.dart';
 import 'package:journexa_app/ui/shared/widgets/app_exception_box.dart';
@@ -238,7 +239,7 @@ void main() {
 
   group('Interaction', () {
     testWidgets(
-      'add WalletEvent.search with correct query',
+      'add IncomeCategoriesEvent.search with correct query',
       (tester) async {
         await pumpWidget(tester);
 
@@ -286,6 +287,79 @@ void main() {
         await tester.tap(finder);
 
         expect(isPressed, isTrue);
+      },
+    );
+
+    testWidgets(
+      'add IncomeCategoriesEvent.delete with correct category '
+      'when a category is deleted',
+      (tester) async {
+        whenListen(
+          mockIncomeCategoriesBloc,
+          const Stream<IncomeCategoriesState>.empty(),
+          initialState: IncomeCategoriesState(
+            status: IncomeCategoriesStatus.loaded,
+            categories: categoriesState,
+          ),
+        );
+
+        await pumpWidget(tester);
+
+        final firstCategory = categories.first;
+        await tester.tap(find.text(firstCategory.name));
+        await tester.pumpAndSettle();
+
+        await tester.tap(find.text('Delete'));
+        await tester.pumpAndSettle();
+
+        await tester.tap(find.text('Delete'));
+        await tester.pumpAndSettle();
+
+        verify(
+          () => mockIncomeCategoriesBloc.add(
+            IncomeCategoriesEvent.delete(firstCategory),
+          ),
+        ).called(1);
+      },
+    );
+
+    testWidgets(
+      'add IncomeCategoriesEvent.update with correct category '
+      'and updated data when a category is updated',
+      (tester) async {
+        whenListen(
+          mockIncomeCategoriesBloc,
+          const Stream<IncomeCategoriesState>.empty(),
+          initialState: IncomeCategoriesState(
+            status: IncomeCategoriesStatus.loaded,
+            categories: categoriesState,
+          ),
+        );
+
+        await pumpWidget(tester);
+
+        final firstCategory = categories.first;
+        await tester.tap(find.text(firstCategory.name));
+        await tester.pumpAndSettle();
+
+        await tester.tap(find.text('Update'));
+        await tester.pumpAndSettle();
+
+        await tester.enterText(
+          find.descendant(
+            of: find.byType(IncomeCategoryForm),
+            matching: find.byType(TextFormField),
+          ),
+          'new name',
+        );
+        await tester.tap(find.text('Save'));
+        await tester.pumpAndSettle();
+
+        verify(
+          () => mockIncomeCategoriesBloc.add(
+            IncomeCategoriesEvent.update(firstCategory, name: 'new name'),
+          ),
+        ).called(1);
       },
     );
   });

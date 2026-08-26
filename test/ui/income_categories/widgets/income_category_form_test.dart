@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:journexa_app/domain/entities/account.dart';
+import 'package:journexa_app/domain/entities/income_category.dart';
 import 'package:journexa_app/ui/income_categories/widgets/income_category_form.dart';
 import 'package:journexa_app/ui/shared/l10n/l10n.dart';
 import 'package:journexa_app/ui/shared/widgets/app_button.dart';
@@ -27,13 +27,13 @@ void main() {
     Locale locale = const Locale('en'),
     void Function(String name)? onSavePressed,
     bool isSaving = false,
-    Account? initialAccount,
+    IncomeCategory? initialCategory,
   }) async {
     return pumpForWidgetTest(
       tester,
       locale: locale,
       widget: IncomeCategoryForm(
-        initialAccount: initialAccount,
+        initialCategory: initialCategory,
         onSavePressed: onSavePressed,
         isSaving: isSaving,
       ),
@@ -85,16 +85,13 @@ void main() {
       testWidgets(
         'shows initial account name when provided',
         (tester) async {
+          final initial = IncomeCategory.test();
           await pumpWidget(
             tester,
-            initialAccount: Account(
-              code: '10.0001',
-              name: 'name',
-              type: AccountType.asset,
-            ),
+            initialCategory: initial,
           );
 
-          expect(find.text('name'), findsOneWidget);
+          expect(find.text(initial.name), findsOneWidget);
         },
       );
     },

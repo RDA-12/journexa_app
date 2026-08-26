@@ -231,4 +231,55 @@ class AppLocalizationsId extends AppLocalizations {
   @override
   String get incomeCategoriesListAddButtonSemantics =>
       'Tambah Kategori Pendapatan';
+
+  @override
+  String deleteIncomeCategoryDialogTitle(String name) {
+    return 'Hapus $name?';
+  }
+
+  @override
+  String deleteIncomeCategoryDialogContent(String name) {
+    return 'Data yang terikat dengan kategori pendapatan $name akan tetap ada. Tapi, kategori pendapatan $name tidak akan bisa digunakan lagi untuk data pendapatan selanjutnya';
+  }
+
+  @override
+  String get deleteIncomeCategoryDialogConfirmLabel => 'Hapus';
+
+  @override
+  String deleteIncomeCategorySemantics(String name) {
+    return 'Hapus $name';
+  }
+
+  @override
+  String deleteIncomeCategoryDeletingSemanticsLabel(String name) {
+    return 'Menghapus $name';
+  }
+
+  @override
+  String deleteIncomeCategoryToastMessage(String name) {
+    return '$name telah dihapus';
+  }
+
+  @override
+  String updateIncomeCategorySemantics(String name) {
+    return 'Perbarui $name';
+  }
+
+  @override
+  String updateIncomeCategoryUpdatingSemanticsLabel(String name) {
+    return 'Memperbarui $name';
+  }
+
+  @override
+  String updateIncomeCategoryToastMessage(String name) {
+    return '$name telah diperbarui';
+  }
+
+  @override
+  String get deleteIncomeCategoryToastFailureTitle =>
+      'Gagal menghapus kategori pendapatan';
+
+  @override
+  String get updateIncomeCategoryToastFailureTitle =>
+      'Gagal memperbarui kategori pendapatan';
 }

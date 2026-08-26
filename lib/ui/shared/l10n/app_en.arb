@@ -333,5 +333,97 @@
   "incomeCategoriesListAddButtonSemantics": "Add Income Category",
   "@incomeCategoriesListAddButtonSemantics": {
     "description": "Semantics label for add button on income categories list"
+  },
+  "deleteIncomeCategoryDialogTitle": "Delete {name}?",
+  "@deleteIncomeCategoryDialogTitle": {
+    "description": "Title for delete income category dialog",
+    "placeholders": {
+      "name": {
+        "type": "String",
+        "example": "dompet hitam"
+      }
+    }
+  },
+  "deleteIncomeCategoryDialogContent": "Data related to {name} income category will still exist. But, {name} income category will no longer be able to be used for future income data",
+  "@deleteIncomeCategoryDialogContent": {
+    "description": "Content for delete income category dialog",
+    "placeholders": {
+      "name": {
+        "type": "String",
+        "example": "dompet hitam"
+      }
+    }
+  },
+  "deleteIncomeCategoryDialogConfirmLabel": "Delete",
+  "@deleteIncomeCategoryDialogConfirmLabel": {
+    "description": "Confirm label for delete income category dialog"
+  },
+  "deleteIncomeCategorySemantics": "Delete {name}",
+  "@deleteIncomeCategorySemantics": {
+    "description": "Semantics label for delete income category button",
+    "placeholders": {
+      "name": {
+        "type": "String",
+        "example": "dompet hitam"
+      }
+    }
+  },
+  "deleteIncomeCategoryDeletingSemanticsLabel": "Deleting {name}",
+  "@deleteIncomeCategoryDeletingSemanticsLabel": {
+    "description": "Semantics label for button when income category deletion is in progress",
+    "placeholders": {
+      "name": {
+        "type": "String",
+        "example": "dompet hitam"
+      }
+    }
+  },
+  "deleteIncomeCategoryToastMessage": "{name} has been deleted",
+  "@deleteIncomeCategoryToastMessage": {
+    "description": "Message to be showed on toast when income category has been deleted",
+    "placeholders": {
+      "name": {
+        "type": "String",
+        "example": "dompet hitam"
+      }
+    }
+  },
+  "updateIncomeCategorySemantics": "Update {name}",
+  "@updateIncomeCategorySemantics": {
+    "description": "Semantics label for update income category button",
+    "placeholders": {
+      "name": {
+        "type": "String",
+        "example": "dompet hitam"
+      }
+    }
+  },
+  "updateIncomeCategoryUpdatingSemanticsLabel": "Updating {name}",
+  "@updateIncomeCategoryUpdatingSemanticsLabel": {
+    "description": "Semantics label for button when income category update is in progress",
+    "placeholders": {
+      "name": {
+        "type": "String",
+        "example": "dompet hitam"
+      }
+    }
+  },
+  "updateIncomeCategoryToastMessage": "{name} has been updated",
+  "@updateIncomeCategoryToastMessage": {
+    "description": "Message to be showed on toast when income category has been updated",
+    "placeholders": {
+      "name": {
+        "type": "String",
+        "example": "dompet hitam"
+      }
+    }
+  },
+  "deleteIncomeCategoryToastFailureTitle": "Failed to delete income category",
+  "@deleteIncomeCategoryToastFailureTitle": {
+    "description": "Title for error state in delete income category toast"
+  },
+  "updateIncomeCategoryToastFailureTitle": "Failed to update income category",
+  "@updateIncomeCategoryToastFailureTitle": {
+    "description": "Title for error state in update income category toast"
   }
 }

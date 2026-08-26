@@ -475,6 +475,72 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Add Income Category'**
   String get incomeCategoriesListAddButtonSemantics;
+
+  /// Title for delete income category dialog
+  ///
+  /// In en, this message translates to:
+  /// **'Delete {name}?'**
+  String deleteIncomeCategoryDialogTitle(String name);
+
+  /// Content for delete income category dialog
+  ///
+  /// In en, this message translates to:
+  /// **'Data related to {name} income category will still exist. But, {name} income category will no longer be able to be used for future income data'**
+  String deleteIncomeCategoryDialogContent(String name);
+
+  /// Confirm label for delete income category dialog
+  ///
+  /// In en, this message translates to:
+  /// **'Delete'**
+  String get deleteIncomeCategoryDialogConfirmLabel;
+
+  /// Semantics label for delete income category button
+  ///
+  /// In en, this message translates to:
+  /// **'Delete {name}'**
+  String deleteIncomeCategorySemantics(String name);
+
+  /// Semantics label for button when income category deletion is in progress
+  ///
+  /// In en, this message translates to:
+  /// **'Deleting {name}'**
+  String deleteIncomeCategoryDeletingSemanticsLabel(String name);
+
+  /// Message to be showed on toast when income category has been deleted
+  ///
+  /// In en, this message translates to:
+  /// **'{name} has been deleted'**
+  String deleteIncomeCategoryToastMessage(String name);
+
+  /// Semantics label for update income category button
+  ///
+  /// In en, this message translates to:
+  /// **'Update {name}'**
+  String updateIncomeCategorySemantics(String name);
+
+  /// Semantics label for button when income category update is in progress
+  ///
+  /// In en, this message translates to:
+  /// **'Updating {name}'**
+  String updateIncomeCategoryUpdatingSemanticsLabel(String name);
+
+  /// Message to be showed on toast when income category has been updated
+  ///
+  /// In en, this message translates to:
+  /// **'{name} has been updated'**
+  String updateIncomeCategoryToastMessage(String name);
+
+  /// Title for error state in delete income category toast
+  ///
+  /// In en, this message translates to:
+  /// **'Failed to delete income category'**
+  String get deleteIncomeCategoryToastFailureTitle;
+
+  /// Title for error state in update income category toast
+  ///
+  /// In en, this message translates to:
+  /// **'Failed to update income category'**
+  String get updateIncomeCategoryToastFailureTitle;
 }
 
 class _AppLocalizationsDelegate

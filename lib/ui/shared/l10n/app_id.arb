@@ -62,5 +62,16 @@
   "incomeCategoriesListTitle": "Daftar Kategori Pendapatan",
   "incomeCategoriesListSearchLabel": "Cari Kategori Pendapatan",
   "incomeCategoriesListEmptyDescription": "Tidak ada data kategori pendapatan yang ditemukan",
-  "incomeCategoriesListAddButtonSemantics": "Tambah Kategori Pendapatan"
+  "incomeCategoriesListAddButtonSemantics": "Tambah Kategori Pendapatan",
+  "deleteIncomeCategoryDialogTitle": "Hapus {name}?",
+  "deleteIncomeCategoryDialogContent": "Data yang terikat dengan kategori pendapatan {name} akan tetap ada. Tapi, kategori pendapatan {name} tidak akan bisa digunakan lagi untuk data pendapatan selanjutnya",
+  "deleteIncomeCategoryDialogConfirmLabel": "Hapus",
+  "deleteIncomeCategorySemantics": "Hapus {name}",
+  "deleteIncomeCategoryDeletingSemanticsLabel": "Menghapus {name}",
+  "deleteIncomeCategoryToastMessage": "{name} telah dihapus",
+  "updateIncomeCategorySemantics": "Perbarui {name}",
+  "updateIncomeCategoryUpdatingSemanticsLabel": "Memperbarui {name}",
+  "updateIncomeCategoryToastMessage": "{name} telah diperbarui",
+  "deleteIncomeCategoryToastFailureTitle": "Gagal menghapus kategori pendapatan",
+  "updateIncomeCategoryToastFailureTitle": "Gagal memperbarui kategori pendapatan"
 }

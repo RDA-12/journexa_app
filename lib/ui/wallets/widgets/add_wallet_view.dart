@@ -24,7 +24,6 @@ class AddWalletView extends StatelessWidget {
           added: () {
             context.showToast(
               type: ToastificationType.success,
-              title: context.l10n.addWalletSuccessTitle,
               description: context.l10n.addWalletSuccessMessage,
               autoClose: true,
             );

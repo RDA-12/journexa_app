@@ -31,6 +31,9 @@ final expectedTranslations = {
     'emptyTitle': 'Data Tidak Ditemukan',
     'emptyDescription': 'Tidak ada data dompet yang ditemukan',
     'semanticsAddButton': 'Tambah Dompet Baru',
+    'deleteSuccessToastMessage': 'asset 0 telah dihapus',
+    'deleteFailureToastTitle': 'Gagal menghapus data dompet',
+    'deleteFailureToastMessage': 'Terjadi kesalahan internal',
   },
   'en': {
     'errorTitle': 'Failed to get wallet data',
@@ -40,6 +43,9 @@ final expectedTranslations = {
     'emptyTitle': 'Data Not Found',
     'emptyDescription': 'No wallet data was found',
     'semanticsAddButton': 'Add New Wallet',
+    'deleteSuccessToastMessage': 'asset 0 has been deleted',
+    'deleteFailureToastTitle': 'Failed to delete wallet data',
+    'deleteFailureToastMessage': 'Internal exception error',
   },
 };
 
@@ -380,7 +386,7 @@ void main() {
 
   group('a11y', () {
     for (final locale in AppLocalizations.supportedLocales) {
-      final expectedTranslation = expectedTranslations[locale.languageCode]!;
+      final expectedTranslation = expectedTranslations[locale.toLanguageTag()]!;
       final expectedSemantics = expectedTranslation['semanticsLoading']!;
       testWidgets(
         'has $expectedSemantics '
@@ -440,12 +446,155 @@ void main() {
           expect(find.byTooltip(expectedTooltip), findsOneWidget);
         },
       );
-    }
 
-    // TODO(RDA): expect to shows toast semantically on delete succeeded/failed
+      final expectedDeleteSuccessToastMessage =
+          expectedTranslation['deleteSuccessToastMessage']!;
+      testWidgets(
+        'has correct semantics on toast when delete is succeeded '
+        'for locale $locale',
+        (tester) async {
+          whenListen(
+            mockWalletsBloc,
+            Stream<WalletsState>.fromIterable([
+              WalletsState(
+                status: WalletsStatus.loaded,
+                walletWithBalances: walletWithBalancesState,
+                notice: WalletNotice.recentlyDeleted(
+                  wallet: walletWithBalances.first.wallet,
+                ),
+              ),
+            ]),
+            initialState: WalletsState(
+              status: WalletsStatus.loaded,
+              walletWithBalances: walletWithBalancesState,
+            ),
+          );
+
+          await pumpWidget(tester, locale: locale);
+          await tester.pumpAndSettle();
+
+          expect(
+            find.bySemanticsLabel(expectedDeleteSuccessToastMessage),
+            findsOneWidget,
+          );
+
+          await tester.pumpAndSettle(kToastDuration);
+        },
+      );
+
+      final expectedDeleteFailureToastTitle =
+          expectedTranslation['deleteFailureToastTitle']!;
+      final expectedDeleteFailureToastMessage =
+          expectedTranslation['deleteFailureToastMessage']!;
+      testWidgets(
+        'has correct semantics on toast when delete is failed '
+        'for locale $locale',
+        (tester) async {
+          whenListen(
+            mockWalletsBloc,
+            Stream<WalletsState>.fromIterable([
+              WalletsState(
+                status: WalletsStatus.loaded,
+                walletWithBalances: walletWithBalancesState,
+                notice: WalletNotice.deleteFailed(
+                  wallet: walletWithBalances.first.wallet,
+                  exception: AppException.test(),
+                ),
+              ),
+            ]),
+            initialState: WalletsState(
+              status: WalletsStatus.loaded,
+              walletWithBalances: walletWithBalancesState,
+            ),
+          );
+
+          await pumpWidget(tester, locale: locale);
+          await tester.pumpAndSettle();
+
+          expect(
+            find.bySemanticsLabel(
+              '$expectedDeleteFailureToastTitle'
+              '\n$expectedDeleteFailureToastMessage',
+            ),
+            findsOneWidget,
+          );
+
+          await tester.pumpAndSettle(kToastDuration);
+        },
+      );
+    }
   });
 
   group('Side Effects', () {
-    // TODO(RDA): expect to shows toast on delete succeeded/failed
+    for (final locale in AppLocalizations.supportedLocales) {
+      final expectedTranslation = expectedTranslations[locale.toLanguageTag()]!;
+      final expectedDeleteSuccessToastMessage =
+          expectedTranslation['deleteSuccessToastMessage']!;
+      testWidgets(
+        'shows correct toast when delete is succeeded '
+        'for locale $locale',
+        (tester) async {
+          whenListen(
+            mockWalletsBloc,
+            Stream<WalletsState>.fromIterable([
+              WalletsState(
+                status: WalletsStatus.loaded,
+                walletWithBalances: walletWithBalancesState,
+                notice: WalletNotice.recentlyDeleted(
+                  wallet: walletWithBalances.first.wallet,
+                ),
+              ),
+            ]),
+            initialState: WalletsState(
+              status: WalletsStatus.loaded,
+              walletWithBalances: walletWithBalancesState,
+            ),
+          );
+
+          await pumpWidget(tester, locale: locale);
+          await tester.pumpAndSettle();
+
+          expect(find.text(expectedDeleteSuccessToastMessage), findsOneWidget);
+
+          await tester.pumpAndSettle(kToastDuration);
+        },
+      );
+
+      final expectedDeleteFailureToastTitle =
+          expectedTranslation['deleteFailureToastTitle']!;
+      final expectedDeleteFailureToastMessage =
+          expectedTranslation['deleteFailureToastMessage']!;
+      testWidgets(
+        'shows correct toast when delete is failed '
+        'for locale $locale',
+        (tester) async {
+          whenListen(
+            mockWalletsBloc,
+            Stream<WalletsState>.fromIterable([
+              WalletsState(
+                status: WalletsStatus.loaded,
+                walletWithBalances: walletWithBalancesState,
+                notice: WalletNotice.deleteFailed(
+                  wallet: walletWithBalances.first.wallet,
+                  exception: AppException.test(),
+                ),
+              ),
+            ]),
+            initialState: WalletsState(
+              status: WalletsStatus.loaded,
+              walletWithBalances: walletWithBalancesState,
+            ),
+          );
+
+          await pumpWidget(tester, locale: locale);
+          await tester.pumpAndSettle();
+
+          expect(find.text(expectedDeleteFailureToastTitle), findsOneWidget);
+          expect(find.text(expectedDeleteFailureToastMessage), findsOneWidget);
+
+          await tester.pumpAndSettle(kToastDuration);
+        },
+      );
+    }
   });
 }

@@ -430,13 +430,13 @@
   "@addExpenseCategoryNameLabel": {
     "description": "Label for name field on add expense category"
   },
+  "addExpenseCategorySuccessTitle": "Expense category added",
+  "@addExpenseCategorySuccessTitle": {
+    "description": "Title to be showed when expense category added successfully"
+  },
   "addExpenseCategorySuccessMessage": "Expense category successfully added",
   "@addExpenseCategorySuccessMessage": {
     "description": "Message to be showed when expense category added successfully"
-  },
-  "addExpenseCategorySuccessTitle": "Expense category added",
-  "@addExpenseCategorySuccessTitle": {
-    "description": "Title for success state in add expense category page"
   },
   "addExpenseCategoryFailureTitle": "Failed to add expense category",
   "@addExpenseCategoryFailureTitle": {

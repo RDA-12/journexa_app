@@ -2,16 +2,34 @@ import 'package:bloc_test/bloc_test.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:journexa_app/shared/app_exception.dart';
 import 'package:journexa_app/ui/expense_categories/bloc/add_expense_category_bloc.dart';
 import 'package:journexa_app/ui/expense_categories/widgets/add_expense_category_view.dart';
 import 'package:journexa_app/ui/expense_categories/widgets/expense_category_form.dart';
+import 'package:journexa_app/ui/shared/l10n/app_localizations.dart';
 import 'package:journexa_app/ui/shared/widgets/app_button.dart';
+import 'package:journexa_app/ui/shared/widgets/app_toast.dart';
 import 'package:mocktail/mocktail.dart';
 
 import '../../util.dart';
 
 class MockAddExpenseCategoryBloc extends Mock
     implements AddExpenseCategoryBloc {}
+
+final expectedTranslations = {
+  'id': {
+    'successToastTitle': 'Kategori pengeluaran ditambahkan',
+    'successToastMessage': 'Kategori pengeluaran berhasil ditambahkan',
+    'failureToastTitle': 'Gagal menambahkan kategori pengeluaran',
+    'failureToastMessage': 'Terjadi kesalahan internal',
+  },
+  'en': {
+    'successToastTitle': 'Expense category added',
+    'successToastMessage': 'Expense category successfully added',
+    'failureToastTitle': 'Failed to add expense category',
+    'failureToastMessage': 'Internal exception error',
+  },
+};
 
 void main() {
   late AddExpenseCategoryBloc mockAddExpenseCategoryBloc;
@@ -89,10 +107,114 @@ void main() {
   });
 
   group('Side Effects', () {
-    // TODO(RDA): test to ensure toast is showed when success/fail
+    for (final locale in AppLocalizations.supportedLocales) {
+      final translations = expectedTranslations[locale.toLanguageTag()]!;
+      final expectedSuccessToastTitle = translations['successToastTitle']!;
+      final expectedSuccessToastMessage = translations['successToastMessage']!;
+      testWidgets(
+        'shows correct toast when state is success '
+        'for locale $locale',
+        (tester) async {
+          whenListen(
+            mockAddExpenseCategoryBloc,
+            Stream<AddExpenseCategoryState>.fromIterable([
+              const AddExpenseCategoryState.added(),
+            ]),
+            initialState: const AddExpenseCategoryState.loading(),
+          );
+
+          await pumpWidget(tester, locale: locale);
+          await tester.pumpAndSettle();
+
+          expect(find.text(expectedSuccessToastTitle), findsOneWidget);
+          expect(find.text(expectedSuccessToastMessage), findsOneWidget);
+
+          await tester.pumpAndSettle(kToastDuration);
+        },
+      );
+
+      final expectedFailureToastTitle = translations['failureToastTitle']!;
+      final expectedFailureToastMessage = translations['failureToastMessage']!;
+      testWidgets(
+        'shows correct toast when state is failure '
+        'for locale $locale',
+        (tester) async {
+          whenListen(
+            mockAddExpenseCategoryBloc,
+            Stream<AddExpenseCategoryState>.fromIterable([
+              AddExpenseCategoryState.failure(AppException.test()),
+            ]),
+            initialState: const AddExpenseCategoryState.loading(),
+          );
+
+          await pumpWidget(tester, locale: locale);
+          await tester.pumpAndSettle();
+
+          expect(find.text(expectedFailureToastTitle), findsOneWidget);
+          expect(find.text(expectedFailureToastMessage), findsOneWidget);
+
+          await tester.pumpAndSettle(kToastDuration);
+        },
+      );
+    }
   });
 
   group('a11y', () {
-    // TODO(RDA): test to ensure toast has correct semantics when success/fail
+    for (final locale in AppLocalizations.supportedLocales) {
+      final translations = expectedTranslations[locale.toLanguageTag()]!;
+      final expectedToastTitle = translations['successToastTitle']!;
+      final expectedToastMessage = translations['successToastMessage']!;
+      testWidgets(
+        'has correct semantics on toast when state is success '
+        'for locale $locale',
+        (tester) async {
+          whenListen(
+            mockAddExpenseCategoryBloc,
+            Stream<AddExpenseCategoryState>.fromIterable([
+              const AddExpenseCategoryState.added(),
+            ]),
+            initialState: const AddExpenseCategoryState.loading(),
+          );
+
+          await pumpWidget(tester, locale: locale);
+          await tester.pumpAndSettle();
+
+          expect(
+            find.bySemanticsLabel('$expectedToastTitle\n$expectedToastMessage'),
+            findsOneWidget,
+          );
+
+          await tester.pumpAndSettle(kToastDuration);
+        },
+      );
+
+      final expectedFailureToastTitle = translations['failureToastTitle']!;
+      final expectedFailureToastMessage = translations['failureToastMessage']!;
+      testWidgets(
+        'has corrent semantics on toast when state is failure '
+        'for locale $locale',
+        (tester) async {
+          whenListen(
+            mockAddExpenseCategoryBloc,
+            Stream<AddExpenseCategoryState>.fromIterable([
+              AddExpenseCategoryState.failure(AppException.test()),
+            ]),
+            initialState: const AddExpenseCategoryState.loading(),
+          );
+
+          await pumpWidget(tester, locale: locale);
+          await tester.pumpAndSettle();
+
+          expect(
+            find.bySemanticsLabel(
+              '$expectedFailureToastTitle\n$expectedFailureToastMessage',
+            ),
+            findsOneWidget,
+          );
+
+          await tester.pumpAndSettle(kToastDuration);
+        },
+      );
+    }
   });
 }

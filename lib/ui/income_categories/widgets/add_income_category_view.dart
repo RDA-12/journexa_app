@@ -24,7 +24,6 @@ class AddIncomeCategoryView extends StatelessWidget {
           added: () {
             context.showToast(
               type: ToastificationType.success,
-              title: context.l10n.addIncomeCategorySuccessTitle,
               description: context.l10n.addIncomeCategorySuccessMessage,
               autoClose: true,
             );

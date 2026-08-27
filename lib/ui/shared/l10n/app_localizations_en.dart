@@ -283,11 +283,11 @@ class AppLocalizationsEn extends AppLocalizations {
   String get addExpenseCategoryNameLabel => 'Name';
 
   @override
-  String get addExpenseCategorySuccessMessage =>
-      'Expense category successfully added';
+  String get addExpenseCategorySuccessTitle => 'Expense category added';
 
   @override
-  String get addExpenseCategorySuccessTitle => 'Expense category added';
+  String get addExpenseCategorySuccessMessage =>
+      'Expense category successfully added';
 
   @override
   String get addExpenseCategoryFailureTitle => 'Failed to add expense category';

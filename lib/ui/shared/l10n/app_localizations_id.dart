@@ -287,11 +287,11 @@ class AppLocalizationsId extends AppLocalizations {
   String get addExpenseCategoryNameLabel => 'Nama';
 
   @override
-  String get addExpenseCategorySuccessMessage =>
-      'Kategori pengeluaran berhasil ditambahkan';
+  String get addExpenseCategorySuccessTitle =>
+      'Kategori pengeluaran ditambahkan';
 
   @override
-  String get addExpenseCategorySuccessTitle =>
+  String get addExpenseCategorySuccessMessage =>
       'Kategori pengeluaran berhasil ditambahkan';
 
   @override

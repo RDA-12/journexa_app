@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:journexa_app/shared/app_exception.dart';
 import 'package:journexa_app/ui/login/bloc/login_bloc.dart';
 import 'package:journexa_app/ui/login/widgets/login_with_google_button.dart';
 import 'package:journexa_app/ui/shared/l10n/l10n.dart';
@@ -20,8 +21,7 @@ const expectedTranslations = {
     'loginSuccessTitle': 'Login successful',
     'loginSuccessMessage': 'Redirecting to initialization process...',
     'loginFailedTitle': 'Login failed',
-    'errorInternalException':
-        'An error occurred during login. Please try again',
+    'errorInternalException': 'Internal exception error',
     'errorLoginCanceled': 'Login process was cancelled',
   },
   'id': {
@@ -29,7 +29,7 @@ const expectedTranslations = {
     'loginSuccessTitle': 'Login berhasil',
     'loginSuccessMessage': 'Mengarahkan ke proses inisialisasi...',
     'loginFailedTitle': 'Login gagal',
-    'errorInternalException': 'Terjadi kesalahan saat login. Harap coba lagi',
+    'errorInternalException': 'Terjadi kesalahan internal',
     'errorLoginCanceled': 'Proses login dibatalkan',
   },
 };
@@ -132,7 +132,6 @@ void main() {
     testWidgets(
       'calls onSuccess when login with Google is suceeded',
       (tester) async {
-        var autoCloseRemaining = kToastDuration;
         whenListen(
           mockLoginBloc,
           Stream.fromIterable([
@@ -148,73 +147,64 @@ void main() {
           onSuccess: () => isSucceeded = true,
         );
 
-        await tester.pumpAndSettle(const Duration(seconds: 1));
-        autoCloseRemaining -= const Duration(seconds: 1);
+        await tester.pumpAndSettle();
 
         expect(isSucceeded, true);
 
-        await tester.pumpAndSettle(autoCloseRemaining);
+        await tester.pumpAndSettle(kToastDuration);
       },
     );
 
-    // TODO(RDA-12): find a way to test the toast
-    // for (final locale in AppLocalizations.supportedLocales) {
-    //   final expectedTitle =
-    //       expectedTranslations[locale.languageCode]!['loginSuccessTitle']!;
-    //   testWidgets(
-    //     'shows "$expectedTitle" for $locale',
-    //     (tester) async {
-    //       var autoCloseRemaining = kToastDuration;
-    //       whenListen(
-    //         mockLoginBloc,
-    //         Stream.fromIterable([
-    //           const LoginState.loading(),
-    //           const LoginState.success(),
-    //         ]),
-    //       );
+    for (final locale in AppLocalizations.supportedLocales) {
+      final translations = expectedTranslations[locale.languageCode]!;
+      final expectedSuccessTitle = translations['loginSuccessTitle']!;
+      final expectedSuccessMessage = translations['loginSuccessMessage']!;
+      testWidgets(
+        'shows correct toast when state is success '
+        'for locale $locale',
+        (tester) async {
+          whenListen(
+            mockLoginBloc,
+            Stream.fromIterable([
+              const LoginState.loading(),
+              const LoginState.success(),
+            ]),
+          );
 
-    //       await pumpWidget(
-    //         tester: tester,
-    //         locale: locale,
-    //       );
+          await pumpWidget(tester: tester, locale: locale);
+          await tester.pumpAndSettle();
 
-    //       await tester.pumpAndSettle(const Duration(seconds: 1));
-    //       autoCloseRemaining -= const Duration(seconds: 1);
+          expect(find.text(expectedSuccessTitle), findsOneWidget);
+          expect(find.text(expectedSuccessMessage), findsOneWidget);
 
-    //       expect(find.text(expectedTitle), findsOneWidget);
+          await tester.pumpAndSettle(kToastDuration);
+        },
+      );
 
-    //       await tester.pumpAndSettle(autoCloseRemaining);
-    //     },
-    //   );
+      final expectedFailureTitle = translations['loginFailedTitle']!;
+      final expectedFailureMessage = translations['errorInternalException']!;
+      testWidgets(
+        'shows correct toast when state is failure '
+        'for locale $locale',
+        (tester) async {
+          whenListen(
+            mockLoginBloc,
+            Stream.fromIterable([
+              const LoginState.loading(),
+              LoginState.failure(AppException.test()),
+            ]),
+          );
 
-    //   final expectedMessage =
-    //       expectedTranslations[locale.languageCode]!['loginSuccessMessage']!;
-    //   testWidgets(
-    //     'shows "$expectedMessage" for $locale',
-    //     (tester) async {
-    //       var autoCloseRemaining = kToastDuration;
-    //       whenListen(
-    //         mockLoginBloc,
-    //         Stream.fromIterable([
-    //           const LoginState.loading(),
-    //           const LoginState.success(),
-    //         ]),
-    //       );
+          await pumpWidget(tester: tester, locale: locale);
+          await tester.pumpAndSettle();
 
-    //       await pumpWidget(
-    //         tester: tester,
-    //         locale: locale,
-    //       );
+          expect(find.text(expectedFailureTitle), findsOneWidget);
+          expect(find.text(expectedFailureMessage), findsOneWidget);
 
-    //       await tester.pumpAndSettle(const Duration(seconds: 1));
-    //       autoCloseRemaining -= const Duration(seconds: 1);
-
-    //       expect(find.text(expectedMessage), findsOneWidget);
-
-    //       await tester.pumpAndSettle(autoCloseRemaining);
-    //     },
-    //   );
-    // }
+          await tester.pumpAndSettle(kToastDuration);
+        },
+      );
+    }
   });
 
   group('a11y', () {
@@ -244,8 +234,63 @@ void main() {
           handle.dispose();
         },
       );
-    }
 
-    // TODO(RDA-12): find a way to test the toast to meet a11y guidelines
+      final translations = expectedTranslations[locale.languageCode]!;
+      final expectedSuccessTitle = translations['loginSuccessTitle']!;
+      final expectedSuccessMessage = translations['loginSuccessMessage']!;
+      testWidgets(
+        'has correct semantics on toast when state is success '
+        'for locale $locale',
+        (tester) async {
+          whenListen(
+            mockLoginBloc,
+            Stream.fromIterable([
+              const LoginState.loading(),
+              const LoginState.success(),
+            ]),
+          );
+
+          await pumpWidget(tester: tester, locale: locale);
+          await tester.pumpAndSettle();
+
+          expect(
+            find.bySemanticsLabel(
+              '$expectedSuccessTitle\n$expectedSuccessMessage',
+            ),
+            findsOneWidget,
+          );
+
+          await tester.pumpAndSettle(kToastDuration);
+        },
+      );
+
+      final expectedFailureTitle = translations['loginFailedTitle']!;
+      final expectedFailureMessage = translations['errorInternalException']!;
+      testWidgets(
+        'has correct semantics on toast when state is failure '
+        'for locale $locale',
+        (tester) async {
+          whenListen(
+            mockLoginBloc,
+            Stream.fromIterable([
+              const LoginState.loading(),
+              LoginState.failure(AppException.test()),
+            ]),
+          );
+
+          await pumpWidget(tester: tester, locale: locale);
+          await tester.pumpAndSettle();
+
+          expect(
+            find.bySemanticsLabel(
+              '$expectedFailureTitle\n$expectedFailureMessage',
+            ),
+            findsOneWidget,
+          );
+
+          await tester.pumpAndSettle(kToastDuration);
+        },
+      );
+    }
   });
 }

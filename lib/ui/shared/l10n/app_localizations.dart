@@ -548,17 +548,17 @@ abstract class AppLocalizations {
   /// **'Name'**
   String get addExpenseCategoryNameLabel;
 
+  /// Title to be showed when expense category added successfully
+  ///
+  /// In en, this message translates to:
+  /// **'Expense category added'**
+  String get addExpenseCategorySuccessTitle;
+
   /// Message to be showed when expense category added successfully
   ///
   /// In en, this message translates to:
   /// **'Expense category successfully added'**
   String get addExpenseCategorySuccessMessage;
-
-  /// Title for success state in add expense category page
-  ///
-  /// In en, this message translates to:
-  /// **'Expense category added'**
-  String get addExpenseCategorySuccessTitle;
 
   /// Title for error state in add expense category page
   ///

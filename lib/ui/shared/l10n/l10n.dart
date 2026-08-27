@@ -31,13 +31,17 @@ extension AppExceptionCodeX on AppExceptionCode {
     AppExceptionCode.serverException => context.l10n.errorServerException,
     AppExceptionCode.unauthenticated => context.l10n.errorUnauthenticated,
     AppExceptionCode.accountAlreadyExists =>
-      context.l10n.errorAccountAlreadyExists(data['name'] as String),
+      context.l10n.errorAccountAlreadyExists((data['name'] as String?) ?? ''),
     AppExceptionCode.accountNotFound => context.l10n.errorAccountNotFound(
-      data['code'] as String,
+      (data['code'] as String?) ?? '',
     ),
     AppExceptionCode.walletNameAlreadyExists =>
-      context.l10n.errorWalletNameAlreadyExists(data['name'] as String),
+      context.l10n.errorWalletNameAlreadyExists(
+        (data['name'] as String?) ?? '',
+      ),
     AppExceptionCode.categoryNameAlreadyExists =>
-      context.l10n.errorCategoryAlreadyExists(data['name'] as String),
+      context.l10n.errorCategoryAlreadyExists(
+        (data['name'] as String?) ?? '',
+      ),
   };
 }

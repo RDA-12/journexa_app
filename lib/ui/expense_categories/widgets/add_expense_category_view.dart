@@ -29,19 +29,16 @@ class AddExpenseCategoryView extends StatelessWidget {
               autoClose: true,
             );
           },
-          failure: (exc) {
+          failure: (exc, name) {
             final code = exc.code;
-            late final String message;
-            if (code == AppExceptionCode.accountAlreadyExists) {
-              message = code.toLocalizedString(
-                context,
-                data: {
-                  'name': context.l10n.commonWallet,
-                },
-              );
-            } else {
-              message = code.toLocalizedString(context);
-            }
+            final message = switch (code) {
+              AppExceptionCode.categoryNameAlreadyExists =>
+                code.toLocalizedString(
+                  context,
+                  data: {'name': name ?? ''},
+                ),
+              _ => code.toLocalizedString(context),
+            };
             context.showToast(
               type: ToastificationType.error,
               title: context.l10n.addExpenseCategoryFailureTitle,

@@ -80,7 +80,10 @@ void main() {
           bloc.add(AddExpenseCategoryEvent.submit(name: params.name)),
       expect: () => <AddExpenseCategoryState>[
         const AddExpenseCategoryState.loading(),
-        AddExpenseCategoryState.failure(AppException.test()),
+        AddExpenseCategoryState.failure(
+          AppException.test(),
+          name: params.name,
+        ),
       ],
       verify: (_) {
         verify(() => mockUidGenerator.generateUid()).called(1);

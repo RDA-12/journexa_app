@@ -13,5 +13,8 @@ class AddExpenseCategoryState with _$AddExpenseCategoryState {
   const factory AddExpenseCategoryState.added() = _Added;
 
   /// State when adding new expense category has failed
-  const factory AddExpenseCategoryState.failure(AppException exc) = _Failure;
+  const factory AddExpenseCategoryState.failure(
+    AppException exc, {
+    String? name,
+  }) = _Failure;
 }

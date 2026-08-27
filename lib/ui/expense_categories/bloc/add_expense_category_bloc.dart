@@ -56,7 +56,7 @@ class AddExpenseCategoryBloc
           'Add new expense category failed. Emit failure state',
           traceId: traceId,
         );
-        emit(AddExpenseCategoryState.failure(exc));
+        emit(AddExpenseCategoryState.failure(exc, name: name));
       },
     );
   }

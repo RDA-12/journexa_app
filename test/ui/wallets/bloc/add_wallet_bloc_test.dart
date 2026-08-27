@@ -76,7 +76,10 @@ void main() {
       act: (bloc) => bloc.add(AddWalletEvent.submit(name: params.name)),
       expect: () => <AddWalletState>[
         const AddWalletState.loading(),
-        AddWalletState.failure(AppException.test()),
+        AddWalletState.failure(
+          AppException.test(),
+          name: params.name,
+        ),
       ],
       verify: (_) {
         verify(() => mockUidGenerator.generateUid()).called(1);

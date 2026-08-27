@@ -77,7 +77,10 @@ void main() {
       act: (bloc) => bloc.add(AddIncomeCategoryEvent.submit(name: params.name)),
       expect: () => <AddIncomeCategoryState>[
         const AddIncomeCategoryState.loading(),
-        AddIncomeCategoryState.failure(AppException.test()),
+        AddIncomeCategoryState.failure(
+          AppException.test(),
+          name: params.name,
+        ),
       ],
       verify: (_) {
         verify(() => mockUidGenerator.generateUid()).called(1);

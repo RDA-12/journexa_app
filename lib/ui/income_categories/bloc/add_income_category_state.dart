@@ -13,5 +13,8 @@ class AddIncomeCategoryState with _$AddIncomeCategoryState {
   const factory AddIncomeCategoryState.added() = _Added;
 
   /// State when adding new income category has failed
-  const factory AddIncomeCategoryState.failure(AppException exc) = _Failure;
+  const factory AddIncomeCategoryState.failure(
+    AppException exc, {
+    String? name,
+  }) = _Failure;
 }

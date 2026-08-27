@@ -57,7 +57,7 @@ class AddWalletBloc extends Bloc<AddWalletEvent, AddWalletState>
           'Add new wallet failed. Emit failure state',
           traceId: traceId,
         );
-        emit(AddWalletState.failure(exc));
+        emit(AddWalletState.failure(exc, name: name));
       },
     );
   }

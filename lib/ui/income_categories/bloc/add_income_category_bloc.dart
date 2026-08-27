@@ -56,7 +56,7 @@ class AddIncomeCategoryBloc
           'Add new income category failed. Emit failure state',
           traceId: traceId,
         );
-        emit(AddIncomeCategoryState.failure(exc));
+        emit(AddIncomeCategoryState.failure(exc, name: name));
       },
     );
   }

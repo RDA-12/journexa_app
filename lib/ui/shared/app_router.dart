@@ -1,4 +1,6 @@
 import 'package:go_router/go_router.dart';
+import 'package:journexa_app/ui/expense_categories/add_expense_category_page.dart';
+import 'package:journexa_app/ui/expense_categories/expense_categories_list_page.dart';
 import 'package:journexa_app/ui/home/home_page.dart';
 import 'package:journexa_app/ui/income_categories/add_income_categories_list_page.dart';
 import 'package:journexa_app/ui/income_categories/add_income_category_page.dart';
@@ -45,6 +47,14 @@ abstract class AppRouter {
       GoRoute(
         path: '/income-categories',
         builder: (context, state) => const IncomeCategoriesListPage(),
+      ),
+      GoRoute(
+        path: '/add-expense-category',
+        builder: (context, state) => const AddExpenseCategoryPage(),
+      ),
+      GoRoute(
+        path: '/expense-categories',
+        builder: (context, state) => const ExpenseCategoriesListPage(),
       ),
     ],
   );

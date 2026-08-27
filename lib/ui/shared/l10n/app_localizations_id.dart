@@ -300,4 +300,77 @@ class AppLocalizationsId extends AppLocalizations {
 
   @override
   String get addExpenseCategoryTitle => 'Tambah Kategori Pengeluaran';
+
+  @override
+  String get expenseCategoriesListFailureTitle =>
+      'Gagal mendapatkan data kategori pengeluaran';
+
+  @override
+  String get expenseCategoriesListLoadingSemantics =>
+      'Memuat data kategori pengeluaran';
+
+  @override
+  String get expenseCategoriesListTitle => 'Daftar Kategori Pengeluaran';
+
+  @override
+  String get expenseCategoriesListSearchLabel => 'Cari Kategori Pengeluaran';
+
+  @override
+  String get expenseCategoriesListEmptyDescription =>
+      'Tidak ada data kategori pengeluaran yang ditemukan';
+
+  @override
+  String get expenseCategoriesListAddButtonSemantics =>
+      'Tambah Kategori Pengeluaran';
+
+  @override
+  String deleteExpenseCategoryDialogTitle(String name) {
+    return 'Hapus $name?';
+  }
+
+  @override
+  String deleteExpenseCategoryDialogContent(String name) {
+    return 'Data yang terikat dengan kategori pengeluaran $name akan tetap ada. Tapi, kategori pengeluaran $name tidak akan bisa digunakan lagi untuk data pengeluaran selanjutnya';
+  }
+
+  @override
+  String get deleteExpenseCategoryDialogConfirmLabel => 'Hapus';
+
+  @override
+  String deleteExpenseCategorySemantics(String name) {
+    return 'Hapus $name';
+  }
+
+  @override
+  String deleteExpenseCategoryDeletingSemanticsLabel(String name) {
+    return 'Menghapus $name';
+  }
+
+  @override
+  String deleteExpenseCategoryToastMessage(String name) {
+    return '$name telah dihapus';
+  }
+
+  @override
+  String updateExpenseCategorySemantics(String name) {
+    return 'Perbarui $name';
+  }
+
+  @override
+  String updateExpenseCategoryUpdatingSemanticsLabel(String name) {
+    return 'Memperbarui $name';
+  }
+
+  @override
+  String updateExpenseCategoryToastMessage(String name) {
+    return '$name telah diperbarui';
+  }
+
+  @override
+  String get deleteExpenseCategoryToastFailureTitle =>
+      'Gagal menghapus kategori pengeluaran';
+
+  @override
+  String get updateExpenseCategoryToastFailureTitle =>
+      'Gagal memperbarui kategori pengeluaran';
 }

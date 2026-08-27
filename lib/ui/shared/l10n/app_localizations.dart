@@ -571,6 +571,108 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Add Expense Category'**
   String get addExpenseCategoryTitle;
+
+  /// Title for error state in expense categories list page
+  ///
+  /// In en, this message translates to:
+  /// **'Failed to get expense categories data'**
+  String get expenseCategoriesListFailureTitle;
+
+  /// Semantics label for loading state in expense categories list page
+  ///
+  /// In en, this message translates to:
+  /// **'Loading expense categories data'**
+  String get expenseCategoriesListLoadingSemantics;
+
+  /// Title for expense categories list page
+  ///
+  /// In en, this message translates to:
+  /// **'Expense Categories List'**
+  String get expenseCategoriesListTitle;
+
+  /// Label for search input on expense categories list
+  ///
+  /// In en, this message translates to:
+  /// **'Search Expense Category'**
+  String get expenseCategoriesListSearchLabel;
+
+  /// Description to be showed when expense categories data is empty
+  ///
+  /// In en, this message translates to:
+  /// **'No expense categories data was found'**
+  String get expenseCategoriesListEmptyDescription;
+
+  /// Semantics label for add button on expense categories list
+  ///
+  /// In en, this message translates to:
+  /// **'Add Expense Category'**
+  String get expenseCategoriesListAddButtonSemantics;
+
+  /// Title for delete expense category dialog
+  ///
+  /// In en, this message translates to:
+  /// **'Delete {name}?'**
+  String deleteExpenseCategoryDialogTitle(String name);
+
+  /// Content for delete expense category dialog
+  ///
+  /// In en, this message translates to:
+  /// **'Data related to {name} expense category will still exist. But, {name} expense category will no longer be able to be used for future expense data'**
+  String deleteExpenseCategoryDialogContent(String name);
+
+  /// Confirm label for delete expense category dialog
+  ///
+  /// In en, this message translates to:
+  /// **'Delete'**
+  String get deleteExpenseCategoryDialogConfirmLabel;
+
+  /// Semantics label for delete expense category button
+  ///
+  /// In en, this message translates to:
+  /// **'Delete {name}'**
+  String deleteExpenseCategorySemantics(String name);
+
+  /// Semantics label for button when expense category deletion is in progress
+  ///
+  /// In en, this message translates to:
+  /// **'Deleting {name}'**
+  String deleteExpenseCategoryDeletingSemanticsLabel(String name);
+
+  /// Message to be showed on toast when expense category has been deleted
+  ///
+  /// In en, this message translates to:
+  /// **'{name} has been deleted'**
+  String deleteExpenseCategoryToastMessage(String name);
+
+  /// Semantics label for update expense category button
+  ///
+  /// In en, this message translates to:
+  /// **'Update {name}'**
+  String updateExpenseCategorySemantics(String name);
+
+  /// Semantics label for button when expense category update is in progress
+  ///
+  /// In en, this message translates to:
+  /// **'Updating {name}'**
+  String updateExpenseCategoryUpdatingSemanticsLabel(String name);
+
+  /// Message to be showed on toast when expense category has been updated
+  ///
+  /// In en, this message translates to:
+  /// **'{name} has been updated'**
+  String updateExpenseCategoryToastMessage(String name);
+
+  /// Title for error state in delete expense category toast
+  ///
+  /// In en, this message translates to:
+  /// **'Failed to delete expense category'**
+  String get deleteExpenseCategoryToastFailureTitle;
+
+  /// Title for error state in update expense category toast
+  ///
+  /// In en, this message translates to:
+  /// **'Failed to update expense category'**
+  String get updateExpenseCategoryToastFailureTitle;
 }
 
 class _AppLocalizationsDelegate

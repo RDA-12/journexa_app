@@ -26,6 +26,12 @@ class HomePage extends StatelessWidget {
             },
             label: 'Income Category',
           ),
+          AppButton(
+            onPressed: () {
+              unawaited(context.push('/expense-categories'));
+            },
+            label: 'Expense Category',
+          ),
         ],
       ),
     );

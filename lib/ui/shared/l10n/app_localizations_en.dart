@@ -294,4 +294,76 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get addExpenseCategoryTitle => 'Add Expense Category';
+
+  @override
+  String get expenseCategoriesListFailureTitle =>
+      'Failed to get expense categories data';
+
+  @override
+  String get expenseCategoriesListLoadingSemantics =>
+      'Loading expense categories data';
+
+  @override
+  String get expenseCategoriesListTitle => 'Expense Categories List';
+
+  @override
+  String get expenseCategoriesListSearchLabel => 'Search Expense Category';
+
+  @override
+  String get expenseCategoriesListEmptyDescription =>
+      'No expense categories data was found';
+
+  @override
+  String get expenseCategoriesListAddButtonSemantics => 'Add Expense Category';
+
+  @override
+  String deleteExpenseCategoryDialogTitle(String name) {
+    return 'Delete $name?';
+  }
+
+  @override
+  String deleteExpenseCategoryDialogContent(String name) {
+    return 'Data related to $name expense category will still exist. But, $name expense category will no longer be able to be used for future expense data';
+  }
+
+  @override
+  String get deleteExpenseCategoryDialogConfirmLabel => 'Delete';
+
+  @override
+  String deleteExpenseCategorySemantics(String name) {
+    return 'Delete $name';
+  }
+
+  @override
+  String deleteExpenseCategoryDeletingSemanticsLabel(String name) {
+    return 'Deleting $name';
+  }
+
+  @override
+  String deleteExpenseCategoryToastMessage(String name) {
+    return '$name has been deleted';
+  }
+
+  @override
+  String updateExpenseCategorySemantics(String name) {
+    return 'Update $name';
+  }
+
+  @override
+  String updateExpenseCategoryUpdatingSemanticsLabel(String name) {
+    return 'Updating $name';
+  }
+
+  @override
+  String updateExpenseCategoryToastMessage(String name) {
+    return '$name has been updated';
+  }
+
+  @override
+  String get deleteExpenseCategoryToastFailureTitle =>
+      'Failed to delete expense category';
+
+  @override
+  String get updateExpenseCategoryToastFailureTitle =>
+      'Failed to update expense category';
 }

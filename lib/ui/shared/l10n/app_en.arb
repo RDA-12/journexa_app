@@ -445,5 +445,121 @@
   "addExpenseCategoryTitle": "Add Expense Category",
   "@addExpenseCategoryTitle": {
     "description": "Title for add expense category page"
+  },
+  "expenseCategoriesListFailureTitle": "Failed to get expense categories data",
+  "@expenseCategoriesListFailureTitle": {
+    "description": "Title for error state in expense categories list page"
+  },
+  "expenseCategoriesListLoadingSemantics": "Loading expense categories data",
+  "@expenseCategoriesListLoadingSemantics": {
+    "description": "Semantics label for loading state in expense categories list page"
+  },
+  "expenseCategoriesListTitle": "Expense Categories List",
+  "@expenseCategoriesListTitle": {
+    "description": "Title for expense categories list page"
+  },
+  "expenseCategoriesListSearchLabel": "Search Expense Category",
+  "@expenseCategoriesListSearchLabel": {
+    "description": "Label for search input on expense categories list"
+  },
+  "expenseCategoriesListEmptyDescription": "No expense categories data was found",
+  "@expenseCategoriesListEmptyDescription": {
+    "description": "Description to be showed when expense categories data is empty"
+  },
+  "expenseCategoriesListAddButtonSemantics": "Add Expense Category",
+  "@expenseCategoriesListAddButtonSemantics": {
+    "description": "Semantics label for add button on expense categories list"
+  },
+  "deleteExpenseCategoryDialogTitle": "Delete {name}?",
+  "@deleteExpenseCategoryDialogTitle": {
+    "description": "Title for delete expense category dialog",
+    "placeholders": {
+      "name": {
+        "type": "String",
+        "example": "dompet hitam"
+      }
+    }
+  },
+  "deleteExpenseCategoryDialogContent": "Data related to {name} expense category will still exist. But, {name} expense category will no longer be able to be used for future expense data",
+  "@deleteExpenseCategoryDialogContent": {
+    "description": "Content for delete expense category dialog",
+    "placeholders": {
+      "name": {
+        "type": "String",
+        "example": "dompet hitam"
+      }
+    }
+  },
+  "deleteExpenseCategoryDialogConfirmLabel": "Delete",
+  "@deleteExpenseCategoryDialogConfirmLabel": {
+    "description": "Confirm label for delete expense category dialog"
+  },
+  "deleteExpenseCategorySemantics": "Delete {name}",
+  "@deleteExpenseCategorySemantics": {
+    "description": "Semantics label for delete expense category button",
+    "placeholders": {
+      "name": {
+        "type": "String",
+        "example": "dompet hitam"
+      }
+    }
+  },
+  "deleteExpenseCategoryDeletingSemanticsLabel": "Deleting {name}",
+  "@deleteExpenseCategoryDeletingSemanticsLabel": {
+    "description": "Semantics label for button when expense category deletion is in progress",
+    "placeholders": {
+      "name": {
+        "type": "String",
+        "example": "dompet hitam"
+      }
+    }
+  },
+  "deleteExpenseCategoryToastMessage": "{name} has been deleted",
+  "@deleteExpenseCategoryToastMessage": {
+    "description": "Message to be showed on toast when expense category has been deleted",
+    "placeholders": {
+      "name": {
+        "type": "String",
+        "example": "dompet hitam"
+      }
+    }
+  },
+  "updateExpenseCategorySemantics": "Update {name}",
+  "@updateExpenseCategorySemantics": {
+    "description": "Semantics label for update expense category button",
+    "placeholders": {
+      "name": {
+        "type": "String",
+        "example": "dompet hitam"
+      }
+    }
+  },
+  "updateExpenseCategoryUpdatingSemanticsLabel": "Updating {name}",
+  "@updateExpenseCategoryUpdatingSemanticsLabel": {
+    "description": "Semantics label for button when expense category update is in progress",
+    "placeholders": {
+      "name": {
+        "type": "String",
+        "example": "dompet hitam"
+      }
+    }
+  },
+  "updateExpenseCategoryToastMessage": "{name} has been updated",
+  "@updateExpenseCategoryToastMessage": {
+    "description": "Message to be showed on toast when expense category has been updated",
+    "placeholders": {
+      "name": {
+        "type": "String",
+        "example": "dompet hitam"
+      }
+    }
+  },
+  "deleteExpenseCategoryToastFailureTitle": "Failed to delete expense category",
+  "@deleteExpenseCategoryToastFailureTitle": {
+    "description": "Title for error state in delete expense category toast"
+  },
+  "updateExpenseCategoryToastFailureTitle": "Failed to update expense category",
+  "@updateExpenseCategoryToastFailureTitle": {
+    "description": "Title for error state in update expense category toast"
   }
 }

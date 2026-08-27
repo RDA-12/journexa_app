@@ -78,5 +78,22 @@
   "addExpenseCategorySuccessMessage": "Kategori pengeluaran berhasil ditambahkan",
   "addExpenseCategorySuccessTitle": "Kategori pengeluaran berhasil ditambahkan",
   "addExpenseCategoryFailureTitle": "Gagal menambahkan kategori pengeluaran",
-  "addExpenseCategoryTitle": "Tambah Kategori Pengeluaran"
+  "addExpenseCategoryTitle": "Tambah Kategori Pengeluaran",
+  "expenseCategoriesListFailureTitle": "Gagal mendapatkan data kategori pengeluaran",
+  "expenseCategoriesListLoadingSemantics": "Memuat data kategori pengeluaran",
+  "expenseCategoriesListTitle": "Daftar Kategori Pengeluaran",
+  "expenseCategoriesListSearchLabel": "Cari Kategori Pengeluaran",
+  "expenseCategoriesListEmptyDescription": "Tidak ada data kategori pengeluaran yang ditemukan",
+  "expenseCategoriesListAddButtonSemantics": "Tambah Kategori Pengeluaran",
+  "deleteExpenseCategoryDialogTitle": "Hapus {name}?",
+  "deleteExpenseCategoryDialogContent": "Data yang terikat dengan kategori pengeluaran {name} akan tetap ada. Tapi, kategori pengeluaran {name} tidak akan bisa digunakan lagi untuk data pengeluaran selanjutnya",
+  "deleteExpenseCategoryDialogConfirmLabel": "Hapus",
+  "deleteExpenseCategorySemantics": "Hapus {name}",
+  "deleteExpenseCategoryDeletingSemanticsLabel": "Menghapus {name}",
+  "deleteExpenseCategoryToastMessage": "{name} telah dihapus",
+  "updateExpenseCategorySemantics": "Perbarui {name}",
+  "updateExpenseCategoryUpdatingSemanticsLabel": "Memperbarui {name}",
+  "updateExpenseCategoryToastMessage": "{name} telah diperbarui",
+  "deleteExpenseCategoryToastFailureTitle": "Gagal menghapus kategori pengeluaran",
+  "updateExpenseCategoryToastFailureTitle": "Gagal memperbarui kategori pengeluaran"
 }

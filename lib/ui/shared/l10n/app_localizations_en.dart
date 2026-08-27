@@ -278,4 +278,20 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get updateIncomeCategoryToastFailureTitle =>
       'Failed to update income category';
+
+  @override
+  String get addExpenseCategoryNameLabel => 'Name';
+
+  @override
+  String get addExpenseCategorySuccessMessage =>
+      'Expense category successfully added';
+
+  @override
+  String get addExpenseCategorySuccessTitle => 'Expense category added';
+
+  @override
+  String get addExpenseCategoryFailureTitle => 'Failed to add expense category';
+
+  @override
+  String get addExpenseCategoryTitle => 'Add Expense Category';
 }

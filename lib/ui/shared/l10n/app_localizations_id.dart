@@ -282,4 +282,22 @@ class AppLocalizationsId extends AppLocalizations {
   @override
   String get updateIncomeCategoryToastFailureTitle =>
       'Gagal memperbarui kategori pendapatan';
+
+  @override
+  String get addExpenseCategoryNameLabel => 'Nama';
+
+  @override
+  String get addExpenseCategorySuccessMessage =>
+      'Kategori pengeluaran berhasil ditambahkan';
+
+  @override
+  String get addExpenseCategorySuccessTitle =>
+      'Kategori pengeluaran berhasil ditambahkan';
+
+  @override
+  String get addExpenseCategoryFailureTitle =>
+      'Gagal menambahkan kategori pengeluaran';
+
+  @override
+  String get addExpenseCategoryTitle => 'Tambah Kategori Pengeluaran';
 }

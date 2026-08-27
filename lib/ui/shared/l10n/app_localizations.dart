@@ -541,6 +541,36 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Failed to update income category'**
   String get updateIncomeCategoryToastFailureTitle;
+
+  /// Label for name field on add expense category
+  ///
+  /// In en, this message translates to:
+  /// **'Name'**
+  String get addExpenseCategoryNameLabel;
+
+  /// Message to be showed when expense category added successfully
+  ///
+  /// In en, this message translates to:
+  /// **'Expense category successfully added'**
+  String get addExpenseCategorySuccessMessage;
+
+  /// Title for success state in add expense category page
+  ///
+  /// In en, this message translates to:
+  /// **'Expense category added'**
+  String get addExpenseCategorySuccessTitle;
+
+  /// Title for error state in add expense category page
+  ///
+  /// In en, this message translates to:
+  /// **'Failed to add expense category'**
+  String get addExpenseCategoryFailureTitle;
+
+  /// Title for add expense category page
+  ///
+  /// In en, this message translates to:
+  /// **'Add Expense Category'**
+  String get addExpenseCategoryTitle;
 }
 
 class _AppLocalizationsDelegate

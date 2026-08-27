@@ -425,5 +425,25 @@
   "updateIncomeCategoryToastFailureTitle": "Failed to update income category",
   "@updateIncomeCategoryToastFailureTitle": {
     "description": "Title for error state in update income category toast"
+  },
+  "addExpenseCategoryNameLabel": "Name",
+  "@addExpenseCategoryNameLabel": {
+    "description": "Label for name field on add expense category"
+  },
+  "addExpenseCategorySuccessMessage": "Expense category successfully added",
+  "@addExpenseCategorySuccessMessage": {
+    "description": "Message to be showed when expense category added successfully"
+  },
+  "addExpenseCategorySuccessTitle": "Expense category added",
+  "@addExpenseCategorySuccessTitle": {
+    "description": "Title for success state in add expense category page"
+  },
+  "addExpenseCategoryFailureTitle": "Failed to add expense category",
+  "@addExpenseCategoryFailureTitle": {
+    "description": "Title for error state in add expense category page"
+  },
+  "addExpenseCategoryTitle": "Add Expense Category",
+  "@addExpenseCategoryTitle": {
+    "description": "Title for add expense category page"
   }
 }

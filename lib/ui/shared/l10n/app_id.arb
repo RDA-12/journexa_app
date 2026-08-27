@@ -73,5 +73,10 @@
   "updateIncomeCategoryUpdatingSemanticsLabel": "Memperbarui {name}",
   "updateIncomeCategoryToastMessage": "{name} telah diperbarui",
   "deleteIncomeCategoryToastFailureTitle": "Gagal menghapus kategori pendapatan",
-  "updateIncomeCategoryToastFailureTitle": "Gagal memperbarui kategori pendapatan"
+  "updateIncomeCategoryToastFailureTitle": "Gagal memperbarui kategori pendapatan",
+  "addExpenseCategoryNameLabel": "Nama",
+  "addExpenseCategorySuccessMessage": "Kategori pengeluaran berhasil ditambahkan",
+  "addExpenseCategorySuccessTitle": "Kategori pengeluaran berhasil ditambahkan",
+  "addExpenseCategoryFailureTitle": "Gagal menambahkan kategori pengeluaran",
+  "addExpenseCategoryTitle": "Tambah Kategori Pengeluaran"
 }

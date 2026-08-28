@@ -209,5 +209,48 @@ void main() {
 
       expect(actual, expected);
     });
+
+    test('creates correct JournalEntry from transfer transaction', () {
+      final amount = Decimal.fromInt(10000);
+      final fee = Decimal.fromInt(3500);
+      final date = DateTime.now();
+      final transaction = TransferTransaction(
+        id: '0',
+        source: Wallet.test(),
+        destination: Wallet.test().update(name: 'wallet 2').copyWith(id: 'w-2'),
+        amount: amount,
+        fee: fee,
+        date: date,
+      );
+
+      final expected = JournalEntry(
+        id: 'id',
+        transactionDate: date,
+        lines: [
+          JournalEntryLine(
+            account: transaction.source.account,
+            debit: Decimal.zero,
+            credit: amount + fee,
+          ),
+          JournalEntryLine(
+            account: transaction.destination.account,
+            debit: amount,
+            credit: Decimal.zero,
+          ),
+          JournalEntryLine(
+            account: SystemDefinedAccount.feeTransfer,
+            debit: fee,
+            credit: Decimal.zero,
+          ),
+        ],
+      );
+
+      final actual = JournalEntry.fromTransaction(
+        id: expected.id,
+        transaction: transaction,
+      );
+
+      expect(actual, expected);
+    });
   });
 }

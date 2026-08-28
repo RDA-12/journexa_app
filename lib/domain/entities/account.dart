@@ -88,8 +88,22 @@ abstract class SystemDefinedAccount {
     isSystemAccount: true,
   );
 
+  /// Default expense account for transfer transaction fee
+  static Account get feeTransfer => Account(
+    code: '50.0001',
+    name: 'transfer fee',
+    type: AccountType.expense,
+    isSystemAccount: true,
+    parent: rootExpense,
+  );
+
   /// All system defined accounts
-  static List<Account> get accounts => [rootAsset, rootRevenue, rootExpense];
+  static List<Account> get accounts => [
+    rootAsset,
+    rootRevenue,
+    rootExpense,
+    feeTransfer,
+  ];
 }
 
 /// Represent single account in a double-entry accounting system

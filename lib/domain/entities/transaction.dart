@@ -21,7 +21,7 @@ sealed class Transaction with _$Transaction {
     /// [IncomeCategory] of this transaction
     required IncomeCategory category,
 
-    /// Amount of income the [wallet] gets
+    /// Amount of money the wallet gets
     required Decimal amount,
 
     /// Date when the transaction happened
@@ -42,7 +42,7 @@ sealed class Transaction with _$Transaction {
     /// [ExpenseCategory] of this transaction
     required ExpenseCategory category,
 
-    /// Amount of income the [wallet] gets
+    /// Amount of money the wallet needs to spend
     required Decimal amount,
 
     /// Date when the transaction happened
@@ -51,6 +51,34 @@ sealed class Transaction with _$Transaction {
     /// Notes or description
     String? notes,
   }) = ExpenseTransaction;
+
+  /// Creates new [TransferTransaction]
+  factory Transaction.transfer({
+    /// Unique ID of this transaction
+    required String id,
+
+    /// Source [Wallet] of this transaction
+    required Wallet source,
+
+    /// Destination [Wallet] of this transaction
+    required Wallet destination,
+
+    /// Amount of money that will be transfered
+    /// from source to destination wallet
+    required Decimal amount,
+
+    /// Transfer fee
+    ///
+    /// Fee that will be deducted from source wallet.
+    required Decimal fee,
+
+    /// Date when the transaction happened
+    required DateTime date,
+
+    /// Notes or description
+    String? notes,
+  }) = TransferTransaction;
+
   Transaction._() {
     if (amount <= Decimal.zero) {
       throw AppException(
@@ -58,6 +86,23 @@ sealed class Transaction with _$Transaction {
         code: AppExceptionCode.internalException,
       );
     }
+    whenOrNull(
+      transfer: (id, source, destination, amount, fee, date, notes) {
+        if (source == destination) {
+          throw AppException(
+            'source and destination wallet must be different. '
+            'Got: ${source.id} and ${destination.id}',
+            code: AppExceptionCode.internalException,
+          );
+        }
+        if (fee < Decimal.zero) {
+          throw AppException(
+            'fee must be 0 or positive. Got: $fee',
+            code: AppExceptionCode.internalException,
+          );
+        }
+      },
+    );
   }
 
   /// Creates new [IncomeTransaction] for test purposes
@@ -87,6 +132,23 @@ sealed class Transaction with _$Transaction {
       amount: amount,
       date: date,
       notes: 'Test expense',
+    );
+  }
+
+  /// Creates new [TransferTransaction] for test purposes
+  factory Transaction.testTransfer({
+    required Decimal amount,
+    required DateTime date,
+    required Decimal fee,
+  }) {
+    return Transaction.transfer(
+      id: 'id',
+      source: Wallet.test(),
+      destination: Wallet.test().update(name: 'wallet 2').copyWith(id: 'id-2'),
+      amount: amount,
+      fee: fee,
+      date: date,
+      notes: 'Test transfer',
     );
   }
 }

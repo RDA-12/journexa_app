@@ -48,7 +48,80 @@ void main() {
               ),
             ),
           );
+          expect(
+            () => Transaction.transfer(
+              id: '0',
+              source: wallet,
+              destination: wallet.copyWith(id: 'id-2'),
+              amount: amount,
+              fee: Decimal.fromInt(100),
+              date: DateTime.now(),
+            ),
+            throwsA(
+              isA<AppException>().having(
+                (e) => e.message,
+                'message',
+                'amount must be positive. Got: $amount',
+              ),
+            ),
+          );
         }
+      },
+    );
+
+    test(
+      'throws AppException when source and destination wallet are same '
+      'in transfer transaction',
+      () {
+        final source = Wallet.test();
+        final destination = source;
+
+        expect(
+          () => Transaction.transfer(
+            id: '0',
+            source: source,
+            destination: destination,
+            amount: Decimal.fromInt(1000),
+            fee: Decimal.fromInt(100),
+            date: DateTime.now(),
+          ),
+          throwsA(
+            isA<AppException>().having(
+              (e) => e.message,
+              'message',
+              'source and destination wallet must be different. '
+                  'Got: ${source.id} and ${destination.id}',
+            ),
+          ),
+        );
+      },
+    );
+
+    test(
+      'throws AppException when fee < 0 '
+      'in transfer transaction',
+      () {
+        final source = Wallet.test();
+        final destination = source.copyWith(id: 'id-2');
+        final fee = Decimal.fromInt(-100);
+
+        expect(
+          () => Transaction.transfer(
+            id: '0',
+            source: source,
+            destination: destination,
+            amount: Decimal.fromInt(1000),
+            fee: fee,
+            date: DateTime.now(),
+          ),
+          throwsA(
+            isA<AppException>().having(
+              (e) => e.message,
+              'message',
+              'fee must be 0 or positive. Got: $fee',
+            ),
+          ),
+        );
       },
     );
   });

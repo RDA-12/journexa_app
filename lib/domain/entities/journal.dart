@@ -74,6 +74,26 @@ sealed class JournalEntry with _$JournalEntry {
         ],
       );
     }
+    if (transaction is TransferTransaction) {
+      return JournalEntry(
+        id: id,
+        transactionDate: transaction.date,
+        lines: [
+          JournalEntryLine.fromAccount(
+            account: transaction.source.account,
+            amount: -(transaction.amount + transaction.fee),
+          ),
+          JournalEntryLine.fromAccount(
+            account: transaction.destination.account,
+            amount: transaction.amount,
+          ),
+          JournalEntryLine.fromAccount(
+            account: SystemDefinedAccount.feeTransfer,
+            amount: transaction.fee,
+          ),
+        ],
+      );
+    }
 
     throw AppException(
       'unknown transaction. Got: $transaction',

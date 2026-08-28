@@ -1,8 +1,11 @@
 import 'package:decimal/decimal.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:journexa_app/domain/entities/account.dart';
+import 'package:journexa_app/domain/entities/expense_category.dart';
+import 'package:journexa_app/domain/entities/income_category.dart';
 import 'package:journexa_app/domain/entities/journal.dart';
 import 'package:journexa_app/domain/entities/transaction.dart';
+import 'package:journexa_app/domain/entities/wallet.dart';
 import 'package:journexa_app/shared/app_exception.dart';
 
 void main() {
@@ -135,10 +138,16 @@ void main() {
   );
 
   group('JournalEntry.fromTransaction', () {
-    test('creates correct JournalEntry', () {
+    test('creates correct JournalEntry from income transaction', () {
       final amount = Decimal.fromInt(10000);
       final date = DateTime.now();
-      final transaction = Transaction.test(amount: amount, date: date);
+      final transaction = IncomeTransaction(
+        id: '0',
+        wallet: Wallet.test(),
+        category: IncomeCategory.test(),
+        amount: amount,
+        date: date,
+      );
 
       final expected = JournalEntry(
         id: 'id',
@@ -153,6 +162,42 @@ void main() {
             account: transaction.category.account,
             debit: Decimal.zero,
             credit: amount,
+          ),
+        ],
+      );
+
+      final actual = JournalEntry.fromTransaction(
+        id: expected.id,
+        transaction: transaction,
+      );
+
+      expect(actual, expected);
+    });
+
+    test('creates correct JournalEntry from expense transaction', () {
+      final amount = Decimal.fromInt(10000);
+      final date = DateTime.now();
+      final transaction = ExpenseTransaction(
+        id: '0',
+        wallet: Wallet.test(),
+        category: ExpenseCategory.test(),
+        amount: amount,
+        date: date,
+      );
+
+      final expected = JournalEntry(
+        id: 'id',
+        transactionDate: date,
+        lines: [
+          JournalEntryLine(
+            account: transaction.wallet.account,
+            debit: Decimal.zero,
+            credit: amount,
+          ),
+          JournalEntryLine(
+            account: transaction.category.account,
+            debit: amount,
+            credit: Decimal.zero,
           ),
         ],
       );

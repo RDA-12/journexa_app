@@ -1,5 +1,6 @@
 import 'package:decimal/decimal.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
+import 'package:journexa_app/domain/entities/expense_category.dart';
 import 'package:journexa_app/domain/entities/income_category.dart';
 import 'package:journexa_app/domain/entities/wallet.dart';
 import 'package:journexa_app/shared/app_exception.dart';
@@ -29,6 +30,27 @@ sealed class Transaction with _$Transaction {
     /// Notes or description
     String? notes,
   }) = IncomeTransaction;
+
+  /// Creates new [ExpenseTransaction]
+  factory Transaction.expense({
+    /// Unique ID of this transaction
+    required String id,
+
+    /// [Wallet] to put the [amount]
+    required Wallet wallet,
+
+    /// [ExpenseCategory] of this transaction
+    required ExpenseCategory category,
+
+    /// Amount of income the [wallet] gets
+    required Decimal amount,
+
+    /// Date when the transaction happened
+    required DateTime date,
+
+    /// Notes or description
+    String? notes,
+  }) = ExpenseTransaction;
   Transaction._() {
     if (amount <= Decimal.zero) {
       throw AppException(
@@ -38,8 +60,8 @@ sealed class Transaction with _$Transaction {
     }
   }
 
-  /// Creates new [Transaction] for test purposes
-  factory Transaction.test({
+  /// Creates new [IncomeTransaction] for test purposes
+  factory Transaction.testIncome({
     required Decimal amount,
     required DateTime date,
   }) {
@@ -50,6 +72,21 @@ sealed class Transaction with _$Transaction {
       amount: amount,
       date: date,
       notes: 'Test income',
+    );
+  }
+
+  /// Creates new [ExpenseTransaction] for test purposes
+  factory Transaction.testExpense({
+    required Decimal amount,
+    required DateTime date,
+  }) {
+    return Transaction.expense(
+      id: 'id',
+      wallet: Wallet.test(),
+      category: ExpenseCategory.test(),
+      amount: amount,
+      date: date,
+      notes: 'Test expense',
     );
   }
 }

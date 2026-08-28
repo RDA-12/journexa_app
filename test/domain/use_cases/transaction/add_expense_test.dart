@@ -1,12 +1,12 @@
 import 'package:decimal/decimal.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:journexa_app/domain/entities/income_category.dart';
+import 'package:journexa_app/domain/entities/expense_category.dart';
 import 'package:journexa_app/domain/entities/journal.dart';
 import 'package:journexa_app/domain/entities/transaction.dart';
 import 'package:journexa_app/domain/entities/wallet.dart';
 import 'package:journexa_app/domain/repositories/i_auth_repository.dart';
 import 'package:journexa_app/domain/repositories/i_transaction_repository.dart';
-import 'package:journexa_app/domain/use_cases/transaction/add_income.dart';
+import 'package:journexa_app/domain/use_cases/transaction/add_expense.dart';
 import 'package:journexa_app/shared/app_exception.dart';
 import 'package:journexa_app/shared/app_result.dart';
 import 'package:journexa_app/shared/uid_generator.dart';
@@ -26,15 +26,15 @@ void main() {
   final date = DateTime.now();
   final amount = Decimal.fromInt(100000);
   final wallet = Wallet.test();
-  final category = IncomeCategory.test();
-  final transaction = IncomeTransaction(
+  final category = ExpenseCategory.test();
+  final transaction = ExpenseTransaction(
     id: 'id',
     wallet: wallet,
     category: category,
     amount: amount,
     date: date,
   );
-  final params = AddIncomeParams(
+  final params = AddExpenseParams(
     wallet: wallet,
     category: category,
     amount: amount,
@@ -44,11 +44,11 @@ void main() {
   late IAuthRepository mockAuthRepository;
   late ITransactionRepository mockTransactionRepository;
   late UidGenerator mockUidGenerator;
-  late AddIncomeUseCase useCase;
+  late AddExpenseUseCase useCase;
 
   setUpAll(() {
     registerFallbackValue(
-      Transaction.testIncome(amount: amount, date: DateTime.now()),
+      Transaction.testExpense(amount: amount, date: DateTime.now()),
     );
     registerFallbackValue(
       JournalEntry.test(lines: [], transactionDate: DateTime.now()),
@@ -74,7 +74,7 @@ void main() {
     mockUidGenerator = MockUidGenerator();
     when(mockUidGenerator.generateUid).thenReturn(id);
 
-    useCase = AddIncomeUseCase(
+    useCase = AddExpenseUseCase(
       authRepository: mockAuthRepository,
       transactionRepository: mockTransactionRepository,
     )..customGenerator = mockUidGenerator;
@@ -112,13 +112,13 @@ void main() {
             lines: [
               JournalEntryLine(
                 account: transaction.wallet.account,
-                debit: amount,
-                credit: Decimal.zero,
+                debit: Decimal.zero,
+                credit: amount,
               ),
               JournalEntryLine(
                 account: transaction.category.account,
-                debit: Decimal.zero,
-                credit: amount,
+                debit: amount,
+                credit: Decimal.zero,
               ),
             ],
             transactionDate: date,

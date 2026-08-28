@@ -42,19 +42,42 @@ sealed class JournalEntry with _$JournalEntry {
   }) {
     final amount = transaction.amount;
 
-    return JournalEntry(
-      id: id,
-      transactionDate: transaction.date,
-      lines: [
-        JournalEntryLine.fromAccount(
-          account: transaction.wallet.account,
-          amount: amount,
-        ),
-        JournalEntryLine.fromAccount(
-          account: transaction.category.account,
-          amount: amount,
-        ),
-      ],
+    if (transaction is IncomeTransaction) {
+      return JournalEntry(
+        id: id,
+        transactionDate: transaction.date,
+        lines: [
+          JournalEntryLine.fromAccount(
+            account: transaction.wallet.account,
+            amount: amount,
+          ),
+          JournalEntryLine.fromAccount(
+            account: transaction.category.account,
+            amount: amount,
+          ),
+        ],
+      );
+    }
+    if (transaction is ExpenseTransaction) {
+      return JournalEntry(
+        id: id,
+        transactionDate: transaction.date,
+        lines: [
+          JournalEntryLine.fromAccount(
+            account: transaction.wallet.account,
+            amount: -amount,
+          ),
+          JournalEntryLine.fromAccount(
+            account: transaction.category.account,
+            amount: amount,
+          ),
+        ],
+      );
+    }
+
+    throw AppException(
+      'unknown transaction. Got: $transaction',
+      code: AppExceptionCode.internalException,
     );
   }
 

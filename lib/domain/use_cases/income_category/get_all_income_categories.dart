@@ -60,6 +60,7 @@ class GetAllIncomeCategoriesUseCase
     final accountsResult = await _incomeCategoryRepository.getAll(
       userId: userId,
       query: params.query,
+      isDeleted: false,
       traceId: traceId,
     );
     final accountsExc = accountsResult.errorOrNull;

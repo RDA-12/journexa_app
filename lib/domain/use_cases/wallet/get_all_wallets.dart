@@ -63,6 +63,7 @@ class GetAllWalletsUseCase
     final walletsResult = await _walletRepository.getAll(
       userId: userId,
       query: params.query,
+      isDeleted: false,
       traceId: traceId,
     );
     final accountsExc = walletsResult.errorOrNull;

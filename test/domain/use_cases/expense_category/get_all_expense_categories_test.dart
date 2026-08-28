@@ -59,6 +59,7 @@ void main() {
         userId: userId,
         traceId: traceId,
         query: any(named: 'query'),
+        isDeleted: any(named: 'isDeleted'),
       ),
     ).thenAnswer((_) async => AppResult.success(categories));
 
@@ -96,6 +97,7 @@ void main() {
         () => mockExpenseCategoryRepository.getAll(
           userId: userId,
           traceId: traceId,
+          isDeleted: false,
         ),
       ).called(1);
     },
@@ -115,6 +117,7 @@ void main() {
           userId: userId,
           traceId: traceId,
           query: 'query',
+          isDeleted: false,
         ),
       ).called(1);
     },
@@ -163,6 +166,7 @@ void main() {
         () => mockExpenseCategoryRepository.getAll(
           userId: userId,
           traceId: traceId,
+          isDeleted: false,
         ),
       ).thenAnswer((_) async => AppResult.failure(AppException.test()));
 

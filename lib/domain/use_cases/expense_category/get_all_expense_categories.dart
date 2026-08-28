@@ -24,8 +24,10 @@ sealed class GetAllExpenseCategoriesParams
 class GetAllExpenseCategoriesUseCase
     with Loggable
     implements
-        FutureBaseUseCase<GetAllExpenseCategoriesParams,
-            List<ExpenseCategory>> {
+        FutureBaseUseCase<
+          GetAllExpenseCategoriesParams,
+          List<ExpenseCategory>
+        > {
   /// Creates new [GetAllExpenseCategoriesUseCase]
   GetAllExpenseCategoriesUseCase({
     required this._authRepository,
@@ -63,6 +65,7 @@ class GetAllExpenseCategoriesUseCase
       userId: userId,
       query: params.query,
       traceId: traceId,
+      isDeleted: false,
     );
     final accountsExc = accountsResult.errorOrNull;
     if (accountsExc != null) {

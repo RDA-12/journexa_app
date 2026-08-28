@@ -673,6 +673,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Failed to update expense category'**
   String get updateExpenseCategoryToastFailureTitle;
+
+  /// Error message when wallet doesn't have enough balance
+  ///
+  /// In en, this message translates to:
+  /// **'Wallet {name} doesn\'t have enough balance'**
+  String errorInsufficientWalletBalance(String name);
 }
 
 class _AppLocalizationsDelegate

@@ -373,4 +373,9 @@ class AppLocalizationsId extends AppLocalizations {
   @override
   String get updateExpenseCategoryToastFailureTitle =>
       'Gagal memperbarui kategori pengeluaran';
+
+  @override
+  String errorInsufficientWalletBalance(String name) {
+    return 'Dompet $name tidak punya cukup saldo';
+  }
 }

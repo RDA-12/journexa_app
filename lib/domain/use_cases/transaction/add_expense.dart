@@ -6,8 +6,10 @@ import 'package:journexa_app/domain/entities/journal.dart';
 import 'package:journexa_app/domain/entities/transaction.dart';
 import 'package:journexa_app/domain/entities/wallet.dart';
 import 'package:journexa_app/domain/repositories/i_auth_repository.dart';
+import 'package:journexa_app/domain/repositories/i_journal_repository.dart';
 import 'package:journexa_app/domain/repositories/i_transaction_repository.dart';
 import 'package:journexa_app/domain/use_cases/base_use_case.dart';
+import 'package:journexa_app/shared/app_exception.dart';
 import 'package:journexa_app/shared/app_logger.dart';
 import 'package:journexa_app/shared/app_result.dart';
 import 'package:journexa_app/shared/uid_generator.dart';
@@ -44,10 +46,12 @@ class AddExpenseUseCase
   /// Creates new [AddExpenseUseCase]
   AddExpenseUseCase({
     required this._authRepository,
+    required this._journalRepository,
     required this._transactionRepository,
   });
 
   final IAuthRepository _authRepository;
+  final IJournalRepository _journalRepository;
   final ITransactionRepository _transactionRepository;
 
   @override
@@ -76,7 +80,56 @@ class AddExpenseUseCase
 
     final userId = getCurrentUserIdResult.valueOrNull!;
     logInfo(
-      'User ID obtained. Creates new transaction and journal entry',
+      'User ID obtained. Get Wallet balance',
+      traceId: traceId,
+      extras: {
+        'walletId': params.wallet.id,
+      },
+    );
+    final walletBalanceResult = await _journalRepository.getCurrentBalance(
+      userId: userId,
+      accounts: [params.wallet.account],
+      traceId: traceId,
+    );
+    final walletBalanceExc = walletBalanceResult.errorOrNull;
+    if (walletBalanceExc != null) {
+      logInfo(
+        'Failed to get wallet balance.',
+        traceId: traceId,
+      );
+      return AppResult.failure(walletBalanceExc);
+    }
+
+    final walletBalance =
+        walletBalanceResult.valueOrNull![params.wallet.account.code]!;
+    logInfo(
+      'Wallet balance obtained. Check it against requested amount',
+      traceId: traceId,
+      extras: {
+        'walletBalance': walletBalance.balance,
+        'amount': params.amount,
+      },
+    );
+    if (walletBalance.balance < params.amount) {
+      logInfo(
+        'Wallet balance is not enough.',
+        traceId: traceId,
+        extras: {
+          'walletId': params.wallet.id,
+          'walletBalance': walletBalance.balance,
+          'amount': params.amount,
+        },
+      );
+      return const AppResult.failure(
+        AppException(
+          'insufficient wallet balance',
+          code: AppExceptionCode.insufficientWalletBalance,
+        ),
+      );
+    }
+
+    logInfo(
+      'Wallet balance is enough. Creates transaction and journal entry',
       traceId: traceId,
       extras: {
         'walletId': params.wallet.id,

@@ -95,5 +95,6 @@
   "updateExpenseCategoryUpdatingSemanticsLabel": "Memperbarui {name}",
   "updateExpenseCategoryToastMessage": "{name} telah diperbarui",
   "deleteExpenseCategoryToastFailureTitle": "Gagal menghapus kategori pengeluaran",
-  "updateExpenseCategoryToastFailureTitle": "Gagal memperbarui kategori pengeluaran"
+  "updateExpenseCategoryToastFailureTitle": "Gagal memperbarui kategori pengeluaran",
+  "errorInsufficientWalletBalance": "Dompet {name} tidak punya cukup saldo"
 }

@@ -366,4 +366,9 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get updateExpenseCategoryToastFailureTitle =>
       'Failed to update expense category';
+
+  @override
+  String errorInsufficientWalletBalance(String name) {
+    return 'Wallet $name doesn\'t have enough balance';
+  }
 }

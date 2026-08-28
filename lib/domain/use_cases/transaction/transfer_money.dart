@@ -5,8 +5,10 @@ import 'package:journexa_app/domain/entities/journal.dart';
 import 'package:journexa_app/domain/entities/transaction.dart';
 import 'package:journexa_app/domain/entities/wallet.dart';
 import 'package:journexa_app/domain/repositories/i_auth_repository.dart';
+import 'package:journexa_app/domain/repositories/i_journal_repository.dart';
 import 'package:journexa_app/domain/repositories/i_transaction_repository.dart';
 import 'package:journexa_app/domain/use_cases/base_use_case.dart';
+import 'package:journexa_app/shared/app_exception.dart';
 import 'package:journexa_app/shared/app_logger.dart';
 import 'package:journexa_app/shared/app_result.dart';
 import 'package:journexa_app/shared/uid_generator.dart';
@@ -46,10 +48,12 @@ class TransferMoneyUseCase
   /// Creates new [TransferMoneyUseCase]
   TransferMoneyUseCase({
     required this._authRepository,
+    required this._journalRepository,
     required this._transactionRepository,
   });
 
   final IAuthRepository _authRepository;
+  final IJournalRepository _journalRepository;
   final ITransactionRepository _transactionRepository;
 
   @override
@@ -78,7 +82,60 @@ class TransferMoneyUseCase
 
     final userId = getCurrentUserIdResult.valueOrNull!;
     logInfo(
-      'User ID obtained. Creates new transaction and journal entry',
+      'User ID obtained. Get source wallet balance',
+      traceId: traceId,
+      extras: {
+        'sourceWalletId': params.source.id,
+      },
+    );
+    final walletBalanceResult = await _journalRepository.getCurrentBalance(
+      userId: userId,
+      accounts: [params.source.account],
+      traceId: traceId,
+    );
+    final walletBalanceExc = walletBalanceResult.errorOrNull;
+    if (walletBalanceExc != null) {
+      logInfo(
+        'Failed to get source wallet balance.',
+        traceId: traceId,
+      );
+      return AppResult.failure(walletBalanceExc);
+    }
+
+    final walletBalance =
+        walletBalanceResult.valueOrNull![params.source.account.code]!;
+    final requiredAmount = params.amount + params.fee;
+    logInfo(
+      'Source wallet balance obtained. Check it against requested total amount',
+      traceId: traceId,
+      extras: {
+        'walletBalance': walletBalance.balance,
+        'amount': params.amount,
+        'fee': params.fee,
+        'requiredAmount': requiredAmount,
+      },
+    );
+    if (walletBalance.balance < requiredAmount) {
+      logInfo(
+        'Source wallet balance is not enough.',
+        traceId: traceId,
+        extras: {
+          'sourceWalletId': params.source.id,
+          'walletBalance': walletBalance.balance,
+          'requiredAmount': requiredAmount,
+        },
+      );
+      return const AppResult.failure(
+        AppException(
+          'insufficient wallet balance',
+          code: AppExceptionCode.insufficientWalletBalance,
+        ),
+      );
+    }
+
+    logInfo(
+      'Source wallet balance is enough. '
+      'Creates new transaction and journal entry',
       traceId: traceId,
       extras: {
         'sourceWalletId': params.source.id,

@@ -43,5 +43,9 @@ extension AppExceptionCodeX on AppExceptionCode {
       context.l10n.errorCategoryAlreadyExists(
         (data['name'] as String?) ?? '',
       ),
+    AppExceptionCode.insufficientWalletBalance =>
+      context.l10n.errorInsufficientWalletBalance(
+        (data['name'] as String?) ?? '',
+      ),
   };
 }

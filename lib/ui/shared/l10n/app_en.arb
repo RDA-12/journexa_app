@@ -561,5 +561,15 @@
   "updateExpenseCategoryToastFailureTitle": "Failed to update expense category",
   "@updateExpenseCategoryToastFailureTitle": {
     "description": "Title for error state in update expense category toast"
+  },
+  "errorInsufficientWalletBalance": "Wallet {name} doesn't have enough balance",
+  "@errorInsufficientWalletBalance": {
+    "description": "Error message when wallet doesn't have enough balance",
+    "placeholders": {
+      "name": {
+        "type": "String",
+        "example": "dompet hitam"
+      }
+    }
   }
 }

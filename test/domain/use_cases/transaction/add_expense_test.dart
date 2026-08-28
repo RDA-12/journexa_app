@@ -1,10 +1,12 @@
 import 'package:decimal/decimal.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:journexa_app/domain/entities/account.dart';
 import 'package:journexa_app/domain/entities/expense_category.dart';
 import 'package:journexa_app/domain/entities/journal.dart';
 import 'package:journexa_app/domain/entities/transaction.dart';
 import 'package:journexa_app/domain/entities/wallet.dart';
 import 'package:journexa_app/domain/repositories/i_auth_repository.dart';
+import 'package:journexa_app/domain/repositories/i_journal_repository.dart';
 import 'package:journexa_app/domain/repositories/i_transaction_repository.dart';
 import 'package:journexa_app/domain/use_cases/transaction/add_expense.dart';
 import 'package:journexa_app/shared/app_exception.dart';
@@ -13,6 +15,8 @@ import 'package:journexa_app/shared/uid_generator.dart';
 import 'package:mocktail/mocktail.dart';
 
 class MockAuthRepository extends Mock implements IAuthRepository {}
+
+class MockJournalRepository extends Mock implements IJournalRepository {}
 
 class MockTransactionRepository extends Mock
     implements ITransactionRepository {}
@@ -43,6 +47,7 @@ void main() {
 
   late IAuthRepository mockAuthRepository;
   late ITransactionRepository mockTransactionRepository;
+  late IJournalRepository mockJournalRepository;
   late UidGenerator mockUidGenerator;
   late AddExpenseUseCase useCase;
 
@@ -53,6 +58,7 @@ void main() {
     registerFallbackValue(
       JournalEntry.test(lines: [], transactionDate: DateTime.now()),
     );
+    registerFallbackValue(Account.test());
   });
 
   setUp(() {
@@ -60,6 +66,22 @@ void main() {
     when(
       () => mockAuthRepository.getCurrentUserId(traceId: traceId),
     ).thenAnswer((_) async => const AppResult.success(userId));
+
+    mockJournalRepository = MockJournalRepository();
+    when(
+      () => mockJournalRepository.getCurrentBalance(
+        userId: userId,
+        accounts: any(named: 'accounts'),
+        traceId: traceId,
+      ),
+    ).thenAnswer(
+      (_) async => AppResult.success({
+        wallet.account.code: AccountBalance(
+          balance: amount + Decimal.fromInt(100000),
+          account: wallet.account,
+        ),
+      }),
+    );
 
     mockTransactionRepository = MockTransactionRepository();
     when(
@@ -76,6 +98,7 @@ void main() {
 
     useCase = AddExpenseUseCase(
       authRepository: mockAuthRepository,
+      journalRepository: mockJournalRepository,
       transactionRepository: mockTransactionRepository,
     )..customGenerator = mockUidGenerator;
   });
@@ -91,6 +114,25 @@ void main() {
 
       verify(
         () => mockAuthRepository.getCurrentUserId(traceId: traceId),
+      ).called(1);
+    },
+  );
+
+  test(
+    'calls JournalRepository.getCurrentBalance once '
+    'with correct params',
+    () async {
+      await useCase.execute(
+        params,
+        traceId: traceId,
+      );
+
+      verify(
+        () => mockJournalRepository.getCurrentBalance(
+          userId: userId,
+          accounts: [wallet.account],
+          traceId: traceId,
+        ),
       ).called(1);
     },
   );
@@ -156,6 +198,39 @@ void main() {
       );
 
       expect(result, AppResult<Transaction>.failure(AppException.test()));
+      verifyZeroInteractions(mockTransactionRepository);
+    },
+  );
+
+  test(
+    'returns failure and not save Transaction '
+    'when wallet balance is not enough',
+    () async {
+      when(
+        () => mockJournalRepository.getCurrentBalance(
+          userId: userId,
+          accounts: any(named: 'accounts'),
+          traceId: traceId,
+        ),
+      ).thenAnswer(
+        (_) async => AppResult.success({
+          wallet.account.code: AccountBalance(
+            balance: amount - Decimal.fromInt(1),
+            account: wallet.account,
+          ),
+        }),
+      );
+
+      final result = await useCase.execute(params, traceId: traceId);
+
+      expect(
+        result,
+        isA<AppResultFailure<Transaction>>().having(
+          (e) => e.error.code,
+          'error.code',
+          equals(AppExceptionCode.insufficientWalletBalance),
+        ),
+      );
       verifyZeroInteractions(mockTransactionRepository);
     },
   );

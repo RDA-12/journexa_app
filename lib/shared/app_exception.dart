@@ -28,6 +28,9 @@ enum AppExceptionCode {
 
   /// Code when create new [IncomeCategory] with existing name
   categoryNameAlreadyExists,
+
+  /// Code when trying to spend more money than available in wallet
+  insufficientWalletBalance,
 }
 
 /// Base exception class for the application

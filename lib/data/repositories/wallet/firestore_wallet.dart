@@ -10,10 +10,20 @@ part 'firestore_wallet.g.dart';
 sealed class FirestoreWallet with _$FirestoreWallet {
   /// Creates new [FirestoreWallet]
   const factory FirestoreWallet({
+    /// ID of the [FirestoreWallet]
     required String id,
+
+    /// Name of this wallet
     required String name,
+
+    /// Lower version of [name]
     required String nameLower,
+
+    /// Account code of this wallet
     required String accountCode,
+
+    /// Whether this wallet is deleted
+    @Default(false) bool isDeleted,
   }) = _FirestoreWallet;
 
   /// Converts from JSON to [FirestoreWallet]

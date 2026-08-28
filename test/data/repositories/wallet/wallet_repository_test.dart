@@ -278,7 +278,8 @@ void main() {
 
   group('delete', () {
     test(
-      'returns success and delete correct Wallet and the Account',
+      'returns success and set isDeleted to true '
+      'for correct Wallet and the Account',
       () async {
         final deletedWallet = initialWallets.first;
 
@@ -294,13 +295,13 @@ void main() {
           'users/$userId/wallets/${deletedWallet.id}',
         );
         final walletSnapshot = await walletDocRef.get();
-        expect(walletSnapshot.exists, isFalse);
+        expect(walletSnapshot.data()!['isDeleted'], isTrue);
 
         final accountDocRef = fakeFirestore.doc(
           'users/$userId/accounts/${deletedWallet.account.code}',
         );
         final accountSnapshot = await accountDocRef.get();
-        expect(accountSnapshot.exists, isFalse);
+        expect(accountSnapshot.data()!['isDeleted'], isTrue);
       },
     );
 

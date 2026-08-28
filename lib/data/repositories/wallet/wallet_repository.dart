@@ -181,13 +181,27 @@ class FirestoreWalletRepository with Loggable implements IWalletRepository {
         },
       );
 
-      final batch = _db.batch();
       final walletRef = _db.doc('users/$userId/wallets/${wallet.id}');
-      batch.delete(walletRef);
+      final walletSnap = await walletRef.get();
+      final walletExists = walletSnap.exists;
       final accountRef = _db.doc(
         'users/$userId/accounts/${wallet.account.code}',
       );
-      batch.delete(accountRef);
+      final accountSnap = await accountRef.get();
+      final accountExists = accountSnap.exists;
+      final batch = _db.batch();
+      if (walletExists) {
+        batch.set(
+          walletRef,
+          walletFirestore.copyWith(isDeleted: true).toJson(),
+        );
+      }
+      if (accountExists) {
+        batch.set(
+          accountRef,
+          accountFirestore.copyWith(isDeleted: true).toJson(),
+        );
+      }
       await batch.commit();
       logInfo(
         'Successfully deleted wallet and account',

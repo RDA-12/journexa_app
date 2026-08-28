@@ -26,6 +26,9 @@ sealed class FirestoreIncomeCategory with _$FirestoreIncomeCategory {
 
     /// Account code of the category
     required String accountCode,
+
+    /// Whether the category is deleted
+    @Default(false) bool isDeleted,
   }) = _FirestoreIncomeCategory;
   const FirestoreIncomeCategory._();
 

@@ -261,7 +261,8 @@ void main() {
 
   group('delete', () {
     test(
-      'returns success and delete correct Category and the Account',
+      'returns success and set isDeleted to true '
+      'for correct Category and the Account',
       () async {
         final deletedCategory = initialCategories.first;
 
@@ -277,13 +278,13 @@ void main() {
           'users/$userId/incomeCategories/${deletedCategory.id}',
         );
         final categorySnapshot = await categoryDocRef.get();
-        expect(categorySnapshot.exists, isFalse);
+        expect(categorySnapshot.data()?['isDeleted'], isTrue);
 
         final accountDocRef = fakeFirestore.doc(
           'users/$userId/accounts/${deletedCategory.account.code}',
         );
         final accountSnapshot = await accountDocRef.get();
-        expect(accountSnapshot.exists, isFalse);
+        expect(accountSnapshot.data()?['isDeleted'], isTrue);
       },
     );
 
@@ -295,7 +296,7 @@ void main() {
           name: 'non-existent',
           icon: 'icon',
           account: Account(
-            code: '40.0100',
+            code: '40.1111',
             name: 'non-existent',
             type: AccountType.revenue,
             parent: parentAccount,

@@ -26,6 +26,9 @@ sealed class FirestoreExpenseCategory with _$FirestoreExpenseCategory {
 
     /// Account code of the category
     required String accountCode,
+
+    /// Whether the category is deleted
+    @Default(false) bool isDeleted,
   }) = _FirestoreExpenseCategory;
   const FirestoreExpenseCategory._();
 
@@ -37,6 +40,7 @@ sealed class FirestoreExpenseCategory with _$FirestoreExpenseCategory {
       nameLower: domain.name.toLowerCase(),
       icon: domain.icon,
       accountCode: domain.account.code,
+      isDeleted: false,
     );
   }
 

@@ -192,15 +192,29 @@ class FirestoreIncomeCategoryRepository
         },
       );
 
-      final batch = _db.batch();
       final categoryRef = _db.doc(
         'users/$userId/incomeCategories/${category.id}',
       );
-      batch.delete(categoryRef);
+      final categorySnap = await categoryRef.get();
+      final categoryExists = categorySnap.exists;
       final accountRef = _db.doc(
         'users/$userId/accounts/${category.account.code}',
       );
-      batch.delete(accountRef);
+      final accountSnap = await accountRef.get();
+      final accountExists = accountSnap.exists;
+      final batch = _db.batch();
+      if (categoryExists) {
+        batch.set(
+          categoryRef,
+          categoryFirestore.copyWith(isDeleted: true).toJson(),
+        );
+      }
+      if (accountExists) {
+        batch.set(
+          accountRef,
+          accountFirestore.copyWith(isDeleted: true).toJson(),
+        );
+      }
       await batch.commit();
       logInfo(
         'Successfully deleted category and account',

@@ -99,6 +99,7 @@ class FirestoreExpenseCategoryRepository
     required String userId,
     required String traceId,
     String? query,
+    bool? isDeleted,
   }) async {
     try {
       maybeThrowException(this, Invocation.method(#getAll, null));
@@ -114,6 +115,12 @@ class FirestoreExpenseCategoryRepository
         categoriesQuery = categoriesQuery
             .where('nameLower', isGreaterThanOrEqualTo: query)
             .where('nameLower', isLessThanOrEqualTo: '$query~');
+      }
+      if (isDeleted != null) {
+        categoriesQuery = categoriesQuery.where(
+          'isDeleted',
+          isEqualTo: isDeleted,
+        );
       }
       final categoriesSnap = await categoriesQuery.get();
       logInfo(

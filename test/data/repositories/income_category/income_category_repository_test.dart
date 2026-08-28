@@ -209,6 +209,55 @@ void main() {
     );
 
     test(
+      'returns success with correct categories when isDeleted provided',
+      () async {
+        final expectedCategory = IncomeCategory(
+          id: 'expected',
+          name: 'expected name',
+          icon: 'icon',
+          account: Account(
+            code: '40.1000',
+            name: 'expected name',
+            type: AccountType.revenue,
+            parent: parentAccount,
+          ),
+        );
+        final categoryDoc = fakeFirestore.doc(
+          'users/$userId/incomeCategories/${expectedCategory.id}',
+        );
+        await categoryDoc.set(
+          FirestoreIncomeCategory.fromDomain(
+            expectedCategory,
+          ).copyWith(isDeleted: true).toJson(),
+        );
+        final accountDoc = fakeFirestore.doc(
+          'users/$userId/accounts/${expectedCategory.account.code}',
+        );
+        await accountDoc.set(
+          FirestoreAccount.fromDomain(
+            expectedCategory.account,
+          ).copyWith(isDeleted: true).toJson(),
+        );
+
+        final result = await repository.getAll(
+          userId: userId,
+          isDeleted: false,
+          traceId: traceId,
+        );
+
+        expect(result, AppResult.success(initialCategories));
+
+        final result2 = await repository.getAll(
+          userId: userId,
+          isDeleted: true,
+          traceId: traceId,
+        );
+
+        expect(result2, AppResult.success([expectedCategory]));
+      },
+    );
+
+    test(
       'returns failure with serverException code '
       'when firestore throws FirebaseException',
       () async {

@@ -226,6 +226,54 @@ void main() {
     );
 
     test(
+      'returns success with correct Wallets when isDeleted provided',
+      () async {
+        final expectedWallet = Wallet(
+          id: 'expected',
+          name: 'expected name',
+          account: Account(
+            code: '10.1000',
+            name: 'expected name',
+            type: AccountType.asset,
+            parent: parent,
+          ),
+        );
+        final walletDoc = fakeFirestore.doc(
+          'users/$userId/wallets/${expectedWallet.id}',
+        );
+        await walletDoc.set(
+          FirestoreWallet.fromDomain(
+            expectedWallet,
+          ).copyWith(isDeleted: true).toJson(),
+        );
+        final accountDoc = fakeFirestore.doc(
+          'users/$userId/accounts/${expectedWallet.account.code}',
+        );
+        await accountDoc.set(
+          FirestoreAccount.fromDomain(
+            expectedWallet.account,
+          ).copyWith(isDeleted: true).toJson(),
+        );
+
+        final result = await repository.getAll(
+          userId: userId,
+          isDeleted: false,
+          traceId: traceId,
+        );
+
+        expect(result, AppResult.success(initialWallets));
+
+        final result2 = await repository.getAll(
+          userId: userId,
+          isDeleted: true,
+          traceId: traceId,
+        );
+
+        expect(result2, AppResult.success([expectedWallet]));
+      },
+    );
+
+    test(
       'returns failure with serverException code '
       'when firestore throws FirebaseException',
       () async {

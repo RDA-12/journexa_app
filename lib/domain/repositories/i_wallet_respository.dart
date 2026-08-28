@@ -17,6 +17,7 @@ abstract interface class IWalletRepository {
     required String userId,
     required String traceId,
     String? query,
+    bool? isDeleted,
   });
 
   /// Delete [wallet] within [userId] database

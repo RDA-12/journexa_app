@@ -15,6 +15,7 @@ abstract interface class IIncomeCategoryRepository {
     required String userId,
     required String traceId,
     String? query,
+    bool? isDeleted,
   });
 
   /// Delete [category] from [userId] database

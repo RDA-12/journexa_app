@@ -88,6 +88,7 @@ class FirestoreWalletRepository with Loggable implements IWalletRepository {
     required String userId,
     required String traceId,
     String? query,
+    bool? isDeleted,
   }) async {
     try {
       maybeThrowException(this, Invocation.method(#getAll, null));
@@ -103,6 +104,12 @@ class FirestoreWalletRepository with Loggable implements IWalletRepository {
         walletsQuery = walletsQuery
             .where('nameLower', isGreaterThanOrEqualTo: query)
             .where('nameLower', isLessThanOrEqualTo: '$query~');
+      }
+      if (isDeleted != null) {
+        walletsQuery = walletsQuery.where(
+          'isDeleted',
+          isEqualTo: isDeleted,
+        );
       }
       final walletsSnap = await walletsQuery.get();
       logInfo(

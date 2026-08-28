@@ -1,6 +1,7 @@
 import 'package:decimal/decimal.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:journexa_app/domain/entities/account.dart';
+import 'package:journexa_app/domain/entities/transaction.dart';
 import 'package:journexa_app/shared/app_exception.dart';
 
 part 'journal.freezed.dart';
@@ -14,7 +15,7 @@ sealed class JournalEntry with _$JournalEntry {
     required String id,
 
     /// When the entry was created
-    required DateTime createdAt,
+    required DateTime transactionDate,
 
     /// List of lines in this entry
     required List<JournalEntryLine> lines,
@@ -33,6 +34,43 @@ sealed class JournalEntry with _$JournalEntry {
       );
     }
   }
+
+  /// Creates new [JournalEntry] based on [transaction]
+  factory JournalEntry.fromTransaction({
+    required String id,
+    required Transaction transaction,
+  }) {
+    final amount = transaction.amount;
+
+    return JournalEntry(
+      id: id,
+      transactionDate: transaction.date,
+      lines: [
+        JournalEntryLine.fromAccount(
+          account: transaction.wallet.account,
+          amount: amount,
+        ),
+        JournalEntryLine.fromAccount(
+          account: transaction.category.account,
+          amount: amount,
+        ),
+      ],
+    );
+  }
+
+  /// Creates new [JournalEntry] for test purposes
+  factory JournalEntry.test({
+    required DateTime transactionDate,
+    List<JournalEntryLine> lines = const [],
+    String? description,
+  }) {
+    return JournalEntry(
+      id: 'id',
+      transactionDate: transactionDate,
+      lines: lines,
+      description: description,
+    );
+  }
 }
 
 /// Represent single line in an entry in double-entry accounting system
@@ -50,23 +88,22 @@ sealed class JournalEntryLine with _$JournalEntryLine {
     required Decimal credit,
   }) = _JournalEntryLine;
   const JournalEntryLine._();
-}
 
-/// Extension helper to constructs JournalEntry
-extension JournalEntryX on Account {
-  /// Creates new line for this [Account]
-  JournalEntryLine createLine(Decimal amount) {
+  factory JournalEntryLine.fromAccount({
+    required Account account,
+    required Decimal amount,
+  }) {
     final absAmount = amount.abs();
-    if (normalBalance == BalanceType.credit) {
+    if (account.normalBalance == BalanceType.credit) {
       if (amount > Decimal.zero) {
         return JournalEntryLine(
-          account: this,
+          account: account,
           debit: Decimal.zero,
           credit: absAmount,
         );
       } else {
         return JournalEntryLine(
-          account: this,
+          account: account,
           debit: absAmount,
           credit: Decimal.zero,
         );
@@ -74,13 +111,13 @@ extension JournalEntryX on Account {
     } else {
       if (amount > Decimal.zero) {
         return JournalEntryLine(
-          account: this,
+          account: account,
           debit: absAmount,
           credit: Decimal.zero,
         );
       } else {
         return JournalEntryLine(
-          account: this,
+          account: account,
           debit: Decimal.zero,
           credit: absAmount,
         );

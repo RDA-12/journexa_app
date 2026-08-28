@@ -2,6 +2,7 @@ import 'package:decimal/decimal.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:journexa_app/domain/entities/account.dart';
 import 'package:journexa_app/domain/entities/journal.dart';
+import 'package:journexa_app/domain/entities/transaction.dart';
 import 'package:journexa_app/shared/app_exception.dart';
 
 void main() {
@@ -36,7 +37,7 @@ void main() {
           expect(
             () => JournalEntry(
               id: 'id',
-              createdAt: DateTime.now(),
+              transactionDate: DateTime.now(),
               lines: [line1, line2],
             ),
             throwsA(
@@ -53,13 +54,16 @@ void main() {
   );
 
   group(
-    'Account.createLine',
+    'JournalEntryLine.fromAccount',
     () {
       for (final type in AccountType.debitNormalBalance) {
         test(
           '$type should set debit when amount is posivite',
           () {
-            final line = assetAccount.createLine(Decimal.fromInt(1000));
+            final line = JournalEntryLine.fromAccount(
+              account: assetAccount,
+              amount: Decimal.fromInt(1000),
+            );
             expect(
               line,
               JournalEntryLine(
@@ -74,7 +78,10 @@ void main() {
         test(
           '$type should set credit when amount is negative',
           () {
-            final line = assetAccount.createLine(-Decimal.fromInt(1000));
+            final line = JournalEntryLine.fromAccount(
+              account: assetAccount,
+              amount: Decimal.fromInt(-1000),
+            );
             expect(
               line,
               JournalEntryLine(
@@ -91,7 +98,10 @@ void main() {
         test(
           '$type should set credit when amount is posivite',
           () {
-            final line = revenueAccount.createLine(Decimal.fromInt(1000));
+            final line = JournalEntryLine.fromAccount(
+              account: revenueAccount,
+              amount: Decimal.fromInt(1000),
+            );
             expect(
               line,
               JournalEntryLine(
@@ -106,7 +116,10 @@ void main() {
         test(
           '$type should set debit when amount is negative',
           () {
-            final line = revenueAccount.createLine(-Decimal.fromInt(1000));
+            final line = JournalEntryLine.fromAccount(
+              account: revenueAccount,
+              amount: Decimal.fromInt(-1000),
+            );
             expect(
               line,
               JournalEntryLine(
@@ -120,4 +133,36 @@ void main() {
       }
     },
   );
+
+  group('JournalEntry.fromTransaction', () {
+    test('creates correct JournalEntry', () {
+      final amount = Decimal.fromInt(10000);
+      final date = DateTime.now();
+      final transaction = Transaction.test(amount: amount, date: date);
+
+      final expected = JournalEntry(
+        id: 'id',
+        transactionDate: date,
+        lines: [
+          JournalEntryLine(
+            account: transaction.wallet.account,
+            debit: amount,
+            credit: Decimal.zero,
+          ),
+          JournalEntryLine(
+            account: transaction.category.account,
+            debit: Decimal.zero,
+            credit: amount,
+          ),
+        ],
+      );
+
+      final actual = JournalEntry.fromTransaction(
+        id: expected.id,
+        transaction: transaction,
+      );
+
+      expect(actual, expected);
+    });
+  });
 }

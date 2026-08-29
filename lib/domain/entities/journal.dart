@@ -167,6 +167,14 @@ sealed class JournalEntryLine with _$JournalEntryLine {
       }
     }
   }
+
+  factory JournalEntryLine.test() {
+    return JournalEntryLine(
+      account: Account.test(),
+      debit: Decimal.zero,
+      credit: Decimal.zero,
+    );
+  }
 }
 
 /// Represent balance of a single [Account]

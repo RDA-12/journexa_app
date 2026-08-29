@@ -28,3 +28,61 @@ sealed class FirestoreAccountBalance with _$FirestoreAccountBalance {
   factory FirestoreAccountBalance.fromJson(Map<String, Object?> json) =>
       _$FirestoreAccountBalanceFromJson(json);
 }
+
+/// Firestore model for [JournalEntry]
+@freezed
+sealed class FirestoreJournalEntry with _$FirestoreJournalEntry {
+  /// Creates new [FirestoreJournalEntry]
+  const factory FirestoreJournalEntry({
+    /// ID of this entry
+    required String id,
+
+    /// When this entry was happened
+    required DateTime transactionDate,
+
+    /// Optional notes
+    String? notes,
+  }) = _FirestoreJournalEntry;
+
+  /// Creates new [FirestoreJournalEntry] from [json]
+  factory FirestoreJournalEntry.fromJson(Map<String, Object?> json) =>
+      _$FirestoreJournalEntryFromJson(json);
+
+  /// Creates new [FirestoreJournalEntry] from [JournalEntry]
+  factory FirestoreJournalEntry.fromDomain(JournalEntry entry) {
+    return FirestoreJournalEntry(
+      id: entry.id,
+      transactionDate: entry.transactionDate,
+      notes: entry.description,
+    );
+  }
+}
+
+/// Firestore model for [JournalEntryLine]
+@freezed
+sealed class FirestoreJournalEntryLine with _$FirestoreJournalEntryLine {
+  /// Creates new [FirestoreJournalEntryLine]
+  const factory FirestoreJournalEntryLine({
+    /// Code of the account
+    required String accountCode,
+
+    /// Total debit of this line
+    @DecimalConverter() required Decimal debit,
+
+    /// Total credit of this line
+    @DecimalConverter() required Decimal credit,
+  }) = _FirestoreJournalEntryLine;
+
+  /// Creates new [FirestoreJournalEntryLine] from [json]
+  factory FirestoreJournalEntryLine.fromJson(Map<String, Object?> json) =>
+      _$FirestoreJournalEntryLineFromJson(json);
+
+  /// Creates new [FirestoreJournalEntryLine] from [JournalEntryLine]
+  factory FirestoreJournalEntryLine.fromDomain(JournalEntryLine line) {
+    return FirestoreJournalEntryLine(
+      accountCode: line.account.code,
+      debit: line.debit,
+      credit: line.credit,
+    );
+  }
+}

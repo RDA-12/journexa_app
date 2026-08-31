@@ -17,7 +17,7 @@ extension AppBottomSheetX on BuildContext {
         return Container(
           padding: const EdgeInsets.all(16),
           decoration: const BoxDecoration(
-            borderRadius: const BorderRadius.vertical(
+            borderRadius: BorderRadius.vertical(
               top: Radius.circular(28),
             ),
           ),

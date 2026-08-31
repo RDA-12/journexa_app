@@ -4,7 +4,6 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:journexa_app/domain/entities/account.dart';
 import 'package:journexa_app/domain/entities/wallet.dart';
 import 'package:journexa_app/ui/shared/l10n/l10n.dart';
-import 'package:journexa_app/ui/shared/widgets/app_dialog.dart';
 import 'package:journexa_app/ui/shared/widgets/widgets.dart';
 import 'package:journexa_app/ui/wallets/widgets/delete_wallet_button.dart';
 import 'package:journexa_app/ui/wallets/widgets/update_wallet_button.dart';

@@ -2,7 +2,6 @@ import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:journexa_app/ui/shared/l10n/l10n.dart';
-import 'package:journexa_app/ui/shared/widgets/app_empty_box.dart';
 import 'package:journexa_app/ui/shared/widgets/app_list_view.dart';
 import 'package:journexa_app/ui/shared/widgets/widgets.dart';
 import 'package:journexa_app/ui/wallets/bloc/wallets_bloc.dart';

@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:journexa_app/ui/shared/l10n/app_localizations.dart';
-import 'package:journexa_app/ui/shared/widgets/app_dialog.dart';
 import 'package:journexa_app/ui/shared/widgets/widgets.dart';
 
 import '../../util.dart';

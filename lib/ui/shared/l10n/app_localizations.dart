@@ -679,6 +679,24 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Wallet {name} doesn\'t have enough balance'**
   String errorInsufficientWalletBalance(String name);
+
+  /// Title when AppSelector have error status
+  ///
+  /// In en, this message translates to:
+  /// **'Failed to get items'**
+  String get appSelectorErrorTitle;
+
+  /// Description when AppSelector have empty status
+  ///
+  /// In en, this message translates to:
+  /// **'No items found'**
+  String get appSelectorEmptyItemsDescription;
+
+  /// Default semantics label for standalone LoadingIndicator
+  ///
+  /// In en, this message translates to:
+  /// **'Loading data'**
+  String get commonLoadingSemanticsLabel;
 }
 
 class _AppLocalizationsDelegate

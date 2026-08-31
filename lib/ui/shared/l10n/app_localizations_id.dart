@@ -378,4 +378,13 @@ class AppLocalizationsId extends AppLocalizations {
   String errorInsufficientWalletBalance(String name) {
     return 'Dompet $name tidak punya cukup saldo';
   }
+
+  @override
+  String get appSelectorErrorTitle => 'Gagal mendapatkan data';
+
+  @override
+  String get appSelectorEmptyItemsDescription => 'Tidak ada data';
+
+  @override
+  String get commonLoadingSemanticsLabel => 'Loading data';
 }

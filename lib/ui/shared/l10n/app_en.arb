@@ -571,5 +571,17 @@
         "example": "dompet hitam"
       }
     }
+  },
+  "appSelectorErrorTitle": "Failed to get items",
+  "@appSelectorErrorTitle": {
+    "description": "Title when AppSelector have error status"
+  },
+  "appSelectorEmptyItemsDescription": "No items found",
+  "@appSelectorEmptyItemsDescription": {
+    "description": "Description when AppSelector have empty status"
+  },
+  "commonLoadingSemanticsLabel": "Loading data",
+  "@commonLoadingSemanticsLabel": {
+    "description": "Default semantics label for standalone LoadingIndicator"
   }
 }

@@ -8,5 +8,6 @@ export 'app_form_field.dart';
 export 'app_icon_button.dart';
 export 'app_logo.dart';
 export 'app_responsive.dart';
+export 'app_selector.dart';
 export 'app_toast.dart';
 export 'loading_indicator.dart';

@@ -371,4 +371,13 @@ class AppLocalizationsEn extends AppLocalizations {
   String errorInsufficientWalletBalance(String name) {
     return 'Wallet $name doesn\'t have enough balance';
   }
+
+  @override
+  String get appSelectorErrorTitle => 'Failed to get items';
+
+  @override
+  String get appSelectorEmptyItemsDescription => 'No items found';
+
+  @override
+  String get commonLoadingSemanticsLabel => 'Loading data';
 }

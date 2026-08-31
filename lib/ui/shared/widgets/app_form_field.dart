@@ -7,9 +7,11 @@ class AppFormField extends StatelessWidget {
   /// Creates new [AppFormField]
   const AppFormField({
     required this.isRequired,
+    this.readOnly = false,
     this.icon,
     this.label,
     this.controller,
+    this.onPressed,
     super.key,
   });
 
@@ -17,6 +19,9 @@ class AppFormField extends StatelessWidget {
   ///
   /// If true, will check emptiness on [TextFormField]'s validator
   final bool isRequired;
+
+  /// Whether this form is read only or not
+  final bool readOnly;
 
   /// Widget prefix that shown before label
   final Widget? icon;
@@ -26,6 +31,9 @@ class AppFormField extends StatelessWidget {
 
   /// [TextEditingController] that managing input value
   final TextEditingController? controller;
+
+  /// Callback that will be invoked when the form is pressed
+  final VoidCallback? onPressed;
 
   @override
   Widget build(BuildContext context) {
@@ -37,6 +45,8 @@ class AppFormField extends StatelessWidget {
     return TextFormField(
       controller: controller,
       validator: (value) => _validator(context, value),
+      readOnly: readOnly,
+      onTap: onPressed,
       decoration: InputDecoration(
         fillColor: WidgetStateColor.resolveWith(
           (states) {

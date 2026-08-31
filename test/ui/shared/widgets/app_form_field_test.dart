@@ -22,6 +22,8 @@ void main() {
     Widget? icon,
     String? label,
     bool? isRequired,
+    bool? readOnly,
+    VoidCallback? onPressed,
   }) async {
     final formKey = GlobalKey<FormState>();
 
@@ -37,6 +39,8 @@ void main() {
               isRequired: isRequired ?? false,
               label: label,
               icon: icon,
+              readOnly: readOnly ?? false,
+              onPressed: onPressed,
             ),
             FilledButton(
               key: const ValueKey('validator-button'),
@@ -129,6 +133,31 @@ void main() {
       },
     );
 
+    testWidgets('not allows input text when readOnly true', (tester) async {
+      await pumpWidget(tester, readOnly: true);
+
+      final formFieldFinder = find.byType(TextFormField);
+      await tester.enterText(formFieldFinder, 'Test');
+
+      expect(find.text('Test'), findsNothing);
+    });
+
+    testWidgets('calls onPressed when clicked', (tester) async {
+      var isPressed = false;
+      await pumpWidget(
+        tester,
+        onPressed: () {
+          isPressed = true;
+        },
+      );
+
+      final formFieldFinder = find.byType(TextFormField);
+      await tester.tap(formFieldFinder);
+      await tester.pumpAndSettle();
+
+      expect(isPressed, isTrue);
+    });
+
     testWidgets(
       'uses controller when provided',
       (tester) async {
@@ -183,9 +212,19 @@ void main() {
         final finder = find.byType(AppFormField);
         expect(
           tester.getSemantics(finder),
-          isSemantics(isTextField: true),
+          isSemantics(isTextField: true, isReadOnly: false),
         );
       },
     );
+
+    testWidgets('has isReadOnly flag when readOnly true', (tester) async {
+      await pumpWidget(tester, readOnly: true);
+
+      final finder = find.byType(AppFormField);
+      expect(
+        tester.getSemantics(finder),
+        isSemantics(isTextField: true, isReadOnly: true),
+      );
+    });
   });
 }

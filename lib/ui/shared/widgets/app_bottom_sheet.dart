@@ -12,11 +12,11 @@ extension AppBottomSheetX on BuildContext {
       constraints: const BoxConstraints(maxWidth: 640, minHeight: 256),
       elevation: 1,
       showDragHandle: true,
+      backgroundColor: color.surfaceContainerLow,
       builder: (context) {
         return Container(
           padding: const EdgeInsets.all(16),
-          decoration: BoxDecoration(
-            color: color.surfaceContainerLow,
+          decoration: const BoxDecoration(
             borderRadius: const BorderRadius.vertical(
               top: Radius.circular(28),
             ),

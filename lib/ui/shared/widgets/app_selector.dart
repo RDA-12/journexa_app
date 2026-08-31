@@ -66,6 +66,7 @@ class AppSelectorController<T> extends ChangeNotifier {
       return;
     }
     _items = items;
+    _status = SelectorStatus.idle;
     notifyListeners();
   }
 

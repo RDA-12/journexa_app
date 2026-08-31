@@ -294,4 +294,32 @@ void main() {
       );
     }
   });
+
+  group('AppSelectorController', () {
+    test('set status to loading when isLoading is set to true', () {
+      final controller = AppSelectorController<TestClass>(
+        displayAsString: (it) => it.name,
+      )..isLoading = true;
+
+      expect(controller.status, SelectorStatus.loading);
+    });
+
+    test('set status to error when lastError is set', () {
+      final controller = AppSelectorController<TestClass>(
+        displayAsString: (it) => it.name,
+      )..lastError = AppException.test();
+
+      expect(controller.lastError, AppException.test());
+      expect(controller.status, SelectorStatus.error);
+    });
+
+    test('set status to idle when set new items', () {
+      final controller = AppSelectorController<TestClass>(
+        displayAsString: (it) => it.name,
+      )..items = items;
+
+      expect(controller.items, items);
+      expect(controller.status, SelectorStatus.idle);
+    });
+  });
 }

@@ -39,6 +39,7 @@ void main() {
     Widget Function(BuildContext, AppException)? exceptionBuilder,
     bool isRequired = false,
     String? label,
+    VoidCallback? onPressed,
   }) {
     return pumpForWidgetTest(
       tester,
@@ -49,6 +50,7 @@ void main() {
         label: label,
         onSearch: onSearch,
         exceptionBuilder: exceptionBuilder,
+        onPressed: onPressed,
       ),
     );
   }
@@ -267,6 +269,26 @@ void main() {
 
         expect(controller.value, items.first);
         expect(find.text(items.first.name), findsOneWidget);
+      },
+    );
+
+    testWidgets(
+      'calls search when search button is pressed',
+      (tester) async {
+        final controller = AppSelectorController<TestClass>(
+          displayAsString: (it) => it.name,
+        );
+        var pressed = false;
+        await pumpWidget(
+          tester,
+          controller: controller,
+          onPressed: () {
+            pressed = true;
+          },
+        );
+        await openItems(tester);
+
+        expect(pressed, isTrue);
       },
     );
   });

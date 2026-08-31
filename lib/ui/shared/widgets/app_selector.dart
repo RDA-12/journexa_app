@@ -118,6 +118,7 @@ class AppSelector<T extends Object> extends StatelessWidget {
     super.key,
     this.label,
     this.exceptionBuilder,
+    this.onPressed,
     this.onSearch,
   });
 
@@ -135,6 +136,11 @@ class AppSelector<T extends Object> extends StatelessWidget {
 
   /// Callback when search button is pressed
   final void Function(String?)? onSearch;
+
+  /// Callback when the selector is pressed
+  ///
+  /// Typically used to trigger fetching items
+  final VoidCallback? onPressed;
 
   /// Shows bottom modal with list of items
   Future<T?> showItems(BuildContext context) {
@@ -220,6 +226,7 @@ class AppSelector<T extends Object> extends StatelessWidget {
       label: label,
       readOnly: true,
       onPressed: () async {
+        onPressed?.call();
         final result = await showItems(context);
         controller.value = result;
       },

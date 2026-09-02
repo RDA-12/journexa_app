@@ -380,4 +380,43 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get commonLoadingSemanticsLabel => 'Loading data';
+
+  @override
+  String get transferMoneyDateLabel => 'Date';
+
+  @override
+  String get transferMoneySourceLabel => 'Source Wallet';
+
+  @override
+  String get transferMoneyDestinationLabel => 'Destination Wallet';
+
+  @override
+  String get transferMoneyAmountLabel => 'Amount';
+
+  @override
+  String get transferMoneyFeeLabel => 'Transfer Fee';
+
+  @override
+  String get transferMoneyNotesLabel => 'Notes';
+
+  @override
+  String get transferMoneySubmitButton => 'Transfer';
+
+  @override
+  String get transferMoneySuccessTitle => 'Transfer recorded';
+
+  @override
+  String transferMoneySuccessMessage(
+    String sourceName,
+    String destName,
+    String amount,
+  ) {
+    return '$amount transfer from $sourceName to $destName have been recorded';
+  }
+
+  @override
+  String get transferMoneyFailureTitle => 'Failed to record transfer';
+
+  @override
+  String get addTransactionTitle => 'Record new transaction';
 }

@@ -697,6 +697,76 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Loading data'**
   String get commonLoadingSemanticsLabel;
+
+  /// Label for date field in transfer money form
+  ///
+  /// In en, this message translates to:
+  /// **'Date'**
+  String get transferMoneyDateLabel;
+
+  /// Label for source wallet selector in transfer money form
+  ///
+  /// In en, this message translates to:
+  /// **'Source Wallet'**
+  String get transferMoneySourceLabel;
+
+  /// Label for destination wallet selector in transfer money form
+  ///
+  /// In en, this message translates to:
+  /// **'Destination Wallet'**
+  String get transferMoneyDestinationLabel;
+
+  /// Label for amount field in transfer money form
+  ///
+  /// In en, this message translates to:
+  /// **'Amount'**
+  String get transferMoneyAmountLabel;
+
+  /// Label for fee field in transfer money form
+  ///
+  /// In en, this message translates to:
+  /// **'Transfer Fee'**
+  String get transferMoneyFeeLabel;
+
+  /// Label for notes field in transfer money form
+  ///
+  /// In en, this message translates to:
+  /// **'Notes'**
+  String get transferMoneyNotesLabel;
+
+  /// Submit button in transfer money form
+  ///
+  /// In en, this message translates to:
+  /// **'Transfer'**
+  String get transferMoneySubmitButton;
+
+  /// Title for toast success state in transfer money page
+  ///
+  /// In en, this message translates to:
+  /// **'Transfer recorded'**
+  String get transferMoneySuccessTitle;
+
+  /// Message for toast success state in transfer money page
+  ///
+  /// In en, this message translates to:
+  /// **'{amount} transfer from {sourceName} to {destName} have been recorded'**
+  String transferMoneySuccessMessage(
+    String sourceName,
+    String destName,
+    String amount,
+  );
+
+  /// Title for toast failure state in transfer money page
+  ///
+  /// In en, this message translates to:
+  /// **'Failed to record transfer'**
+  String get transferMoneyFailureTitle;
+
+  /// Title for Add transaction page
+  ///
+  /// In en, this message translates to:
+  /// **'Record new transaction'**
+  String get addTransactionTitle;
 }
 
 class _AppLocalizationsDelegate

@@ -583,5 +583,64 @@
   "commonLoadingSemanticsLabel": "Loading data",
   "@commonLoadingSemanticsLabel": {
     "description": "Default semantics label for standalone LoadingIndicator"
+  },
+  "transferMoneyDateLabel": "Date",
+  "@transferMoneyDateLabel": {
+    "description": "Label for date field in transfer money form"
+  },
+  "transferMoneySourceLabel": "Source Wallet",
+  "@transferMoneySourceLabel": {
+    "description": "Label for source wallet selector in transfer money form"
+  },
+  "transferMoneyDestinationLabel": "Destination Wallet",
+  "@transferMoneyDestinationLabel": {
+    "description": "Label for destination wallet selector in transfer money form"
+  },
+  "transferMoneyAmountLabel": "Amount",
+  "@transferMoneyAmountLabel": {
+    "description": "Label for amount field in transfer money form"
+  },
+  "transferMoneyFeeLabel": "Transfer Fee",
+  "@transferMoneyFeeLabel": {
+    "description": "Label for fee field in transfer money form"
+  },
+  "transferMoneyNotesLabel": "Notes",
+  "@transferMoneyNotesLabel": {
+    "description": "Label for notes field in transfer money form"
+  },
+  "transferMoneySubmitButton": "Transfer",
+  "@transferMoneySubmitButton": {
+    "description": "Submit button in transfer money form"
+  },
+  "transferMoneySuccessTitle": "Transfer recorded",
+  "@transferMoneySuccessTitle": {
+    "description": "Title for toast success state in transfer money page"
+  },
+  "transferMoneySuccessMessage": "{amount} transfer from {sourceName} to {destName} have been recorded",
+  "@transferMoneySuccessMessage": {
+    "description": "Message for toast success state in transfer money page",
+    "placeholders": {
+      "sourceName": {
+        "type": "String",
+        "example": "bank hitam"
+      },
+      "destName": {
+        "type": "String",
+        "example": "bank putih"
+      },
+      "amount": {
+        "description": "amount with currency symbol",
+        "type": "String",
+        "example": "$100"
+      }
+    }
+  },
+  "transferMoneyFailureTitle": "Failed to record transfer",
+  "@transferMoneyFailureTitle": {
+    "description": "Title for toast failure state in transfer money page"
+  },
+  "addTransactionTitle": "Record new transaction",
+  "@addTransactionTitle": {
+    "description": "Title for Add transaction page"
   }
 }

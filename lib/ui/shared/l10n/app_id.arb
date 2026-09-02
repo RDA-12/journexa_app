@@ -99,5 +99,16 @@
   "errorInsufficientWalletBalance": "Dompet {name} tidak punya cukup saldo",
   "appSelectorErrorTitle": "Gagal mendapatkan data",
   "appSelectorEmptyItemsDescription": "Tidak ada data",
-  "commonLoadingSemanticsLabel": "Loading data"
+  "commonLoadingSemanticsLabel": "Loading data",
+  "transferMoneyDateLabel": "Tanggal",
+  "transferMoneySourceLabel": "Dompet Sumber",
+  "transferMoneyDestinationLabel": "Dompet Tujuan",
+  "transferMoneyAmountLabel": "Jumlah",
+  "transferMoneyFeeLabel": "Biaya Transfer",
+  "transferMoneyNotesLabel": "Catatan",
+  "transferMoneySubmitButton": "Transfer",
+  "transferMoneySuccessTitle": "Transfer tercatat",
+  "transferMoneySuccessMessage": "Transfer {amount} dari {sourceName} ke {destName} telah tercatat",
+  "transferMoneyFailureTitle": "Gagal mencatat transfer",
+  "addTransactionTitle": "Catat transaksi baru"
 }

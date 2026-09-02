@@ -1,5 +1,7 @@
+import 'package:decimal/decimal.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:journexa_app/shared/formatter/formatter.dart';
 import 'package:journexa_app/ui/shared/l10n/l10n.dart';
 import 'package:journexa_app/ui/shared/widgets/app_form_field.dart';
 
@@ -225,6 +227,272 @@ void main() {
         tester.getSemantics(finder),
         isSemantics(isTextField: true, isReadOnly: true),
       );
+    });
+  });
+
+  group('AppDecimalFormField', () {
+    Future<void> pumpDecimalFormField(
+      WidgetTester tester, {
+      Locale? locale,
+      AppDecimalController? controller,
+      Widget? icon,
+      String? label,
+      bool? isRequired,
+      bool? readOnly,
+      VoidCallback? onPressed,
+    }) async {
+      final formKey = GlobalKey<FormState>();
+
+      return pumpForWidgetTest(
+        tester,
+        locale: locale ?? const Locale('en'),
+        widget: Form(
+          key: formKey,
+          child: Column(
+            children: [
+              AppDecimalFormField(
+                controller: controller,
+                isRequired: isRequired ?? false,
+                label: label,
+                icon: icon,
+                readOnly: readOnly ?? false,
+                onPressed: onPressed,
+              ),
+              FilledButton(
+                key: const ValueKey('validator-button'),
+                onPressed: () {
+                  formKey.currentState!.validate();
+                },
+                child: const Text('Validate'),
+              ),
+            ],
+          ),
+        ),
+      );
+    }
+
+    group('Render', () {
+      testWidgets('shows correct AppFormField', (tester) async {
+        final controller = AppDecimalController();
+        const icon = Icon(Icons.search);
+        const label = 'label';
+
+        await pumpDecimalFormField(
+          tester,
+          controller: controller,
+          isRequired: false,
+          icon: icon,
+          label: label,
+          readOnly: false,
+        );
+
+        final finder = find.byType(AppFormField);
+        expect(finder, findsOneWidget);
+
+        final widget = tester.widget<AppFormField>(finder);
+        expect(widget.controller, controller.textEditingController);
+        expect(widget.isRequired, false);
+        expect(widget.icon, icon);
+        expect(widget.label, label);
+        expect(widget.readOnly, false);
+        expect(widget.onPressed, null);
+      });
+
+      for (final locale in AppLocalizations.supportedLocales) {
+        testWidgets(
+          'shows correct formatted decimal for ${locale.languageCode}',
+          (tester) async {
+            final decimal = Decimal.parse('1234.56');
+            final controller = AppDecimalController(initialValue: decimal)
+              ..languageCode = locale.languageCode;
+
+            await pumpDecimalFormField(
+              tester,
+              locale: locale,
+              controller: controller,
+            );
+
+            expect(
+              find.text(decimal.toLocalizedString(locale.languageCode)),
+              findsOneWidget,
+            );
+          },
+        );
+      }
+
+      testWidgets('uses provided controller', (tester) async {
+        final controller = AppDecimalController(
+          initialValue: Decimal.zero,
+        );
+        const input = '1000000';
+        final expected = Decimal.parse(input);
+
+        await pumpDecimalFormField(tester, controller: controller);
+        await tester.enterText(find.byType(TextFormField), input);
+        await tester.pumpAndSettle();
+
+        expect(controller.value, expected);
+      });
+
+      testWidgets('shows correct initial value', (tester) async {
+        final value = Decimal.parse('1000000');
+        final controller = AppDecimalController(
+          initialValue: value,
+        );
+
+        await pumpDecimalFormField(tester, controller: controller);
+
+        expect(find.text(value.toLocalizedString('en')), findsOneWidget);
+      });
+    });
+
+    group('Interactions', () {
+      testWidgets('allows inputting decimal value', (tester) async {
+        final controller = AppDecimalController();
+        const input = '1000000';
+        final expected = Decimal.parse(input);
+
+        await pumpDecimalFormField(tester, controller: controller);
+        await tester.enterText(find.byType(TextFormField), input);
+        await tester.pumpAndSettle();
+
+        expect(controller.value, expected);
+      });
+
+      testWidgets('does not allow non-decimal input', (tester) async {
+        final controller = AppDecimalController();
+        const input = 'abc';
+        final expected = Decimal.zero;
+
+        await pumpDecimalFormField(tester, controller: controller);
+        await tester.enterText(find.byType(TextFormField), input);
+        await tester.pumpAndSettle();
+
+        expect(controller.value, expected);
+      });
+    });
+
+    group('AppDecimalController', () {
+      testWidgets('reset value when languageCode changed', (tester) async {
+        const expectedInitial = '1,000,000.95';
+        const expectedLater = '1.000.000,95';
+        final controller = AppDecimalController(
+          initialValue: Decimal.parse('1000000.95'),
+        );
+
+        expect(
+          controller.textEditingController.text,
+          expectedInitial,
+        );
+
+        controller.languageCode = 'id';
+        expect(
+          controller.textEditingController.text,
+          expectedLater,
+        );
+      });
+    });
+  });
+
+  group('AppDateTimeFormField', () {
+    Future<void> pumpDateTimeFormField(
+      WidgetTester tester, {
+      Locale? locale,
+      AppDateTimeController? controller,
+      Widget? icon,
+      String? label,
+      bool? isRequired,
+      bool? readOnly,
+      VoidCallback? onPressed,
+    }) async {
+      final formKey = GlobalKey<FormState>();
+
+      return pumpForWidgetTest(
+        tester,
+        locale: locale ?? const Locale('en'),
+        widget: Form(
+          key: formKey,
+          child: Column(
+            children: [
+              AppDateTimeFormField(
+                controller: controller,
+                isRequired: isRequired ?? false,
+                label: label,
+                icon: icon,
+                readOnly: readOnly ?? false,
+                onPressed: onPressed,
+              ),
+              FilledButton(
+                key: const ValueKey('validator-button'),
+                onPressed: () {
+                  formKey.currentState!.validate();
+                },
+                child: const Text('Validate'),
+              ),
+            ],
+          ),
+        ),
+      );
+    }
+
+    group('Render', () {
+      testWidgets(
+        'shows correct AppFormField',
+        (tester) async {
+          final controller = AppDateTimeController();
+          const icon = Icon(Icons.search);
+          const label = 'label';
+
+          await pumpDateTimeFormField(
+            tester,
+            controller: controller,
+            isRequired: false,
+            icon: icon,
+            label: label,
+            readOnly: false,
+          );
+
+          final finder = find.byType(AppFormField);
+          expect(finder, findsOneWidget);
+
+          final widget = tester.widget<AppFormField>(finder);
+          expect(widget.controller, controller.textEditingController);
+          expect(widget.isRequired, false);
+          expect(widget.icon, icon);
+          expect(widget.label, label);
+          expect(widget.readOnly, false);
+        },
+      );
+
+      testWidgets('shows correct initial value', (tester) async {
+        final value = DateTime.now();
+        final controller = AppDateTimeController(initialValue: value);
+
+        await pumpDateTimeFormField(tester, controller: controller);
+
+        expect(find.text(value.dateTimeFormat), findsOneWidget);
+      });
+    });
+
+    group('Interactions', () {
+      testWidgets('allows to select date and time', (tester) async {
+        final controller = AppDateTimeController();
+        final now = DateTime.now();
+        final value = DateTime(now.year, now.month, now.day);
+
+        await pumpDateTimeFormField(tester, controller: controller);
+
+        await tester.tap(find.byType(TextFormField));
+        await tester.pumpAndSettle();
+
+        await tester.tap(find.text(value.day.toString()));
+        await tester.pump();
+
+        await tester.tap(find.text('OK'));
+        await tester.pumpAndSettle();
+
+        expect(controller.value, value);
+      });
     });
   });
 }

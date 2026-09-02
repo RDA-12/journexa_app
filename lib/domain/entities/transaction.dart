@@ -7,6 +7,18 @@ import 'package:journexa_app/shared/app_exception.dart';
 
 part 'transaction.freezed.dart';
 
+/// Types of [Transaction]
+enum TransactionType {
+  /// Income type
+  income,
+
+  /// Expense type
+  expense,
+
+  /// Transfer type
+  transfer,
+}
+
 /// Represent single transaction
 @freezed
 sealed class Transaction with _$Transaction {

@@ -387,4 +387,43 @@ class AppLocalizationsId extends AppLocalizations {
 
   @override
   String get commonLoadingSemanticsLabel => 'Loading data';
+
+  @override
+  String get transferMoneyDateLabel => 'Tanggal';
+
+  @override
+  String get transferMoneySourceLabel => 'Dompet Sumber';
+
+  @override
+  String get transferMoneyDestinationLabel => 'Dompet Tujuan';
+
+  @override
+  String get transferMoneyAmountLabel => 'Jumlah';
+
+  @override
+  String get transferMoneyFeeLabel => 'Biaya Transfer';
+
+  @override
+  String get transferMoneyNotesLabel => 'Catatan';
+
+  @override
+  String get transferMoneySubmitButton => 'Transfer';
+
+  @override
+  String get transferMoneySuccessTitle => 'Transfer tercatat';
+
+  @override
+  String transferMoneySuccessMessage(
+    String sourceName,
+    String destName,
+    String amount,
+  ) {
+    return 'Transfer $amount dari $sourceName ke $destName telah tercatat';
+  }
+
+  @override
+  String get transferMoneyFailureTitle => 'Gagal mencatat transfer';
+
+  @override
+  String get addTransactionTitle => 'Catat transaksi baru';
 }

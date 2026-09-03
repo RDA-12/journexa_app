@@ -119,7 +119,14 @@
   "incomeSubmitButton": "Pendapatan",
   "incomeSuccessTitle": "Pendapatan tercatat",
   "incomeSuccessMessage": "Pendapatan {amount} ke {walletName} untuk {categoryName} telah tercatat",
-  "incomeFailureTitle": "Gagal mencatat pendapatan"
+  "incomeFailureTitle": "Gagal mencatat pendapatan",
+  "expenseDateLabel": "Tanggal",
+  "expenseWalletLabel": "Dompet",
+  "expenseCategoryLabel": "Kategori",
+  "expenseAmountLabel": "Jumlah",
+  "expenseNotesLabel": "Catatan",
+  "expenseSubmitButton": "Pengeluaran"
 }
+
 
 

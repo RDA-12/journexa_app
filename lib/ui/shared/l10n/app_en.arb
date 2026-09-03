@@ -693,7 +693,32 @@
   "incomeFailureTitle": "Failed to record income",
   "@incomeFailureTitle": {
     "description": "Title for toast failure state in income page"
+  },
+  "expenseDateLabel": "Date",
+  "@expenseDateLabel": {
+    "description": "Label for date field in expense form"
+  },
+  "expenseWalletLabel": "Wallet",
+  "@expenseWalletLabel": {
+    "description": "Label for wallet selector in expense form"
+  },
+  "expenseCategoryLabel": "Category",
+  "@expenseCategoryLabel": {
+    "description": "Label for category selector in expense form"
+  },
+  "expenseAmountLabel": "Amount",
+  "@expenseAmountLabel": {
+    "description": "Label for amount field in expense form"
+  },
+  "expenseNotesLabel": "Notes",
+  "@expenseNotesLabel": {
+    "description": "Label for notes field in expense form"
+  },
+  "expenseSubmitButton": "Expense",
+  "@expenseSubmitButton": {
+    "description": "Submit button in expense form"
   }
 }
+
 
 

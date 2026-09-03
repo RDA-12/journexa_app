@@ -452,4 +452,22 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get incomeFailureTitle => 'Failed to record income';
+
+  @override
+  String get expenseDateLabel => 'Date';
+
+  @override
+  String get expenseWalletLabel => 'Wallet';
+
+  @override
+  String get expenseCategoryLabel => 'Category';
+
+  @override
+  String get expenseAmountLabel => 'Amount';
+
+  @override
+  String get expenseNotesLabel => 'Notes';
+
+  @override
+  String get expenseSubmitButton => 'Expense';
 }

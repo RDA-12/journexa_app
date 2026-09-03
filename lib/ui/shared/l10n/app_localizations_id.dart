@@ -459,4 +459,22 @@ class AppLocalizationsId extends AppLocalizations {
 
   @override
   String get incomeFailureTitle => 'Gagal mencatat pendapatan';
+
+  @override
+  String get expenseDateLabel => 'Tanggal';
+
+  @override
+  String get expenseWalletLabel => 'Dompet';
+
+  @override
+  String get expenseCategoryLabel => 'Kategori';
+
+  @override
+  String get expenseAmountLabel => 'Jumlah';
+
+  @override
+  String get expenseNotesLabel => 'Catatan';
+
+  @override
+  String get expenseSubmitButton => 'Pengeluaran';
 }

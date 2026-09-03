@@ -825,6 +825,42 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Failed to record income'**
   String get incomeFailureTitle;
+
+  /// Label for date field in expense form
+  ///
+  /// In en, this message translates to:
+  /// **'Date'**
+  String get expenseDateLabel;
+
+  /// Label for wallet selector in expense form
+  ///
+  /// In en, this message translates to:
+  /// **'Wallet'**
+  String get expenseWalletLabel;
+
+  /// Label for category selector in expense form
+  ///
+  /// In en, this message translates to:
+  /// **'Category'**
+  String get expenseCategoryLabel;
+
+  /// Label for amount field in expense form
+  ///
+  /// In en, this message translates to:
+  /// **'Amount'**
+  String get expenseAmountLabel;
+
+  /// Label for notes field in expense form
+  ///
+  /// In en, this message translates to:
+  /// **'Notes'**
+  String get expenseNotesLabel;
+
+  /// Submit button in expense form
+  ///
+  /// In en, this message translates to:
+  /// **'Expense'**
+  String get expenseSubmitButton;
 }
 
 class _AppLocalizationsDelegate

@@ -125,8 +125,12 @@
   "expenseCategoryLabel": "Kategori",
   "expenseAmountLabel": "Jumlah",
   "expenseNotesLabel": "Catatan",
-  "expenseSubmitButton": "Pengeluaran"
+  "expenseSubmitButton": "Pengeluaran",
+  "expenseSuccessTitle": "Pengeluaran tercatat",
+  "expenseSuccessMessage": "Pengeluaran {amount} dari {walletName} untuk {categoryName} telah tercatat",
+  "expenseFailureTitle": "Gagal mencatat pengeluaran"
 }
+
 
 
 

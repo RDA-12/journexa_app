@@ -3,15 +3,18 @@ import 'package:decimal/decimal.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:journexa_app/domain/entities/expense_category.dart';
 import 'package:journexa_app/domain/entities/income_category.dart';
 import 'package:journexa_app/domain/entities/transaction.dart';
 import 'package:journexa_app/domain/entities/wallet.dart';
 import 'package:journexa_app/shared/app_exception.dart';
+import 'package:journexa_app/ui/expense_categories/bloc/expense_categories_bloc.dart';
 import 'package:journexa_app/ui/income_categories/bloc/income_categories_bloc.dart';
 import 'package:journexa_app/ui/shared/l10n/app_localizations.dart';
 import 'package:journexa_app/ui/shared/widgets/widgets.dart';
 import 'package:journexa_app/ui/transactions/bloc/add_transaction_bloc.dart';
 import 'package:journexa_app/ui/transactions/widgets/add_transaction_view.dart';
+import 'package:journexa_app/ui/transactions/widgets/expense_form.dart';
 import 'package:journexa_app/ui/transactions/widgets/income_form.dart';
 import 'package:journexa_app/ui/transactions/widgets/transfer_money_form.dart';
 import 'package:journexa_app/ui/wallets/bloc/wallets_bloc.dart';
@@ -22,6 +25,9 @@ import '../../util.dart';
 class MockWalletsBloc extends Mock implements WalletsBloc {}
 
 class MockIncomeCategoriesBloc extends Mock implements IncomeCategoriesBloc {}
+
+class MockExpenseCategoriesBloc extends Mock
+    implements ExpenseCategoriesBloc {}
 
 class MockAddTransactionBloc extends Mock implements AddTransactionBloc {}
 
@@ -37,6 +43,11 @@ final expectedTranslations = {
         'Pendapatan Rp 10.000 ke test untuk name telah tercatat',
     'incomeFailureToastTitle': 'Gagal mencatat pendapatan',
     'incomeFailureToastMessage': 'Terjadi kesalahan internal',
+    'expenseSuccessToastTitle': 'Pengeluaran tercatat',
+    'expenseSuccessToastMessage':
+        'Pengeluaran Rp 10.000 dari test untuk name telah tercatat',
+    'expenseFailureToastTitle': 'Gagal mencatat pengeluaran',
+    'expenseFailureToastMessage': 'Terjadi kesalahan internal',
   },
   'en': {
     'transferSuccessToastTitle': 'Transfer recorded',
@@ -49,6 +60,11 @@ final expectedTranslations = {
         'Rp 10,000 income to test for name have been recorded',
     'incomeFailureToastTitle': 'Failed to record income',
     'incomeFailureToastMessage': 'Internal exception error',
+    'expenseSuccessToastTitle': 'Expense recorded',
+    'expenseSuccessToastMessage':
+        'Rp 10,000 expense from test for name have been recorded',
+    'expenseFailureToastTitle': 'Failed to record expense',
+    'expenseFailureToastMessage': 'Internal exception error',
   },
 };
 
@@ -62,17 +78,27 @@ void main() {
     );
   }).toList();
 
-  final categories = List.generate(5, (index) {
+  final incomeCategories = List.generate(5, (index) {
     return IncomeCategory.test()
         .update(name: 'category $index')
         .copyWith(id: '$index');
   }).toList();
-  final blocCategories = categories.map((it) {
+  final blocIncomeCategories = incomeCategories.map((it) {
     return IncomeCategoryWithState(category: it);
+  }).toList();
+
+  final expenseCategories = List.generate(5, (index) {
+    return ExpenseCategory.test()
+        .update(name: 'category $index')
+        .copyWith(id: '$index');
+  }).toList();
+  final blocExpenseCategories = expenseCategories.map((it) {
+    return ExpenseCategoryWithState(category: it);
   }).toList();
 
   late WalletsBloc mockWalletsBloc;
   late IncomeCategoriesBloc mockIncomeCategoriesBloc;
+  late ExpenseCategoriesBloc mockExpenseCategoriesBloc;
   late AddTransactionBloc mockAddTransactionBloc;
 
   setUp(() {
@@ -94,10 +120,22 @@ void main() {
       Stream<IncomeCategoriesState>.value(
         IncomeCategoriesState(
           status: IncomeCategoriesStatus.loaded,
-          categories: blocCategories,
+          categories: blocIncomeCategories,
         ),
       ),
       initialState: const IncomeCategoriesState(),
+    );
+
+    mockExpenseCategoriesBloc = MockExpenseCategoriesBloc();
+    whenListen(
+      mockExpenseCategoriesBloc,
+      Stream<ExpenseCategoriesState>.value(
+        ExpenseCategoriesState(
+          status: ExpenseCategoriesStatus.loaded,
+          categories: blocExpenseCategories,
+        ),
+      ),
+      initialState: const ExpenseCategoriesState(),
     );
 
     mockAddTransactionBloc = MockAddTransactionBloc();
@@ -120,6 +158,7 @@ void main() {
         providers: [
           BlocProvider.value(value: mockWalletsBloc),
           BlocProvider.value(value: mockIncomeCategoriesBloc),
+          BlocProvider.value(value: mockExpenseCategoriesBloc),
           BlocProvider.value(value: mockAddTransactionBloc),
         ],
         child: AddTransactionView(type: type),
@@ -442,7 +481,7 @@ void main() {
           final widget = tester.widget<IncomeForm>(finder);
           widget.onAddIncomePressed!(
             wallet: wallets[0],
-            category: categories[0],
+            category: incomeCategories[0],
             amount: Decimal.parse('100'),
             date: DateTime(now.year, now.month, now.day),
             notes: 'test',
@@ -452,7 +491,7 @@ void main() {
             () => mockAddTransactionBloc.add(
               AddTransactionEvent.income(
                 wallet: wallets[0],
-                category: categories[0],
+                category: incomeCategories[0],
                 amount: Decimal.parse('100'),
                 date: DateTime(now.year, now.month, now.day),
                 notes: 'test',
@@ -634,6 +673,263 @@ void main() {
             expect(
               find.bySemanticsLabel(
                 '$incomeFailureToastTitle\n$incomeFailureToastMessage',
+              ),
+              findsOneWidget,
+            );
+            await tester.pumpAndSettle(kToastDuration);
+          },
+        );
+      }
+    });
+  });
+
+  group('expense', () {
+    final expenseTransaction = Transaction.testExpense(
+      amount: Decimal.fromInt(10000),
+      date: DateTime.now(),
+    );
+    group('Render', () {
+      testWidgets(
+        'shows correct ExpenseForm',
+        (tester) async {
+          await pumpWidget(tester, type: TransactionType.expense);
+
+          final formFinder = find.byType(ExpenseForm);
+          expect(formFinder, findsOneWidget);
+
+          final widget = tester.widget<ExpenseForm>(formFinder);
+          expect(widget.isProcessing, false);
+          expect(widget.onAddExpensePressed, isNotNull);
+        },
+      );
+
+      testWidgets(
+        'set onAddExpensePressed=null and isProcessing=true on ExpenseForm '
+        'when state is loading',
+        (tester) async {
+          whenListen(
+            mockAddTransactionBloc,
+            Stream<AddTransactionState>.value(
+              const AddTransactionState.loading(),
+            ),
+            initialState: const AddTransactionState.initial(),
+          );
+          await pumpWidget(tester, type: TransactionType.expense);
+          await tester.pumpAndSettle();
+
+          final formFinder = find.byType(ExpenseForm);
+          expect(formFinder, findsOneWidget);
+
+          final widget = tester.widget<ExpenseForm>(formFinder);
+          expect(widget.isProcessing, true);
+          expect(widget.onAddExpensePressed, isNull);
+        },
+      );
+    });
+
+    group('Interactions', () {
+      testWidgets(
+        'add correct AddTransactionEvent.expense when onAddExpensePressed',
+        (tester) async {
+          await pumpWidget(tester, type: TransactionType.expense);
+
+          final now = DateTime.now();
+          final finder = find.byType(ExpenseForm);
+          final widget = tester.widget<ExpenseForm>(finder);
+          widget.onAddExpensePressed!(
+            wallet: wallets[0],
+            category: expenseCategories[0],
+            amount: Decimal.parse('100'),
+            date: DateTime(now.year, now.month, now.day),
+            notes: 'test',
+          );
+
+          verify(
+            () => mockAddTransactionBloc.add(
+              AddTransactionEvent.expense(
+                wallet: wallets[0],
+                category: expenseCategories[0],
+                amount: Decimal.parse('100'),
+                date: DateTime(now.year, now.month, now.day),
+                notes: 'test',
+              ),
+            ),
+          ).called(1);
+        },
+      );
+    });
+
+    group('SideEffects', () {
+      for (final locale in AppLocalizations.supportedLocales) {
+        final translations = expectedTranslations[locale.languageCode]!;
+
+        final expenseSuccessToastTitle =
+            translations['expenseSuccessToastTitle']!;
+        testWidgets(
+          'shows correct toast title when expense succeeded '
+          'for ${locale.languageCode}',
+          (tester) async {
+            whenListen(
+              mockAddTransactionBloc,
+              Stream.value(AddTransactionState.added(expenseTransaction)),
+              initialState: const AddTransactionState.initial(),
+            );
+            await pumpWidget(
+              tester,
+              type: TransactionType.expense,
+              locale: locale,
+            );
+            await tester.pumpAndSettle();
+
+            expect(find.text(expenseSuccessToastTitle), findsOneWidget);
+            await tester.pumpAndSettle(kToastDuration);
+          },
+        );
+
+        final expenseSuccessToastMessage =
+            translations['expenseSuccessToastMessage']!;
+        testWidgets(
+          'shows correct toast description when expense succeeded '
+          'for ${locale.languageCode}',
+          (tester) async {
+            whenListen(
+              mockAddTransactionBloc,
+              Stream.value(
+                AddTransactionState.added(expenseTransaction),
+              ),
+              initialState: const AddTransactionState.initial(),
+            );
+            await pumpWidget(
+              tester,
+              type: TransactionType.expense,
+              locale: locale,
+            );
+            await tester.pumpAndSettle();
+
+            expect(find.text(expenseSuccessToastMessage), findsOneWidget);
+            await tester.pumpAndSettle(kToastDuration);
+          },
+        );
+
+        final expenseFailureToastTitle =
+            translations['expenseFailureToastTitle']!;
+        testWidgets(
+          'shows correct toast title when expense failed '
+          'for ${locale.languageCode}',
+          (tester) async {
+            whenListen(
+              mockAddTransactionBloc,
+              Stream.value(
+                AddTransactionState.failure(
+                  AppException.test(),
+                ),
+              ),
+              initialState: const AddTransactionState.initial(),
+            );
+            await pumpWidget(
+              tester,
+              type: TransactionType.expense,
+              locale: locale,
+            );
+            await tester.pumpAndSettle();
+
+            expect(find.text(expenseFailureToastTitle), findsOneWidget);
+            await tester.pumpAndSettle(kToastDuration);
+          },
+        );
+
+        final expenseFailureToastMessage =
+            translations['expenseFailureToastMessage']!;
+        testWidgets(
+          'shows correct toast description when expense failed '
+          'for ${locale.languageCode}',
+          (tester) async {
+            whenListen(
+              mockAddTransactionBloc,
+              Stream.value(
+                AddTransactionState.failure(
+                  AppException.test(),
+                ),
+              ),
+              initialState: const AddTransactionState.initial(),
+            );
+            await pumpWidget(
+              tester,
+              type: TransactionType.expense,
+              locale: locale,
+            );
+            await tester.pumpAndSettle();
+
+            expect(find.text(expenseFailureToastMessage), findsOneWidget);
+            await tester.pumpAndSettle(kToastDuration);
+          },
+        );
+      }
+    });
+
+    group('a11y', () {
+      for (final locale in AppLocalizations.supportedLocales) {
+        final translations = expectedTranslations[locale.languageCode]!;
+
+        final expenseSuccessToastTitle =
+            translations['expenseSuccessToastTitle']!;
+        final expenseSuccessToastMessage =
+            translations['expenseSuccessToastMessage']!;
+        testWidgets(
+          'has correct semantics on toast when expense succeeded '
+          'for ${locale.languageCode}',
+          (tester) async {
+            whenListen(
+              mockAddTransactionBloc,
+              Stream.value(
+                AddTransactionState.added(expenseTransaction),
+              ),
+              initialState: const AddTransactionState.initial(),
+            );
+            await pumpWidget(
+              tester,
+              type: TransactionType.expense,
+              locale: locale,
+            );
+            await tester.pumpAndSettle();
+
+            expect(
+              find.bySemanticsLabel(
+                '$expenseSuccessToastTitle\n$expenseSuccessToastMessage',
+              ),
+              findsOneWidget,
+            );
+            await tester.pumpAndSettle(kToastDuration);
+          },
+        );
+
+        final expenseFailureToastTitle =
+            translations['expenseFailureToastTitle']!;
+        final expenseFailureToastMessage =
+            translations['expenseFailureToastMessage']!;
+        testWidgets(
+          'has correct semantics on toast when expense failed '
+          'for ${locale.languageCode}',
+          (tester) async {
+            whenListen(
+              mockAddTransactionBloc,
+              Stream.value(
+                AddTransactionState.failure(
+                  AppException.test(),
+                ),
+              ),
+              initialState: const AddTransactionState.initial(),
+            );
+            await pumpWidget(
+              tester,
+              type: TransactionType.expense,
+              locale: locale,
+            );
+            await tester.pumpAndSettle();
+
+            expect(
+              find.bySemanticsLabel(
+                '$expenseFailureToastTitle\n$expenseFailureToastMessage',
               ),
               findsOneWidget,
             );

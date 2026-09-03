@@ -717,8 +717,36 @@
   "expenseSubmitButton": "Expense",
   "@expenseSubmitButton": {
     "description": "Submit button in expense form"
+  },
+  "expenseSuccessTitle": "Expense recorded",
+  "@expenseSuccessTitle": {
+    "description": "Title for toast success state in expense page"
+  },
+  "expenseSuccessMessage": "{amount} expense from {walletName} for {categoryName} have been recorded",
+  "@expenseSuccessMessage": {
+    "description": "Message for toast success state in expense page",
+    "placeholders": {
+      "walletName": {
+        "type": "String",
+        "example": "bank hitam"
+      },
+      "categoryName": {
+        "type": "String",
+        "example": "food"
+      },
+      "amount": {
+        "description": "amount with currency symbol",
+        "type": "String",
+        "example": "$100"
+      }
+    }
+  },
+  "expenseFailureTitle": "Failed to record expense",
+  "@expenseFailureTitle": {
+    "description": "Title for toast failure state in expense page"
   }
 }
+
 
 
 

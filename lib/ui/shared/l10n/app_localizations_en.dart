@@ -470,4 +470,19 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get expenseSubmitButton => 'Expense';
+
+  @override
+  String get expenseSuccessTitle => 'Expense recorded';
+
+  @override
+  String expenseSuccessMessage(
+    String walletName,
+    String categoryName,
+    String amount,
+  ) {
+    return '$amount expense from $walletName for $categoryName have been recorded';
+  }
+
+  @override
+  String get expenseFailureTitle => 'Failed to record expense';
 }

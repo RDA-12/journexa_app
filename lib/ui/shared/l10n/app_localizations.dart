@@ -861,6 +861,28 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Expense'**
   String get expenseSubmitButton;
+
+  /// Title for toast success state in expense page
+  ///
+  /// In en, this message translates to:
+  /// **'Expense recorded'**
+  String get expenseSuccessTitle;
+
+  /// Message for toast success state in expense page
+  ///
+  /// In en, this message translates to:
+  /// **'{amount} expense from {walletName} for {categoryName} have been recorded'**
+  String expenseSuccessMessage(
+    String walletName,
+    String categoryName,
+    String amount,
+  );
+
+  /// Title for toast failure state in expense page
+  ///
+  /// In en, this message translates to:
+  /// **'Failed to record expense'**
+  String get expenseFailureTitle;
 }
 
 class _AppLocalizationsDelegate

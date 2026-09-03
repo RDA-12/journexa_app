@@ -5,6 +5,7 @@ import 'package:journexa_app/shared/formatter/decimal_formatter.dart';
 import 'package:journexa_app/ui/shared/l10n/l10n.dart';
 import 'package:journexa_app/ui/shared/widgets/app_toast.dart';
 import 'package:journexa_app/ui/transactions/bloc/add_transaction_bloc.dart';
+import 'package:journexa_app/ui/transactions/widgets/expense_form.dart';
 import 'package:journexa_app/ui/transactions/widgets/income_form.dart';
 import 'package:journexa_app/ui/transactions/widgets/transfer_money_form.dart';
 
@@ -32,14 +33,18 @@ class AddTransactionView extends StatelessWidget {
                   description: exc.code.toLocalizedString(context),
                   autoClose: true,
                 );
+              case TransactionType.expense:
+                context.showToast(
+                  title: context.l10n.expenseFailureTitle,
+                  description: exc.code.toLocalizedString(context),
+                  autoClose: true,
+                );
               case TransactionType.transfer:
                 context.showToast(
                   title: context.l10n.transferMoneyFailureTitle,
                   description: exc.code.toLocalizedString(context),
                   autoClose: true,
                 );
-              case _:
-                throw UnimplementedError();
             }
           },
           added: (transaction) {
@@ -55,7 +60,17 @@ class AddTransactionView extends StatelessWidget {
                   autoClose: true,
                 );
               },
-              expense: (id, wallet, category, amount, date, notes) {},
+              expense: (id, wallet, category, amount, date, notes) {
+                context.showToast(
+                  title: context.l10n.expenseSuccessTitle,
+                  description: context.l10n.expenseSuccessMessage(
+                    wallet.name,
+                    category.name,
+                    amount.idrCurrency(context.languageCode),
+                  ),
+                  autoClose: true,
+                );
+              },
               transfer: (id, source, destination, amount, fee, date, notes) {
                 context.showToast(
                   title: context.l10n.transferMoneySuccessTitle,
@@ -99,7 +114,28 @@ class AddTransactionView extends StatelessWidget {
                     );
                   },
           ),
-          TransactionType.expense => const Placeholder(),
+          TransactionType.expense => ExpenseForm(
+            isProcessing: isLoading,
+            onAddExpensePressed: isLoading
+                ? null
+                : ({
+                    required wallet,
+                    required category,
+                    required amount,
+                    required date,
+                    notes,
+                  }) {
+                    context.read<AddTransactionBloc>().add(
+                      AddTransactionEvent.expense(
+                        wallet: wallet,
+                        category: category,
+                        amount: amount,
+                        date: date,
+                        notes: notes,
+                      ),
+                    );
+                  },
+          ),
           TransactionType.transfer => TransferMoneyForm(
             isProcessing: isLoading,
             onTransferPressed: isLoading

@@ -12,4 +12,13 @@ sealed class AddTransactionEvent with _$AddTransactionEvent {
     required DateTime date,
     String? notes,
   }) = _Transfer;
+
+  /// Event to add an income transaction
+  const factory AddTransactionEvent.income({
+    required Wallet wallet,
+    required IncomeCategory category,
+    required Decimal amount,
+    required DateTime date,
+    String? notes,
+  }) = _Income;
 }

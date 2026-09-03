@@ -1,8 +1,10 @@
 import 'package:bloc/bloc.dart';
 import 'package:decimal/decimal.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
+import 'package:journexa_app/domain/entities/income_category.dart';
 import 'package:journexa_app/domain/entities/transaction.dart';
 import 'package:journexa_app/domain/entities/wallet.dart';
+import 'package:journexa_app/domain/use_cases/transaction/add_income.dart';
 import 'package:journexa_app/domain/use_cases/transaction/transfer_money.dart';
 import 'package:journexa_app/shared/app_exception.dart';
 import 'package:journexa_app/shared/app_logger.dart';
@@ -19,6 +21,7 @@ class AddTransactionBloc extends Bloc<AddTransactionEvent, AddTransactionState>
   /// Creates new [AddTransactionBloc]
   AddTransactionBloc({
     required this._transferMoney,
+    required this._addIncome,
   }) : super(const AddTransactionState.initial()) {
     on<AddTransactionEvent>(
       (event, emit) async {
@@ -34,12 +37,23 @@ class AddTransactionBloc extends Bloc<AddTransactionEvent, AddTransactionState>
               notes: notes,
             );
           },
+          income: (wallet, category, amount, date, notes) {
+            return _onIncome(
+              emit: emit,
+              wallet: wallet,
+              category: category,
+              amount: amount,
+              date: date,
+              notes: notes,
+            );
+          },
         );
       },
     );
   }
 
   final TransferMoneyUseCase _transferMoney;
+  final AddIncomeUseCase _addIncome;
 
   @override
   String get logTag => 'AddTransactionBloc';
@@ -89,6 +103,57 @@ class AddTransactionBloc extends Bloc<AddTransactionEvent, AddTransactionState>
       failure: (error) {
         logError(
           'Transfer money failed. Emit failure state',
+          traceId: traceId,
+          error: error,
+        );
+        emit(AddTransactionState.failure(error));
+      },
+    );
+  }
+
+  Future<void> _onIncome({
+    required Emitter<AddTransactionState> emit,
+    required Wallet wallet,
+    required IncomeCategory category,
+    required Decimal amount,
+    required DateTime date,
+    String? notes,
+  }) async {
+    final traceId = generateUid();
+    logInfo(
+      'Starts adding new income. Emit loading state',
+      traceId: traceId,
+      extras: {
+        'walletId': wallet.id,
+        'categoryId': category.id,
+        'amount': amount,
+        'date': date,
+        'notes': notes,
+      },
+    );
+    emit(const AddTransactionState.loading());
+    final result = await _addIncome.execute(
+      AddIncomeParams(
+        wallet: wallet,
+        category: category,
+        amount: amount,
+        date: date,
+        notes: notes,
+      ),
+      traceId: traceId,
+    );
+    result.when(
+      success: (transaction) {
+        logInfo(
+          'Add income success. Emit added state',
+          traceId: traceId,
+          extras: {'transactionId': transaction.id},
+        );
+        emit(AddTransactionState.added(transaction));
+      },
+      failure: (error) {
+        logError(
+          'Add income failed. Emit failure state',
           traceId: traceId,
           error: error,
         );

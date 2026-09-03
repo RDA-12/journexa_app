@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:journexa_app/di.dart';
 import 'package:journexa_app/domain/entities/transaction.dart';
+import 'package:journexa_app/domain/use_cases/transaction/add_income.dart';
 import 'package:journexa_app/domain/use_cases/transaction/transfer_money.dart';
 import 'package:journexa_app/domain/use_cases/wallet/delete_wallet.dart';
 import 'package:journexa_app/domain/use_cases/wallet/get_all_wallets.dart';
@@ -52,6 +53,7 @@ class AddTransactionPage extends StatelessWidget {
               addTransactionBloc ??
               AddTransactionBloc(
                 transferMoney: getIt<TransferMoneyUseCase>(),
+                addIncome: getIt<AddIncomeUseCase>(),
               ),
         ),
       ],

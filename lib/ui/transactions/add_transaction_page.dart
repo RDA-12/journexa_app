@@ -2,14 +2,19 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:journexa_app/di.dart';
 import 'package:journexa_app/domain/entities/transaction.dart';
+import 'package:journexa_app/domain/use_cases/expense_category/delete_expense_category.dart';
+import 'package:journexa_app/domain/use_cases/expense_category/get_all_expense_categories.dart';
+import 'package:journexa_app/domain/use_cases/expense_category/update_expense_category.dart';
 import 'package:journexa_app/domain/use_cases/income_category/delete_income_category.dart';
 import 'package:journexa_app/domain/use_cases/income_category/get_all_income_categories.dart';
 import 'package:journexa_app/domain/use_cases/income_category/update_income_category.dart';
+import 'package:journexa_app/domain/use_cases/transaction/add_expense.dart';
 import 'package:journexa_app/domain/use_cases/transaction/add_income.dart';
 import 'package:journexa_app/domain/use_cases/transaction/transfer_money.dart';
 import 'package:journexa_app/domain/use_cases/wallet/delete_wallet.dart';
 import 'package:journexa_app/domain/use_cases/wallet/get_all_wallets.dart';
 import 'package:journexa_app/domain/use_cases/wallet/update_wallet.dart';
+import 'package:journexa_app/ui/expense_categories/bloc/expense_categories_bloc.dart';
 import 'package:journexa_app/ui/income_categories/bloc/income_categories_bloc.dart';
 import 'package:journexa_app/ui/shared/l10n/l10n.dart';
 import 'package:journexa_app/ui/transactions/bloc/add_transaction_bloc.dart';
@@ -23,6 +28,7 @@ class AddTransactionPage extends StatelessWidget {
     required this.type,
     this.walletsBloc,
     this.incomeCategoriesBloc,
+    this.expenseCategoriesBloc,
     this.addTransactionBloc,
     super.key,
   });
@@ -36,6 +42,11 @@ class AddTransactionPage extends StatelessWidget {
   ///
   /// If not provided, it will be created
   final IncomeCategoriesBloc? incomeCategoriesBloc;
+
+  /// Optional [ExpenseCategoriesBloc]
+  ///
+  /// If not provided, it will be created
+  final ExpenseCategoriesBloc? expenseCategoriesBloc;
 
   /// Optional [AddTransactionBloc]
   ///
@@ -72,10 +83,23 @@ class AddTransactionPage extends StatelessWidget {
         ),
         BlocProvider(
           create: (context) =>
+              expenseCategoriesBloc ??
+              ExpenseCategoriesBloc(
+                getAllExpenseCategories:
+                    getIt<GetAllExpenseCategoriesUseCase>(),
+                deleteExpenseCategory:
+                    getIt<DeleteExpenseCategoryUseCase>(),
+                updateExpenseCategory:
+                    getIt<UpdateExpenseCategoryUseCase>(),
+              ),
+        ),
+        BlocProvider(
+          create: (context) =>
               addTransactionBloc ??
               AddTransactionBloc(
                 transferMoney: getIt<TransferMoneyUseCase>(),
                 addIncome: getIt<AddIncomeUseCase>(),
+                addExpense: getIt<AddExpenseUseCase>(),
               ),
         ),
       ],

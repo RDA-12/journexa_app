@@ -3,6 +3,7 @@ import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:journexa_app/domain/entities/transaction.dart';
+import 'package:journexa_app/ui/expense_categories/bloc/expense_categories_bloc.dart';
 import 'package:journexa_app/ui/income_categories/bloc/income_categories_bloc.dart';
 import 'package:journexa_app/ui/shared/l10n/app_localizations.dart';
 import 'package:journexa_app/ui/transactions/add_transaction_page.dart';
@@ -16,6 +17,8 @@ import '../util.dart';
 class MockWalletsBloc extends Mock implements WalletsBloc {}
 
 class MockIncomeCategoriesBloc extends Mock implements IncomeCategoriesBloc {}
+
+class MockExpenseCategoriesBloc extends Mock implements ExpenseCategoriesBloc {}
 
 class MockAddTransactionBloc extends Mock implements AddTransactionBloc {}
 
@@ -31,6 +34,7 @@ final expectedTranslations = {
 void main() {
   late WalletsBloc mockWalletsBloc;
   late IncomeCategoriesBloc mockIncomeCategoriesBloc;
+  late ExpenseCategoriesBloc mockExpenseCategoriesBloc;
   late AddTransactionBloc mockAddTransactionBloc;
 
   setUp(() {
@@ -49,6 +53,14 @@ void main() {
       initialState: const IncomeCategoriesState(),
     );
     when(mockIncomeCategoriesBloc.close).thenAnswer((_) async {});
+
+    mockExpenseCategoriesBloc = MockExpenseCategoriesBloc();
+    whenListen(
+      mockExpenseCategoriesBloc,
+      const Stream<ExpenseCategoriesState>.empty(),
+      initialState: const ExpenseCategoriesState(),
+    );
+    when(mockExpenseCategoriesBloc.close).thenAnswer((_) async {});
 
     mockAddTransactionBloc = MockAddTransactionBloc();
     whenListen(
@@ -71,6 +83,7 @@ void main() {
           type: type,
           walletsBloc: mockWalletsBloc,
           incomeCategoriesBloc: mockIncomeCategoriesBloc,
+          expenseCategoriesBloc: mockExpenseCategoriesBloc,
           addTransactionBloc: mockAddTransactionBloc,
         ),
       },
@@ -95,6 +108,18 @@ void main() {
 
         expect(
           find.byType(BlocProvider<IncomeCategoriesBloc>),
+          findsOneWidget,
+        );
+      },
+    );
+
+    testWidgets(
+      'provides ExpenseCategoriesBloc',
+      (tester) async {
+        await pumpWidget(tester, type: TransactionType.income);
+
+        expect(
+          find.byType(BlocProvider<ExpenseCategoriesBloc>),
           findsOneWidget,
         );
       },

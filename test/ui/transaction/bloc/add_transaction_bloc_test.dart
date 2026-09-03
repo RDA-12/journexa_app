@@ -1,9 +1,11 @@
 import 'package:bloc_test/bloc_test.dart';
 import 'package:decimal/decimal.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:journexa_app/domain/entities/expense_category.dart';
 import 'package:journexa_app/domain/entities/income_category.dart';
 import 'package:journexa_app/domain/entities/transaction.dart';
 import 'package:journexa_app/domain/entities/wallet.dart';
+import 'package:journexa_app/domain/use_cases/transaction/add_expense.dart';
 import 'package:journexa_app/domain/use_cases/transaction/add_income.dart';
 import 'package:journexa_app/domain/use_cases/transaction/transfer_money.dart';
 import 'package:journexa_app/shared/app_exception.dart';
@@ -17,6 +19,8 @@ class MockUidGenerator extends Mock implements UidGenerator {}
 class MockTransferMoneyUseCase extends Mock implements TransferMoneyUseCase {}
 
 class MockAddIncomeUseCase extends Mock implements AddIncomeUseCase {}
+
+class MockAddExpenseUseCase extends Mock implements AddExpenseUseCase {}
 
 void main() {
   const traceId = 'traceId';
@@ -35,10 +39,18 @@ void main() {
     amount: Decimal.fromInt(1000),
     date: DateTime.now(),
   );
+  final expenseTransaction = ExpenseTransaction(
+    id: 'id',
+    wallet: Wallet.test(),
+    category: ExpenseCategory.test(),
+    amount: Decimal.fromInt(1000),
+    date: DateTime.now(),
+  );
 
   late UidGenerator mockUidGenerator;
   late TransferMoneyUseCase mockTransferMoney;
   late AddIncomeUseCase mockAddIncome;
+  late AddExpenseUseCase mockAddExpense;
 
   setUpAll(() {
     registerFallbackValue(
@@ -58,6 +70,14 @@ void main() {
         date: DateTime.now(),
       ),
     );
+    registerFallbackValue(
+      AddExpenseParams(
+        wallet: Wallet.test(),
+        category: ExpenseCategory.test(),
+        amount: Decimal.zero,
+        date: DateTime.now(),
+      ),
+    );
   });
 
   setUp(() {
@@ -73,12 +93,18 @@ void main() {
     when(() => mockAddIncome.execute(any(), traceId: traceId)).thenAnswer(
       (_) async => AppResult.success(incomeTransaction),
     );
+
+    mockAddExpense = MockAddExpenseUseCase();
+    when(() => mockAddExpense.execute(any(), traceId: traceId)).thenAnswer(
+      (_) async => AppResult.success(expenseTransaction),
+    );
   });
 
   AddTransactionBloc buildBloc() {
     return AddTransactionBloc(
       transferMoney: mockTransferMoney,
       addIncome: mockAddIncome,
+      addExpense: mockAddExpense,
     )..customGenerator = mockUidGenerator;
   }
 
@@ -224,6 +250,77 @@ void main() {
       verify: (_) {
         verify(
           () => mockAddIncome.execute(
+            params,
+            traceId: traceId,
+          ),
+        ).called(1);
+      },
+    );
+  });
+
+  group('expense', () {
+    final params = AddExpenseParams(
+      wallet: Wallet.test(),
+      category: ExpenseCategory.test(),
+      amount: Decimal.fromInt(1000),
+      date: DateTime.now(),
+      notes: 'notes',
+    );
+
+    blocTest<AddTransactionBloc, AddTransactionState>(
+      'emits [AddTransactionState.Loading, AddTransactionState.Added] '
+      'when expense is successful.',
+      build: buildBloc,
+      act: (bloc) => bloc.add(
+        AddTransactionEvent.expense(
+          wallet: params.wallet,
+          category: params.category,
+          amount: params.amount,
+          date: params.date,
+          notes: params.notes,
+        ),
+      ),
+      expect: () => <AddTransactionState>[
+        const AddTransactionState.loading(),
+        AddTransactionState.added(expenseTransaction),
+      ],
+      verify: (_) {
+        verify(
+          () => mockAddExpense.execute(
+            params,
+            traceId: traceId,
+          ),
+        ).called(1);
+      },
+    );
+
+    blocTest<AddTransactionBloc, AddTransactionState>(
+      'emits [AddTransactionState.Loading, AddTransactionState.Failure] '
+      'when expense is failed.',
+      setUp: () {
+        when(
+          () => mockAddExpense.execute(any(), traceId: traceId),
+        ).thenAnswer(
+          (_) async => AppResult.failure(AppException.test()),
+        );
+      },
+      build: buildBloc,
+      act: (bloc) => bloc.add(
+        AddTransactionEvent.expense(
+          wallet: params.wallet,
+          category: params.category,
+          amount: params.amount,
+          date: params.date,
+          notes: params.notes,
+        ),
+      ),
+      expect: () => <AddTransactionState>[
+        const AddTransactionState.loading(),
+        AddTransactionState.failure(AppException.test()),
+      ],
+      verify: (_) {
+        verify(
+          () => mockAddExpense.execute(
             params,
             traceId: traceId,
           ),

@@ -127,6 +127,7 @@ sealed class FirestoreTransaction with _$FirestoreTransaction {
     );
   }
 
+  /// Return [Transaction] representation of this transaction
   Transaction toModel() {
     return when(
       income: (id, walletId, incomeCategoryId, amount, date, notes) =>

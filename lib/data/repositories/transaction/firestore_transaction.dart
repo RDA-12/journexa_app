@@ -126,4 +126,39 @@ sealed class FirestoreTransaction with _$FirestoreTransaction {
           },
     );
   }
+
+  Transaction toModel() {
+    return when(
+      income: (id, walletId, incomeCategoryId, amount, date, notes) =>
+          IncomeTransaction(
+            id: id,
+            walletId: walletId,
+            incomeCategoryId: incomeCategoryId,
+            amount: amount,
+            date: date,
+            notes: notes,
+          ),
+      expense: (id, walletId, expenseCategoryId, amount, date, notes) =>
+          ExpenseTransaction(
+            id: id,
+            walletId: walletId,
+            expenseCategoryId: expenseCategoryId,
+            amount: amount,
+            date: date,
+            notes: notes,
+          ),
+      transfer:
+          (id, sourceWalletId, destinationWalletId, amount, fee, date, notes) {
+            return TransferTransaction(
+              id: id,
+              sourceWalletId: sourceWalletId,
+              destinationWalletId: destinationWalletId,
+              amount: amount,
+              fee: fee,
+              date: date,
+              notes: notes,
+            );
+          },
+    );
+  }
 }

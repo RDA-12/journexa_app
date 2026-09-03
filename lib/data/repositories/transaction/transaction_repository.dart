@@ -84,4 +84,47 @@ class FirestoreTransactionRepository
       );
     }
   }
+
+  @override
+  Future<AppResult<List<Transaction>>> getAll({
+    required String userId,
+    required String traceId,
+  }) async {
+    try {
+      maybeThrowException(this, Invocation.method(#getAll, null));
+      logInfo(
+        'Starts getting transactions',
+        traceId: traceId,
+        extras: {'userId': userId},
+      );
+      final colRef = _db.collection('users/$userId/transactions');
+      final snap = await colRef.get();
+      logInfo(
+        'Transactions obtained. Starts mapping',
+        traceId: traceId,
+      );
+      final result = <Transaction>[];
+      for (final doc in snap.docs) {
+        final data = doc.data();
+        final firestoreTransaction = FirestoreTransaction.fromJson(data);
+        result.add(firestoreTransaction.toModel());
+      }
+      logInfo(
+        'Mapping completed. Returns results',
+        traceId: traceId,
+        extras: {'count': result.length},
+      );
+      return AppResult.success(result);
+    } on FirebaseException catch (e) {
+      logError('$e', traceId: traceId, error: e);
+      return AppResult.failure(
+        AppException('$e', code: AppExceptionCode.serverException),
+      );
+    } on Exception catch (e, st) {
+      logError('$e', traceId: traceId, error: e, stackTrace: st);
+      return AppResult.failure(
+        AppException('$e', code: AppExceptionCode.internalException),
+      );
+    }
+  }
 }

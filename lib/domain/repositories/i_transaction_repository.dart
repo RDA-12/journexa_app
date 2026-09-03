@@ -11,4 +11,10 @@ abstract interface class ITransactionRepository {
     required JournalEntry journalEntry,
     required String traceId,
   });
+
+  /// Return all [Transaction]'s in [userId] database
+  Future<AppResult<List<Transaction>>> getAll({
+    required String userId,
+    required String traceId,
+  });
 }

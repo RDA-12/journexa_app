@@ -16,12 +16,26 @@ import 'package:mock_exceptions/mock_exceptions.dart';
 void main() {
   const userId = 'userId';
   const traceId = 'traceId';
+  final initialTransactions = List.generate(5, (index) {
+    return Transaction.income(
+      id: 'id$index',
+      walletId: 'wallet-1',
+      incomeCategoryId: 'income-1',
+      amount: Decimal.fromInt(100 * (index + 1)),
+      date: DateTime.now(),
+    );
+  });
 
   late FirebaseFirestore fakeFirestore;
   late ITransactionRepository repository;
 
-  setUp(() {
+  setUp(() async {
     fakeFirestore = FakeFirebaseFirestore();
+    for (final tr in initialTransactions) {
+      final doc = fakeFirestore.doc('users/$userId/transactions/${tr.id}');
+      await doc.set(FirestoreTransaction.fromDomain(tr).toJson());
+    }
+
     repository = FirestoreTransactionRepository(db: fakeFirestore);
   });
 
@@ -43,7 +57,7 @@ void main() {
           amount: transaction.amount,
         ),
         JournalEntryLine.fromAccount(
-          account: Account.test(),
+          account: Account.test(AccountType.revenue),
           amount: transaction.amount,
         ),
       ],
@@ -138,6 +152,62 @@ void main() {
         expect(
           result,
           isA<AppResultFailure<Null>>().having(
+            (e) => e.error.code,
+            'error.code',
+            AppExceptionCode.internalException,
+          ),
+        );
+      },
+    );
+  });
+
+  group('getAll', () {
+    test('returns success with correct transactions list', () async {
+      final result = await repository.getAll(userId: userId, traceId: traceId);
+
+      expect(result, AppResult.success(initialTransactions));
+    });
+
+    test(
+      'returns failure with serverException code '
+      'when firestore throws FirebaseException',
+      () async {
+        whenCalling(
+          Invocation.method(#getAll, null),
+        ).on(repository).thenThrow(FirebaseException(plugin: 'firestore'));
+
+        final result = await repository.getAll(
+          userId: userId,
+          traceId: traceId,
+        );
+
+        expect(
+          result,
+          isA<AppResultFailure<List<Transaction>>>().having(
+            (e) => e.error.code,
+            'error.code',
+            AppExceptionCode.serverException,
+          ),
+        );
+      },
+    );
+
+    test(
+      'returns failure with internalException code '
+      'when repository throws Exception',
+      () async {
+        whenCalling(
+          Invocation.method(#getAll, null),
+        ).on(repository).thenThrow(Exception('exception'));
+
+        final result = await repository.getAll(
+          userId: userId,
+          traceId: traceId,
+        );
+
+        expect(
+          result,
+          isA<AppResultFailure<List<Transaction>>>().having(
             (e) => e.error.code,
             'error.code',
             AppExceptionCode.internalException,

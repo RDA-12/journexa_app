@@ -426,4 +426,22 @@ class AppLocalizationsId extends AppLocalizations {
 
   @override
   String get addTransactionTitle => 'Catat transaksi baru';
+
+  @override
+  String get incomeDateLabel => 'Tanggal';
+
+  @override
+  String get incomeWalletLabel => 'Dompet';
+
+  @override
+  String get incomeCategoryLabel => 'Kategori';
+
+  @override
+  String get incomeAmountLabel => 'Jumlah';
+
+  @override
+  String get incomeNotesLabel => 'Catatan';
+
+  @override
+  String get incomeSubmitButton => 'Pendapatan';
 }

@@ -110,5 +110,12 @@
   "transferMoneySuccessTitle": "Transfer tercatat",
   "transferMoneySuccessMessage": "Transfer {amount} dari {sourceName} ke {destName} telah tercatat",
   "transferMoneyFailureTitle": "Gagal mencatat transfer",
-  "addTransactionTitle": "Catat transaksi baru"
+  "addTransactionTitle": "Catat transaksi baru",
+  "incomeDateLabel": "Tanggal",
+  "incomeWalletLabel": "Dompet",
+  "incomeCategoryLabel": "Kategori",
+  "incomeAmountLabel": "Jumlah",
+  "incomeNotesLabel": "Catatan",
+  "incomeSubmitButton": "Pendapatan"
 }
+

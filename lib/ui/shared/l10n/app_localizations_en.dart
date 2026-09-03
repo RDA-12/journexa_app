@@ -419,4 +419,22 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get addTransactionTitle => 'Record new transaction';
+
+  @override
+  String get incomeDateLabel => 'Date';
+
+  @override
+  String get incomeWalletLabel => 'Wallet';
+
+  @override
+  String get incomeCategoryLabel => 'Category';
+
+  @override
+  String get incomeAmountLabel => 'Amount';
+
+  @override
+  String get incomeNotesLabel => 'Notes';
+
+  @override
+  String get incomeSubmitButton => 'Income';
 }

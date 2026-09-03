@@ -767,6 +767,42 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Record new transaction'**
   String get addTransactionTitle;
+
+  /// Label for date field in income form
+  ///
+  /// In en, this message translates to:
+  /// **'Date'**
+  String get incomeDateLabel;
+
+  /// Label for wallet selector in income form
+  ///
+  /// In en, this message translates to:
+  /// **'Wallet'**
+  String get incomeWalletLabel;
+
+  /// Label for category selector in income form
+  ///
+  /// In en, this message translates to:
+  /// **'Category'**
+  String get incomeCategoryLabel;
+
+  /// Label for amount field in income form
+  ///
+  /// In en, this message translates to:
+  /// **'Amount'**
+  String get incomeAmountLabel;
+
+  /// Label for notes field in income form
+  ///
+  /// In en, this message translates to:
+  /// **'Notes'**
+  String get incomeNotesLabel;
+
+  /// Submit button in income form
+  ///
+  /// In en, this message translates to:
+  /// **'Income'**
+  String get incomeSubmitButton;
 }
 
 class _AppLocalizationsDelegate

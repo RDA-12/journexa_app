@@ -642,5 +642,30 @@
   "addTransactionTitle": "Record new transaction",
   "@addTransactionTitle": {
     "description": "Title for Add transaction page"
+  },
+  "incomeDateLabel": "Date",
+  "@incomeDateLabel": {
+    "description": "Label for date field in income form"
+  },
+  "incomeWalletLabel": "Wallet",
+  "@incomeWalletLabel": {
+    "description": "Label for wallet selector in income form"
+  },
+  "incomeCategoryLabel": "Category",
+  "@incomeCategoryLabel": {
+    "description": "Label for category selector in income form"
+  },
+  "incomeAmountLabel": "Amount",
+  "@incomeAmountLabel": {
+    "description": "Label for amount field in income form"
+  },
+  "incomeNotesLabel": "Notes",
+  "@incomeNotesLabel": {
+    "description": "Label for notes field in income form"
+  },
+  "incomeSubmitButton": "Income",
+  "@incomeSubmitButton": {
+    "description": "Submit button in income form"
   }
 }
+

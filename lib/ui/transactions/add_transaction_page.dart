@@ -2,11 +2,15 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:journexa_app/di.dart';
 import 'package:journexa_app/domain/entities/transaction.dart';
+import 'package:journexa_app/domain/use_cases/income_category/delete_income_category.dart';
+import 'package:journexa_app/domain/use_cases/income_category/get_all_income_categories.dart';
+import 'package:journexa_app/domain/use_cases/income_category/update_income_category.dart';
 import 'package:journexa_app/domain/use_cases/transaction/add_income.dart';
 import 'package:journexa_app/domain/use_cases/transaction/transfer_money.dart';
 import 'package:journexa_app/domain/use_cases/wallet/delete_wallet.dart';
 import 'package:journexa_app/domain/use_cases/wallet/get_all_wallets.dart';
 import 'package:journexa_app/domain/use_cases/wallet/update_wallet.dart';
+import 'package:journexa_app/ui/income_categories/bloc/income_categories_bloc.dart';
 import 'package:journexa_app/ui/shared/l10n/l10n.dart';
 import 'package:journexa_app/ui/transactions/bloc/add_transaction_bloc.dart';
 import 'package:journexa_app/ui/transactions/widgets/add_transaction_view.dart';
@@ -18,6 +22,7 @@ class AddTransactionPage extends StatelessWidget {
   const AddTransactionPage({
     required this.type,
     this.walletsBloc,
+    this.incomeCategoriesBloc,
     this.addTransactionBloc,
     super.key,
   });
@@ -26,6 +31,11 @@ class AddTransactionPage extends StatelessWidget {
   ///
   /// If not provided, it will be created
   final WalletsBloc? walletsBloc;
+
+  /// Optional [IncomeCategoriesBloc]
+  ///
+  /// If not provided, it will be created
+  final IncomeCategoriesBloc? incomeCategoriesBloc;
 
   /// Optional [AddTransactionBloc]
   ///
@@ -46,6 +56,18 @@ class AddTransactionPage extends StatelessWidget {
                 getAllWallets: getIt<GetAllWalletsUseCase>(),
                 deleteWallet: getIt<DeleteWalletUseCase>(),
                 updateWallet: getIt<UpdateWalletUseCase>(),
+              ),
+        ),
+        BlocProvider(
+          create: (context) =>
+              incomeCategoriesBloc ??
+              IncomeCategoriesBloc(
+                getAllIncomeCategories:
+                    getIt<GetAllIncomeCategoriesUseCase>(),
+                deleteIncomeCategory:
+                    getIt<DeleteIncomeCategoryUseCase>(),
+                updateIncomeCategory:
+                    getIt<UpdateIncomeCategoryUseCase>(),
               ),
         ),
         BlocProvider(

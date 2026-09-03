@@ -666,6 +666,34 @@
   "incomeSubmitButton": "Income",
   "@incomeSubmitButton": {
     "description": "Submit button in income form"
+  },
+  "incomeSuccessTitle": "Income recorded",
+  "@incomeSuccessTitle": {
+    "description": "Title for toast success state in income page"
+  },
+  "incomeSuccessMessage": "{amount} income to {walletName} for {categoryName} have been recorded",
+  "@incomeSuccessMessage": {
+    "description": "Message for toast success state in income page",
+    "placeholders": {
+      "walletName": {
+        "type": "String",
+        "example": "bank hitam"
+      },
+      "categoryName": {
+        "type": "String",
+        "example": "salary"
+      },
+      "amount": {
+        "description": "amount with currency symbol",
+        "type": "String",
+        "example": "$100"
+      }
+    }
+  },
+  "incomeFailureTitle": "Failed to record income",
+  "@incomeFailureTitle": {
+    "description": "Title for toast failure state in income page"
   }
 }
+
 

@@ -444,4 +444,19 @@ class AppLocalizationsId extends AppLocalizations {
 
   @override
   String get incomeSubmitButton => 'Pendapatan';
+
+  @override
+  String get incomeSuccessTitle => 'Pendapatan tercatat';
+
+  @override
+  String incomeSuccessMessage(
+    String walletName,
+    String categoryName,
+    String amount,
+  ) {
+    return 'Pendapatan $amount ke $walletName untuk $categoryName telah tercatat';
+  }
+
+  @override
+  String get incomeFailureTitle => 'Gagal mencatat pendapatan';
 }

@@ -116,6 +116,10 @@
   "incomeCategoryLabel": "Kategori",
   "incomeAmountLabel": "Jumlah",
   "incomeNotesLabel": "Catatan",
-  "incomeSubmitButton": "Pendapatan"
+  "incomeSubmitButton": "Pendapatan",
+  "incomeSuccessTitle": "Pendapatan tercatat",
+  "incomeSuccessMessage": "Pendapatan {amount} ke {walletName} untuk {categoryName} telah tercatat",
+  "incomeFailureTitle": "Gagal mencatat pendapatan"
 }
+
 

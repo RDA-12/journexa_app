@@ -437,4 +437,19 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get incomeSubmitButton => 'Income';
+
+  @override
+  String get incomeSuccessTitle => 'Income recorded';
+
+  @override
+  String incomeSuccessMessage(
+    String walletName,
+    String categoryName,
+    String amount,
+  ) {
+    return '$amount income to $walletName for $categoryName have been recorded';
+  }
+
+  @override
+  String get incomeFailureTitle => 'Failed to record income';
 }

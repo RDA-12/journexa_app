@@ -803,6 +803,28 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Income'**
   String get incomeSubmitButton;
+
+  /// Title for toast success state in income page
+  ///
+  /// In en, this message translates to:
+  /// **'Income recorded'**
+  String get incomeSuccessTitle;
+
+  /// Message for toast success state in income page
+  ///
+  /// In en, this message translates to:
+  /// **'{amount} income to {walletName} for {categoryName} have been recorded'**
+  String incomeSuccessMessage(
+    String walletName,
+    String categoryName,
+    String amount,
+  );
+
+  /// Title for toast failure state in income page
+  ///
+  /// In en, this message translates to:
+  /// **'Failed to record income'**
+  String get incomeFailureTitle;
 }
 
 class _AppLocalizationsDelegate

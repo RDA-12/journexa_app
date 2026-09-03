@@ -1,7 +1,6 @@
 import 'package:decimal/decimal.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:journexa_app/domain/entities/account.dart';
-import 'package:journexa_app/domain/entities/transaction.dart';
 import 'package:journexa_app/shared/app_exception.dart';
 
 part 'journal.freezed.dart';
@@ -33,72 +32,6 @@ sealed class JournalEntry with _$JournalEntry {
         code: AppExceptionCode.internalException,
       );
     }
-  }
-
-  /// Creates new [JournalEntry] based on [transaction]
-  factory JournalEntry.fromTransaction({
-    required String id,
-    required Transaction transaction,
-  }) {
-    final amount = transaction.amount;
-
-    if (transaction is IncomeTransaction) {
-      return JournalEntry(
-        id: id,
-        transactionDate: transaction.date,
-        lines: [
-          JournalEntryLine.fromAccount(
-            account: transaction.wallet.account,
-            amount: amount,
-          ),
-          JournalEntryLine.fromAccount(
-            account: transaction.category.account,
-            amount: amount,
-          ),
-        ],
-      );
-    }
-    if (transaction is ExpenseTransaction) {
-      return JournalEntry(
-        id: id,
-        transactionDate: transaction.date,
-        lines: [
-          JournalEntryLine.fromAccount(
-            account: transaction.wallet.account,
-            amount: -amount,
-          ),
-          JournalEntryLine.fromAccount(
-            account: transaction.category.account,
-            amount: amount,
-          ),
-        ],
-      );
-    }
-    if (transaction is TransferTransaction) {
-      return JournalEntry(
-        id: id,
-        transactionDate: transaction.date,
-        lines: [
-          JournalEntryLine.fromAccount(
-            account: transaction.source.account,
-            amount: -(transaction.amount + transaction.fee),
-          ),
-          JournalEntryLine.fromAccount(
-            account: transaction.destination.account,
-            amount: transaction.amount,
-          ),
-          JournalEntryLine.fromAccount(
-            account: SystemDefinedAccount.feeTransfer,
-            amount: transaction.fee,
-          ),
-        ],
-      );
-    }
-
-    throw AppException(
-      'unknown transaction. Got: $transaction',
-      code: AppExceptionCode.internalException,
-    );
   }
 
   /// Creates new [JournalEntry] for test purposes

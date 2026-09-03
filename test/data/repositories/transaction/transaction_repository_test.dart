@@ -5,6 +5,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:journexa_app/data/repositories/journal/firestore_journal.dart';
 import 'package:journexa_app/data/repositories/transaction/firestore_transaction.dart';
 import 'package:journexa_app/data/repositories/transaction/transaction_repository.dart';
+import 'package:journexa_app/domain/entities/account.dart';
 import 'package:journexa_app/domain/entities/journal.dart';
 import 'package:journexa_app/domain/entities/transaction.dart';
 import 'package:journexa_app/domain/repositories/i_transaction_repository.dart';
@@ -33,9 +34,20 @@ void main() {
       amount: Decimal.fromInt(100),
       date: DateTime.now(),
     );
-    final entry = JournalEntry.fromTransaction(
+    final entry = JournalEntry(
       id: transaction.id,
-      transaction: transaction,
+      transactionDate: transaction.date,
+      lines: [
+        JournalEntryLine.fromAccount(
+          account: Account.test(),
+          amount: transaction.amount,
+        ),
+        JournalEntryLine.fromAccount(
+          account: Account.test(),
+          amount: transaction.amount,
+        ),
+      ],
+      description: transaction.notes,
     );
 
     test(

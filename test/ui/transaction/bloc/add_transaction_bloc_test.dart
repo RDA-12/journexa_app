@@ -26,23 +26,23 @@ void main() {
   const traceId = 'traceId';
   final transferTransaction = TransferTransaction(
     id: 'id',
-    source: Wallet.test(),
-    destination: Wallet.test().update(name: 'wallet 2').copyWith(id: 'w-2'),
+    sourceWalletId: 'source-id',
+    destinationWalletId: 'destination-id',
     amount: Decimal.fromInt(1000),
     fee: Decimal.zero,
     date: DateTime.now(),
   );
   final incomeTransaction = IncomeTransaction(
     id: 'id',
-    wallet: Wallet.test(),
-    category: IncomeCategory.test(),
+    walletId: 'wallet-1',
+    incomeCategoryId: 'income-1',
     amount: Decimal.fromInt(1000),
     date: DateTime.now(),
   );
   final expenseTransaction = ExpenseTransaction(
     id: 'id',
-    wallet: Wallet.test(),
-    category: ExpenseCategory.test(),
+    walletId: 'wallet-1',
+    expenseCategoryId: 'expense-1',
     amount: Decimal.fromInt(1000),
     date: DateTime.now(),
   );
@@ -139,7 +139,13 @@ void main() {
       ),
       expect: () => <AddTransactionState>[
         const AddTransactionState.loading(),
-        AddTransactionState.added(transferTransaction),
+        AddTransactionState.added(
+          TransactionAddedNotice.transferAdded(
+            source: params.source,
+            destination: params.destination,
+            amount: params.amount,
+          ),
+        ),
       ],
       verify: (_) {
         verify(
@@ -211,7 +217,13 @@ void main() {
       ),
       expect: () => <AddTransactionState>[
         const AddTransactionState.loading(),
-        AddTransactionState.added(incomeTransaction),
+        AddTransactionState.added(
+          TransactionAddedNotice.incomeAdded(
+            wallet: params.wallet,
+            category: params.category,
+            amount: params.amount,
+          ),
+        ),
       ],
       verify: (_) {
         verify(
@@ -282,7 +294,13 @@ void main() {
       ),
       expect: () => <AddTransactionState>[
         const AddTransactionState.loading(),
-        AddTransactionState.added(expenseTransaction),
+        AddTransactionState.added(
+          TransactionAddedNotice.expenseAdded(
+            wallet: params.wallet,
+            category: params.category,
+            amount: params.amount,
+          ),
+        ),
       ],
       verify: (_) {
         verify(

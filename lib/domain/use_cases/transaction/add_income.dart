@@ -88,14 +88,25 @@ class AddIncomeUseCase
     );
     final transaction = Transaction.income(
       id: generateUid(),
-      wallet: params.wallet,
-      category: params.category,
+      walletId: params.wallet.id,
+      incomeCategoryId: params.category.id,
       amount: params.amount,
       date: params.date,
     );
-    final journalEntry = JournalEntry.fromTransaction(
+    final journalEntry = JournalEntry(
       id: generateUid(),
-      transaction: transaction,
+      transactionDate: params.date,
+      lines: [
+        JournalEntryLine.fromAccount(
+          account: params.wallet.account,
+          amount: params.amount,
+        ),
+        JournalEntryLine.fromAccount(
+          account: params.category.account,
+          amount: params.amount,
+        ),
+      ],
+      description: params.notes,
     );
     logInfo(
       'Transaction and journal entry created. Saves them to repository',

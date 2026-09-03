@@ -26,8 +26,7 @@ class MockWalletsBloc extends Mock implements WalletsBloc {}
 
 class MockIncomeCategoriesBloc extends Mock implements IncomeCategoriesBloc {}
 
-class MockExpenseCategoriesBloc extends Mock
-    implements ExpenseCategoriesBloc {}
+class MockExpenseCategoriesBloc extends Mock implements ExpenseCategoriesBloc {}
 
 class MockAddTransactionBloc extends Mock implements AddTransactionBloc {}
 
@@ -35,34 +34,34 @@ final expectedTranslations = {
   'id': {
     'transferSuccessToastTitle': 'Transfer tercatat',
     'transferSuccessToastMessage':
-        'Transfer Rp 10.000 dari test ke wallet 2 telah tercatat',
+        'Transfer Rp 10.000 dari wallet 0 ke wallet 1 telah tercatat',
     'transferFailureToastTitle': 'Gagal mencatat transfer',
     'transferFailureToastMessage': 'Terjadi kesalahan internal',
     'incomeSuccessToastTitle': 'Pendapatan tercatat',
     'incomeSuccessToastMessage':
-        'Pendapatan Rp 10.000 ke test untuk name telah tercatat',
+        'Pendapatan Rp 10.000 ke wallet 0 untuk category 0 telah tercatat',
     'incomeFailureToastTitle': 'Gagal mencatat pendapatan',
     'incomeFailureToastMessage': 'Terjadi kesalahan internal',
     'expenseSuccessToastTitle': 'Pengeluaran tercatat',
     'expenseSuccessToastMessage':
-        'Pengeluaran Rp 10.000 dari test untuk name telah tercatat',
+        'Pengeluaran Rp 10.000 dari wallet 0 untuk category 0 telah tercatat',
     'expenseFailureToastTitle': 'Gagal mencatat pengeluaran',
     'expenseFailureToastMessage': 'Terjadi kesalahan internal',
   },
   'en': {
     'transferSuccessToastTitle': 'Transfer recorded',
     'transferSuccessToastMessage':
-        'Rp 10,000 transfer from test to wallet 2 have been recorded',
+        'Rp 10,000 transfer from wallet 0 to wallet 1 have been recorded',
     'transferFailureToastTitle': 'Failed to record transfer',
     'transferFailureToastMessage': 'Internal exception error',
     'incomeSuccessToastTitle': 'Income recorded',
     'incomeSuccessToastMessage':
-        'Rp 10,000 income to test for name have been recorded',
+        'Rp 10,000 income to wallet 0 for category 0 have been recorded',
     'incomeFailureToastTitle': 'Failed to record income',
     'incomeFailureToastMessage': 'Internal exception error',
     'expenseSuccessToastTitle': 'Expense recorded',
     'expenseSuccessToastMessage':
-        'Rp 10,000 expense from test for name have been recorded',
+        'Rp 10,000 expense from wallet 0 for category 0 have been recorded',
     'expenseFailureToastTitle': 'Failed to record expense',
     'expenseFailureToastMessage': 'Internal exception error',
   },
@@ -167,10 +166,10 @@ void main() {
   }
 
   group('transfer', () {
-    final transferTransaction = Transaction.testTransfer(
+    final transferNotice = TransactionAddedNotice.transferAdded(
+      source: wallets.first,
+      destination: wallets[1],
       amount: Decimal.fromInt(10000),
-      date: DateTime.now(),
-      fee: Decimal.zero,
     );
     group('Render', () {
       testWidgets(
@@ -257,7 +256,7 @@ void main() {
           (tester) async {
             whenListen(
               mockAddTransactionBloc,
-              Stream.value(AddTransactionState.added(transferTransaction)),
+              Stream.value(AddTransactionState.added(transferNotice)),
               initialState: const AddTransactionState.initial(),
             );
             await pumpWidget(
@@ -281,7 +280,7 @@ void main() {
             whenListen(
               mockAddTransactionBloc,
               Stream.value(
-                AddTransactionState.added(transferTransaction),
+                AddTransactionState.added(transferNotice),
               ),
               initialState: const AddTransactionState.initial(),
             );
@@ -368,7 +367,7 @@ void main() {
             whenListen(
               mockAddTransactionBloc,
               Stream.value(
-                AddTransactionState.added(transferTransaction),
+                AddTransactionState.added(transferNotice),
               ),
               initialState: const AddTransactionState.initial(),
             );
@@ -427,9 +426,10 @@ void main() {
   });
 
   group('income', () {
-    final incomeTransaction = Transaction.testIncome(
+    final incomeNotice = TransactionAddedNotice.incomeAdded(
+      wallet: wallets.first,
+      category: incomeCategories.first,
       amount: Decimal.fromInt(10000),
-      date: DateTime.now(),
     );
     group('Render', () {
       testWidgets(
@@ -514,7 +514,7 @@ void main() {
           (tester) async {
             whenListen(
               mockAddTransactionBloc,
-              Stream.value(AddTransactionState.added(incomeTransaction)),
+              Stream.value(AddTransactionState.added(incomeNotice)),
               initialState: const AddTransactionState.initial(),
             );
             await pumpWidget(
@@ -538,7 +538,7 @@ void main() {
             whenListen(
               mockAddTransactionBloc,
               Stream.value(
-                AddTransactionState.added(incomeTransaction),
+                AddTransactionState.added(incomeNotice),
               ),
               initialState: const AddTransactionState.initial(),
             );
@@ -625,7 +625,7 @@ void main() {
             whenListen(
               mockAddTransactionBloc,
               Stream.value(
-                AddTransactionState.added(incomeTransaction),
+                AddTransactionState.added(incomeNotice),
               ),
               initialState: const AddTransactionState.initial(),
             );
@@ -684,9 +684,10 @@ void main() {
   });
 
   group('expense', () {
-    final expenseTransaction = Transaction.testExpense(
+    final expenseNotice = TransactionAddedNotice.expenseAdded(
+      wallet: wallets.first,
+      category: expenseCategories.first,
       amount: Decimal.fromInt(10000),
-      date: DateTime.now(),
     );
     group('Render', () {
       testWidgets(
@@ -771,7 +772,7 @@ void main() {
           (tester) async {
             whenListen(
               mockAddTransactionBloc,
-              Stream.value(AddTransactionState.added(expenseTransaction)),
+              Stream.value(AddTransactionState.added(expenseNotice)),
               initialState: const AddTransactionState.initial(),
             );
             await pumpWidget(
@@ -795,7 +796,7 @@ void main() {
             whenListen(
               mockAddTransactionBloc,
               Stream.value(
-                AddTransactionState.added(expenseTransaction),
+                AddTransactionState.added(expenseNotice),
               ),
               initialState: const AddTransactionState.initial(),
             );
@@ -882,7 +883,7 @@ void main() {
             whenListen(
               mockAddTransactionBloc,
               Stream.value(
-                AddTransactionState.added(expenseTransaction),
+                AddTransactionState.added(expenseNotice),
               ),
               initialState: const AddTransactionState.initial(),
             );

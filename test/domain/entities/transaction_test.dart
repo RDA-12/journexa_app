@@ -1,16 +1,9 @@
 import 'package:decimal/decimal.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:journexa_app/domain/entities/expense_category.dart';
-import 'package:journexa_app/domain/entities/income_category.dart';
 import 'package:journexa_app/domain/entities/transaction.dart';
-import 'package:journexa_app/domain/entities/wallet.dart';
 import 'package:journexa_app/shared/app_exception.dart';
 
 void main() {
-  final wallet = Wallet.test();
-  final incomeCategory = IncomeCategory.test();
-  final expenseCategory = ExpenseCategory.test();
-
   group('constructor', () {
     test(
       'throws AppException when amount is <= 0',
@@ -21,8 +14,8 @@ void main() {
               id: '0',
               amount: amount,
               date: DateTime.now(),
-              category: incomeCategory,
-              wallet: wallet,
+              incomeCategoryId: 'income-1',
+              walletId: 'wallet-1',
             ),
             throwsA(
               isA<AppException>().having(
@@ -37,8 +30,8 @@ void main() {
               id: '0',
               amount: amount,
               date: DateTime.now(),
-              category: expenseCategory,
-              wallet: wallet,
+              expenseCategoryId: 'expense-1',
+              walletId: 'wallet-1',
             ),
             throwsA(
               isA<AppException>().having(
@@ -51,8 +44,8 @@ void main() {
           expect(
             () => Transaction.transfer(
               id: '0',
-              source: wallet,
-              destination: wallet.copyWith(id: 'id-2'),
+              sourceWalletId: 'wallet-1',
+              destinationWalletId: 'wallet-2',
               amount: amount,
               fee: Decimal.fromInt(100),
               date: DateTime.now(),
@@ -73,14 +66,14 @@ void main() {
       'throws AppException when source and destination wallet are same '
       'in transfer transaction',
       () {
-        final source = Wallet.test();
-        final destination = source;
+        const sourceWalletId = 'wallet-1';
+        const destinationWalletId = 'wallet-1';
 
         expect(
           () => Transaction.transfer(
             id: '0',
-            source: source,
-            destination: destination,
+            sourceWalletId: sourceWalletId,
+            destinationWalletId: destinationWalletId,
             amount: Decimal.fromInt(1000),
             fee: Decimal.fromInt(100),
             date: DateTime.now(),
@@ -90,7 +83,7 @@ void main() {
               (e) => e.message,
               'message',
               'source and destination wallet must be different. '
-                  'Got: ${source.id} and ${destination.id}',
+                  'Got: $sourceWalletId and $destinationWalletId',
             ),
           ),
         );
@@ -101,15 +94,13 @@ void main() {
       'throws AppException when fee < 0 '
       'in transfer transaction',
       () {
-        final source = Wallet.test();
-        final destination = source.copyWith(id: 'id-2');
         final fee = Decimal.fromInt(-100);
 
         expect(
           () => Transaction.transfer(
             id: '0',
-            source: source,
-            destination: destination,
+            sourceWalletId: 'wallet-1',
+            destinationWalletId: 'wallet-2',
             amount: Decimal.fromInt(1000),
             fee: fee,
             date: DateTime.now(),

@@ -30,12 +30,13 @@ void main() {
   final amount = Decimal.fromInt(100000);
   final fee = Decimal.fromInt(2500);
   final source = Wallet.test();
-  final destination =
-      Wallet.test().update(name: 'wallet 2').copyWith(id: 'id-2');
+  final destination = Wallet.test()
+      .update(name: 'wallet 2')
+      .copyWith(id: 'id-2');
   final transaction = TransferTransaction(
     id: 'id',
-    source: source,
-    destination: destination,
+    sourceWalletId: source.id,
+    destinationWalletId: destination.id,
     amount: amount,
     fee: fee,
     date: date,
@@ -156,12 +157,12 @@ void main() {
           journalEntry: JournalEntry.test(
             lines: [
               JournalEntryLine(
-                account: transaction.source.account,
+                account: source.account,
                 debit: Decimal.zero,
                 credit: amount + fee,
               ),
               JournalEntryLine(
-                account: transaction.destination.account,
+                account: destination.account,
                 debit: amount,
                 credit: Decimal.zero,
               ),

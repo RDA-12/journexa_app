@@ -112,7 +112,15 @@ class AddTransactionBloc extends Bloc<AddTransactionEvent, AddTransactionState>
           traceId: traceId,
           extras: {'transactionId': transaction.id},
         );
-        emit(AddTransactionState.added(transaction));
+        emit(
+          AddTransactionState.added(
+            TransactionAddedNotice.transferAdded(
+              source: source,
+              destination: destination,
+              amount: amount,
+            ),
+          ),
+        );
       },
       failure: (error) {
         logError(
@@ -163,7 +171,15 @@ class AddTransactionBloc extends Bloc<AddTransactionEvent, AddTransactionState>
           traceId: traceId,
           extras: {'transactionId': transaction.id},
         );
-        emit(AddTransactionState.added(transaction));
+        emit(
+          AddTransactionState.added(
+            TransactionAddedNotice.incomeAdded(
+              wallet: wallet,
+              category: category,
+              amount: amount,
+            ),
+          ),
+        );
       },
       failure: (error) {
         logError(
@@ -214,7 +230,15 @@ class AddTransactionBloc extends Bloc<AddTransactionEvent, AddTransactionState>
           traceId: traceId,
           extras: {'transactionId': transaction.id},
         );
-        emit(AddTransactionState.added(transaction));
+        emit(
+          AddTransactionState.added(
+            TransactionAddedNotice.expenseAdded(
+              wallet: wallet,
+              category: category,
+              amount: amount,
+            ),
+          ),
+        );
       },
       failure: (error) {
         logError(

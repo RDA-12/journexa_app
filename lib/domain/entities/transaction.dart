@@ -1,8 +1,5 @@
 import 'package:decimal/decimal.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
-import 'package:journexa_app/domain/entities/expense_category.dart';
-import 'package:journexa_app/domain/entities/income_category.dart';
-import 'package:journexa_app/domain/entities/wallet.dart';
 import 'package:journexa_app/shared/app_exception.dart';
 
 part 'transaction.freezed.dart';
@@ -27,11 +24,11 @@ sealed class Transaction with _$Transaction {
     /// Unique ID of this transaction
     required String id,
 
-    /// [Wallet] to put the [amount]
-    required Wallet wallet,
+    /// ID of the Wallet to put the [amount]
+    required String walletId,
 
-    /// [IncomeCategory] of this transaction
-    required IncomeCategory category,
+    /// ID of the IncomeCategory
+    required String incomeCategoryId,
 
     /// Amount of money the wallet gets
     required Decimal amount,
@@ -48,11 +45,11 @@ sealed class Transaction with _$Transaction {
     /// Unique ID of this transaction
     required String id,
 
-    /// [Wallet] to put the [amount]
-    required Wallet wallet,
+    /// ID of the Wallet to spend the [amount]
+    required String walletId,
 
-    /// [ExpenseCategory] of this transaction
-    required ExpenseCategory category,
+    /// ID of the ExpenseCategory
+    required String expenseCategoryId,
 
     /// Amount of money the wallet needs to spend
     required Decimal amount,
@@ -69,11 +66,11 @@ sealed class Transaction with _$Transaction {
     /// Unique ID of this transaction
     required String id,
 
-    /// Source [Wallet] of this transaction
-    required Wallet source,
+    /// ID of the Source Wallet
+    required String sourceWalletId,
 
-    /// Destination [Wallet] of this transaction
-    required Wallet destination,
+    /// ID of the Destination Wallet
+    required String destinationWalletId,
 
     /// Amount of money that will be transfered
     /// from source to destination wallet
@@ -99,21 +96,22 @@ sealed class Transaction with _$Transaction {
       );
     }
     whenOrNull(
-      transfer: (id, source, destination, amount, fee, date, notes) {
-        if (source == destination) {
-          throw AppException(
-            'source and destination wallet must be different. '
-            'Got: ${source.id} and ${destination.id}',
-            code: AppExceptionCode.internalException,
-          );
-        }
-        if (fee < Decimal.zero) {
-          throw AppException(
-            'fee must be 0 or positive. Got: $fee',
-            code: AppExceptionCode.internalException,
-          );
-        }
-      },
+      transfer:
+          (id, sourceWalletId, destinationWalletId, amount, fee, date, notes) {
+            if (sourceWalletId == destinationWalletId) {
+              throw AppException(
+                'source and destination wallet must be different. '
+                'Got: $sourceWalletId and $destinationWalletId',
+                code: AppExceptionCode.internalException,
+              );
+            }
+            if (fee < Decimal.zero) {
+              throw AppException(
+                'fee must be 0 or positive. Got: $fee',
+                code: AppExceptionCode.internalException,
+              );
+            }
+          },
     );
   }
 
@@ -124,8 +122,8 @@ sealed class Transaction with _$Transaction {
   }) {
     return Transaction.income(
       id: 'id',
-      wallet: Wallet.test(),
-      category: IncomeCategory.test(),
+      walletId: 'walletId',
+      incomeCategoryId: 'incomeCategoryId',
       amount: amount,
       date: date,
       notes: 'Test income',
@@ -139,8 +137,8 @@ sealed class Transaction with _$Transaction {
   }) {
     return Transaction.expense(
       id: 'id',
-      wallet: Wallet.test(),
-      category: ExpenseCategory.test(),
+      walletId: 'walletId',
+      expenseCategoryId: 'expenseCategoryId',
       amount: amount,
       date: date,
       notes: 'Test expense',
@@ -155,8 +153,8 @@ sealed class Transaction with _$Transaction {
   }) {
     return Transaction.transfer(
       id: 'id',
-      source: Wallet.test(),
-      destination: Wallet.test().update(name: 'wallet 2').copyWith(id: 'id-2'),
+      sourceWalletId: 'sourceWalletId',
+      destinationWalletId: 'destinationWalletId',
       amount: amount,
       fee: fee,
       date: date,

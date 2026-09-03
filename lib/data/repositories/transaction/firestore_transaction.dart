@@ -92,37 +92,38 @@ sealed class FirestoreTransaction with _$FirestoreTransaction {
   /// Creates new [FirestoreTransaction] from [Transaction]
   factory FirestoreTransaction.fromDomain(Transaction transaction) {
     return transaction.when(
-      income: (id, wallet, category, amount, date, notes) {
+      income: (id, walletId, categoryId, amount, date, notes) {
         return FirestoreTransaction.income(
           id: id,
-          walletId: wallet.id,
-          incomeCategoryId: category.id,
+          walletId: walletId,
+          incomeCategoryId: categoryId,
           amount: amount,
           date: date,
           notes: notes,
         );
       },
-      expense: (id, wallet, category, amount, date, notes) {
+      expense: (id, walletId, categoryId, amount, date, notes) {
         return FirestoreTransaction.expense(
           id: id,
-          walletId: wallet.id,
-          expenseCategoryId: category.id,
+          walletId: walletId,
+          expenseCategoryId: categoryId,
           amount: amount,
           date: date,
           notes: notes,
         );
       },
-      transfer: (id, source, destination, amount, fee, date, notes) {
-        return FirestoreTransaction.transfer(
-          id: id,
-          sourceWalletId: source.id,
-          destinationWalletId: destination.id,
-          amount: amount,
-          fee: fee,
-          date: date,
-          notes: notes,
-        );
-      },
+      transfer:
+          (id, sourceWalletId, destinationWalletId, amount, fee, date, notes) {
+            return FirestoreTransaction.transfer(
+              id: id,
+              sourceWalletId: sourceWalletId,
+              destinationWalletId: destinationWalletId,
+              amount: amount,
+              fee: fee,
+              date: date,
+              notes: notes,
+            );
+          },
     );
   }
 }

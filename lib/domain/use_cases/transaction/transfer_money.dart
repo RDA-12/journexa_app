@@ -1,6 +1,7 @@
 import 'package:decimal/decimal.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:injectable/injectable.dart';
+import 'package:journexa_app/domain/entities/account.dart';
 import 'package:journexa_app/domain/entities/journal.dart';
 import 'package:journexa_app/domain/entities/transaction.dart';
 import 'package:journexa_app/domain/entities/wallet.dart';
@@ -148,16 +149,31 @@ class TransferMoneyUseCase
     );
     final transaction = Transaction.transfer(
       id: generateUid(),
-      source: params.source,
-      destination: params.destination,
+      sourceWalletId: params.source.id,
+      destinationWalletId: params.destination.id,
       amount: params.amount,
       fee: params.fee,
       date: params.date,
       notes: params.notes,
     );
-    final journalEntry = JournalEntry.fromTransaction(
+    final journalEntry = JournalEntry(
       id: generateUid(),
-      transaction: transaction,
+      transactionDate: params.date,
+      lines: [
+        JournalEntryLine.fromAccount(
+          account: params.source.account,
+          amount: -(params.amount + params.fee),
+        ),
+        JournalEntryLine.fromAccount(
+          account: params.destination.account,
+          amount: params.amount,
+        ),
+        JournalEntryLine.fromAccount(
+          account: SystemDefinedAccount.feeTransfer,
+          amount: params.fee,
+        ),
+      ],
+      description: params.notes,
     );
     logInfo(
       'Transaction and journal entry created. Saves them to repository',

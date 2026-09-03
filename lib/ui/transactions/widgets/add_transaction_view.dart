@@ -47,9 +47,9 @@ class AddTransactionView extends StatelessWidget {
                 );
             }
           },
-          added: (transaction) {
-            transaction.when(
-              income: (id, wallet, category, amount, date, notes) {
+          added: (notice) {
+            notice.when(
+              incomeAdded: (wallet, category, amount) {
                 context.showToast(
                   title: context.l10n.incomeSuccessTitle,
                   description: context.l10n.incomeSuccessMessage(
@@ -60,7 +60,7 @@ class AddTransactionView extends StatelessWidget {
                   autoClose: true,
                 );
               },
-              expense: (id, wallet, category, amount, date, notes) {
+              expenseAdded: (wallet, category, amount) {
                 context.showToast(
                   title: context.l10n.expenseSuccessTitle,
                   description: context.l10n.expenseSuccessMessage(
@@ -71,7 +71,7 @@ class AddTransactionView extends StatelessWidget {
                   autoClose: true,
                 );
               },
-              transfer: (id, source, destination, amount, fee, date, notes) {
+              transferAdded: (source, destination, amount) {
                 context.showToast(
                   title: context.l10n.transferMoneySuccessTitle,
                   description: context.l10n.transferMoneySuccessMessage(

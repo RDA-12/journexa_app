@@ -29,8 +29,8 @@ void main() {
   final category = IncomeCategory.test();
   final transaction = IncomeTransaction(
     id: 'id',
-    wallet: wallet,
-    category: category,
+    walletId: wallet.id,
+    incomeCategoryId: category.id,
     amount: amount,
     date: date,
   );
@@ -111,12 +111,12 @@ void main() {
           journalEntry: JournalEntry.test(
             lines: [
               JournalEntryLine(
-                account: transaction.wallet.account,
+                account: wallet.account,
                 debit: amount,
                 credit: Decimal.zero,
               ),
               JournalEntryLine(
-                account: transaction.category.account,
+                account: category.account,
                 debit: Decimal.zero,
                 credit: amount,
               ),

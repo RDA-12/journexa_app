@@ -92,12 +92,12 @@ class _IncomeCategorySelectorState extends State<IncomeCategorySelector> {
         label: widget.label,
         onPressed: () {
           context.read<IncomeCategoriesBloc>().add(
-            const IncomeCategoriesEvent.load(),
+            const IncomeCategoriesEvent.subscriptionRequested(),
           );
         },
         onSearch: (query) {
           context.read<IncomeCategoriesBloc>().add(
-            IncomeCategoriesEvent.search(query: query ?? ''),
+            IncomeCategoriesEvent.subscriptionRequested(query: query ?? ''),
           );
         },
       ),

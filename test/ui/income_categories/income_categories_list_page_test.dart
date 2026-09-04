@@ -55,13 +55,14 @@ void main() {
 
   group('Init', () {
     testWidgets(
-      'add IncomeCategoriesEvent.load event on start',
+      'add IncomeCategoriesEvent.subscriptionRequested event on start',
       (tester) async {
         await pumpWidget(tester);
 
         verify(
-          () =>
-              mockIncomeCategoriesBloc.add(const IncomeCategoriesEvent.load()),
+          () => mockIncomeCategoriesBloc.add(
+            const IncomeCategoriesEvent.subscriptionRequested(),
+          ),
         ).called(1);
       },
     );
@@ -137,7 +138,7 @@ void main() {
 
   group('Side Effects', () {
     testWidgets(
-      'add IncomeCategoriesBlocEvent.load '
+      'add IncomeCategoriesBlocEvent.subscriptionRequested '
       'after going back from add income category page',
       (tester) async {
         await pumpWidget(
@@ -168,8 +169,9 @@ void main() {
         );
 
         verify(
-          () =>
-              mockIncomeCategoriesBloc.add(const IncomeCategoriesEvent.load()),
+          () => mockIncomeCategoriesBloc.add(
+            const IncomeCategoriesEvent.subscriptionRequested(),
+          ),
         ).called(2);
       },
     );

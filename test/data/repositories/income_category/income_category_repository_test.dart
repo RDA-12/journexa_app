@@ -158,21 +158,21 @@ void main() {
     );
   });
 
-  group('getAll', () {
+  group('watch', () {
     test(
-      'returns success with correct categories',
+      'emits success with correct categories',
       () async {
-        final result = await repository.getAll(
+        final result = repository.watch(
           userId: userId,
           traceId: traceId,
         );
 
-        expect(result, AppResult.success(initialCategories));
+        expect(result, emits(AppResult.success(initialCategories)));
       },
     );
 
     test(
-      'returns success with correct categories when query provided',
+      'emits success with correct categories when query provided',
       () async {
         final expectedCategory = IncomeCategory(
           id: 'expected',
@@ -198,18 +198,18 @@ void main() {
           FirestoreAccount.fromDomain(expectedCategory.account).toJson(),
         );
 
-        final result = await repository.getAll(
+        final result = repository.watch(
           userId: userId,
           query: 'expected',
           traceId: traceId,
         );
 
-        expect(result, AppResult.success([expectedCategory]));
+        expect(result, emits(AppResult.success([expectedCategory])));
       },
     );
 
     test(
-      'returns success with correct categories when isDeleted provided',
+      'emits success with correct categories when isDeleted provided',
       () async {
         final expectedCategory = IncomeCategory(
           id: 'expected',
@@ -239,69 +239,73 @@ void main() {
           ).copyWith(isDeleted: true).toJson(),
         );
 
-        final result = await repository.getAll(
+        final result = repository.watch(
           userId: userId,
           isDeleted: false,
           traceId: traceId,
         );
 
-        expect(result, AppResult.success(initialCategories));
+        expect(result, emits(AppResult.success(initialCategories)));
 
-        final result2 = await repository.getAll(
+        final result2 = repository.watch(
           userId: userId,
           isDeleted: true,
           traceId: traceId,
         );
 
-        expect(result2, AppResult.success([expectedCategory]));
+        expect(result2, emits(AppResult.success([expectedCategory])));
       },
     );
 
     test(
-      'returns failure with serverException code '
+      'emits failure with serverException code '
       'when firestore throws FirebaseException',
       () async {
-        whenCalling(Invocation.method(#getAll, null))
+        whenCalling(Invocation.method(#watch, null))
             .on(repository)
             .thenThrow(
               FirebaseException(plugin: 'firestore'),
             );
 
-        final result = await repository.getAll(
+        final result = repository.watch(
           userId: userId,
           traceId: traceId,
         );
 
         expect(
           result,
-          isA<AppResultFailure<List<IncomeCategory>>>().having(
-            (e) => e.error.code,
-            'error.code',
-            AppExceptionCode.serverException,
+          emits(
+            isA<AppResultFailure<List<IncomeCategory>>>().having(
+              (e) => e.error.code,
+              'error.code',
+              AppExceptionCode.serverException,
+            ),
           ),
         );
       },
     );
 
     test(
-      'returns failure with internalException code '
+      'emits failure with internalException code '
       'when firestore throws Exception',
       () async {
         whenCalling(
-          Invocation.method(#getAll, null),
+          Invocation.method(#watch, null),
         ).on(repository).thenThrow(Exception());
 
-        final result = await repository.getAll(
+        final result = repository.watch(
           userId: userId,
           traceId: traceId,
         );
 
         expect(
           result,
-          isA<AppResultFailure<List<IncomeCategory>>>().having(
-            (e) => e.error.code,
-            'error.code',
-            AppExceptionCode.internalException,
+          emits(
+            isA<AppResultFailure<List<IncomeCategory>>>().having(
+              (e) => e.error.code,
+              'error.code',
+              AppExceptionCode.internalException,
+            ),
           ),
         );
       },

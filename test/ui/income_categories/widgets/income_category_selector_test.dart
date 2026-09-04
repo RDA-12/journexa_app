@@ -232,7 +232,7 @@ void main() {
 
       verify(
         () => mockIncomeCategoriesBloc.add(
-          const IncomeCategoriesEvent.search(query: 'Search'),
+          const IncomeCategoriesEvent.subscriptionRequested(query: 'Search'),
         ),
       ).called(1);
     });
@@ -253,7 +253,7 @@ void main() {
 
       verify(
         () => mockIncomeCategoriesBloc.add(
-          const IncomeCategoriesEvent.load(),
+          const IncomeCategoriesEvent.subscriptionRequested(),
         ),
       ).called(1);
     });

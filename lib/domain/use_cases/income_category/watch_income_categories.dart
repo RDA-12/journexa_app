@@ -7,41 +7,41 @@ import 'package:journexa_app/domain/use_cases/base_use_case.dart';
 import 'package:journexa_app/shared/app_logger.dart';
 import 'package:journexa_app/shared/app_result.dart';
 
-part 'get_all_income_categories.freezed.dart';
+part 'watch_income_categories.freezed.dart';
 
-/// Params for [GetAllIncomeCategoriesUseCase]
+/// Params for [WatchIncomeCategoriesUseCase]
 @freezed
-sealed class GetAllIncomeCategoriesParams with _$GetAllIncomeCategoriesParams {
-  const factory GetAllIncomeCategoriesParams({
+sealed class WatchIncomeCategoriesParams with _$WatchIncomeCategoriesParams {
+  const factory WatchIncomeCategoriesParams({
     String? query,
-  }) = _GetAllIncomeCategoriesParams;
+  }) = _WatchIncomeCategoriesParams;
 }
 
-/// Use case to get all income categories saved on
+/// Use case to stream income categories saved on
 /// current user database
 @lazySingleton
-class GetAllIncomeCategoriesUseCase
+class WatchIncomeCategoriesUseCase
     with Loggable
     implements
-        FutureBaseUseCase<GetAllIncomeCategoriesParams, List<IncomeCategory>> {
-  /// Creates new [GetAllIncomeCategoriesUseCase]
-  GetAllIncomeCategoriesUseCase({
-    required this._incomeCategoryRepository,
+        StreamBaseUseCase<WatchIncomeCategoriesParams, List<IncomeCategory>> {
+  /// Creates new [WatchIncomeCategoriesUseCase]
+  WatchIncomeCategoriesUseCase({
     required this._authRepository,
+    required this._incomeCategoryRepository,
   });
 
   @override
-  String get logTag => 'GetAllIncomeCategoriesUseCase';
+  String get logTag => 'WatchIncomeCategoriesUseCase';
 
   final IAuthRepository _authRepository;
   final IIncomeCategoryRepository _incomeCategoryRepository;
 
-  /// Execute getting all income categories from current user
+  /// Execute getting stream income categories from current user
   @override
-  Future<AppResult<List<IncomeCategory>>> execute(
-    GetAllIncomeCategoriesParams params, {
+  Stream<AppResult<List<IncomeCategory>>> execute(
+    WatchIncomeCategoriesParams params, {
     required String traceId,
-  }) async {
+  }) async* {
     logInfo('Starts getting current user id ', traceId: traceId);
     final currentUserIdResult = await _authRepository.getCurrentUserId(
       traceId: traceId,
@@ -49,7 +49,8 @@ class GetAllIncomeCategoriesUseCase
     final currentUserIdExc = currentUserIdResult.errorOrNull;
     if (currentUserIdExc != null) {
       logInfo('Failed to get current user id', traceId: traceId);
-      return AppResult.failure(currentUserIdExc);
+      yield AppResult.failure(currentUserIdExc);
+      return;
     }
 
     final userId = currentUserIdResult.valueOrNull!;
@@ -57,23 +58,11 @@ class GetAllIncomeCategoriesUseCase
       'Got current user id. Starts getting income categories',
       traceId: traceId,
     );
-    final accountsResult = await _incomeCategoryRepository.getAll(
+    yield* _incomeCategoryRepository.watch(
       userId: userId,
       query: params.query,
+      traceId: traceId,
       isDeleted: false,
-      traceId: traceId,
     );
-    final accountsExc = accountsResult.errorOrNull;
-    if (accountsExc != null) {
-      logInfo('Failed to get income categories', traceId: traceId);
-      return AppResult.failure(accountsExc);
-    }
-
-    final accounts = accountsResult.valueOrNull!;
-    logInfo(
-      'Got ${accounts.length} income categories',
-      traceId: traceId,
-    );
-    return AppResult.success(accounts);
   }
 }

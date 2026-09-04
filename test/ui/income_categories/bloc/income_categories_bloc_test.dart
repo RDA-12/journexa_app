@@ -3,8 +3,8 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:journexa_app/domain/entities/account.dart';
 import 'package:journexa_app/domain/entities/income_category.dart';
 import 'package:journexa_app/domain/use_cases/income_category/delete_income_category.dart';
-import 'package:journexa_app/domain/use_cases/income_category/get_all_income_categories.dart';
 import 'package:journexa_app/domain/use_cases/income_category/update_income_category.dart';
+import 'package:journexa_app/domain/use_cases/income_category/watch_income_categories.dart';
 import 'package:journexa_app/shared/app_exception.dart';
 import 'package:journexa_app/shared/app_result.dart';
 import 'package:journexa_app/shared/uid_generator.dart';
@@ -12,8 +12,8 @@ import 'package:journexa_app/ui/income_categories/bloc/income_categories_bloc.da
 import 'package:journexa_app/ui/shared/event_transform/event_transform.dart';
 import 'package:mocktail/mocktail.dart';
 
-class MockGetAllIncomeCategories extends Mock
-    implements GetAllIncomeCategoriesUseCase {}
+class MockWatchIncomeCategories extends Mock
+    implements WatchIncomeCategoriesUseCase {}
 
 class MockUidGenerator extends Mock implements UidGenerator {}
 
@@ -46,14 +46,14 @@ void main() {
     name: 'new name',
   );
 
-  late GetAllIncomeCategoriesUseCase mockGetAllIncomeCategories;
+  late WatchIncomeCategoriesUseCase mockWatchIncomeCategories;
   late UidGenerator mockUidGenerator;
   late DeleteIncomeCategoryUseCase mockDeleteIncomeCategory;
   late UpdateIncomeCategoryUseCase mockUpdateIncomeCategory;
 
   setUpAll(() {
     registerFallbackValue(
-      const GetAllIncomeCategoriesParams(),
+      const WatchIncomeCategoriesParams(),
     );
     registerFallbackValue(
       DeleteIncomeCategoryParams(category: incomeCategories.first),
@@ -70,14 +70,14 @@ void main() {
     mockUidGenerator = MockUidGenerator();
     when(mockUidGenerator.generateUid).thenReturn(traceId);
 
-    mockGetAllIncomeCategories = MockGetAllIncomeCategories();
+    mockWatchIncomeCategories = MockWatchIncomeCategories();
     when(
-      () => mockGetAllIncomeCategories.execute(
-        any<GetAllIncomeCategoriesParams>(),
+      () => mockWatchIncomeCategories.execute(
+        any<WatchIncomeCategoriesParams>(),
         traceId: traceId,
       ),
     ).thenAnswer(
-      (_) async => AppResult.success(incomeCategories),
+      (_) => Stream.value(AppResult.success(incomeCategories)),
     );
 
     mockDeleteIncomeCategory = MockDeleteIncomeCategory();
@@ -101,7 +101,7 @@ void main() {
 
   IncomeCategoriesBloc buildBloc() {
     return IncomeCategoriesBloc(
-      getAllIncomeCategories: mockGetAllIncomeCategories,
+      watchIncomeCategories: mockWatchIncomeCategories,
       deleteIncomeCategory: mockDeleteIncomeCategory,
       updateIncomeCategory: mockUpdateIncomeCategory,
     )..customGenerator = mockUidGenerator;
@@ -112,97 +112,15 @@ void main() {
     expect(bloc.state, const IncomeCategoriesState());
   });
 
-  group('load', () {
+  group('subscriptionRequested', () {
     blocTest<IncomeCategoriesBloc, IncomeCategoriesState>(
       'emits [loading, loaded] '
       'with correct categories '
-      'when getAllIncomeCategoriesUseCase returns success',
+      'when watchIncomeCategoriesUseCase returns success',
       build: buildBloc,
-      act: (bloc) => bloc.add(const IncomeCategoriesEvent.load()),
-      expect: () => <IncomeCategoriesState>[
-        const IncomeCategoriesState(status: IncomeCategoriesStatus.loading),
-        IncomeCategoriesState(
-          status: IncomeCategoriesStatus.loaded,
-          categories: incomeCategoriesWithState,
-        ),
-      ],
-      verify: (_) {
-        verify(
-          () => mockGetAllIncomeCategories.execute(
-            const GetAllIncomeCategoriesParams(),
-            traceId: traceId,
-          ),
-        ).called(1);
-      },
-    );
-
-    blocTest<IncomeCategoriesBloc, IncomeCategoriesState>(
-      'emits [loading, failure] '
-      'when getAllIncomeCategoriesUseCase returns failure',
-      setUp: () {
-        when(
-          () => mockGetAllIncomeCategories.execute(
-            const GetAllIncomeCategoriesParams(),
-            traceId: traceId,
-          ),
-        ).thenAnswer(
-          (_) async =>
-              AppResult<List<IncomeCategory>>.failure(AppException.test()),
-        );
-      },
-      build: buildBloc,
-      act: (bloc) => bloc.add(const IncomeCategoriesEvent.load()),
-      expect: () => <IncomeCategoriesState>[
-        const IncomeCategoriesState(status: IncomeCategoriesStatus.loading),
-        IncomeCategoriesState(
-          status: IncomeCategoriesStatus.failure,
-          exception: AppException.test(),
-        ),
-      ],
-      verify: (_) {
-        verify(
-          () => mockGetAllIncomeCategories.execute(
-            const GetAllIncomeCategoriesParams(),
-            traceId: traceId,
-          ),
-        ).called(1);
-      },
-    );
-  });
-
-  group('search', () {
-    blocTest<IncomeCategoriesBloc, IncomeCategoriesState>(
-      'only process last event within debounce time',
-      build: buildBloc,
-      act: (bloc) => bloc
-        ..add(const IncomeCategoriesEvent.search(query: 'q'))
-        ..add(const IncomeCategoriesEvent.search(query: 'que'))
-        ..add(const IncomeCategoriesEvent.search(query: 'query')),
-      wait: kDefaultDebounceDuration + const Duration(milliseconds: 1),
-      expect: () => <IncomeCategoriesState>[
-        const IncomeCategoriesState(status: IncomeCategoriesStatus.loading),
-        IncomeCategoriesState(
-          status: IncomeCategoriesStatus.loaded,
-          categories: incomeCategoriesWithState,
-        ),
-      ],
-      verify: (_) {
-        verify(
-          () => mockGetAllIncomeCategories.execute(
-            const GetAllIncomeCategoriesParams(query: 'query'),
-            traceId: traceId,
-          ),
-        ).called(1);
-      },
-    );
-
-    blocTest<IncomeCategoriesBloc, IncomeCategoriesState>(
-      'emits [loading, loaded] '
-      'with correct categories '
-      'when getAllIncomeCategoriesUseCase returns success',
-      build: buildBloc,
-      act: (bloc) =>
-          bloc.add(const IncomeCategoriesEvent.search(query: 'query')),
+      act: (bloc) => bloc.add(
+        const IncomeCategoriesEvent.subscriptionRequested(),
+      ),
       wait: kDefaultDebounceDuration,
       expect: () => <IncomeCategoriesState>[
         const IncomeCategoriesState(status: IncomeCategoriesStatus.loading),
@@ -213,8 +131,34 @@ void main() {
       ],
       verify: (_) {
         verify(
-          () => mockGetAllIncomeCategories.execute(
-            const GetAllIncomeCategoriesParams(query: 'query'),
+          () => mockWatchIncomeCategories.execute(
+            const WatchIncomeCategoriesParams(),
+            traceId: traceId,
+          ),
+        ).called(1);
+      },
+    );
+
+    blocTest<IncomeCategoriesBloc, IncomeCategoriesState>(
+      'emits [loading, loaded] '
+      'with correct categories and params '
+      'when watchIncomeCategoriesUseCase returns success',
+      build: buildBloc,
+      act: (bloc) => bloc.add(
+        const IncomeCategoriesEvent.subscriptionRequested(query: 'query'),
+      ),
+      wait: kDefaultDebounceDuration,
+      expect: () => <IncomeCategoriesState>[
+        const IncomeCategoriesState(status: IncomeCategoriesStatus.loading),
+        IncomeCategoriesState(
+          status: IncomeCategoriesStatus.loaded,
+          categories: incomeCategoriesWithState,
+        ),
+      ],
+      verify: (_) {
+        verify(
+          () => mockWatchIncomeCategories.execute(
+            const WatchIncomeCategoriesParams(query: 'query'),
             traceId: traceId,
           ),
         ).called(1);
@@ -223,21 +167,23 @@ void main() {
 
     blocTest<IncomeCategoriesBloc, IncomeCategoriesState>(
       'emits [loading, failure] '
-      'when getAllIncomeCategoriesUseCase returns failure',
+      'when getAllIncomeCategoriesUseCase emits failure',
       setUp: () {
         when(
-          () => mockGetAllIncomeCategories.execute(
-            const GetAllIncomeCategoriesParams(query: 'query'),
+          () => mockWatchIncomeCategories.execute(
+            const WatchIncomeCategoriesParams(),
             traceId: traceId,
           ),
         ).thenAnswer(
-          (_) async =>
-              AppResult<List<IncomeCategory>>.failure(AppException.test()),
+          (_) => Stream.value(
+            AppResult<List<IncomeCategory>>.failure(AppException.test()),
+          ),
         );
       },
       build: buildBloc,
-      act: (bloc) =>
-          bloc.add(const IncomeCategoriesEvent.search(query: 'query')),
+      act: (bloc) => bloc.add(
+        const IncomeCategoriesEvent.subscriptionRequested(),
+      ),
       wait: kDefaultDebounceDuration,
       expect: () => <IncomeCategoriesState>[
         const IncomeCategoriesState(status: IncomeCategoriesStatus.loading),
@@ -248,8 +194,8 @@ void main() {
       ],
       verify: (_) {
         verify(
-          () => mockGetAllIncomeCategories.execute(
-            const GetAllIncomeCategoriesParams(query: 'query'),
+          () => mockWatchIncomeCategories.execute(
+            const WatchIncomeCategoriesParams(),
             traceId: traceId,
           ),
         ).called(1);
@@ -259,7 +205,7 @@ void main() {
 
   group('delete', () {
     blocTest<IncomeCategoriesBloc, IncomeCategoriesState>(
-      'emits [new categories, loaded new categories with notice] '
+      'emits [new categories, loaded with notice] '
       'when deleteIncomeCategory returns success',
       seed: () {
         return IncomeCategoriesState(
@@ -284,7 +230,12 @@ void main() {
         ),
         IncomeCategoriesState(
           status: IncomeCategoriesStatus.loaded,
-          categories: incomeCategoriesWithState.sublist(1),
+          categories: incomeCategoriesWithState.map((it) {
+            final isDeleting =
+                it.category.id == incomeCategoriesWithState.first.category.id;
+            if (!isDeleting) return it;
+            return it.copyWith(status: IncomeCategoryStatus.deleting);
+          }).toList(),
           notice: IncomeCategoryNotice.recentlyDeleted(
             category: incomeCategories.first,
           ),
@@ -376,8 +327,7 @@ void main() {
 
   group('update', () {
     blocTest<IncomeCategoriesBloc, IncomeCategoriesState>(
-      'emits [new updating categories, '
-      'new categories with updated notice] '
+      'emits [new updating categories, loaded with updated notice] '
       'when updateIncomeCategory returns success',
       seed: () {
         return IncomeCategoriesState(
@@ -408,10 +358,7 @@ void main() {
             final isUpdating =
                 it.category.id == incomeCategoriesWithState.first.category.id;
             if (!isUpdating) return it;
-            return it.copyWith(
-              status: IncomeCategoryStatus.idle,
-              category: updatedFirstCategory,
-            );
+            return it.copyWith(status: IncomeCategoryStatus.updating);
           }).toList(),
           notice: IncomeCategoryNotice.recentlyUpdated(
             from: incomeCategoriesWithState.first.category,

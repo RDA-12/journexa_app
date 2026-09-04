@@ -11,7 +11,7 @@ abstract interface class IIncomeCategoryRepository {
   });
 
   /// Get all [IncomeCategory] from [userId] database
-  Future<AppResult<List<IncomeCategory>>> getAll({
+  Stream<AppResult<List<IncomeCategory>>> watch({
     required String userId,
     required String traceId,
     String? query,

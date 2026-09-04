@@ -51,7 +51,7 @@ class _IncomeCategoriesListViewState extends State<IncomeCategoriesListView> {
   void _onChanged() {
     final query = _queryController.text.trim();
     context.read<IncomeCategoriesBloc>().add(
-      IncomeCategoriesEvent.search(query: query),
+      IncomeCategoriesEvent.subscriptionRequested(query: query),
     );
   }
 

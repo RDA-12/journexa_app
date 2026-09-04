@@ -3,7 +3,7 @@ import 'package:journexa_app/domain/entities/account.dart';
 import 'package:journexa_app/domain/entities/income_category.dart';
 import 'package:journexa_app/domain/repositories/i_auth_repository.dart';
 import 'package:journexa_app/domain/repositories/i_income_category.dart';
-import 'package:journexa_app/domain/use_cases/income_category/get_all_income_categories.dart';
+import 'package:journexa_app/domain/use_cases/income_category/watch_income_categories.dart';
 import 'package:journexa_app/shared/app_exception.dart';
 import 'package:journexa_app/shared/app_result.dart';
 import 'package:mocktail/mocktail.dart';
@@ -45,7 +45,7 @@ void main() {
 
   late IAuthRepository mockAuthRepository;
   late IIncomeCategoryRepository mockIncomeCategoryRepository;
-  late GetAllIncomeCategoriesUseCase useCase;
+  late WatchIncomeCategoriesUseCase useCase;
 
   setUp(() {
     mockAuthRepository = MockAuthRepository();
@@ -55,15 +55,15 @@ void main() {
 
     mockIncomeCategoryRepository = MockIncomeCategoryRepository();
     when(
-      () => mockIncomeCategoryRepository.getAll(
+      () => mockIncomeCategoryRepository.watch(
         userId: userId,
         traceId: traceId,
         query: any(named: 'query'),
         isDeleted: any(named: 'isDeleted'),
       ),
-    ).thenAnswer((_) async => AppResult.success(categories));
+    ).thenAnswer((_) => Stream.value(AppResult.success(categories)));
 
-    useCase = GetAllIncomeCategoriesUseCase(
+    useCase = WatchIncomeCategoriesUseCase(
       authRepository: mockAuthRepository,
       incomeCategoryRepository: mockIncomeCategoryRepository,
     );
@@ -73,10 +73,11 @@ void main() {
     'calls AuthRepository.getCurrentUserId once '
     'to get current user id',
     () async {
-      await useCase.execute(
-        const GetAllIncomeCategoriesParams(),
+      final result = useCase.execute(
+        const WatchIncomeCategoriesParams(),
         traceId: traceId,
       );
+      await result.first;
 
       verify(
         () => mockAuthRepository.getCurrentUserId(traceId: traceId),
@@ -85,16 +86,17 @@ void main() {
   );
 
   test(
-    'calls IncomeCategoryRepository.getAll once '
+    'calls IncomeCategoryRepository.watch once '
     'with correct args',
     () async {
-      await useCase.execute(
-        const GetAllIncomeCategoriesParams(),
+      final result = useCase.execute(
+        const WatchIncomeCategoriesParams(),
         traceId: traceId,
       );
+      await result.first;
 
       verify(
-        () => mockIncomeCategoryRepository.getAll(
+        () => mockIncomeCategoryRepository.watch(
           userId: userId,
           traceId: traceId,
           isDeleted: false,
@@ -104,16 +106,17 @@ void main() {
   );
 
   test(
-    'calls IncomeCategoryRepository.getAll once '
+    'calls IncomeCategoryRepository.watch once '
     'with correct args when query provided',
     () async {
-      await useCase.execute(
-        const GetAllIncomeCategoriesParams(query: 'query'),
+      final result = useCase.execute(
+        const WatchIncomeCategoriesParams(query: 'query'),
         traceId: traceId,
       );
+      await result.first;
 
       verify(
-        () => mockIncomeCategoryRepository.getAll(
+        () => mockIncomeCategoryRepository.watch(
           userId: userId,
           traceId: traceId,
           query: 'query',
@@ -124,34 +127,36 @@ void main() {
   );
 
   test(
-    'returns correct categories when all operations are successful',
+    'emits correct categories when all operations are successful',
     () async {
-      final result = await useCase.execute(
-        const GetAllIncomeCategoriesParams(),
+      final result = useCase.execute(
+        const WatchIncomeCategoriesParams(),
         traceId: traceId,
       );
 
-      expect(result, AppResult.success(categories));
+      expect(result, emits(AppResult.success(categories)));
     },
   );
 
   test(
-    'returns failure and not fetch Accounts '
+    'emits failure and not fetch Accounts '
     'when AuthRepository.getCurrentUserId failed',
     () async {
       when(
         () => mockAuthRepository.getCurrentUserId(traceId: traceId),
       ).thenAnswer((_) async => AppResult<String>.failure(AppException.test()));
 
-      final result = await useCase.execute(
-        const GetAllIncomeCategoriesParams(),
+      final result = useCase.execute(
+        const WatchIncomeCategoriesParams(),
         traceId: traceId,
       );
 
       expect(
         result,
-        AppResult<List<IncomeCategory>>.failure(
-          AppException.test(),
+        emits(
+          AppResult<List<IncomeCategory>>.failure(
+            AppException.test(),
+          ),
         ),
       );
       verifyZeroInteractions(mockIncomeCategoryRepository);
@@ -159,25 +164,27 @@ void main() {
   );
 
   test(
-    'returns failure '
-    'when IncomeCategoryRepository.getAll failed',
+    'emits failure '
+    'when IncomeCategoryRepository.watch emits failure',
     () async {
       when(
-        () => mockIncomeCategoryRepository.getAll(
+        () => mockIncomeCategoryRepository.watch(
           userId: userId,
           traceId: traceId,
           isDeleted: false,
         ),
-      ).thenAnswer((_) async => AppResult.failure(AppException.test()));
+      ).thenAnswer((_) => Stream.value(AppResult.failure(AppException.test())));
 
-      final result = await useCase.execute(
-        const GetAllIncomeCategoriesParams(),
+      final result = useCase.execute(
+        const WatchIncomeCategoriesParams(),
         traceId: traceId,
       );
 
       expect(
         result,
-        AppResult<List<IncomeCategory>>.failure(AppException.test()),
+        emits(
+          AppResult<List<IncomeCategory>>.failure(AppException.test()),
+        ),
       );
     },
   );

@@ -3,11 +3,9 @@ part of 'income_categories_bloc.dart';
 /// Events for [IncomeCategoriesBloc]
 @freezed
 class IncomeCategoriesEvent with _$IncomeCategoriesEvent {
-  /// Event to loading the income categories
-  const factory IncomeCategoriesEvent.load() = _Load;
-
-  /// Event to search for an income category
-  const factory IncomeCategoriesEvent.search({required String query}) = _Search;
+  /// Request to start listen to [IncomeCategory] streams
+  const factory IncomeCategoriesEvent.subscriptionRequested({String? query}) =
+      _SubscriptionRequested;
 
   /// Event to delete an income category
   const factory IncomeCategoriesEvent.delete(IncomeCategory category) = _Delete;

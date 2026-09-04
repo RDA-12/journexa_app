@@ -3,8 +3,8 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:journexa_app/di.dart';
 import 'package:journexa_app/domain/use_cases/income_category/delete_income_category.dart';
-import 'package:journexa_app/domain/use_cases/income_category/get_all_income_categories.dart';
 import 'package:journexa_app/domain/use_cases/income_category/update_income_category.dart';
+import 'package:journexa_app/domain/use_cases/income_category/watch_income_categories.dart';
 import 'package:journexa_app/ui/income_categories/bloc/income_categories_bloc.dart';
 import 'package:journexa_app/ui/income_categories/widgets/income_categories_list_view.dart';
 import 'package:journexa_app/ui/shared/l10n/l10n.dart';
@@ -29,12 +29,12 @@ class IncomeCategoriesListPage extends StatelessWidget {
       create: (context) =>
           (incomeCategoriesBloc ??
                 IncomeCategoriesBloc(
-                  getAllIncomeCategories:
-                      getIt<GetAllIncomeCategoriesUseCase>(),
+                  watchIncomeCategories:
+                      getIt<WatchIncomeCategoriesUseCase>(),
                   deleteIncomeCategory: getIt<DeleteIncomeCategoryUseCase>(),
                   updateIncomeCategory: getIt<UpdateIncomeCategoryUseCase>(),
                 ))
-            ..add(const IncomeCategoriesEvent.load()),
+            ..add(const IncomeCategoriesEvent.subscriptionRequested()),
       child: const _IncomeCategoriesListView(),
     );
   }
@@ -56,7 +56,7 @@ class _IncomeCategoriesListView extends StatelessWidget {
             await context.push('/add-income-category');
             if (!context.mounted) return;
             context.read<IncomeCategoriesBloc>().add(
-              const IncomeCategoriesEvent.load(),
+              const IncomeCategoriesEvent.subscriptionRequested(),
             );
           },
         ),

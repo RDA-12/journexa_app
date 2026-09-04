@@ -2,17 +2,17 @@ import 'package:bloc/bloc.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:journexa_app/domain/entities/income_category.dart';
 import 'package:journexa_app/domain/use_cases/income_category/delete_income_category.dart';
-import 'package:journexa_app/domain/use_cases/income_category/get_all_income_categories.dart';
 import 'package:journexa_app/domain/use_cases/income_category/update_income_category.dart';
+import 'package:journexa_app/domain/use_cases/income_category/watch_income_categories.dart';
 import 'package:journexa_app/shared/app_exception.dart';
 import 'package:journexa_app/shared/app_logger.dart';
 import 'package:journexa_app/shared/app_result.dart';
 import 'package:journexa_app/shared/uid_generator.dart';
 import 'package:journexa_app/ui/shared/event_transform/debounce.dart';
 
+part 'income_categories_bloc.freezed.dart';
 part 'income_categories_event.dart';
 part 'income_categories_state.dart';
-part 'income_categories_bloc.freezed.dart';
 
 /// Bloc to handle income categories
 class IncomeCategoriesBloc
@@ -20,21 +20,15 @@ class IncomeCategoriesBloc
     with Loggable, GenerateUid {
   /// Creates new [IncomeCategoriesBloc]
   IncomeCategoriesBloc({
-    required this._getAllIncomeCategories,
+    required this._watchIncomeCategories,
     required this._deleteIncomeCategory,
     required this._updateIncomeCategory,
   }) : super(const IncomeCategoriesState()) {
-    on<_Load>((event, emit) async {
-      return _onLoad(
-        emit: emit,
-        params: const GetAllIncomeCategoriesParams(),
-      );
-    });
-    on<_Search>(
+    on<_SubscriptionRequested>(
       (event, emit) async {
-        return _onLoad(
+        return _onSubscriptionRequested(
           emit: emit,
-          params: GetAllIncomeCategoriesParams(query: event.query),
+          params: WatchIncomeCategoriesParams(query: event.query),
         );
       },
       transformer: debounce(),
@@ -58,51 +52,65 @@ class IncomeCategoriesBloc
   @override
   String get logTag => 'IncomeCategoriesBloc';
 
-  final GetAllIncomeCategoriesUseCase _getAllIncomeCategories;
+  final WatchIncomeCategoriesUseCase _watchIncomeCategories;
   final UpdateIncomeCategoryUseCase _updateIncomeCategory;
   final DeleteIncomeCategoryUseCase _deleteIncomeCategory;
 
-  Future<void> _onLoad({
+  Future<void> _onSubscriptionRequested({
     required Emitter<IncomeCategoriesState> emit,
-    required GetAllIncomeCategoriesParams params,
+    required WatchIncomeCategoriesParams params,
   }) async {
     final traceId = generateUid();
     logInfo(
-      'Starts getting income categories for current user. '
-      'Emit loading status',
+      'Starts listening to IncomeCategory streams. '
+      'Emits loading state',
       traceId: traceId,
     );
-    emit(state.copyWith(status: IncomeCategoriesStatus.loading));
+    emit(
+      const IncomeCategoriesState(
+        status: IncomeCategoriesStatus.loading,
+      ),
+    );
 
-    final result = await _getAllIncomeCategories.execute(
+    final stream = _watchIncomeCategories.execute(
       params,
       traceId: traceId,
     );
-    result.when(
-      success: (categories) {
-        logInfo(
-          'Get income categories succeeded. Emit loaded status',
-          traceId: traceId,
-        );
-        emit(
-          state.copyWith(
-            status: IncomeCategoriesStatus.loaded,
-            categories: categories
-                .map((it) => IncomeCategoryWithState(category: it))
-                .toList(),
-          ),
-        );
-      },
-      failure: (exc) {
-        logInfo(
-          'Get income categories failed. Emit failure status',
-          traceId: traceId,
-        );
-        emit(
-          state.copyWith(
-            status: IncomeCategoriesStatus.failure,
-            exception: exc,
-          ),
+    await emit.forEach(
+      stream,
+      onData: (result) {
+        return result.when(
+          success: (categories) {
+            final currentItemState = {
+              for (final it in state.categories) it.category.id: it.status,
+            };
+            logInfo(
+              'Streamed income categories succeeded. Emit loaded status',
+              traceId: traceId,
+            );
+            return state.copyWith(
+              status: IncomeCategoriesStatus.loaded,
+              categories: categories
+                  .map(
+                    (it) => IncomeCategoryWithState(
+                      category: it,
+                      status:
+                          currentItemState[it.id] ?? IncomeCategoryStatus.idle,
+                    ),
+                  )
+                  .toList(),
+            );
+          },
+          failure: (exc) {
+            logInfo(
+              'Streamed income categories failed. Emit failure status',
+              traceId: traceId,
+            );
+            return state.copyWith(
+              status: IncomeCategoriesStatus.failure,
+              exception: exc,
+            );
+          },
         );
       },
     );
@@ -154,9 +162,6 @@ class IncomeCategoriesBloc
         emit(
           state.copyWith(
             status: IncomeCategoriesStatus.loaded,
-            categories: state.categories
-                .where((it) => it.category.id != category.id)
-                .toList(),
             notice: IncomeCategoryNotice.recentlyDeleted(category: category),
           ),
         );
@@ -234,14 +239,6 @@ class IncomeCategoriesBloc
         emit(
           state.copyWith(
             status: IncomeCategoriesStatus.loaded,
-            categories: state.categories.map((it) {
-              final processed = it.category.id == category.id;
-              if (!processed) return it;
-              return it.copyWith(
-                status: IncomeCategoryStatus.idle,
-                category: updated,
-              );
-            }).toList(),
             notice: IncomeCategoryNotice.recentlyUpdated(
               from: oldIncomeCategory,
               to: updated,

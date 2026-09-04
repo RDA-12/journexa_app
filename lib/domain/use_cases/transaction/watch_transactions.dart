@@ -6,14 +6,13 @@ import 'package:journexa_app/domain/use_cases/base_use_case.dart';
 import 'package:journexa_app/shared/app_logger.dart';
 import 'package:journexa_app/shared/app_result.dart';
 
-/// Use case to get all [Transaction] data
-/// for current user
+/// Use case to stream transactions for current user
 @lazySingleton
-class GetAllTransactionsUseCase
+class WatchTransactionsUseCase
     with Loggable
-    implements FutureBaseUseCaseNoParams<List<Transaction>> {
-  /// Creates new [GetAllTransactionsUseCase]
-  GetAllTransactionsUseCase({
+    implements StreamBaseUseCaseNoParams<List<Transaction>> {
+  /// Creates new [WatchTransactionsUseCase]
+  WatchTransactionsUseCase({
     required this._authRepository,
     required this._transactionRepository,
   });
@@ -22,37 +21,31 @@ class GetAllTransactionsUseCase
   final ITransactionRepository _transactionRepository;
 
   @override
-  String get logTag => 'GetAllTransactionsUseCase';
+  String get logTag => 'WatchTransactionsUseCase';
 
   @override
-  Future<AppResult<List<Transaction>>> execute({
+  Stream<AppResult<List<Transaction>>> execute({
     required String traceId,
-  }) async {
-    logInfo('Starts getting current user Id', traceId: traceId);
+  }) async* {
+    logInfo('Starts getting current user id', traceId: traceId);
     final currentUserResult = await _authRepository.getCurrentUserId(
       traceId: traceId,
     );
     final currentUserExc = currentUserResult.errorOrNull;
     if (currentUserExc != null) {
       logInfo('Failed to get current user id', traceId: traceId);
-      return AppResult.failure(currentUserExc);
+      yield AppResult.failure(currentUserExc);
+      return;
     }
 
     final userId = currentUserResult.valueOrNull!;
     logInfo(
-      'Current user id obtained. Starts getting all transactions',
+      'Current user id obtained. Starts watching transactions',
       traceId: traceId,
     );
-    final allTransactionsResult = await _transactionRepository.getAll(
+    yield* _transactionRepository.watch(
       userId: userId,
       traceId: traceId,
     );
-    final allTransactionsExc = allTransactionsResult.errorOrNull;
-    if (allTransactionsExc != null) {
-      logInfo('Failed to get all transactions', traceId: traceId);
-      return AppResult.failure(allTransactionsExc);
-    }
-    logInfo('All transactions obtained successfully', traceId: traceId);
-    return allTransactionsResult;
   }
 }

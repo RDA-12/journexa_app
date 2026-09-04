@@ -9,6 +9,7 @@ import 'package:journexa_app/shared/app_exception.dart';
 import 'package:journexa_app/shared/app_logger.dart';
 import 'package:journexa_app/shared/app_result.dart';
 import 'package:mock_exceptions/mock_exceptions.dart';
+import 'package:rxdart/rxdart.dart';
 
 /// Firestore implementation of [ITransactionRepository]
 @LazySingleton(as: ITransactionRepository)
@@ -86,21 +87,21 @@ class FirestoreTransactionRepository
   }
 
   @override
-  Future<AppResult<List<Transaction>>> getAll({
+  Stream<AppResult<List<Transaction>>> watch({
     required String userId,
     required String traceId,
-  }) async {
-    try {
-      maybeThrowException(this, Invocation.method(#getAll, null));
+  }) {
+    maybeThrowException(this, Invocation.method(#getAll, null));
+    logInfo(
+      'Starts watching transactions',
+      traceId: traceId,
+      extras: {'userId': userId},
+    );
+    final colRef = _db.collection('users/$userId/transactions');
+    return colRef.snapshots().map((snap) {
+      maybeThrowException(this, Invocation.method(#watch, null));
       logInfo(
-        'Starts getting transactions',
-        traceId: traceId,
-        extras: {'userId': userId},
-      );
-      final colRef = _db.collection('users/$userId/transactions');
-      final snap = await colRef.get();
-      logInfo(
-        'Transactions obtained. Starts mapping',
+        'Transactions snapshot obtained. Starts mapping',
         traceId: traceId,
       );
       final result = <Transaction>[];
@@ -115,16 +116,17 @@ class FirestoreTransactionRepository
         extras: {'count': result.length},
       );
       return AppResult.success(result);
-    } on FirebaseException catch (e) {
-      logError('$e', traceId: traceId, error: e);
-      return AppResult.failure(
-        AppException('$e', code: AppExceptionCode.serverException),
-      );
-    } on Exception catch (e, st) {
+    }).onErrorReturnWith((e, st) {
+      if (e is FirebaseException) {
+        logError('$e', traceId: traceId, error: e);
+        return AppResult.failure(
+          AppException('$e', code: AppExceptionCode.serverException),
+        );
+      }
       logError('$e', traceId: traceId, error: e, stackTrace: st);
       return AppResult.failure(
         AppException('$e', code: AppExceptionCode.internalException),
       );
-    }
+    });
   }
 }

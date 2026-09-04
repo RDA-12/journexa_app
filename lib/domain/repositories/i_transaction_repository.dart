@@ -12,8 +12,8 @@ abstract interface class ITransactionRepository {
     required String traceId,
   });
 
-  /// Return all [Transaction]'s in [userId] database
-  Future<AppResult<List<Transaction>>> getAll({
+  /// Stream of all [Transaction]'s in [userId] database
+  Stream<AppResult<List<Transaction>>> watch({
     required String userId,
     required String traceId,
   });

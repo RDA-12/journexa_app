@@ -161,56 +161,60 @@ void main() {
     );
   });
 
-  group('getAll', () {
-    test('returns success with correct transactions list', () async {
-      final result = await repository.getAll(userId: userId, traceId: traceId);
+  group('watch', () {
+    test('emits success with correct transactions list', () async {
+      final result = repository.watch(userId: userId, traceId: traceId);
 
-      expect(result, AppResult.success(initialTransactions));
+      expect(result, emits(AppResult.success(initialTransactions)));
     });
 
     test(
-      'returns failure with serverException code '
+      'emits failure with serverException code '
       'when firestore throws FirebaseException',
       () async {
         whenCalling(
-          Invocation.method(#getAll, null),
+          Invocation.method(#watch, null),
         ).on(repository).thenThrow(FirebaseException(plugin: 'firestore'));
 
-        final result = await repository.getAll(
+        final result = repository.watch(
           userId: userId,
           traceId: traceId,
         );
 
         expect(
           result,
-          isA<AppResultFailure<List<Transaction>>>().having(
-            (e) => e.error.code,
-            'error.code',
-            AppExceptionCode.serverException,
+          emits(
+            isA<AppResultFailure<List<Transaction>>>().having(
+              (e) => e.error.code,
+              'error.code',
+              AppExceptionCode.serverException,
+            ),
           ),
         );
       },
     );
 
     test(
-      'returns failure with internalException code '
-      'when repository throws Exception',
+      'emits failure with internalException code '
+      'when firestore throws Exception',
       () async {
         whenCalling(
-          Invocation.method(#getAll, null),
+          Invocation.method(#watch, null),
         ).on(repository).thenThrow(Exception('exception'));
 
-        final result = await repository.getAll(
+        final result = repository.watch(
           userId: userId,
           traceId: traceId,
         );
 
         expect(
           result,
-          isA<AppResultFailure<List<Transaction>>>().having(
-            (e) => e.error.code,
-            'error.code',
-            AppExceptionCode.internalException,
+          emits(
+            isA<AppResultFailure<List<Transaction>>>().having(
+              (e) => e.error.code,
+              'error.code',
+              AppExceptionCode.internalException,
+            ),
           ),
         );
       },

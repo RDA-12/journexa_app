@@ -3,8 +3,8 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:journexa_app/di.dart';
 import 'package:journexa_app/domain/entities/transaction.dart';
 import 'package:journexa_app/domain/use_cases/expense_category/delete_expense_category.dart';
-import 'package:journexa_app/domain/use_cases/expense_category/get_all_expense_categories.dart';
 import 'package:journexa_app/domain/use_cases/expense_category/update_expense_category.dart';
+import 'package:journexa_app/domain/use_cases/expense_category/watch_expense_categories.dart';
 import 'package:journexa_app/domain/use_cases/income_category/delete_income_category.dart';
 import 'package:journexa_app/domain/use_cases/income_category/get_all_income_categories.dart';
 import 'package:journexa_app/domain/use_cases/income_category/update_income_category.dart';
@@ -73,24 +73,18 @@ class AddTransactionPage extends StatelessWidget {
           create: (context) =>
               incomeCategoriesBloc ??
               IncomeCategoriesBloc(
-                getAllIncomeCategories:
-                    getIt<GetAllIncomeCategoriesUseCase>(),
-                deleteIncomeCategory:
-                    getIt<DeleteIncomeCategoryUseCase>(),
-                updateIncomeCategory:
-                    getIt<UpdateIncomeCategoryUseCase>(),
+                getAllIncomeCategories: getIt<GetAllIncomeCategoriesUseCase>(),
+                deleteIncomeCategory: getIt<DeleteIncomeCategoryUseCase>(),
+                updateIncomeCategory: getIt<UpdateIncomeCategoryUseCase>(),
               ),
         ),
         BlocProvider(
           create: (context) =>
               expenseCategoriesBloc ??
               ExpenseCategoriesBloc(
-                getAllExpenseCategories:
-                    getIt<GetAllExpenseCategoriesUseCase>(),
-                deleteExpenseCategory:
-                    getIt<DeleteExpenseCategoryUseCase>(),
-                updateExpenseCategory:
-                    getIt<UpdateExpenseCategoryUseCase>(),
+                watchExpenseCategories: getIt<WatchExpenseCategoriesUseCase>(),
+                deleteExpenseCategory: getIt<DeleteExpenseCategoryUseCase>(),
+                updateExpenseCategory: getIt<UpdateExpenseCategoryUseCase>(),
               ),
         ),
         BlocProvider(

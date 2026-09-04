@@ -8,5 +8,5 @@ const kDefaultDebounceDuration = Duration(milliseconds: 300);
 EventTransformer<Event> debounce<Event>({
   Duration duration = kDefaultDebounceDuration,
 }) {
-  return (events, mapper) => events.debounce(duration).asyncExpand(mapper);
+  return (events, mapper) => events.debounce(duration).switchMap(mapper);
 }

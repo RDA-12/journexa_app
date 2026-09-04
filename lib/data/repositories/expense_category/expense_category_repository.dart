@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:collection/collection.dart';
 import 'package:injectable/injectable.dart';
 import 'package:journexa_app/data/repositories/account/firestore_account.dart';
 import 'package:journexa_app/data/repositories/expense_category/firestore_expense_category.dart';
@@ -9,6 +10,7 @@ import 'package:journexa_app/shared/app_exception.dart';
 import 'package:journexa_app/shared/app_logger.dart';
 import 'package:journexa_app/shared/app_result.dart';
 import 'package:mock_exceptions/mock_exceptions.dart';
+import 'package:rxdart/rxdart.dart';
 
 /// Firestore implementation of [IExpenseCategoryRepository]
 @LazySingleton(as: IExpenseCategoryRepository)
@@ -95,89 +97,101 @@ class FirestoreExpenseCategoryRepository
   }
 
   @override
-  Future<AppResult<List<ExpenseCategory>>> getAll({
+  Stream<AppResult<List<ExpenseCategory>>> watch({
     required String userId,
     required String traceId,
     String? query,
     bool? isDeleted,
-  }) async {
-    try {
-      maybeThrowException(this, Invocation.method(#getAll, null));
-      logInfo(
-        'Start fetching categories',
-        traceId: traceId,
-        extras: {'query': query},
+  }) {
+    maybeThrowException(this, Invocation.method(#getAll, null));
+    logInfo(
+      'Constructing streams for expense categories and its accounts',
+      traceId: traceId,
+      extras: {'query': query},
+    );
+    Query<Map<String, Object?>> categoriesQuery = _db.collection(
+      'users/$userId/expenseCategories',
+    );
+    Query<Map<String, Object?>> accountsQuery = _db.collection(
+      'users/$userId/accounts',
+    );
+    if (query != null) {
+      categoriesQuery = categoriesQuery
+          .where('nameLower', isGreaterThanOrEqualTo: query)
+          .where('nameLower', isLessThanOrEqualTo: '$query~');
+      accountsQuery = accountsQuery
+          .where('nameLower', isGreaterThanOrEqualTo: query)
+          .where('nameLower', isLessThanOrEqualTo: '$query~');
+    }
+    if (isDeleted != null) {
+      categoriesQuery = categoriesQuery.where(
+        'isDeleted',
+        isEqualTo: isDeleted,
       );
-      Query<Map<String, Object?>> categoriesQuery = _db.collection(
-        'users/$userId/expenseCategories',
-      );
-      if (query != null) {
-        categoriesQuery = categoriesQuery
-            .where('nameLower', isGreaterThanOrEqualTo: query)
-            .where('nameLower', isLessThanOrEqualTo: '$query~');
-      }
-      if (isDeleted != null) {
-        categoriesQuery = categoriesQuery.where(
-          'isDeleted',
-          isEqualTo: isDeleted,
-        );
-      }
-      final categoriesSnap = await categoriesQuery.get();
-      logInfo(
-        'categories fetched. Start fetch each category account',
-        traceId: traceId,
-      );
-      final result = <ExpenseCategory>[];
-      final parentAccount = SystemDefinedAccount.rootExpense;
-      for (final doc in categoriesSnap.docs) {
-        final categoryFirestore = FirestoreExpenseCategory.fromJson(doc.data());
-        logInfo(
-          'Fetch account for category ${categoryFirestore.name}',
-          traceId: traceId,
-          extras: {'category': categoryFirestore.toJson()},
-        );
-        final accountDoc = _db.doc(
-          'users/$userId/accounts/${categoryFirestore.accountCode}',
-        );
-        final accountSnap = await accountDoc.get();
-        if (!accountSnap.exists) {
-          logWarning(
-            'Account ${categoryFirestore.accountCode} not found',
-            traceId: traceId,
-          );
-          continue;
-        }
-        final accountFirestore = FirestoreAccount.fromJson(accountSnap.data()!);
-        logInfo(
-          'Account found',
-          traceId: traceId,
-          extras: accountFirestore.toJson(),
-        );
-        result.add(
-          categoryFirestore.toDomain(
-            accountFirestore.toDomain().copyWith(
-              parent: parentAccount,
-            ),
-          ),
-        );
-      }
-      logInfo(
-        'Successfully fetched categories',
-        traceId: traceId,
-        extras: {'count': result.length},
-      );
-      return AppResult.success(result);
-    } on FirebaseException catch (e) {
-      logError('$e', traceId: traceId, error: e);
-      return AppResult.failure(
-        AppException('$e', code: AppExceptionCode.serverException),
-      );
-    } on Exception catch (e, st) {
-      logError('$e', traceId: traceId, error: e, stackTrace: st);
-      return AppResult.failure(
-        AppException('$e', code: AppExceptionCode.internalException),
+      accountsQuery = accountsQuery.where(
+        'isDeleted',
+        isEqualTo: isDeleted,
       );
     }
+    final categoriesStream = categoriesQuery.snapshots();
+    final accountsStream = accountsQuery.snapshots();
+    logInfo(
+      'Streams constructed. Return combined streams',
+      traceId: traceId,
+    );
+    return CombineLatestStream.combine2(
+      categoriesStream,
+      accountsStream,
+      (catSnap, accountSnap) {
+        maybeThrowException(this, Invocation.method(#watch, null));
+        logInfo(
+          'Either category or account changed. '
+          'Starts constructing expense categories',
+          traceId: traceId,
+        );
+        final catDocs = catSnap.docs;
+        final accountDocs = accountSnap.docs;
+        final result = <ExpenseCategory>[];
+        for (final catDoc in catDocs) {
+          final firestoreCat = FirestoreExpenseCategory.fromJson(
+            catDoc.data(),
+          );
+          final accountDoc = accountDocs.firstWhereOrNull((it) {
+            return it.data()['code'] == firestoreCat.accountCode;
+          });
+          if (accountDoc == null) {
+            logWarning(
+              'Account for expense category ${firestoreCat.id} not found',
+              traceId: traceId,
+              extras: {
+                'expenseCategoryId': firestoreCat.id,
+              },
+            );
+            continue;
+          }
+          final firestoreAccount = FirestoreAccount.fromJson(
+            accountDoc.data(),
+          );
+          final category = firestoreCat.toDomain(
+            firestoreAccount.toDomain().copyWith(
+              parent: SystemDefinedAccount.rootExpense,
+            ),
+          );
+          result.add(category);
+        }
+        return AppResult.success(result);
+      },
+    ).onErrorReturnWith((err, st) {
+      logError('$err', traceId: traceId, error: err, stackTrace: st);
+      if (err is FirebaseException) {
+        return AppResult.failure(
+          AppException('$err', code: AppExceptionCode.serverException),
+        );
+      }
+      return AppResult.failure(
+        AppException('$err', code: AppExceptionCode.internalException),
+      );
+    });
   }
 
   @override

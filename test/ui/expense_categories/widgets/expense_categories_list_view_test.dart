@@ -239,7 +239,7 @@ void main() {
 
   group('Interaction', () {
     testWidgets(
-      'add ExpenseCategoriesEvent.search with correct query',
+      'add ExpenseCategoriesEvent.subscriptionRequested with correct query',
       (tester) async {
         await pumpWidget(tester);
 
@@ -249,7 +249,7 @@ void main() {
 
         verify(
           () => mockExpenseCategoriesBloc.add(
-            const ExpenseCategoriesEvent.search(query: 'query'),
+            const ExpenseCategoriesEvent.subscriptionRequested(query: 'query'),
           ),
         ).called(1);
       },

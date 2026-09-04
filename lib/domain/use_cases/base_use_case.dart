@@ -35,3 +35,19 @@ abstract interface class FutureBaseUseCase<P, R> {
   /// Executes the use case with the given parameters.
   Future<AppResult<R>> execute(P params, {required String traceId});
 }
+
+/// An abstract class for defining a streamable use case
+/// without input parameters.
+// ignore: one_member_abstracts
+abstract interface class StreamBaseUseCaseNoParams<R> {
+  /// Executes the use case.
+  Stream<AppResult<R>> execute({required String traceId});
+}
+
+/// An abstract class for defining a streamable use case
+/// with input [P] and output [R] types.
+// ignore: one_member_abstracts
+abstract interface class StreamBaseUseCase<P, R> {
+  /// Executes the use case with the given parameters.
+  Stream<AppResult<R>> execute(P params, {required String traceId});
+}

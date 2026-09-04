@@ -11,8 +11,7 @@ import 'package:mocktail/mocktail.dart';
 
 import '../../util.dart';
 
-class MockExpenseCategoriesBloc extends Mock
-    implements ExpenseCategoriesBloc {}
+class MockExpenseCategoriesBloc extends Mock implements ExpenseCategoriesBloc {}
 
 void main() {
   late ExpenseCategoriesBloc mockExpenseCategoriesBloc;
@@ -59,8 +58,9 @@ void main() {
         final widgetFinder = find.byType(AppSelector<ExpenseCategory>);
         expect(widgetFinder, findsOneWidget);
 
-        final widget =
-            tester.widget<AppSelector<ExpenseCategory>>(widgetFinder);
+        final widget = tester.widget<AppSelector<ExpenseCategory>>(
+          widgetFinder,
+        );
         expect(widget.isRequired, true);
       },
     );
@@ -73,8 +73,9 @@ void main() {
         final widgetFinder = find.byType(AppSelector<ExpenseCategory>);
         expect(widgetFinder, findsOneWidget);
 
-        final widget =
-            tester.widget<AppSelector<ExpenseCategory>>(widgetFinder);
+        final widget = tester.widget<AppSelector<ExpenseCategory>>(
+          widgetFinder,
+        );
         expect(widget.isRequired, false);
       },
     );
@@ -87,8 +88,9 @@ void main() {
         final widgetFinder = find.byType(AppSelector<ExpenseCategory>);
         expect(widgetFinder, findsOneWidget);
 
-        final widget =
-            tester.widget<AppSelector<ExpenseCategory>>(widgetFinder);
+        final widget = tester.widget<AppSelector<ExpenseCategory>>(
+          widgetFinder,
+        );
         expect(widget.label, 'Some text');
       },
     );
@@ -104,8 +106,9 @@ void main() {
         final widgetFinder = find.byType(AppSelector<ExpenseCategory>);
         expect(widgetFinder, findsOneWidget);
 
-        final widget =
-            tester.widget<AppSelector<ExpenseCategory>>(widgetFinder);
+        final widget = tester.widget<AppSelector<ExpenseCategory>>(
+          widgetFinder,
+        );
         expect(widget.controller, controller);
       },
     );
@@ -233,7 +236,7 @@ void main() {
 
       verify(
         () => mockExpenseCategoriesBloc.add(
-          const ExpenseCategoriesEvent.search(query: 'Search'),
+          const ExpenseCategoriesEvent.subscriptionRequested(query: 'Search'),
         ),
       ).called(1);
     });
@@ -254,7 +257,7 @@ void main() {
 
       verify(
         () => mockExpenseCategoriesBloc.add(
-          const ExpenseCategoriesEvent.load(),
+          const ExpenseCategoriesEvent.subscriptionRequested(),
         ),
       ).called(1);
     });

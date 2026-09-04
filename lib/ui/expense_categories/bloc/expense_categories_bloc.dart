@@ -2,17 +2,17 @@ import 'package:bloc/bloc.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:journexa_app/domain/entities/expense_category.dart';
 import 'package:journexa_app/domain/use_cases/expense_category/delete_expense_category.dart';
-import 'package:journexa_app/domain/use_cases/expense_category/get_all_expense_categories.dart';
 import 'package:journexa_app/domain/use_cases/expense_category/update_expense_category.dart';
+import 'package:journexa_app/domain/use_cases/expense_category/watch_expense_categories.dart';
 import 'package:journexa_app/shared/app_exception.dart';
 import 'package:journexa_app/shared/app_logger.dart';
 import 'package:journexa_app/shared/app_result.dart';
 import 'package:journexa_app/shared/uid_generator.dart';
 import 'package:journexa_app/ui/shared/event_transform/debounce.dart';
 
+part 'expense_categories_bloc.freezed.dart';
 part 'expense_categories_event.dart';
 part 'expense_categories_state.dart';
-part 'expense_categories_bloc.freezed.dart';
 
 /// Bloc to handle expense categories
 class ExpenseCategoriesBloc
@@ -20,21 +20,15 @@ class ExpenseCategoriesBloc
     with Loggable, GenerateUid {
   /// Creates new [ExpenseCategoriesBloc]
   ExpenseCategoriesBloc({
-    required this._getAllExpenseCategories,
+    required this._watchExpenseCategories,
     required this._deleteExpenseCategory,
     required this._updateExpenseCategory,
   }) : super(const ExpenseCategoriesState()) {
-    on<_Load>((event, emit) async {
-      return _onLoad(
-        emit: emit,
-        params: const GetAllExpenseCategoriesParams(),
-      );
-    });
-    on<_Search>(
+    on<_SubscriptionRequested>(
       (event, emit) async {
-        return _onLoad(
+        return _onSubscriptionRequested(
           emit: emit,
-          params: GetAllExpenseCategoriesParams(query: event.query),
+          params: WatchExpenseCategoriesParams(query: event.query),
         );
       },
       transformer: debounce(),
@@ -58,51 +52,65 @@ class ExpenseCategoriesBloc
   @override
   String get logTag => 'ExpenseCategoriesBloc';
 
-  final GetAllExpenseCategoriesUseCase _getAllExpenseCategories;
+  final WatchExpenseCategoriesUseCase _watchExpenseCategories;
   final UpdateExpenseCategoryUseCase _updateExpenseCategory;
   final DeleteExpenseCategoryUseCase _deleteExpenseCategory;
 
-  Future<void> _onLoad({
+  Future<void> _onSubscriptionRequested({
     required Emitter<ExpenseCategoriesState> emit,
-    required GetAllExpenseCategoriesParams params,
+    required WatchExpenseCategoriesParams params,
   }) async {
     final traceId = generateUid();
     logInfo(
-      'Starts getting expense categories for current user. '
-      'Emit loading status',
+      'Starts listening to ExpenseCategory streams. '
+      'Emits loading state',
       traceId: traceId,
     );
-    emit(state.copyWith(status: ExpenseCategoriesStatus.loading));
+    emit(
+      const ExpenseCategoriesState(
+        status: ExpenseCategoriesStatus.loading,
+      ),
+    );
 
-    final result = await _getAllExpenseCategories.execute(
+    final stream = _watchExpenseCategories.execute(
       params,
       traceId: traceId,
     );
-    result.when(
-      success: (categories) {
-        logInfo(
-          'Get expense categories succeeded. Emit loaded status',
-          traceId: traceId,
-        );
-        emit(
-          state.copyWith(
-            status: ExpenseCategoriesStatus.loaded,
-            categories: categories
-                .map((it) => ExpenseCategoryWithState(category: it))
-                .toList(),
-          ),
-        );
-      },
-      failure: (exc) {
-        logInfo(
-          'Get expense categories failed. Emit failure status',
-          traceId: traceId,
-        );
-        emit(
-          state.copyWith(
-            status: ExpenseCategoriesStatus.failure,
-            exception: exc,
-          ),
+    await emit.forEach(
+      stream,
+      onData: (result) {
+        return result.when(
+          success: (categories) {
+            final currentItemState = {
+              for (final it in state.categories) it.category.id: it.status,
+            };
+            logInfo(
+              'Streamed expense categories succeeded. Emit loaded status',
+              traceId: traceId,
+            );
+            return state.copyWith(
+              status: ExpenseCategoriesStatus.loaded,
+              categories: categories
+                  .map(
+                    (it) => ExpenseCategoryWithState(
+                      category: it,
+                      status:
+                          currentItemState[it.id] ?? ExpenseCategoryStatus.idle,
+                    ),
+                  )
+                  .toList(),
+            );
+          },
+          failure: (exc) {
+            logInfo(
+              'Streamed expense categories failed. Emit failure status',
+              traceId: traceId,
+            );
+            return state.copyWith(
+              status: ExpenseCategoriesStatus.failure,
+              exception: exc,
+            );
+          },
         );
       },
     );
@@ -154,9 +162,6 @@ class ExpenseCategoriesBloc
         emit(
           state.copyWith(
             status: ExpenseCategoriesStatus.loaded,
-            categories: state.categories
-                .where((it) => it.category.id != category.id)
-                .toList(),
             notice: ExpenseCategoryNotice.recentlyDeleted(category: category),
           ),
         );
@@ -234,14 +239,6 @@ class ExpenseCategoriesBloc
         emit(
           state.copyWith(
             status: ExpenseCategoriesStatus.loaded,
-            categories: state.categories.map((it) {
-              final processed = it.category.id == category.id;
-              if (!processed) return it;
-              return it.copyWith(
-                status: ExpenseCategoryStatus.idle,
-                category: updated,
-              );
-            }).toList(),
             notice: ExpenseCategoryNotice.recentlyUpdated(
               from: oldExpenseCategory,
               to: updated,

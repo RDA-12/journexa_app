@@ -3,7 +3,7 @@ import 'package:journexa_app/domain/entities/account.dart';
 import 'package:journexa_app/domain/entities/expense_category.dart';
 import 'package:journexa_app/domain/repositories/i_auth_repository.dart';
 import 'package:journexa_app/domain/repositories/i_expense_category.dart';
-import 'package:journexa_app/domain/use_cases/expense_category/get_all_expense_categories.dart';
+import 'package:journexa_app/domain/use_cases/expense_category/watch_expense_categories.dart';
 import 'package:journexa_app/shared/app_exception.dart';
 import 'package:journexa_app/shared/app_result.dart';
 import 'package:mocktail/mocktail.dart';
@@ -45,7 +45,7 @@ void main() {
 
   late IAuthRepository mockAuthRepository;
   late IExpenseCategoryRepository mockExpenseCategoryRepository;
-  late GetAllExpenseCategoriesUseCase useCase;
+  late WatchExpenseCategoriesUseCase useCase;
 
   setUp(() {
     mockAuthRepository = MockAuthRepository();
@@ -55,15 +55,15 @@ void main() {
 
     mockExpenseCategoryRepository = MockExpenseCategoryRepository();
     when(
-      () => mockExpenseCategoryRepository.getAll(
+      () => mockExpenseCategoryRepository.watch(
         userId: userId,
         traceId: traceId,
         query: any(named: 'query'),
         isDeleted: any(named: 'isDeleted'),
       ),
-    ).thenAnswer((_) async => AppResult.success(categories));
+    ).thenAnswer((_) => Stream.value(AppResult.success(categories)));
 
-    useCase = GetAllExpenseCategoriesUseCase(
+    useCase = WatchExpenseCategoriesUseCase(
       authRepository: mockAuthRepository,
       expenseCategoryRepository: mockExpenseCategoryRepository,
     );
@@ -73,10 +73,11 @@ void main() {
     'calls AuthRepository.getCurrentUserId once '
     'to get current user id',
     () async {
-      await useCase.execute(
-        const GetAllExpenseCategoriesParams(),
+      final result = useCase.execute(
+        const WatchExpenseCategoriesParams(),
         traceId: traceId,
       );
+      await result.first;
 
       verify(
         () => mockAuthRepository.getCurrentUserId(traceId: traceId),
@@ -85,16 +86,17 @@ void main() {
   );
 
   test(
-    'calls ExpenseCategoryRepository.getAll once '
+    'calls ExpenseCategoryRepository.watch once '
     'with correct args',
     () async {
-      await useCase.execute(
-        const GetAllExpenseCategoriesParams(),
+      final result = useCase.execute(
+        const WatchExpenseCategoriesParams(),
         traceId: traceId,
       );
+      await result.first;
 
       verify(
-        () => mockExpenseCategoryRepository.getAll(
+        () => mockExpenseCategoryRepository.watch(
           userId: userId,
           traceId: traceId,
           isDeleted: false,
@@ -104,16 +106,17 @@ void main() {
   );
 
   test(
-    'calls ExpenseCategoryRepository.getAll once '
+    'calls ExpenseCategoryRepository.watch once '
     'with correct args when query provided',
     () async {
-      await useCase.execute(
-        const GetAllExpenseCategoriesParams(query: 'query'),
+      final result = useCase.execute(
+        const WatchExpenseCategoriesParams(query: 'query'),
         traceId: traceId,
       );
+      await result.first;
 
       verify(
-        () => mockExpenseCategoryRepository.getAll(
+        () => mockExpenseCategoryRepository.watch(
           userId: userId,
           traceId: traceId,
           query: 'query',
@@ -124,34 +127,36 @@ void main() {
   );
 
   test(
-    'returns correct categories when all operations are successful',
+    'emits correct categories when all operations are successful',
     () async {
-      final result = await useCase.execute(
-        const GetAllExpenseCategoriesParams(),
+      final result = useCase.execute(
+        const WatchExpenseCategoriesParams(),
         traceId: traceId,
       );
 
-      expect(result, AppResult.success(categories));
+      expect(result, emits(AppResult.success(categories)));
     },
   );
 
   test(
-    'returns failure and not fetch Accounts '
+    'emits failure and not fetch Accounts '
     'when AuthRepository.getCurrentUserId failed',
     () async {
       when(
         () => mockAuthRepository.getCurrentUserId(traceId: traceId),
       ).thenAnswer((_) async => AppResult<String>.failure(AppException.test()));
 
-      final result = await useCase.execute(
-        const GetAllExpenseCategoriesParams(),
+      final result = useCase.execute(
+        const WatchExpenseCategoriesParams(),
         traceId: traceId,
       );
 
       expect(
         result,
-        AppResult<List<ExpenseCategory>>.failure(
-          AppException.test(),
+        emits(
+          AppResult<List<ExpenseCategory>>.failure(
+            AppException.test(),
+          ),
         ),
       );
       verifyZeroInteractions(mockExpenseCategoryRepository);
@@ -159,25 +164,27 @@ void main() {
   );
 
   test(
-    'returns failure '
-    'when ExpenseCategoryRepository.getAll failed',
+    'emits failure '
+    'when ExpenseCategoryRepository.watch emits failure',
     () async {
       when(
-        () => mockExpenseCategoryRepository.getAll(
+        () => mockExpenseCategoryRepository.watch(
           userId: userId,
           traceId: traceId,
           isDeleted: false,
         ),
-      ).thenAnswer((_) async => AppResult.failure(AppException.test()));
+      ).thenAnswer((_) => Stream.value(AppResult.failure(AppException.test())));
 
-      final result = await useCase.execute(
-        const GetAllExpenseCategoriesParams(),
+      final result = useCase.execute(
+        const WatchExpenseCategoriesParams(),
         traceId: traceId,
       );
 
       expect(
         result,
-        AppResult<List<ExpenseCategory>>.failure(AppException.test()),
+        emits(
+          AppResult<List<ExpenseCategory>>.failure(AppException.test()),
+        ),
       );
     },
   );

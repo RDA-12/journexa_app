@@ -3,12 +3,9 @@ part of 'expense_categories_bloc.dart';
 /// Events for [ExpenseCategoriesBloc]
 @freezed
 class ExpenseCategoriesEvent with _$ExpenseCategoriesEvent {
-  /// Event to loading the expense categories
-  const factory ExpenseCategoriesEvent.load() = _Load;
-
-  /// Event to search for an expense category
-  const factory ExpenseCategoriesEvent.search({required String query}) =
-      _Search;
+  /// Request to start listen to [ExpenseCategory] streams
+  const factory ExpenseCategoriesEvent.subscriptionRequested({String? query}) =
+      _SubscriptionRequested;
 
   /// Event to delete an expense category
   const factory ExpenseCategoriesEvent.delete(ExpenseCategory category) =

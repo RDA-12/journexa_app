@@ -55,13 +55,13 @@ void main() {
 
   group('Init', () {
     testWidgets(
-      'add ExpenseCategoriesEvent.load event on start',
+      'add ExpenseCategoriesEvent.subscriptionRequested event on start',
       (tester) async {
         await pumpWidget(tester);
 
         verify(
           () => mockExpenseCategoriesBloc.add(
-            const ExpenseCategoriesEvent.load(),
+            const ExpenseCategoriesEvent.subscriptionRequested(),
           ),
         ).called(1);
       },
@@ -173,7 +173,7 @@ void main() {
 
         verify(
           () => mockExpenseCategoriesBloc.add(
-            const ExpenseCategoriesEvent.load(),
+            const ExpenseCategoriesEvent.subscriptionRequested(),
           ),
         ).called(2);
       },

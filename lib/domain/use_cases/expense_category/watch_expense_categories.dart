@@ -7,45 +7,41 @@ import 'package:journexa_app/domain/use_cases/base_use_case.dart';
 import 'package:journexa_app/shared/app_logger.dart';
 import 'package:journexa_app/shared/app_result.dart';
 
-part 'get_all_expense_categories.freezed.dart';
+part 'watch_expense_categories.freezed.dart';
 
-/// Params for [GetAllExpenseCategoriesUseCase]
+/// Params for [WatchExpenseCategoriesUseCase]
 @freezed
-sealed class GetAllExpenseCategoriesParams
-    with _$GetAllExpenseCategoriesParams {
-  const factory GetAllExpenseCategoriesParams({
+sealed class WatchExpenseCategoriesParams with _$WatchExpenseCategoriesParams {
+  const factory WatchExpenseCategoriesParams({
     String? query,
-  }) = _GetAllExpenseCategoriesParams;
+  }) = _WatchExpenseCategoriesParams;
 }
 
-/// Use case to get all expense categories saved on
+/// Use case to stream expense categories saved on
 /// current user database
 @lazySingleton
-class GetAllExpenseCategoriesUseCase
+class WatchExpenseCategoriesUseCase
     with Loggable
     implements
-        FutureBaseUseCase<
-          GetAllExpenseCategoriesParams,
-          List<ExpenseCategory>
-        > {
-  /// Creates new [GetAllExpenseCategoriesUseCase]
-  GetAllExpenseCategoriesUseCase({
+        StreamBaseUseCase<WatchExpenseCategoriesParams, List<ExpenseCategory>> {
+  /// Creates new [WatchExpenseCategoriesUseCase]
+  WatchExpenseCategoriesUseCase({
     required this._authRepository,
     required this._expenseCategoryRepository,
   });
 
   @override
-  String get logTag => 'GetAllExpenseCategoriesUseCase';
+  String get logTag => 'WatchExpenseCategoriesUseCase';
 
   final IAuthRepository _authRepository;
   final IExpenseCategoryRepository _expenseCategoryRepository;
 
-  /// Execute getting all expense categories from current user
+  /// Execute getting stream expense categories from current user
   @override
-  Future<AppResult<List<ExpenseCategory>>> execute(
-    GetAllExpenseCategoriesParams params, {
+  Stream<AppResult<List<ExpenseCategory>>> execute(
+    WatchExpenseCategoriesParams params, {
     required String traceId,
-  }) async {
+  }) async* {
     logInfo('Starts getting current user id ', traceId: traceId);
     final currentUserIdResult = await _authRepository.getCurrentUserId(
       traceId: traceId,
@@ -53,7 +49,8 @@ class GetAllExpenseCategoriesUseCase
     final currentUserIdExc = currentUserIdResult.errorOrNull;
     if (currentUserIdExc != null) {
       logInfo('Failed to get current user id', traceId: traceId);
-      return AppResult.failure(currentUserIdExc);
+      yield AppResult.failure(currentUserIdExc);
+      return;
     }
 
     final userId = currentUserIdResult.valueOrNull!;
@@ -61,23 +58,11 @@ class GetAllExpenseCategoriesUseCase
       'Got current user id. Starts getting expense categories',
       traceId: traceId,
     );
-    final accountsResult = await _expenseCategoryRepository.getAll(
+    yield* _expenseCategoryRepository.watch(
       userId: userId,
       query: params.query,
       traceId: traceId,
       isDeleted: false,
     );
-    final accountsExc = accountsResult.errorOrNull;
-    if (accountsExc != null) {
-      logInfo('Failed to get expense categories', traceId: traceId);
-      return AppResult.failure(accountsExc);
-    }
-
-    final accounts = accountsResult.valueOrNull!;
-    logInfo(
-      'Got ${accounts.length} expense categories',
-      traceId: traceId,
-    );
-    return AppResult.success(accounts);
   }
 }

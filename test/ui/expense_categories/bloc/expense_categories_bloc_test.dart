@@ -3,8 +3,8 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:journexa_app/domain/entities/account.dart';
 import 'package:journexa_app/domain/entities/expense_category.dart';
 import 'package:journexa_app/domain/use_cases/expense_category/delete_expense_category.dart';
-import 'package:journexa_app/domain/use_cases/expense_category/get_all_expense_categories.dart';
 import 'package:journexa_app/domain/use_cases/expense_category/update_expense_category.dart';
+import 'package:journexa_app/domain/use_cases/expense_category/watch_expense_categories.dart';
 import 'package:journexa_app/shared/app_exception.dart';
 import 'package:journexa_app/shared/app_result.dart';
 import 'package:journexa_app/shared/uid_generator.dart';
@@ -12,8 +12,8 @@ import 'package:journexa_app/ui/expense_categories/bloc/expense_categories_bloc.
 import 'package:journexa_app/ui/shared/event_transform/event_transform.dart';
 import 'package:mocktail/mocktail.dart';
 
-class MockGetAllExpenseCategories extends Mock
-    implements GetAllExpenseCategoriesUseCase {}
+class MockWatchExpenseCategories extends Mock
+    implements WatchExpenseCategoriesUseCase {}
 
 class MockUidGenerator extends Mock implements UidGenerator {}
 
@@ -46,14 +46,14 @@ void main() {
     name: 'new name',
   );
 
-  late GetAllExpenseCategoriesUseCase mockGetAllExpenseCategories;
+  late WatchExpenseCategoriesUseCase mockWatchExpenseCategories;
   late UidGenerator mockUidGenerator;
   late DeleteExpenseCategoryUseCase mockDeleteExpenseCategory;
   late UpdateExpenseCategoryUseCase mockUpdateExpenseCategory;
 
   setUpAll(() {
     registerFallbackValue(
-      const GetAllExpenseCategoriesParams(),
+      const WatchExpenseCategoriesParams(),
     );
     registerFallbackValue(
       DeleteExpenseCategoryParams(category: expenseCategories.first),
@@ -70,14 +70,14 @@ void main() {
     mockUidGenerator = MockUidGenerator();
     when(mockUidGenerator.generateUid).thenReturn(traceId);
 
-    mockGetAllExpenseCategories = MockGetAllExpenseCategories();
+    mockWatchExpenseCategories = MockWatchExpenseCategories();
     when(
-      () => mockGetAllExpenseCategories.execute(
-        any<GetAllExpenseCategoriesParams>(),
+      () => mockWatchExpenseCategories.execute(
+        any<WatchExpenseCategoriesParams>(),
         traceId: traceId,
       ),
     ).thenAnswer(
-      (_) async => AppResult.success(expenseCategories),
+      (_) => Stream.value(AppResult.success(expenseCategories)),
     );
 
     mockDeleteExpenseCategory = MockDeleteExpenseCategory();
@@ -101,7 +101,7 @@ void main() {
 
   ExpenseCategoriesBloc buildBloc() {
     return ExpenseCategoriesBloc(
-      getAllExpenseCategories: mockGetAllExpenseCategories,
+      watchExpenseCategories: mockWatchExpenseCategories,
       deleteExpenseCategory: mockDeleteExpenseCategory,
       updateExpenseCategory: mockUpdateExpenseCategory,
     )..customGenerator = mockUidGenerator;
@@ -112,97 +112,15 @@ void main() {
     expect(bloc.state, const ExpenseCategoriesState());
   });
 
-  group('load', () {
+  group('subscriptionRequested', () {
     blocTest<ExpenseCategoriesBloc, ExpenseCategoriesState>(
       'emits [loading, loaded] '
       'with correct categories '
-      'when getAllExpenseCategoriesUseCase returns success',
+      'when watchExpenseCategoriesUseCase returns success',
       build: buildBloc,
-      act: (bloc) => bloc.add(const ExpenseCategoriesEvent.load()),
-      expect: () => <ExpenseCategoriesState>[
-        const ExpenseCategoriesState(status: ExpenseCategoriesStatus.loading),
-        ExpenseCategoriesState(
-          status: ExpenseCategoriesStatus.loaded,
-          categories: expenseCategoriesWithState,
-        ),
-      ],
-      verify: (_) {
-        verify(
-          () => mockGetAllExpenseCategories.execute(
-            const GetAllExpenseCategoriesParams(),
-            traceId: traceId,
-          ),
-        ).called(1);
-      },
-    );
-
-    blocTest<ExpenseCategoriesBloc, ExpenseCategoriesState>(
-      'emits [loading, failure] '
-      'when getAllExpenseCategoriesUseCase returns failure',
-      setUp: () {
-        when(
-          () => mockGetAllExpenseCategories.execute(
-            const GetAllExpenseCategoriesParams(),
-            traceId: traceId,
-          ),
-        ).thenAnswer(
-          (_) async =>
-              AppResult<List<ExpenseCategory>>.failure(AppException.test()),
-        );
-      },
-      build: buildBloc,
-      act: (bloc) => bloc.add(const ExpenseCategoriesEvent.load()),
-      expect: () => <ExpenseCategoriesState>[
-        const ExpenseCategoriesState(status: ExpenseCategoriesStatus.loading),
-        ExpenseCategoriesState(
-          status: ExpenseCategoriesStatus.failure,
-          exception: AppException.test(),
-        ),
-      ],
-      verify: (_) {
-        verify(
-          () => mockGetAllExpenseCategories.execute(
-            const GetAllExpenseCategoriesParams(),
-            traceId: traceId,
-          ),
-        ).called(1);
-      },
-    );
-  });
-
-  group('search', () {
-    blocTest<ExpenseCategoriesBloc, ExpenseCategoriesState>(
-      'only process last event within debounce time',
-      build: buildBloc,
-      act: (bloc) => bloc
-        ..add(const ExpenseCategoriesEvent.search(query: 'q'))
-        ..add(const ExpenseCategoriesEvent.search(query: 'que'))
-        ..add(const ExpenseCategoriesEvent.search(query: 'query')),
-      wait: kDefaultDebounceDuration + const Duration(milliseconds: 1),
-      expect: () => <ExpenseCategoriesState>[
-        const ExpenseCategoriesState(status: ExpenseCategoriesStatus.loading),
-        ExpenseCategoriesState(
-          status: ExpenseCategoriesStatus.loaded,
-          categories: expenseCategoriesWithState,
-        ),
-      ],
-      verify: (_) {
-        verify(
-          () => mockGetAllExpenseCategories.execute(
-            const GetAllExpenseCategoriesParams(query: 'query'),
-            traceId: traceId,
-          ),
-        ).called(1);
-      },
-    );
-
-    blocTest<ExpenseCategoriesBloc, ExpenseCategoriesState>(
-      'emits [loading, loaded] '
-      'with correct categories '
-      'when getAllExpenseCategoriesUseCase returns success',
-      build: buildBloc,
-      act: (bloc) =>
-          bloc.add(const ExpenseCategoriesEvent.search(query: 'query')),
+      act: (bloc) => bloc.add(
+        const ExpenseCategoriesEvent.subscriptionRequested(),
+      ),
       wait: kDefaultDebounceDuration,
       expect: () => <ExpenseCategoriesState>[
         const ExpenseCategoriesState(status: ExpenseCategoriesStatus.loading),
@@ -213,8 +131,34 @@ void main() {
       ],
       verify: (_) {
         verify(
-          () => mockGetAllExpenseCategories.execute(
-            const GetAllExpenseCategoriesParams(query: 'query'),
+          () => mockWatchExpenseCategories.execute(
+            const WatchExpenseCategoriesParams(),
+            traceId: traceId,
+          ),
+        ).called(1);
+      },
+    );
+
+    blocTest<ExpenseCategoriesBloc, ExpenseCategoriesState>(
+      'emits [loading, loaded] '
+      'with correct categories and params '
+      'when watchExpenseCategoriesUseCase returns success',
+      build: buildBloc,
+      act: (bloc) => bloc.add(
+        const ExpenseCategoriesEvent.subscriptionRequested(query: 'query'),
+      ),
+      wait: kDefaultDebounceDuration,
+      expect: () => <ExpenseCategoriesState>[
+        const ExpenseCategoriesState(status: ExpenseCategoriesStatus.loading),
+        ExpenseCategoriesState(
+          status: ExpenseCategoriesStatus.loaded,
+          categories: expenseCategoriesWithState,
+        ),
+      ],
+      verify: (_) {
+        verify(
+          () => mockWatchExpenseCategories.execute(
+            const WatchExpenseCategoriesParams(query: 'query'),
             traceId: traceId,
           ),
         ).called(1);
@@ -223,21 +167,23 @@ void main() {
 
     blocTest<ExpenseCategoriesBloc, ExpenseCategoriesState>(
       'emits [loading, failure] '
-      'when getAllExpenseCategoriesUseCase returns failure',
+      'when getAllExpenseCategoriesUseCase emits failure',
       setUp: () {
         when(
-          () => mockGetAllExpenseCategories.execute(
-            const GetAllExpenseCategoriesParams(query: 'query'),
+          () => mockWatchExpenseCategories.execute(
+            const WatchExpenseCategoriesParams(),
             traceId: traceId,
           ),
         ).thenAnswer(
-          (_) async =>
-              AppResult<List<ExpenseCategory>>.failure(AppException.test()),
+          (_) => Stream.value(
+            AppResult<List<ExpenseCategory>>.failure(AppException.test()),
+          ),
         );
       },
       build: buildBloc,
-      act: (bloc) =>
-          bloc.add(const ExpenseCategoriesEvent.search(query: 'query')),
+      act: (bloc) => bloc.add(
+        const ExpenseCategoriesEvent.subscriptionRequested(),
+      ),
       wait: kDefaultDebounceDuration,
       expect: () => <ExpenseCategoriesState>[
         const ExpenseCategoriesState(status: ExpenseCategoriesStatus.loading),
@@ -248,8 +194,8 @@ void main() {
       ],
       verify: (_) {
         verify(
-          () => mockGetAllExpenseCategories.execute(
-            const GetAllExpenseCategoriesParams(query: 'query'),
+          () => mockWatchExpenseCategories.execute(
+            const WatchExpenseCategoriesParams(),
             traceId: traceId,
           ),
         ).called(1);
@@ -259,7 +205,7 @@ void main() {
 
   group('delete', () {
     blocTest<ExpenseCategoriesBloc, ExpenseCategoriesState>(
-      'emits [new categories, loaded new categories with notice] '
+      'emits [new categories, loaded with notice] '
       'when deleteExpenseCategory returns success',
       seed: () {
         return ExpenseCategoriesState(
@@ -284,7 +230,12 @@ void main() {
         ),
         ExpenseCategoriesState(
           status: ExpenseCategoriesStatus.loaded,
-          categories: expenseCategoriesWithState.sublist(1),
+          categories: expenseCategoriesWithState.map((it) {
+            final isDeleting =
+                it.category.id == expenseCategoriesWithState.first.category.id;
+            if (!isDeleting) return it;
+            return it.copyWith(status: ExpenseCategoryStatus.deleting);
+          }).toList(),
           notice: ExpenseCategoryNotice.recentlyDeleted(
             category: expenseCategories.first,
           ),
@@ -376,8 +327,7 @@ void main() {
 
   group('update', () {
     blocTest<ExpenseCategoriesBloc, ExpenseCategoriesState>(
-      'emits [new updating categories, '
-      'new categories with updated notice] '
+      'emits [new updating categories, loaded with updated notice] '
       'when updateExpenseCategory returns success',
       seed: () {
         return ExpenseCategoriesState(
@@ -408,10 +358,7 @@ void main() {
             final isUpdating =
                 it.category.id == expenseCategoriesWithState.first.category.id;
             if (!isUpdating) return it;
-            return it.copyWith(
-              status: ExpenseCategoryStatus.idle,
-              category: updatedFirstCategory,
-            );
+            return it.copyWith(status: ExpenseCategoryStatus.updating);
           }).toList(),
           notice: ExpenseCategoryNotice.recentlyUpdated(
             from: expenseCategoriesWithState.first.category,

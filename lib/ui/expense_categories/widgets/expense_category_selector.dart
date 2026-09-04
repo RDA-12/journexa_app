@@ -82,8 +82,9 @@ class _ExpenseCategorySelectorState extends State<ExpenseCategorySelector> {
             _controller.lastError = state.exception;
           case ExpenseCategoriesStatus.loaded:
             _controller.isLoading = false;
-            _controller.items =
-                state.categories.map((it) => it.category).toList();
+            _controller.items = state.categories
+                .map((it) => it.category)
+                .toList();
           case _:
         }
       },
@@ -93,12 +94,12 @@ class _ExpenseCategorySelectorState extends State<ExpenseCategorySelector> {
         label: widget.label,
         onPressed: () {
           context.read<ExpenseCategoriesBloc>().add(
-            const ExpenseCategoriesEvent.load(),
+            const ExpenseCategoriesEvent.subscriptionRequested(),
           );
         },
         onSearch: (query) {
           context.read<ExpenseCategoriesBloc>().add(
-            ExpenseCategoriesEvent.search(query: query ?? ''),
+            ExpenseCategoriesEvent.subscriptionRequested(query: query ?? ''),
           );
         },
       ),

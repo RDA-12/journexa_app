@@ -51,7 +51,7 @@ class _ExpenseCategoriesListViewState extends State<ExpenseCategoriesListView> {
   void _onChanged() {
     final query = _queryController.text.trim();
     context.read<ExpenseCategoriesBloc>().add(
-      ExpenseCategoriesEvent.search(query: query),
+      ExpenseCategoriesEvent.subscriptionRequested(query: query),
     );
   }
 

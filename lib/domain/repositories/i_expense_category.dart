@@ -11,7 +11,7 @@ abstract interface class IExpenseCategoryRepository {
   });
 
   /// Get all [ExpenseCategory] from [userId] database
-  Future<AppResult<List<ExpenseCategory>>> getAll({
+  Stream<AppResult<List<ExpenseCategory>>> watch({
     required String userId,
     required String traceId,
     String? query,

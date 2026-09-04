@@ -5,7 +5,7 @@ import 'package:journexa_app/data/repositories/account/account.dart';
 import 'package:journexa_app/data/repositories/expense_category/expense_category.dart';
 import 'package:journexa_app/domain/entities/account.dart';
 import 'package:journexa_app/domain/entities/expense_category.dart';
-import 'package:journexa_app/domain/repositories/i_expense_category.dart';
+import 'package:journexa_app/domain/repositories/i_expense_category_repository.dart';
 import 'package:journexa_app/shared/app_exception.dart';
 import 'package:journexa_app/shared/app_result.dart';
 import 'package:mock_exceptions/mock_exceptions.dart';

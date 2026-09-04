@@ -12,7 +12,7 @@ abstract interface class IJournalRepository {
     required String traceId,
   });
 
-  /// Stream map of account code and current balance
+  /// Watch [Account] balances. Emits Map of account code and current balance
   Stream<AppResult<Map<String, Decimal>>> watchCurrentBalance({
     required String userId,
     required String traceId,

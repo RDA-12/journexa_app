@@ -2,7 +2,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:journexa_app/domain/entities/account.dart';
 import 'package:journexa_app/domain/entities/income_category.dart';
 import 'package:journexa_app/domain/repositories/i_auth_repository.dart';
-import 'package:journexa_app/domain/repositories/i_income_category.dart';
+import 'package:journexa_app/domain/repositories/i_income_category_repository.dart';
 import 'package:journexa_app/domain/use_cases/income_category/delete_income_category.dart';
 import 'package:journexa_app/shared/app_exception.dart';
 import 'package:journexa_app/shared/app_result.dart';

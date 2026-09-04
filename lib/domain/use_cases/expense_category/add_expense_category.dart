@@ -4,7 +4,7 @@ import 'package:journexa_app/domain/entities/account.dart';
 import 'package:journexa_app/domain/entities/expense_category.dart';
 import 'package:journexa_app/domain/repositories/i_account_repository.dart';
 import 'package:journexa_app/domain/repositories/i_auth_repository.dart';
-import 'package:journexa_app/domain/repositories/i_expense_category.dart';
+import 'package:journexa_app/domain/repositories/i_expense_category_repository.dart';
 import 'package:journexa_app/domain/use_cases/base_use_case.dart';
 import 'package:journexa_app/shared/app_logger.dart';
 import 'package:journexa_app/shared/app_result.dart';

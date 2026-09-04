@@ -92,7 +92,6 @@ class FirestoreWalletRepository with Loggable implements IWalletRepository {
     String? query,
     bool? isDeleted,
   }) {
-    maybeThrowException(this, Invocation.method(#getAll, null));
     logInfo(
       'Constructing streams for wallets and its accounts',
       traceId: traceId,

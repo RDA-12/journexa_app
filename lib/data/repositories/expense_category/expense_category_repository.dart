@@ -5,7 +5,7 @@ import 'package:journexa_app/data/repositories/account/firestore_account.dart';
 import 'package:journexa_app/data/repositories/expense_category/firestore_expense_category.dart';
 import 'package:journexa_app/domain/entities/account.dart';
 import 'package:journexa_app/domain/entities/expense_category.dart';
-import 'package:journexa_app/domain/repositories/i_expense_category.dart';
+import 'package:journexa_app/domain/repositories/i_expense_category_repository.dart';
 import 'package:journexa_app/shared/app_exception.dart';
 import 'package:journexa_app/shared/app_logger.dart';
 import 'package:journexa_app/shared/app_result.dart';
@@ -103,7 +103,6 @@ class FirestoreExpenseCategoryRepository
     String? query,
     bool? isDeleted,
   }) {
-    maybeThrowException(this, Invocation.method(#getAll, null));
     logInfo(
       'Constructing streams for expense categories and its accounts',
       traceId: traceId,

@@ -91,42 +91,44 @@ class FirestoreTransactionRepository
     required String userId,
     required String traceId,
   }) {
-    maybeThrowException(this, Invocation.method(#getAll, null));
     logInfo(
       'Starts watching transactions',
       traceId: traceId,
       extras: {'userId': userId},
     );
     final colRef = _db.collection('users/$userId/transactions');
-    return colRef.snapshots().map((snap) {
-      maybeThrowException(this, Invocation.method(#watch, null));
-      logInfo(
-        'Transactions snapshot obtained. Starts mapping',
-        traceId: traceId,
-      );
-      final result = <Transaction>[];
-      for (final doc in snap.docs) {
-        final data = doc.data();
-        final firestoreTransaction = FirestoreTransaction.fromJson(data);
-        result.add(firestoreTransaction.toModel());
-      }
-      logInfo(
-        'Mapping completed. Returns results',
-        traceId: traceId,
-        extras: {'count': result.length},
-      );
-      return AppResult.success(result);
-    }).onErrorReturnWith((e, st) {
-      if (e is FirebaseException) {
-        logError('$e', traceId: traceId, error: e);
-        return AppResult.failure(
-          AppException('$e', code: AppExceptionCode.serverException),
-        );
-      }
-      logError('$e', traceId: traceId, error: e, stackTrace: st);
-      return AppResult.failure(
-        AppException('$e', code: AppExceptionCode.internalException),
-      );
-    });
+    return colRef
+        .snapshots()
+        .map((snap) {
+          maybeThrowException(this, Invocation.method(#watch, null));
+          logInfo(
+            'Transactions snapshot obtained. Starts mapping',
+            traceId: traceId,
+          );
+          final result = <Transaction>[];
+          for (final doc in snap.docs) {
+            final data = doc.data();
+            final firestoreTransaction = FirestoreTransaction.fromJson(data);
+            result.add(firestoreTransaction.toModel());
+          }
+          logInfo(
+            'Mapping completed. Returns results',
+            traceId: traceId,
+            extras: {'count': result.length},
+          );
+          return AppResult.success(result);
+        })
+        .onErrorReturnWith((e, st) {
+          if (e is FirebaseException) {
+            logError('$e', traceId: traceId, error: e);
+            return AppResult.failure(
+              AppException('$e', code: AppExceptionCode.serverException),
+            );
+          }
+          logError('$e', traceId: traceId, error: e, stackTrace: st);
+          return AppResult.failure(
+            AppException('$e', code: AppExceptionCode.internalException),
+          );
+        });
   }
 }

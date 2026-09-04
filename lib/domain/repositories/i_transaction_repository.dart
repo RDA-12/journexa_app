@@ -12,7 +12,7 @@ abstract interface class ITransactionRepository {
     required String traceId,
   });
 
-  /// Stream of all [Transaction]'s in [userId] database
+  /// Watch all [Transaction]'s in [userId] database
   Stream<AppResult<List<Transaction>>> watch({
     required String userId,
     required String traceId,

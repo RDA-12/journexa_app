@@ -13,7 +13,7 @@ abstract interface class IWalletRepository {
   /// Returns list of [Wallet] within [userId] database
   ///
   /// If [query] is provided, returns list of [Wallet] that contains [query]
-  Future<AppResult<List<Wallet>>> getAll({
+  Stream<AppResult<List<Wallet>>> watch({
     required String userId,
     required String traceId,
     String? query,

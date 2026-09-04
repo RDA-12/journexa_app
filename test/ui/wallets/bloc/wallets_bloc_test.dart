@@ -4,8 +4,8 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:journexa_app/domain/entities/account.dart';
 import 'package:journexa_app/domain/entities/wallet.dart';
 import 'package:journexa_app/domain/use_cases/wallet/delete_wallet.dart';
-import 'package:journexa_app/domain/use_cases/wallet/get_all_wallets.dart';
 import 'package:journexa_app/domain/use_cases/wallet/update_wallet.dart';
+import 'package:journexa_app/domain/use_cases/wallet/watch_wallets.dart';
 import 'package:journexa_app/shared/app_exception.dart';
 import 'package:journexa_app/shared/app_result.dart';
 import 'package:journexa_app/shared/uid_generator.dart';
@@ -13,7 +13,7 @@ import 'package:journexa_app/ui/shared/event_transform/event_transform.dart';
 import 'package:journexa_app/ui/wallets/bloc/wallets_bloc.dart';
 import 'package:mocktail/mocktail.dart';
 
-class MockGetAllWallets extends Mock implements GetAllWalletsUseCase {}
+class MockWatchWallets extends Mock implements WatchWalletsUseCase {}
 
 class MockUidGenerator extends Mock implements UidGenerator {}
 
@@ -53,14 +53,14 @@ void main() {
     ),
   );
 
-  late GetAllWalletsUseCase mockGetAllWallets;
+  late WatchWalletsUseCase mockWatchWallets;
   late UidGenerator mockUidGenerator;
   late DeleteWalletUseCase mockDeleteWalletUseCase;
   late MockUpdateWalletUseCase mockUpdateWalletUseCase;
 
   setUpAll(() {
     registerFallbackValue(
-      const GetAllWalletsParams(),
+      const WatchWalletsParams(),
     );
     registerFallbackValue(
       DeleteWalletParams(wallet: wallets.first.wallet),
@@ -74,14 +74,14 @@ void main() {
     mockUidGenerator = MockUidGenerator();
     when(mockUidGenerator.generateUid).thenReturn(traceId);
 
-    mockGetAllWallets = MockGetAllWallets();
+    mockWatchWallets = MockWatchWallets();
     when(
-      () => mockGetAllWallets.execute(
-        any<GetAllWalletsParams>(),
+      () => mockWatchWallets.execute(
+        any<WatchWalletsParams>(),
         traceId: traceId,
       ),
     ).thenAnswer(
-      (_) async => AppResult.success(wallets),
+      (_) => Stream.value(AppResult.success(wallets)),
     );
 
     mockDeleteWalletUseCase = MockDeleteWalletUseCase();
@@ -105,7 +105,7 @@ void main() {
 
   WalletsBloc buildBloc() {
     return WalletsBloc(
-      getAllWallets: mockGetAllWallets,
+      watchWallets: mockWatchWallets,
       deleteWallet: mockDeleteWalletUseCase,
       updateWallet: mockUpdateWalletUseCase,
     )..customGenerator = mockUidGenerator;
@@ -116,96 +116,15 @@ void main() {
     expect(bloc.state, const WalletsState());
   });
 
-  group('load', () {
+  group('subscriptionRequested', () {
     blocTest<WalletsBloc, WalletsState>(
       'emits [loading, loaded] '
       'with correct wallet balances '
-      'when getAllWalletsUseCase returns success',
+      'when watchWalletsUseCase returns success',
       build: buildBloc,
-      act: (bloc) => bloc.add(const WalletsEvent.load()),
-      expect: () => <WalletsState>[
-        const WalletsState(status: WalletsStatus.loading),
-        WalletsState(
-          status: WalletsStatus.loaded,
-          walletWithBalances: walletsWithState,
-        ),
-      ],
-      verify: (_) {
-        verify(
-          () => mockGetAllWallets.execute(
-            const GetAllWalletsParams(),
-            traceId: traceId,
-          ),
-        ).called(1);
-      },
-    );
-
-    blocTest<WalletsBloc, WalletsState>(
-      'emits [loading, failure] '
-      'when getAllWalletsUseCase returns failure',
-      setUp: () {
-        when(
-          () => mockGetAllWallets.execute(
-            const GetAllWalletsParams(),
-            traceId: traceId,
-          ),
-        ).thenAnswer(
-          (_) async =>
-              AppResult<List<WalletWithBalance>>.failure(AppException.test()),
-        );
-      },
-      build: buildBloc,
-      act: (bloc) => bloc.add(const WalletsEvent.load()),
-      expect: () => <WalletsState>[
-        const WalletsState(status: WalletsStatus.loading),
-        WalletsState(
-          status: WalletsStatus.failure,
-          exception: AppException.test(),
-        ),
-      ],
-      verify: (_) {
-        verify(
-          () => mockGetAllWallets.execute(
-            const GetAllWalletsParams(),
-            traceId: traceId,
-          ),
-        ).called(1);
-      },
-    );
-  });
-
-  group('search', () {
-    blocTest<WalletsBloc, WalletsState>(
-      'only process last event within debounce time',
-      build: buildBloc,
-      act: (bloc) => bloc
-        ..add(const WalletsEvent.search(query: 'q'))
-        ..add(const WalletsEvent.search(query: 'que'))
-        ..add(const WalletsEvent.search(query: 'query')),
-      wait: kDefaultDebounceDuration + const Duration(milliseconds: 1),
-      expect: () => <WalletsState>[
-        const WalletsState(status: WalletsStatus.loading),
-        WalletsState(
-          status: WalletsStatus.loaded,
-          walletWithBalances: walletsWithState,
-        ),
-      ],
-      verify: (_) {
-        verify(
-          () => mockGetAllWallets.execute(
-            const GetAllWalletsParams(query: 'query'),
-            traceId: traceId,
-          ),
-        ).called(1);
-      },
-    );
-
-    blocTest<WalletsBloc, WalletsState>(
-      'emits [loading, loaded] '
-      'with correct wallet balances '
-      'when getAllWalletsUseCase returns success',
-      build: buildBloc,
-      act: (bloc) => bloc.add(const WalletsEvent.search(query: 'query')),
+      act: (bloc) => bloc.add(
+        const WalletsEvent.subscriptionRequested(),
+      ),
       wait: kDefaultDebounceDuration,
       expect: () => <WalletsState>[
         const WalletsState(status: WalletsStatus.loading),
@@ -216,8 +135,34 @@ void main() {
       ],
       verify: (_) {
         verify(
-          () => mockGetAllWallets.execute(
-            const GetAllWalletsParams(query: 'query'),
+          () => mockWatchWallets.execute(
+            const WatchWalletsParams(),
+            traceId: traceId,
+          ),
+        ).called(1);
+      },
+    );
+
+    blocTest<WalletsBloc, WalletsState>(
+      'emits [loading, loaded] '
+      'with correct wallet balances and params '
+      'when watchWalletsUseCase returns success',
+      build: buildBloc,
+      act: (bloc) => bloc.add(
+        const WalletsEvent.subscriptionRequested(query: 'query'),
+      ),
+      wait: kDefaultDebounceDuration,
+      expect: () => <WalletsState>[
+        const WalletsState(status: WalletsStatus.loading),
+        WalletsState(
+          status: WalletsStatus.loaded,
+          walletWithBalances: walletsWithState,
+        ),
+      ],
+      verify: (_) {
+        verify(
+          () => mockWatchWallets.execute(
+            const WatchWalletsParams(query: 'query'),
             traceId: traceId,
           ),
         ).called(1);
@@ -226,20 +171,23 @@ void main() {
 
     blocTest<WalletsBloc, WalletsState>(
       'emits [loading, failure] '
-      'when getAllWalletsUseCase returns failure',
+      'when watchWalletsUseCase emits failure',
       setUp: () {
         when(
-          () => mockGetAllWallets.execute(
-            const GetAllWalletsParams(query: 'query'),
+          () => mockWatchWallets.execute(
+            const WatchWalletsParams(),
             traceId: traceId,
           ),
         ).thenAnswer(
-          (_) async =>
-              AppResult<List<WalletWithBalance>>.failure(AppException.test()),
+          (_) => Stream.value(
+            AppResult<List<WalletWithBalance>>.failure(AppException.test()),
+          ),
         );
       },
       build: buildBloc,
-      act: (bloc) => bloc.add(const WalletsEvent.search(query: 'query')),
+      act: (bloc) => bloc.add(
+        const WalletsEvent.subscriptionRequested(),
+      ),
       wait: kDefaultDebounceDuration,
       expect: () => <WalletsState>[
         const WalletsState(status: WalletsStatus.loading),
@@ -250,8 +198,8 @@ void main() {
       ],
       verify: (_) {
         verify(
-          () => mockGetAllWallets.execute(
-            const GetAllWalletsParams(query: 'query'),
+          () => mockWatchWallets.execute(
+            const WatchWalletsParams(),
             traceId: traceId,
           ),
         ).called(1);
@@ -260,11 +208,8 @@ void main() {
   });
 
   group('delete', () {
-    final deletedWallet = wallets.first.wallet;
-
     blocTest<WalletsBloc, WalletsState>(
-      'emits [new walletWithBalances, '
-      'loaded new walletWithBalances with notice] '
+      'emits [new walletWithBalances, loaded with notice] '
       'when deleteWalletUseCase returns success',
       seed: () {
         return WalletsState(
@@ -274,7 +219,7 @@ void main() {
       },
       build: buildBloc,
       act: (bloc) => bloc.add(
-        WalletsEvent.delete(deletedWallet),
+        WalletsEvent.delete(wallets.first.wallet),
       ),
       wait: kDefaultDebounceDuration,
       expect: () => <WalletsState>[
@@ -282,23 +227,26 @@ void main() {
           status: WalletsStatus.loaded,
           walletWithBalances: walletsWithState.map((it) {
             final isDeleting =
-                it.walletWithBalance.wallet.id == deletedWallet.id;
+                it.walletWithBalance.wallet.id == wallets.first.wallet.id;
             if (!isDeleting) return it;
             return it.copyWith(status: WalletStatus.deleting);
           }).toList(),
         ),
         WalletsState(
           status: WalletsStatus.loaded,
-          walletWithBalances: walletsWithState.sublist(1),
-          notice: WalletNotice.recentlyDeleted(
-            wallet: deletedWallet,
-          ),
+          walletWithBalances: walletsWithState.map((it) {
+            final isDeleting =
+                it.walletWithBalance.wallet.id == wallets.first.wallet.id;
+            if (!isDeleting) return it;
+            return it.copyWith(status: WalletStatus.deleting);
+          }).toList(),
+          notice: WalletNotice.recentlyDeleted(wallet: wallets.first.wallet),
         ),
       ],
       verify: (_) {
         verify(
           () => mockDeleteWalletUseCase.execute(
-            DeleteWalletParams(wallet: deletedWallet),
+            DeleteWalletParams(wallet: wallets.first.wallet),
             traceId: traceId,
           ),
         ).called(1);
@@ -312,12 +260,10 @@ void main() {
       setUp: () {
         when(
           () => mockDeleteWalletUseCase.execute(
-            DeleteWalletParams(wallet: deletedWallet),
+            DeleteWalletParams(wallet: wallets.first.wallet),
             traceId: traceId,
           ),
-        ).thenAnswer(
-          (_) async => AppResult<Null>.failure(AppException.test()),
-        );
+        ).thenAnswer((_) async => AppResult<Null>.failure(AppException.test()));
       },
       seed: () {
         return WalletsState(
@@ -327,7 +273,7 @@ void main() {
       },
       build: buildBloc,
       act: (bloc) => bloc.add(
-        WalletsEvent.delete(deletedWallet),
+        WalletsEvent.delete(wallets.first.wallet),
       ),
       wait: kDefaultDebounceDuration,
       expect: () => <WalletsState>[
@@ -335,7 +281,7 @@ void main() {
           status: WalletsStatus.loaded,
           walletWithBalances: walletsWithState.map((it) {
             final isDeleting =
-                it.walletWithBalance.wallet.id == deletedWallet.id;
+                it.walletWithBalance.wallet.id == wallets.first.wallet.id;
             if (!isDeleting) return it;
             return it.copyWith(status: WalletStatus.deleting);
           }).toList(),
@@ -344,7 +290,7 @@ void main() {
           status: WalletsStatus.loaded,
           walletWithBalances: walletsWithState,
           notice: WalletNotice.deleteFailed(
-            wallet: deletedWallet,
+            wallet: wallets.first.wallet,
             exception: AppException.test(),
           ),
         ),
@@ -352,7 +298,9 @@ void main() {
       verify: (_) {
         verify(
           () => mockDeleteWalletUseCase.execute(
-            DeleteWalletParams(wallet: deletedWallet),
+            DeleteWalletParams(
+              wallet: wallets.first.wallet,
+            ),
             traceId: traceId,
           ),
         ).called(1);
@@ -362,11 +310,13 @@ void main() {
     blocTest<WalletsBloc, WalletsState>(
       'do nothing when wallet not found on walletWithBalances',
       seed: () {
-        return const WalletsState(status: WalletsStatus.loaded);
+        return const WalletsState(
+          status: WalletsStatus.loaded,
+        );
       },
       build: buildBloc,
       act: (bloc) => bloc.add(
-        WalletsEvent.delete(deletedWallet),
+        WalletsEvent.delete(wallets.first.wallet),
       ),
       wait: kDefaultDebounceDuration,
       expect: () => <WalletsState>[],
@@ -378,8 +328,7 @@ void main() {
 
   group('update', () {
     blocTest<WalletsBloc, WalletsState>(
-      'emits [new updating walletWithBalances, '
-      'new walletWithBalances with updated notice] '
+      'emits [new updating walletWithBalances, loaded with updated notice] '
       'when updateWalletUseCase returns success',
       seed: () {
         return WalletsState(
@@ -410,15 +359,10 @@ void main() {
             final isUpdating =
                 it.walletWithBalance.wallet.id == wallets.first.wallet.id;
             if (!isUpdating) return it;
-            return it.copyWith(
-              status: WalletStatus.idle,
-              walletWithBalance: it.walletWithBalance.copyWith(
-                wallet: updatedFirstWallet,
-              ),
-            );
+            return it.copyWith(status: WalletStatus.updating);
           }).toList(),
           notice: WalletNotice.recentlyUpdated(
-            from: walletsWithState.first.walletWithBalance.wallet,
+            from: wallets.first.wallet,
             to: updatedFirstWallet,
           ),
         ),
@@ -501,7 +445,9 @@ void main() {
     blocTest<WalletsBloc, WalletsState>(
       'do nothing when wallet not found on walletWithBalances',
       seed: () {
-        return const WalletsState(status: WalletsStatus.loaded);
+        return const WalletsState(
+          status: WalletsStatus.loaded,
+        );
       },
       build: buildBloc,
       act: (bloc) => bloc.add(

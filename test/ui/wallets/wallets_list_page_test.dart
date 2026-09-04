@@ -55,12 +55,14 @@ void main() {
 
   group('Init', () {
     testWidgets(
-      'add WalletsEvent.load event on start',
+      'add WalletsEvent.subscriptionRequested event on start',
       (tester) async {
         await pumpWidget(tester);
 
         verify(
-          () => mockWalletsBloc.add(const WalletsEvent.load()),
+          () => mockWalletsBloc.add(
+            const WalletsEvent.subscriptionRequested(),
+          ),
         ).called(1);
       },
     );
@@ -136,7 +138,7 @@ void main() {
 
   group('Side Effects', () {
     testWidgets(
-      'add WalletsBlocEvent.load '
+      'add WalletsBlocEvent.subscriptionRequested '
       'after going back from add wallet page',
       (tester) async {
         await pumpWidget(
@@ -161,7 +163,9 @@ void main() {
         expect(find.byKey(const ValueKey('add-wallet-page')), findsNothing);
 
         verify(
-          () => mockWalletsBloc.add(const WalletsEvent.load()),
+          () => mockWalletsBloc.add(
+            const WalletsEvent.subscriptionRequested(),
+          ),
         ).called(2);
       },
     );

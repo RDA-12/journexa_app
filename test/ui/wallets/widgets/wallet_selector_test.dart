@@ -233,7 +233,9 @@ void main() {
       await tester.pumpAndSettle();
 
       verify(
-        () => mockWalletsBloc.add(const WalletsEvent.search(query: 'Search')),
+        () => mockWalletsBloc.add(
+          const WalletsEvent.subscriptionRequested(query: 'Search'),
+        ),
       ).called(1);
     });
 
@@ -252,7 +254,7 @@ void main() {
       await tester.pumpAndSettle();
 
       verify(
-        () => mockWalletsBloc.add(const WalletsEvent.load()),
+        () => mockWalletsBloc.add(const WalletsEvent.subscriptionRequested()),
       ).called(1);
     });
   });

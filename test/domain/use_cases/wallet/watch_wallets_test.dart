@@ -1,12 +1,11 @@
 import 'package:decimal/decimal.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:journexa_app/domain/entities/account.dart';
-import 'package:journexa_app/domain/entities/journal.dart';
 import 'package:journexa_app/domain/entities/wallet.dart';
 import 'package:journexa_app/domain/repositories/i_auth_repository.dart';
 import 'package:journexa_app/domain/repositories/i_journal_repository.dart';
 import 'package:journexa_app/domain/repositories/i_wallet_respository.dart';
-import 'package:journexa_app/domain/use_cases/wallet/get_all_wallets.dart';
+import 'package:journexa_app/domain/use_cases/wallet/watch_wallets.dart';
 import 'package:journexa_app/shared/app_exception.dart';
 import 'package:journexa_app/shared/app_result.dart';
 import 'package:mocktail/mocktail.dart';
@@ -45,27 +44,18 @@ void main() {
         ),
       )
       .toList();
-  final accountBalancesMap = Map<String, AccountBalance>.fromIterable(
-    accounts.map(
-      (it) => AccountBalance(
-        account: it,
-        balance: Decimal.fromInt(10),
-      ),
-    ),
-    key: (it) => (it as AccountBalance).account.code,
-  );
+  final accountBalancesMap = {
+    for (final it in accounts) it.code: Decimal.fromInt(10),
+  };
   final walletWithBalance = wallets.map((it) {
-    final balance = accountBalancesMap[it.account.code];
-    if (balance == null) {
-      return WalletWithBalance(wallet: it, balance: Decimal.zero);
-    }
-    return WalletWithBalance(wallet: it, balance: balance.balance);
+    final balance = accountBalancesMap[it.account.code] ?? Decimal.zero;
+    return WalletWithBalance(wallet: it, balance: balance);
   }).toList();
 
   late IAuthRepository mockAuthRepository;
   late IJournalRepository mockJournalRepository;
   late IWalletRepository mockWalletRepository;
-  late GetAllWalletsUseCase useCase;
+  late WatchWalletsUseCase useCase;
 
   setUp(() {
     mockAuthRepository = MockAuthRepository();
@@ -75,26 +65,25 @@ void main() {
 
     mockWalletRepository = MockWalletRepository();
     when(
-      () => mockWalletRepository.getAll(
+      () => mockWalletRepository.watch(
         userId: userId,
         traceId: traceId,
         query: any(named: 'query'),
         isDeleted: any(named: 'isDeleted'),
       ),
-    ).thenAnswer((_) async => AppResult.success(wallets));
+    ).thenAnswer((_) => Stream.value(AppResult.success(wallets)));
 
     mockJournalRepository = MockJournalRepository();
     when(
-      () => mockJournalRepository.getCurrentBalance(
+      () => mockJournalRepository.watchCurrentBalance(
         userId: userId,
-        accounts: accounts,
         traceId: traceId,
       ),
     ).thenAnswer(
-      (_) async => AppResult.success(accountBalancesMap),
+      (_) => Stream.value(AppResult.success(accountBalancesMap)),
     );
 
-    useCase = GetAllWalletsUseCase(
+    useCase = WatchWalletsUseCase(
       authRepository: mockAuthRepository,
       walletRepository: mockWalletRepository,
       journalRepository: mockJournalRepository,
@@ -105,10 +94,11 @@ void main() {
     'calls AuthRepository.getCurrentUserId once '
     'to get current user id',
     () async {
-      await useCase.execute(
-        const GetAllWalletsParams(),
+      final result = useCase.execute(
+        const WatchWalletsParams(),
         traceId: traceId,
       );
+      await result.first;
 
       verify(
         () => mockAuthRepository.getCurrentUserId(traceId: traceId),
@@ -117,16 +107,17 @@ void main() {
   );
 
   test(
-    'calls WalletRepository.getAll once '
+    'calls WalletRepository.watch once '
     'with correct args',
     () async {
-      await useCase.execute(
-        const GetAllWalletsParams(),
+      final result = useCase.execute(
+        const WatchWalletsParams(),
         traceId: traceId,
       );
+      await result.first;
 
       verify(
-        () => mockWalletRepository.getAll(
+        () => mockWalletRepository.watch(
           userId: userId,
           traceId: traceId,
           isDeleted: false,
@@ -136,16 +127,17 @@ void main() {
   );
 
   test(
-    'calls WalletRepository.getAll once '
+    'calls WalletRepository.watch once '
     'with correct args when query provided',
     () async {
-      await useCase.execute(
-        const GetAllWalletsParams(query: 'query'),
+      final result = useCase.execute(
+        const WatchWalletsParams(query: 'query'),
         traceId: traceId,
       );
+      await result.first;
 
       verify(
-        () => mockWalletRepository.getAll(
+        () => mockWalletRepository.watch(
           userId: userId,
           traceId: traceId,
           query: 'query',
@@ -156,18 +148,18 @@ void main() {
   );
 
   test(
-    'calls JournalRepository.getCurrentBalance once '
+    'calls JournalRepository.watchCurrentBalance once '
     'with correct args',
     () async {
-      await useCase.execute(
-        const GetAllWalletsParams(),
+      final result = useCase.execute(
+        const WatchWalletsParams(),
         traceId: traceId,
       );
+      await result.first;
 
       verify(
-        () => mockJournalRepository.getCurrentBalance(
+        () => mockJournalRepository.watchCurrentBalance(
           userId: userId,
-          accounts: accounts,
           traceId: traceId,
         ),
       ).called(1);
@@ -175,37 +167,39 @@ void main() {
   );
 
   test(
-    'returns correct AccountBalances when all operations are successful',
+    'emits correct AccountBalances when all operations are successful',
     () async {
-      final result = await useCase.execute(
-        const GetAllWalletsParams(),
+      final result = useCase.execute(
+        const WatchWalletsParams(),
         traceId: traceId,
       );
 
       expect(
         result,
-        AppResult.success(walletWithBalance),
+        emits(AppResult.success(walletWithBalance)),
       );
     },
   );
 
   test(
-    'returns failure and not fetch Accounts '
+    'emits failure and not fetch Accounts '
     'when AuthRepository.getCurrentUserId failed',
     () async {
       when(
         () => mockAuthRepository.getCurrentUserId(traceId: traceId),
       ).thenAnswer((_) async => AppResult<String>.failure(AppException.test()));
 
-      final result = await useCase.execute(
-        const GetAllWalletsParams(),
+      final result = useCase.execute(
+        const WatchWalletsParams(),
         traceId: traceId,
       );
 
       expect(
         result,
-        AppResult<List<WalletWithBalance>>.failure(
-          AppException.test(),
+        emits(
+          AppResult<List<WalletWithBalance>>.failure(
+            AppException.test(),
+          ),
         ),
       );
       verifyZeroInteractions(mockWalletRepository);
@@ -213,54 +207,54 @@ void main() {
   );
 
   test(
-    'returns failure '
-    'when WalletRepository.getAll failed',
+    'emits failure '
+    'when WalletRepository.watch emits failure',
     () async {
       when(
-        () => mockWalletRepository.getAll(
+        () => mockWalletRepository.watch(
           userId: userId,
           traceId: traceId,
           isDeleted: false,
         ),
-      ).thenAnswer((_) async => AppResult.failure(AppException.test()));
+      ).thenAnswer((_) => Stream.value(AppResult.failure(AppException.test())));
 
-      final result = await useCase.execute(
-        const GetAllWalletsParams(),
+      final result = useCase.execute(
+        const WatchWalletsParams(),
         traceId: traceId,
       );
 
       expect(
         result,
-        AppResult<List<WalletWithBalance>>.failure(AppException.test()),
+        emits(AppResult<List<WalletWithBalance>>.failure(AppException.test())),
       );
-      verifyZeroInteractions(mockJournalRepository);
     },
   );
 
   test(
-    'returns failure '
-    'when JournalRepository.getCurrentBalance failed',
+    'emits failure '
+    'when JournalRepository.watchCurrentBalance emits failure',
     () async {
       when(
-        () => mockJournalRepository.getCurrentBalance(
+        () => mockJournalRepository.watchCurrentBalance(
           userId: userId,
-          accounts: accounts,
           traceId: traceId,
         ),
       ).thenAnswer(
-        (_) async => AppResult<Map<String, AccountBalance>>.failure(
-          AppException.test(),
+        (_) => Stream.value(
+          AppResult<Map<String, Decimal>>.failure(
+            AppException.test(),
+          ),
         ),
       );
 
-      final result = await useCase.execute(
-        const GetAllWalletsParams(),
+      final result = useCase.execute(
+        const WatchWalletsParams(),
         traceId: traceId,
       );
 
       expect(
         result,
-        AppResult<List<WalletWithBalance>>.failure(AppException.test()),
+        emits(AppResult<List<WalletWithBalance>>.failure(AppException.test())),
       );
     },
   );

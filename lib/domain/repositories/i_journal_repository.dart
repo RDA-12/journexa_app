@@ -1,3 +1,4 @@
+import 'package:decimal/decimal.dart';
 import 'package:journexa_app/domain/entities/account.dart';
 import 'package:journexa_app/domain/entities/journal.dart';
 import 'package:journexa_app/shared/app_result.dart';
@@ -8,6 +9,12 @@ abstract interface class IJournalRepository {
   Future<AppResult<Map<String, AccountBalance>>> getCurrentBalance({
     required String userId,
     required List<Account> accounts,
+    required String traceId,
+  });
+
+  /// Stream map of account code and current balance
+  Stream<AppResult<Map<String, Decimal>>> watchCurrentBalance({
+    required String userId,
     required String traceId,
   });
 }

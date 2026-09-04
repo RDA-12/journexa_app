@@ -8,6 +8,8 @@ import 'package:journexa_app/domain/repositories/i_journal_repository.dart';
 import 'package:journexa_app/shared/app_exception.dart';
 import 'package:journexa_app/shared/app_logger.dart';
 import 'package:journexa_app/shared/app_result.dart';
+import 'package:mock_exceptions/mock_exceptions.dart';
+import 'package:rxdart/rxdart.dart';
 
 /// Firestore implementation of [IJournalRepository]
 @LazySingleton(as: IJournalRepository)
@@ -27,6 +29,7 @@ class FirestoreJournalRepository with Loggable implements IJournalRepository {
     required String traceId,
   }) async {
     try {
+      maybeThrowException(this, Invocation.method(#getCurrentBalance, null));
       logInfo('Starts get current balance for accounts', traceId: traceId);
       final result = <String, AccountBalance>{};
       for (final account in accounts) {
@@ -67,5 +70,38 @@ class FirestoreJournalRepository with Loggable implements IJournalRepository {
         AppException('$e', code: AppExceptionCode.internalException),
       );
     }
+  }
+
+  @override
+  Stream<AppResult<Map<String, Decimal>>> watchCurrentBalance({
+    required String userId,
+    required String traceId,
+  }) {
+    logInfo(
+      'Starts watching current balance for all accounts',
+      traceId: traceId,
+    );
+    return _db
+        .collection('users/$userId/account_balance')
+        .snapshots()
+        .map((snap) {
+      maybeThrowException(this, Invocation.method(#watchCurrentBalance, null));
+      final result = <String, Decimal>{};
+      for (final doc in snap.docs) {
+        final data = FirestoreAccountBalance.fromJson(doc.data());
+        result[data.code] = data.balance;
+      }
+      return AppResult.success(result);
+    }).onErrorReturnWith((err, st) {
+      logError('$err', traceId: traceId, error: err, stackTrace: st);
+      if (err is FirebaseException) {
+        return AppResult.failure(
+          AppException('$err', code: AppExceptionCode.serverException),
+        );
+      }
+      return AppResult.failure(
+        AppException('$err', code: AppExceptionCode.internalException),
+      );
+    });
   }
 }

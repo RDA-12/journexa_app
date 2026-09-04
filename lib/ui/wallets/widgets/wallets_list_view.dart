@@ -46,7 +46,7 @@ class _WalletsListViewState extends State<WalletsListView> {
   void _onChanged() {
     final query = _queryController.text.trim();
     context.read<WalletsBloc>().add(
-      WalletsEvent.search(query: query),
+      WalletsEvent.subscriptionRequested(query: query),
     );
   }
 

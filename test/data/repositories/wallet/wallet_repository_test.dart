@@ -176,21 +176,21 @@ void main() {
     );
   });
 
-  group('getAll', () {
+  group('watch', () {
     test(
-      'returns success with correct Wallets',
+      'emits success with correct Wallets',
       () async {
-        final result = await repository.getAll(
+        final result = repository.watch(
           userId: userId,
           traceId: traceId,
         );
 
-        expect(result, AppResult.success(initialWallets));
+        expect(result, emits(AppResult.success(initialWallets)));
       },
     );
 
     test(
-      'returns success with correct Wallets when query provided',
+      'emits success with correct Wallets when query provided',
       () async {
         final expectedWallet = Wallet(
           id: 'expected',
@@ -215,18 +215,18 @@ void main() {
           FirestoreAccount.fromDomain(expectedWallet.account).toJson(),
         );
 
-        final result = await repository.getAll(
+        final result = repository.watch(
           userId: userId,
           query: 'expected',
           traceId: traceId,
         );
 
-        expect(result, AppResult.success([expectedWallet]));
+        expect(result, emits(AppResult.success([expectedWallet])));
       },
     );
 
     test(
-      'returns success with correct Wallets when isDeleted provided',
+      'emits success with correct Wallets when isDeleted provided',
       () async {
         final expectedWallet = Wallet(
           id: 'expected',
@@ -255,69 +255,73 @@ void main() {
           ).copyWith(isDeleted: true).toJson(),
         );
 
-        final result = await repository.getAll(
+        final result = repository.watch(
           userId: userId,
           isDeleted: false,
           traceId: traceId,
         );
 
-        expect(result, AppResult.success(initialWallets));
+        expect(result, emits(AppResult.success(initialWallets)));
 
-        final result2 = await repository.getAll(
+        final result2 = repository.watch(
           userId: userId,
           isDeleted: true,
           traceId: traceId,
         );
 
-        expect(result2, AppResult.success([expectedWallet]));
+        expect(result2, emits(AppResult.success([expectedWallet])));
       },
     );
 
     test(
-      'returns failure with serverException code '
+      'emits failure with serverException code '
       'when firestore throws FirebaseException',
       () async {
-        whenCalling(Invocation.method(#getAll, null))
+        whenCalling(Invocation.method(#watch, null))
             .on(repository)
             .thenThrow(
               FirebaseException(plugin: 'firestore'),
             );
 
-        final result = await repository.getAll(
+        final result = repository.watch(
           userId: userId,
           traceId: traceId,
         );
 
         expect(
           result,
-          isA<AppResultFailure<List<Wallet>>>().having(
-            (e) => e.error.code,
-            'error.code',
-            AppExceptionCode.serverException,
+          emits(
+            isA<AppResultFailure<List<Wallet>>>().having(
+              (e) => e.error.code,
+              'error.code',
+              AppExceptionCode.serverException,
+            ),
           ),
         );
       },
     );
 
     test(
-      'returns failure with internalException code '
+      'emits failure with internalException code '
       'when firestore throws Exception',
       () async {
         whenCalling(
-          Invocation.method(#getAll, null),
+          Invocation.method(#watch, null),
         ).on(repository).thenThrow(Exception());
 
-        final result = await repository.getAll(
+        final result = repository.watch(
           userId: userId,
           traceId: traceId,
         );
 
         expect(
           result,
-          isA<AppResultFailure<List<Wallet>>>().having(
-            (e) => e.error.code,
-            'error.code',
-            AppExceptionCode.internalException,
+          emits(
+            isA<AppResultFailure<List<Wallet>>>().having(
+              (e) => e.error.code,
+              'error.code',
+              AppExceptionCode.internalException,
+            ),
           ),
         );
       },

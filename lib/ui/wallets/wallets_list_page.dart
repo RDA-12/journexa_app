@@ -3,8 +3,8 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:journexa_app/di.dart';
 import 'package:journexa_app/domain/use_cases/wallet/delete_wallet.dart';
-import 'package:journexa_app/domain/use_cases/wallet/get_all_wallets.dart';
 import 'package:journexa_app/domain/use_cases/wallet/update_wallet.dart';
+import 'package:journexa_app/domain/use_cases/wallet/watch_wallets.dart';
 import 'package:journexa_app/ui/shared/l10n/l10n.dart';
 import 'package:journexa_app/ui/shared/widgets/app_responsive.dart';
 import 'package:journexa_app/ui/wallets/bloc/wallets_bloc.dart';
@@ -29,11 +29,11 @@ class WalletsListPage extends StatelessWidget {
       create: (context) =>
           (walletsBloc ??
                 WalletsBloc(
-                  getAllWallets: getIt<GetAllWalletsUseCase>(),
+                  watchWallets: getIt<WatchWalletsUseCase>(),
                   deleteWallet: getIt<DeleteWalletUseCase>(),
                   updateWallet: getIt<UpdateWalletUseCase>(),
                 ))
-            ..add(const WalletsEvent.load()),
+            ..add(const WalletsEvent.subscriptionRequested()),
       child: const _WalletListView(),
     );
   }
@@ -55,7 +55,7 @@ class _WalletListView extends StatelessWidget {
             await context.push('/add-wallet-account');
             if (!context.mounted) return;
             context.read<WalletsBloc>().add(
-              const WalletsEvent.load(),
+              const WalletsEvent.subscriptionRequested(),
             );
           },
         ),

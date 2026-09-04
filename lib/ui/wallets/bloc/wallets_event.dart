@@ -3,13 +3,9 @@ part of 'wallets_bloc.dart';
 /// Events for [WalletsBloc]
 @freezed
 sealed class WalletsEvent with _$WalletsEvent {
-  /// Event to loading wallets
-  const factory WalletsEvent.load() = _Load;
-
-  /// event to search for wallets
-  ///
-  /// It uses debounce transformer to prevent rapid calls
-  const factory WalletsEvent.search({String? query}) = _Search;
+  /// Request to start listen to [WalletWithBalance] streams
+  const factory WalletsEvent.subscriptionRequested({String? query}) =
+      _SubscriptionRequested;
 
   /// Event to delete [wallet]
   const factory WalletsEvent.delete(Wallet wallet) = _Delete;

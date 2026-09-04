@@ -147,4 +147,80 @@ void main() {
       );
     },
   );
+
+  group(
+    'watchCurrentBalance',
+    () {
+      test(
+        'emits success with correct mapped data',
+        () async {
+          final result = repository.watchCurrentBalance(
+            userId: userId,
+            traceId: traceId,
+          );
+
+          expect(
+            result,
+            emits(
+              AppResult.success({
+                debitAccount.code: debitAccountBalance.balance,
+              }),
+            ),
+          );
+        },
+      );
+
+      test(
+        'emits failure with serverException code '
+        'when firestore throw FirebaseException',
+        () async {
+          whenCalling(
+            Invocation.method(#watchCurrentBalance, null),
+          ).on(repository).thenThrow(FirebaseException(plugin: 'firestore'));
+
+          final result = repository.watchCurrentBalance(
+            userId: userId,
+            traceId: traceId,
+          );
+
+          expect(
+            result,
+            emits(
+              isA<AppResultFailure<Map<String, Decimal>>>().having(
+                (e) => e.error.code,
+                'error.code',
+                AppExceptionCode.serverException,
+              ),
+            ),
+          );
+        },
+      );
+
+      test(
+        'emits failure with internalException code '
+        'when firestore throw Exception',
+        () async {
+          whenCalling(
+            Invocation.method(#watchCurrentBalance, null),
+          ).on(repository).thenThrow(Exception());
+
+          final result = repository.watchCurrentBalance(
+            userId: userId,
+            traceId: traceId,
+          );
+
+          expect(
+            result,
+            emits(
+              isA<AppResultFailure<Map<String, Decimal>>>().having(
+                (e) => e.error.code,
+                'error.code',
+                AppExceptionCode.internalException,
+              ),
+            ),
+          );
+        },
+      );
+    },
+  );
 }

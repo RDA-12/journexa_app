@@ -92,11 +92,13 @@ class _WalletSelectorState extends State<WalletSelector> {
         isRequired: widget.isRequired,
         label: widget.label,
         onPressed: () {
-          context.read<WalletsBloc>().add(const WalletsEvent.load());
+          context
+              .read<WalletsBloc>()
+              .add(const WalletsEvent.subscriptionRequested());
         },
         onSearch: (query) {
           context.read<WalletsBloc>().add(
-            WalletsEvent.search(query: query),
+            WalletsEvent.subscriptionRequested(query: query),
           );
         },
       ),

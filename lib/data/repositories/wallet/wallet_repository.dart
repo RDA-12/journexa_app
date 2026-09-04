@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:collection/collection.dart';
 import 'package:injectable/injectable.dart';
 import 'package:journexa_app/data/repositories/account/account.dart';
 import 'package:journexa_app/data/repositories/wallet/firestore_wallet.dart';
@@ -9,6 +10,7 @@ import 'package:journexa_app/shared/app_exception.dart';
 import 'package:journexa_app/shared/app_logger.dart';
 import 'package:journexa_app/shared/app_result.dart';
 import 'package:mock_exceptions/mock_exceptions.dart';
+import 'package:rxdart/rxdart.dart';
 
 /// Firestore implementation of [IWalletRepository]
 @LazySingleton(as: IWalletRepository)
@@ -84,89 +86,101 @@ class FirestoreWalletRepository with Loggable implements IWalletRepository {
   }
 
   @override
-  Future<AppResult<List<Wallet>>> getAll({
+  Stream<AppResult<List<Wallet>>> watch({
     required String userId,
     required String traceId,
     String? query,
     bool? isDeleted,
-  }) async {
-    try {
-      maybeThrowException(this, Invocation.method(#getAll, null));
-      logInfo(
-        'Start fetching Wallets',
-        traceId: traceId,
-        extras: {'query': query},
+  }) {
+    maybeThrowException(this, Invocation.method(#getAll, null));
+    logInfo(
+      'Constructing streams for wallets and its accounts',
+      traceId: traceId,
+      extras: {'query': query},
+    );
+    Query<Map<String, Object?>> walletsQuery = _db.collection(
+      'users/$userId/wallets',
+    );
+    Query<Map<String, Object?>> accountsQuery = _db.collection(
+      'users/$userId/accounts',
+    );
+    if (query != null) {
+      walletsQuery = walletsQuery
+          .where('nameLower', isGreaterThanOrEqualTo: query)
+          .where('nameLower', isLessThanOrEqualTo: '$query~');
+      accountsQuery = accountsQuery
+          .where('nameLower', isGreaterThanOrEqualTo: query)
+          .where('nameLower', isLessThanOrEqualTo: '$query~');
+    }
+    if (isDeleted != null) {
+      walletsQuery = walletsQuery.where(
+        'isDeleted',
+        isEqualTo: isDeleted,
       );
-      Query<Map<String, Object?>> walletsQuery = _db.collection(
-        'users/$userId/wallets',
-      );
-      if (query != null) {
-        walletsQuery = walletsQuery
-            .where('nameLower', isGreaterThanOrEqualTo: query)
-            .where('nameLower', isLessThanOrEqualTo: '$query~');
-      }
-      if (isDeleted != null) {
-        walletsQuery = walletsQuery.where(
-          'isDeleted',
-          isEqualTo: isDeleted,
-        );
-      }
-      final walletsSnap = await walletsQuery.get();
-      logInfo(
-        'Wallets fetched. Start fetch each Wallet Account',
-        traceId: traceId,
-      );
-      final result = <Wallet>[];
-      final parentAccount = SystemDefinedAccount.rootAsset;
-      for (final doc in walletsSnap.docs) {
-        final walletFirestore = FirestoreWallet.fromJson(doc.data());
-        logInfo(
-          'Fetch account for wallet ${walletFirestore.name}',
-          traceId: traceId,
-          extras: {'wallet': walletFirestore.toJson()},
-        );
-        final accountDoc = _db.doc(
-          'users/$userId/accounts/${walletFirestore.accountCode}',
-        );
-        final accountSnap = await accountDoc.get();
-        if (!accountSnap.exists) {
-          logWarning(
-            'Account ${walletFirestore.accountCode} not found',
-            traceId: traceId,
-          );
-          continue;
-        }
-        final accountFirestore = FirestoreAccount.fromJson(accountSnap.data()!);
-        logInfo(
-          'Account found',
-          traceId: traceId,
-          extras: accountFirestore.toJson(),
-        );
-        result.add(
-          walletFirestore.toDomain(
-            accountFirestore.toDomain().copyWith(
-              parent: parentAccount,
-            ),
-          ),
-        );
-      }
-      logInfo(
-        'Successfully fetched wallets',
-        traceId: traceId,
-        extras: {'count': result.length},
-      );
-      return AppResult.success(result);
-    } on FirebaseException catch (e) {
-      logError('$e', traceId: traceId, error: e);
-      return AppResult.failure(
-        AppException('$e', code: AppExceptionCode.serverException),
-      );
-    } on Exception catch (e, st) {
-      logError('$e', traceId: traceId, error: e, stackTrace: st);
-      return AppResult.failure(
-        AppException('$e', code: AppExceptionCode.internalException),
+      accountsQuery = accountsQuery.where(
+        'isDeleted',
+        isEqualTo: isDeleted,
       );
     }
+    final walletsStream = walletsQuery.snapshots();
+    final accountsStream = accountsQuery.snapshots();
+    logInfo(
+      'Streams constructed. Return combined streams',
+      traceId: traceId,
+    );
+    return CombineLatestStream.combine2(
+      walletsStream,
+      accountsStream,
+      (walletSnap, accountSnap) {
+        maybeThrowException(this, Invocation.method(#watch, null));
+        logInfo(
+          'Either wallet or account changed. '
+          'Starts constructing wallets',
+          traceId: traceId,
+        );
+        final walletDocs = walletSnap.docs;
+        final accountDocs = accountSnap.docs;
+        final result = <Wallet>[];
+        for (final walletDoc in walletDocs) {
+          final firestoreWallet = FirestoreWallet.fromJson(
+            walletDoc.data(),
+          );
+          final accountDoc = accountDocs.firstWhereOrNull((it) {
+            return it.data()['code'] == firestoreWallet.accountCode;
+          });
+          if (accountDoc == null) {
+            logWarning(
+              'Account for wallet ${firestoreWallet.id} not found',
+              traceId: traceId,
+              extras: {
+                'walletId': firestoreWallet.id,
+              },
+            );
+            continue;
+          }
+          final firestoreAccount = FirestoreAccount.fromJson(
+            accountDoc.data(),
+          );
+          final wallet = firestoreWallet.toDomain(
+            firestoreAccount.toDomain().copyWith(
+              parent: SystemDefinedAccount.rootAsset,
+            ),
+          );
+          result.add(wallet);
+        }
+        return AppResult.success(result);
+      },
+    ).onErrorReturnWith((err, st) {
+      logError('$err', traceId: traceId, error: err, stackTrace: st);
+      if (err is FirebaseException) {
+        return AppResult.failure(
+          AppException('$err', code: AppExceptionCode.serverException),
+        );
+      }
+      return AppResult.failure(
+        AppException('$err', code: AppExceptionCode.internalException),
+      );
+    });
   }
 
   @override

@@ -2,38 +2,32 @@ import 'package:bloc/bloc.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:journexa_app/domain/entities/wallet.dart';
 import 'package:journexa_app/domain/use_cases/wallet/delete_wallet.dart';
-import 'package:journexa_app/domain/use_cases/wallet/get_all_wallets.dart';
 import 'package:journexa_app/domain/use_cases/wallet/update_wallet.dart';
+import 'package:journexa_app/domain/use_cases/wallet/watch_wallets.dart';
 import 'package:journexa_app/shared/app_exception.dart';
 import 'package:journexa_app/shared/app_logger.dart';
 import 'package:journexa_app/shared/app_result.dart';
 import 'package:journexa_app/shared/uid_generator.dart';
 import 'package:journexa_app/ui/shared/event_transform/debounce.dart';
 
+part 'wallets_bloc.freezed.dart';
 part 'wallets_event.dart';
 part 'wallets_state.dart';
-part 'wallets_bloc.freezed.dart';
 
 /// Bloc to get all wallets current user have
 class WalletsBloc extends Bloc<WalletsEvent, WalletsState>
     with GenerateUid, Loggable {
   /// Creates new [WalletsBloc]
   WalletsBloc({
-    required this._getAllWallets,
+    required this._watchWallets,
     required this._deleteWallet,
     required this._updateWallet,
   }) : super(const WalletsState()) {
-    on<_Load>((event, emit) async {
-      return _onLoad(
-        emit: emit,
-        params: const GetAllWalletsParams(),
-      );
-    });
-    on<_Search>(
+    on<_SubscriptionRequested>(
       (event, emit) async {
-        return _onLoad(
+        return _onSubscriptionRequested(
           emit: emit,
-          params: GetAllWalletsParams(query: event.query),
+          params: WatchWalletsParams(query: event.query),
         );
       },
       transformer: debounce(),
@@ -57,51 +51,66 @@ class WalletsBloc extends Bloc<WalletsEvent, WalletsState>
   @override
   String get logTag => 'WalletsBloc';
 
-  final GetAllWalletsUseCase _getAllWallets;
+  final WatchWalletsUseCase _watchWallets;
   final DeleteWalletUseCase _deleteWallet;
   final UpdateWalletUseCase _updateWallet;
 
-  Future<void> _onLoad({
+  Future<void> _onSubscriptionRequested({
     required Emitter<WalletsState> emit,
-    required GetAllWalletsParams params,
+    required WatchWalletsParams params,
   }) async {
     final traceId = generateUid();
     logInfo(
-      'Starts getting wallets for current user. '
-      'Emit loading status',
+      'Starts listening to Wallet streams. '
+      'Emits loading state',
       traceId: traceId,
     );
-    emit(state.copyWith(status: WalletsStatus.loading));
+    emit(
+      const WalletsState(
+        status: WalletsStatus.loading,
+      ),
+    );
 
-    final result = await _getAllWallets.execute(
+    final stream = _watchWallets.execute(
       params,
       traceId: traceId,
     );
-    result.when(
-      success: (walletWithBalances) {
-        logInfo(
-          'Get wallets succeeded. Emit loaded status',
-          traceId: traceId,
-        );
-        emit(
-          state.copyWith(
-            status: WalletsStatus.loaded,
-            walletWithBalances: walletWithBalances
-                .map((it) => WalletWithBalanceState(walletWithBalance: it))
-                .toList(),
-          ),
-        );
-      },
-      failure: (exc) {
-        logInfo(
-          'Get wallets failed. Emit failure status',
-          traceId: traceId,
-        );
-        emit(
-          state.copyWith(
-            status: WalletsStatus.failure,
-            exception: exc,
-          ),
+    await emit.forEach(
+      stream,
+      onData: (result) {
+        return result.when(
+          success: (walletWithBalances) {
+            final currentItemState = {
+              for (final it in state.walletWithBalances)
+                it.walletWithBalance.wallet.id: it.status,
+            };
+            logInfo(
+              'Streamed wallets succeeded. Emit loaded status',
+              traceId: traceId,
+            );
+            return state.copyWith(
+              status: WalletsStatus.loaded,
+              walletWithBalances: walletWithBalances
+                  .map(
+                    (it) => WalletWithBalanceState(
+                      walletWithBalance: it,
+                      status: currentItemState[it.wallet.id] ??
+                          WalletStatus.idle,
+                    ),
+                  )
+                  .toList(),
+            );
+          },
+          failure: (exc) {
+            logInfo(
+              'Streamed wallets failed. Emit failure status',
+              traceId: traceId,
+            );
+            return state.copyWith(
+              status: WalletsStatus.failure,
+              exception: exc,
+            );
+          },
         );
       },
     );
@@ -153,9 +162,6 @@ class WalletsBloc extends Bloc<WalletsEvent, WalletsState>
         emit(
           state.copyWith(
             status: WalletsStatus.loaded,
-            walletWithBalances: state.walletWithBalances
-                .where((it) => it.walletWithBalance.wallet.id != wallet.id)
-                .toList(),
             notice: WalletNotice.recentlyDeleted(wallet: wallet),
           ),
         );
@@ -231,16 +237,6 @@ class WalletsBloc extends Bloc<WalletsEvent, WalletsState>
         emit(
           state.copyWith(
             status: WalletsStatus.loaded,
-            walletWithBalances: state.walletWithBalances.map((it) {
-              final processed = it.walletWithBalance.wallet.id == wallet.id;
-              if (!processed) return it;
-              return it.copyWith(
-                status: WalletStatus.idle,
-                walletWithBalance: it.walletWithBalance.copyWith(
-                  wallet: updated,
-                ),
-              );
-            }).toList(),
             notice: WalletNotice.recentlyUpdated(
               from: oldWallet,
               to: updated,

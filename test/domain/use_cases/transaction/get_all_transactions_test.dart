@@ -19,7 +19,7 @@ void main() {
   final transactions = List.generate(
     5,
     (index) => Transaction.testTransfer(
-      amount: Decimal.fromInt(10 * index),
+      amount: Decimal.fromInt(10 * (index + 1)),
       date: DateTime.now(),
       fee: Decimal.zero,
     ),

@@ -248,7 +248,7 @@ void main() {
 
   group('Interaction', () {
     testWidgets(
-      'add WalletEvent.search with correct query',
+      'add WalletEvent.subscriptionRequested with correct query',
       (tester) async {
         await pumpWidget(tester);
 
@@ -258,7 +258,7 @@ void main() {
 
         verify(
           () => mockWalletsBloc.add(
-            const WalletsEvent.search(query: 'query'),
+            const WalletsEvent.subscriptionRequested(query: 'query'),
           ),
         ).called(1);
       },

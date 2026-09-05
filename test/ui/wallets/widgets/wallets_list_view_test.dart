@@ -49,8 +49,8 @@ final expectedTranslations = {
 
 void main() {
   final assetParent = SystemDefinedAccount.rootAsset;
-  final walletWithBalances = List.generate(5, (idx) {
-    return WalletWithBalance(
+  final walletsData = List.generate(5, (idx) {
+    return WalletUIModel(
       wallet: Wallet(
         id: '$idx',
         name: 'asset $idx',
@@ -64,9 +64,6 @@ void main() {
       balance: Decimal.zero,
     );
   });
-  final walletWithBalancesState = walletWithBalances
-      .map((it) => WalletWithBalanceUIModel(walletWithBalance: it))
-      .toList();
 
   late WalletsBloc mockWalletsBloc;
 
@@ -123,18 +120,18 @@ void main() {
           const Stream<WalletsState>.empty(),
           initialState: WalletsState(
             status: WalletsUIStatus.loaded,
-            walletWithBalances: walletWithBalancesState,
+            wallets: walletsData,
           ),
         );
 
         await pumpWidget(tester);
 
-        final finder = find.byType(AppListView<WalletWithBalanceUIModel>);
+        final finder = find.byType(AppListView<WalletUIModel>);
         expect(finder, findsOneWidget);
-        final widget = tester.widget<AppListView<WalletWithBalanceUIModel>>(
+        final widget = tester.widget<AppListView<WalletUIModel>>(
           finder,
         );
-        expect(widget.items, walletWithBalancesState);
+        expect(widget.items, walletsData);
       },
     );
 
@@ -174,7 +171,7 @@ void main() {
             const Stream<WalletsState>.empty(),
             initialState: WalletsState(
               status: WalletsUIStatus.loaded,
-              walletWithBalances: walletWithBalancesState,
+              wallets: walletsData,
             ),
           );
 
@@ -307,13 +304,13 @@ void main() {
           const Stream<WalletsState>.empty(),
           initialState: WalletsState(
             status: WalletsUIStatus.loaded,
-            walletWithBalances: walletWithBalancesState,
+            wallets: walletsData,
           ),
         );
         await pumpWidget(tester);
         await tester.pumpAndSettle();
 
-        final expectedWallet = walletWithBalances.first.wallet;
+        final expectedWallet = walletsData.first.wallet;
 
         final deleteButtonFinder = find.byType(DeleteWalletButton).first;
         await tester.tap(deleteButtonFinder);
@@ -344,13 +341,13 @@ void main() {
           const Stream<WalletsState>.empty(),
           initialState: WalletsState(
             status: WalletsUIStatus.loaded,
-            walletWithBalances: walletWithBalancesState,
+            wallets: walletsData,
           ),
         );
         await pumpWidget(tester);
         await tester.pumpAndSettle();
 
-        final expectedWallet = walletWithBalances.first.wallet;
+        final expectedWallet = walletsData.first.wallet;
 
         final updateButtonFinder = find.byType(UpdateWalletButton).first;
         await tester.tap(updateButtonFinder);
@@ -413,7 +410,7 @@ void main() {
             const Stream<WalletsState>.empty(),
             initialState: WalletsState(
               status: WalletsUIStatus.loaded,
-              walletWithBalances: walletWithBalancesState,
+              wallets: walletsData,
             ),
           );
 
@@ -435,7 +432,7 @@ void main() {
             const Stream<WalletsState>.empty(),
             initialState: WalletsState(
               status: WalletsUIStatus.loaded,
-              walletWithBalances: walletWithBalancesState,
+              wallets: walletsData,
             ),
           );
 
@@ -456,15 +453,15 @@ void main() {
             Stream<WalletsState>.fromIterable([
               WalletsState(
                 status: WalletsUIStatus.loaded,
-                walletWithBalances: walletWithBalancesState,
+                wallets: walletsData,
                 notice: WalletUINotice.recentlyDeleted(
-                  wallet: walletWithBalances.first.wallet,
+                  wallet: walletsData.first.wallet,
                 ),
               ),
             ]),
             initialState: WalletsState(
               status: WalletsUIStatus.loaded,
-              walletWithBalances: walletWithBalancesState,
+              wallets: walletsData,
             ),
           );
 
@@ -493,16 +490,16 @@ void main() {
             Stream<WalletsState>.fromIterable([
               WalletsState(
                 status: WalletsUIStatus.loaded,
-                walletWithBalances: walletWithBalancesState,
+                wallets: walletsData,
                 notice: WalletUINotice.deleteFailed(
-                  wallet: walletWithBalances.first.wallet,
+                  wallet: walletsData.first.wallet,
                   exception: AppException.test(),
                 ),
               ),
             ]),
             initialState: WalletsState(
               status: WalletsUIStatus.loaded,
-              walletWithBalances: walletWithBalancesState,
+              wallets: walletsData,
             ),
           );
 
@@ -537,15 +534,15 @@ void main() {
             Stream<WalletsState>.fromIterable([
               WalletsState(
                 status: WalletsUIStatus.loaded,
-                walletWithBalances: walletWithBalancesState,
+                wallets: walletsData,
                 notice: WalletUINotice.recentlyDeleted(
-                  wallet: walletWithBalances.first.wallet,
+                  wallet: walletsData.first.wallet,
                 ),
               ),
             ]),
             initialState: WalletsState(
               status: WalletsUIStatus.loaded,
-              walletWithBalances: walletWithBalancesState,
+              wallets: walletsData,
             ),
           );
 
@@ -571,16 +568,16 @@ void main() {
             Stream<WalletsState>.fromIterable([
               WalletsState(
                 status: WalletsUIStatus.loaded,
-                walletWithBalances: walletWithBalancesState,
+                wallets: walletsData,
                 notice: WalletUINotice.deleteFailed(
-                  wallet: walletWithBalances.first.wallet,
+                  wallet: walletsData.first.wallet,
                   exception: AppException.test(),
                 ),
               ),
             ]),
             initialState: WalletsState(
               status: WalletsUIStatus.loaded,
-              walletWithBalances: walletWithBalancesState,
+              wallets: walletsData,
             ),
           );
 

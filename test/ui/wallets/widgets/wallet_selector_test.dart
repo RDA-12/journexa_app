@@ -163,12 +163,9 @@ void main() {
         mockWalletsBloc,
         Stream<WalletsState>.fromIterable([
           WalletsState(
-            walletWithBalances: items
+            wallets: items
                 .map(
-                  (it) => WalletWithBalance(wallet: it, balance: Decimal.zero),
-                )
-                .map(
-                  (it) => WalletWithBalanceUIModel(walletWithBalance: it),
+                  (it) => WalletUIModel(wallet: it, balance: Decimal.zero),
                 )
                 .toList(),
             status: WalletsUIStatus.loaded,

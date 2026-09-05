@@ -3,7 +3,7 @@ part of 'wallets_bloc.dart';
 /// Events for [WalletsBloc]
 @freezed
 sealed class WalletsEvent with _$WalletsEvent {
-  /// Request to start listen to [WalletWithBalance] streams
+  /// Request to start listen to [Wallet] and its balance stream
   const factory WalletsEvent.subscriptionRequested({String? query}) =
       _SubscriptionRequested;
 

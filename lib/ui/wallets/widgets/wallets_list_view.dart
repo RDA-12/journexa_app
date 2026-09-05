@@ -149,11 +149,9 @@ class _WalletsListViewState extends State<WalletsListView> {
                 }
 
                 return BlocBuilder<WalletsBloc, WalletsState>(
-                  buildWhen: (p, c) =>
-                      p.walletWithBalances.length !=
-                      c.walletWithBalances.length,
+                  buildWhen: (p, c) => p.wallets.length != c.wallets.length,
                   builder: (context, dataState) {
-                    final walletBalances = dataState.walletWithBalances;
+                    final walletBalances = dataState.wallets;
                     if (walletBalances.isEmpty) {
                       return Center(
                         child: AppEmptyBox(
@@ -170,39 +168,36 @@ class _WalletsListViewState extends State<WalletsListView> {
                         return BlocSelector<
                           WalletsBloc,
                           WalletsState,
-                          WalletWithBalanceUIModel?
+                          WalletUIModel?
                         >(
                           selector: (state) {
-                            return state.walletWithBalances.firstWhereOrNull(
-                              (it) =>
-                                  it.walletWithBalance.wallet.id ==
-                                  item.walletWithBalance.wallet.id,
+                            return state.wallets.firstWhereOrNull(
+                              (it) => it.wallet.id == item.wallet.id,
                             );
                           },
-                          builder: (context, wallet) {
-                            if (wallet == null) {
+                          builder: (context, data) {
+                            if (data == null) {
                               return const SizedBox.shrink();
                             }
-                            final walletWithBalance = wallet.walletWithBalance;
                             final isDeleting =
-                                wallet.status == WalletUIStatus.deleting;
+                                data.status == WalletUIStatus.deleting;
                             final isUpdating =
-                                wallet.status == WalletUIStatus.updating;
+                                data.status == WalletUIStatus.updating;
                             return WalletCard(
-                              walletWithBalance: walletWithBalance,
+                              data: data,
                               isDeleting: isDeleting,
                               isUpdating: isUpdating,
                               onUpdatePressed: (name) {
                                 context.read<WalletsBloc>().add(
                                   WalletsEvent.update(
-                                    walletWithBalance.wallet,
+                                    data.wallet,
                                     name: name,
                                   ),
                                 );
                               },
                               onDeletePressed: () {
                                 context.read<WalletsBloc>().add(
-                                  WalletsEvent.delete(walletWithBalance.wallet),
+                                  WalletsEvent.delete(data.wallet),
                                 );
                               },
                             );

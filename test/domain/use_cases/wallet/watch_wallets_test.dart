@@ -1,9 +1,7 @@
-import 'package:decimal/decimal.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:journexa_app/domain/entities/account.dart';
 import 'package:journexa_app/domain/entities/wallet.dart';
 import 'package:journexa_app/domain/repositories/i_auth_repository.dart';
-import 'package:journexa_app/domain/repositories/i_journal_repository.dart';
 import 'package:journexa_app/domain/repositories/i_wallet_respository.dart';
 import 'package:journexa_app/domain/use_cases/wallet/watch_wallets.dart';
 import 'package:journexa_app/shared/app_exception.dart';
@@ -13,8 +11,6 @@ import 'package:mocktail/mocktail.dart';
 class MockWalletRepository extends Mock implements IWalletRepository {}
 
 class MockAuthRepository extends Mock implements IAuthRepository {}
-
-class MockJournalRepository extends Mock implements IJournalRepository {}
 
 void main() {
   const userId = 'userId';
@@ -44,16 +40,8 @@ void main() {
         ),
       )
       .toList();
-  final accountBalancesMap = {
-    for (final it in accounts) it.code: Decimal.fromInt(10),
-  };
-  final walletWithBalance = wallets.map((it) {
-    final balance = accountBalancesMap[it.account.code] ?? Decimal.zero;
-    return WalletWithBalance(wallet: it, balance: balance);
-  }).toList();
 
   late IAuthRepository mockAuthRepository;
-  late IJournalRepository mockJournalRepository;
   late IWalletRepository mockWalletRepository;
   late WatchWalletsUseCase useCase;
 
@@ -73,20 +61,9 @@ void main() {
       ),
     ).thenAnswer((_) => Stream.value(AppResult.success(wallets)));
 
-    mockJournalRepository = MockJournalRepository();
-    when(
-      () => mockJournalRepository.watchCurrentBalance(
-        userId: userId,
-        traceId: traceId,
-      ),
-    ).thenAnswer(
-      (_) => Stream.value(AppResult.success(accountBalancesMap)),
-    );
-
     useCase = WatchWalletsUseCase(
       authRepository: mockAuthRepository,
       walletRepository: mockWalletRepository,
-      journalRepository: mockJournalRepository,
     );
   });
 
@@ -148,26 +125,8 @@ void main() {
   );
 
   test(
-    'calls JournalRepository.watchCurrentBalance once '
-    'with correct args',
-    () async {
-      final result = useCase.execute(
-        const WatchWalletsParams(),
-        traceId: traceId,
-      );
-      await result.first;
-
-      verify(
-        () => mockJournalRepository.watchCurrentBalance(
-          userId: userId,
-          traceId: traceId,
-        ),
-      ).called(1);
-    },
-  );
-
-  test(
-    'emits correct AccountBalances when all operations are successful',
+    'emits correct map of wallet code to its balance '
+    'when all operations are successful',
     () async {
       final result = useCase.execute(
         const WatchWalletsParams(),
@@ -176,7 +135,7 @@ void main() {
 
       expect(
         result,
-        emits(AppResult.success(walletWithBalance)),
+        emits(AppResult.success(wallets)),
       );
     },
   );
@@ -197,7 +156,7 @@ void main() {
       expect(
         result,
         emits(
-          AppResult<List<WalletWithBalance>>.failure(
+          AppResult<List<Wallet>>.failure(
             AppException.test(),
           ),
         ),
@@ -225,36 +184,7 @@ void main() {
 
       expect(
         result,
-        emits(AppResult<List<WalletWithBalance>>.failure(AppException.test())),
-      );
-    },
-  );
-
-  test(
-    'emits failure '
-    'when JournalRepository.watchCurrentBalance emits failure',
-    () async {
-      when(
-        () => mockJournalRepository.watchCurrentBalance(
-          userId: userId,
-          traceId: traceId,
-        ),
-      ).thenAnswer(
-        (_) => Stream.value(
-          AppResult<Map<String, Decimal>>.failure(
-            AppException.test(),
-          ),
-        ),
-      );
-
-      final result = useCase.execute(
-        const WatchWalletsParams(),
-        traceId: traceId,
-      );
-
-      expect(
-        result,
-        emits(AppResult<List<WalletWithBalance>>.failure(AppException.test())),
+        emits(AppResult<List<Wallet>>.failure(AppException.test())),
       );
     },
   );

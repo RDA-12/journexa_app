@@ -5,6 +5,7 @@ import 'package:journexa_app/domain/entities/account.dart';
 import 'package:journexa_app/domain/entities/wallet.dart';
 import 'package:journexa_app/ui/shared/l10n/l10n.dart';
 import 'package:journexa_app/ui/shared/widgets/widgets.dart';
+import 'package:journexa_app/ui/wallets/bloc/wallets_bloc.dart';
 import 'package:journexa_app/ui/wallets/widgets/delete_wallet_button.dart';
 import 'package:journexa_app/ui/wallets/widgets/update_wallet_button.dart';
 import 'package:journexa_app/ui/wallets/widgets/wallet_card.dart';
@@ -24,7 +25,7 @@ final expectedTranslations = {
 };
 
 void main() {
-  final walletWithBalance = WalletWithBalance(
+  final walletData = WalletUIModel(
     wallet: Wallet(
       id: 'id',
       name: 'Dompet Hitam',
@@ -34,7 +35,6 @@ void main() {
         currentChildrenCount: 0,
       ),
     ),
-
     balance: Decimal.fromInt(10000),
   );
 
@@ -50,7 +50,7 @@ void main() {
       tester,
       locale: locale,
       widget: WalletCard(
-        walletWithBalance: walletWithBalance,
+        data: walletData,
         isDeleting: isDeleting,
         onDeletePressed: onDeletePressed ?? () {},
         isUpdating: isUpdating,
@@ -65,7 +65,7 @@ void main() {
       (tester) async {
         await pumpWidget(tester);
 
-        expect(find.text(walletWithBalance.wallet.name), findsOneWidget);
+        expect(find.text(walletData.wallet.name), findsOneWidget);
       },
     );
 
@@ -96,7 +96,7 @@ void main() {
         final finder = find.byType(DeleteWalletButton);
         expect(finder, findsOneWidget);
         final widget = tester.widget<DeleteWalletButton>(finder);
-        expect(widget.wallet, walletWithBalance.wallet);
+        expect(widget.wallet, walletData.wallet);
       },
     );
 
@@ -108,7 +108,7 @@ void main() {
         final finder = find.byType(UpdateWalletButton);
         expect(finder, findsOneWidget);
         final widget = tester.widget<UpdateWalletButton>(finder);
-        expect(widget.wallet, walletWithBalance.wallet);
+        expect(widget.wallet, walletData.wallet);
       },
     );
 

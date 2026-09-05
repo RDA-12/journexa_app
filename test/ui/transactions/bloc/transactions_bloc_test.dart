@@ -54,10 +54,7 @@ void main() {
     ),
   );
 
-  final walletsWithBalance = [
-    WalletWithBalance(wallet: wallet1, balance: Decimal.fromInt(1000)),
-    WalletWithBalance(wallet: wallet2, balance: Decimal.fromInt(2000)),
-  ];
+  final wallets = [wallet1, wallet2];
 
   final incomeCategory = IncomeCategory(
     id: 'inc-cat-1',
@@ -170,7 +167,7 @@ void main() {
         any<WatchWalletsParams>(),
         traceId: traceId,
       ),
-    ).thenAnswer((_) => Stream.value(AppResult.success(walletsWithBalance)));
+    ).thenAnswer((_) => Stream.value(AppResult.success(wallets)));
 
     mockWatchIncomeCategories = MockWatchIncomeCategoriesUseCase();
     when(
@@ -328,7 +325,7 @@ void main() {
           ),
         ).thenAnswer(
           (_) => Stream.value(
-            AppResult<List<WalletWithBalance>>.failure(AppException.test()),
+            AppResult<List<Wallet>>.failure(AppException.test()),
           ),
         );
       },

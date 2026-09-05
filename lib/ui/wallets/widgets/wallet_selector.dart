@@ -81,9 +81,7 @@ class _WalletSelectorState extends State<WalletSelector> {
             _controller.lastError = state.exception;
           case WalletsUIStatus.loaded:
             _controller.isLoading = false;
-            _controller.items = state.walletWithBalances
-                .map((it) => it.walletWithBalance.wallet)
-                .toList();
+            _controller.items = state.wallets.map((it) => it.wallet).toList();
           case _:
         }
       },
@@ -92,9 +90,9 @@ class _WalletSelectorState extends State<WalletSelector> {
         isRequired: widget.isRequired,
         label: widget.label,
         onPressed: () {
-          context
-              .read<WalletsBloc>()
-              .add(const WalletsEvent.subscriptionRequested());
+          context.read<WalletsBloc>().add(
+            const WalletsEvent.subscriptionRequested(),
+          );
         },
         onSearch: (query) {
           context.read<WalletsBloc>().add(

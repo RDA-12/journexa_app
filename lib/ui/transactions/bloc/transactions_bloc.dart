@@ -113,7 +113,7 @@ class TransactionsBloc extends Bloc<TransactionsEvent, TransactionsState>
           tr.when(
             income: (id, walletId, categoryId, amount, date, notes) {
               final wallet = wallets.firstWhereOrNull(
-                (it) => it.wallet.id == walletId,
+                (it) => it.id == walletId,
               );
               final category = incCats.firstWhereOrNull(
                 (it) => it.id == categoryId,
@@ -128,7 +128,7 @@ class TransactionsBloc extends Bloc<TransactionsEvent, TransactionsState>
               result.add(
                 TransactionUIModel.income(
                   id: id,
-                  wallet: wallet.wallet,
+                  wallet: wallet,
                   category: category,
                   amount: amount,
                   date: date,
@@ -138,7 +138,7 @@ class TransactionsBloc extends Bloc<TransactionsEvent, TransactionsState>
             },
             expense: (id, walletId, categoryId, amount, date, notes) {
               final wallet = wallets.firstWhereOrNull(
-                (it) => it.wallet.id == walletId,
+                (it) => it.id == walletId,
               );
               final category = expCats.firstWhereOrNull(
                 (it) => it.id == categoryId,
@@ -153,7 +153,7 @@ class TransactionsBloc extends Bloc<TransactionsEvent, TransactionsState>
               result.add(
                 TransactionUIModel.expense(
                   id: id,
-                  wallet: wallet.wallet,
+                  wallet: wallet,
                   category: category,
                   amount: amount,
                   date: date,
@@ -172,10 +172,10 @@ class TransactionsBloc extends Bloc<TransactionsEvent, TransactionsState>
                   notes,
                 ) {
                   final sourceWallet = wallets.firstWhereOrNull(
-                    (it) => it.wallet.id == sourceWalletId,
+                    (it) => it.id == sourceWalletId,
                   );
                   final destinationWallet = wallets.firstWhereOrNull(
-                    (it) => it.wallet.id == destinationWalletId,
+                    (it) => it.id == destinationWalletId,
                   );
                   if (sourceWallet == null || destinationWallet == null) {
                     logWarning(
@@ -187,8 +187,8 @@ class TransactionsBloc extends Bloc<TransactionsEvent, TransactionsState>
                   result.add(
                     TransactionUIModel.transfer(
                       id: id,
-                      sourceWallet: sourceWallet.wallet,
-                      destinationWallet: destinationWallet.wallet,
+                      sourceWallet: sourceWallet,
+                      destinationWallet: destinationWallet,
                       amount: amount,
                       fee: fee,
                       date: date,

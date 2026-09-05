@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:journexa_app/di.dart';
+import 'package:journexa_app/domain/use_cases/journal/watch_current_balance.dart';
 import 'package:journexa_app/domain/use_cases/wallet/delete_wallet.dart';
 import 'package:journexa_app/domain/use_cases/wallet/update_wallet.dart';
 import 'package:journexa_app/domain/use_cases/wallet/watch_wallets.dart';
@@ -30,6 +31,7 @@ class WalletsListPage extends StatelessWidget {
           (walletsBloc ??
                 WalletsBloc(
                   watchWallets: getIt<WatchWalletsUseCase>(),
+                  watchCurrentBalance: getIt<WatchCurrentBalanceUseCase>(),
                   deleteWallet: getIt<DeleteWalletUseCase>(),
                   updateWallet: getIt<UpdateWalletUseCase>(),
                 ))

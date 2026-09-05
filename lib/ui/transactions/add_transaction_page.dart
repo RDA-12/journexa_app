@@ -8,6 +8,7 @@ import 'package:journexa_app/domain/use_cases/expense_category/watch_expense_cat
 import 'package:journexa_app/domain/use_cases/income_category/delete_income_category.dart';
 import 'package:journexa_app/domain/use_cases/income_category/update_income_category.dart';
 import 'package:journexa_app/domain/use_cases/income_category/watch_income_categories.dart';
+import 'package:journexa_app/domain/use_cases/journal/watch_current_balance.dart';
 import 'package:journexa_app/domain/use_cases/transaction/add_expense.dart';
 import 'package:journexa_app/domain/use_cases/transaction/add_income.dart';
 import 'package:journexa_app/domain/use_cases/transaction/transfer_money.dart';
@@ -65,6 +66,7 @@ class AddTransactionPage extends StatelessWidget {
               walletsBloc ??
               WalletsBloc(
                 watchWallets: getIt<WatchWalletsUseCase>(),
+                watchCurrentBalance: getIt<WatchCurrentBalanceUseCase>(),
                 deleteWallet: getIt<DeleteWalletUseCase>(),
                 updateWallet: getIt<UpdateWalletUseCase>(),
               ),

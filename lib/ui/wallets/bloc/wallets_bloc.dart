@@ -1,6 +1,8 @@
 import 'package:bloc/bloc.dart';
+import 'package:decimal/decimal.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:journexa_app/domain/entities/wallet.dart';
+import 'package:journexa_app/domain/use_cases/journal/watch_current_balance.dart';
 import 'package:journexa_app/domain/use_cases/wallet/delete_wallet.dart';
 import 'package:journexa_app/domain/use_cases/wallet/update_wallet.dart';
 import 'package:journexa_app/domain/use_cases/wallet/watch_wallets.dart';
@@ -9,6 +11,7 @@ import 'package:journexa_app/shared/app_logger.dart';
 import 'package:journexa_app/shared/app_result.dart';
 import 'package:journexa_app/shared/uid_generator.dart';
 import 'package:journexa_app/ui/shared/event_transform/debounce.dart';
+import 'package:rxdart/rxdart.dart';
 
 part 'wallets_bloc.freezed.dart';
 part 'wallets_event.dart';
@@ -20,6 +23,7 @@ class WalletsBloc extends Bloc<WalletsEvent, WalletsState>
   /// Creates new [WalletsBloc]
   WalletsBloc({
     required this._watchWallets,
+    required this._watchCurrentBalance,
     required this._deleteWallet,
     required this._updateWallet,
   }) : super(const WalletsState()) {
@@ -52,6 +56,7 @@ class WalletsBloc extends Bloc<WalletsEvent, WalletsState>
   String get logTag => 'WalletsBloc';
 
   final WatchWalletsUseCase _watchWallets;
+  final WatchCurrentBalanceUseCase _watchCurrentBalance;
   final DeleteWalletUseCase _deleteWallet;
   final UpdateWalletUseCase _updateWallet;
 
@@ -71,18 +76,46 @@ class WalletsBloc extends Bloc<WalletsEvent, WalletsState>
       ),
     );
 
-    final stream = _watchWallets.execute(
-      params,
-      traceId: traceId,
+    final stream = CombineLatestStream.combine2(
+      _watchWallets.execute(params, traceId: traceId),
+      _watchCurrentBalance.execute(traceId: traceId),
+      (walletsRes, currentBalanceRes) {
+        logInfo('New data recevied', traceId: traceId);
+        final currentBalancesExc = currentBalanceRes.errorOrNull;
+        if (currentBalancesExc != null) {
+          logInfo('Current balance stream emits failure', traceId: traceId);
+          return AppResult<List<WalletUIModel>>.failure(currentBalancesExc);
+        }
+
+        final walletsExc = walletsRes.errorOrNull;
+        if (walletsExc != null) {
+          logInfo('Wallets stream emits failure', traceId: traceId);
+          return AppResult<List<WalletUIModel>>.failure(walletsExc);
+        }
+
+        final currentBalances = currentBalanceRes.valueOrNull!;
+        final wallets = walletsRes.valueOrNull!;
+        final result = <WalletUIModel>[];
+        for (final wallet in wallets) {
+          final balance = currentBalances[wallet.id];
+          result.add(
+            WalletUIModel(
+              wallet: wallet,
+              balance: balance ?? Decimal.zero,
+            ),
+          );
+        }
+        logInfo('All Streams fine', traceId: traceId);
+        return AppResult.success(result);
+      },
     );
     await emit.forEach(
       stream,
       onData: (result) {
         return result.when(
-          success: (walletWithBalances) {
+          success: (wallets) {
             final currentItemState = {
-              for (final it in state.walletWithBalances)
-                it.walletWithBalance.wallet.id: it.status,
+              for (final it in state.wallets) it.wallet.id: it.status,
             };
             logInfo(
               'Streamed wallets succeeded. Emit loaded status',
@@ -90,10 +123,11 @@ class WalletsBloc extends Bloc<WalletsEvent, WalletsState>
             );
             return state.copyWith(
               status: WalletsUIStatus.loaded,
-              walletWithBalances: walletWithBalances
+              wallets: wallets
                   .map(
-                    (it) => WalletWithBalanceUIModel(
-                      walletWithBalance: it,
+                    (it) => WalletUIModel(
+                      wallet: it.wallet,
+                      balance: it.balance,
                       status:
                           currentItemState[it.wallet.id] ?? WalletUIStatus.idle,
                     ),
@@ -121,12 +155,12 @@ class WalletsBloc extends Bloc<WalletsEvent, WalletsState>
     required Emitter<WalletsState> emit,
   }) async {
     final traceId = generateUid();
-    final walletIdx = state.walletWithBalances.indexWhere(
-      (it) => it.walletWithBalance.wallet.id == wallet.id,
+    final walletIdx = state.wallets.indexWhere(
+      (it) => it.wallet.id == wallet.id,
     );
     if (walletIdx == -1) {
       logInfo(
-        'Wallet with id ${wallet.id} not found in walletWithBalances. '
+        'Wallet with id ${wallet.id} not found in wallets. '
         'Early return',
         traceId: traceId,
       );
@@ -135,13 +169,13 @@ class WalletsBloc extends Bloc<WalletsEvent, WalletsState>
 
     logInfo(
       'Starts deleting wallet with id ${wallet.id}. '
-      'Emit new walletWithBalances with status deleting on the Wallet',
+      'Emit new wallets with status deleting on the Wallet',
       traceId: traceId,
     );
     emit(
       state.copyWith(
-        walletWithBalances: state.walletWithBalances.map((it) {
-          final isDeleting = it.walletWithBalance.wallet.id == wallet.id;
+        wallets: state.wallets.map((it) {
+          final isDeleting = it.wallet.id == wallet.id;
           if (!isDeleting) return it;
           return it.copyWith(status: WalletUIStatus.deleting);
         }).toList(),
@@ -155,7 +189,7 @@ class WalletsBloc extends Bloc<WalletsEvent, WalletsState>
       success: (_) {
         logInfo(
           'Deletes wallet success. '
-          'Filter wallet from walletWithBalances. '
+          'Filter wallet from wallets. '
           'Emit with recentlyDeleted notice',
           traceId: traceId,
         );
@@ -175,8 +209,8 @@ class WalletsBloc extends Bloc<WalletsEvent, WalletsState>
         emit(
           state.copyWith(
             status: WalletsUIStatus.loaded,
-            walletWithBalances: state.walletWithBalances.map((it) {
-              final processed = it.walletWithBalance.wallet.id == wallet.id;
+            wallets: state.wallets.map((it) {
+              final processed = it.wallet.id == wallet.id;
               if (!processed) return it;
               return it.copyWith(status: WalletUIStatus.idle);
             }).toList(),
@@ -197,25 +231,24 @@ class WalletsBloc extends Bloc<WalletsEvent, WalletsState>
   }) async {
     final traceId = generateUid();
     logInfo('Checking wallet with id ${wallet.id}', traceId: traceId);
-    final walletIdx = state.walletWithBalances.indexWhere(
-      (it) => it.walletWithBalance.wallet.id == wallet.id,
+    final walletIdx = state.wallets.indexWhere(
+      (it) => it.wallet.id == wallet.id,
     );
     if (walletIdx == -1) {
       logInfo('Wallet not found. Skipping', traceId: traceId);
       return;
     }
-    final oldWallet =
-        state.walletWithBalances[walletIdx].walletWithBalance.wallet;
+    final oldWallet = state.wallets[walletIdx].wallet;
 
     logInfo(
       'Starts updating wallet ${wallet.id}. '
-      'Emit new walletWithBalances with status updateing on the Wallet',
+      'Emit new wallets with status updateing on the Wallet',
       traceId: traceId,
     );
     emit(
       state.copyWith(
-        walletWithBalances: state.walletWithBalances.map((it) {
-          final isUpdating = it.walletWithBalance.wallet.id == wallet.id;
+        wallets: state.wallets.map((it) {
+          final isUpdating = it.wallet.id == wallet.id;
           if (!isUpdating) return it;
           return it.copyWith(status: WalletUIStatus.updating);
         }).toList(),
@@ -253,8 +286,8 @@ class WalletsBloc extends Bloc<WalletsEvent, WalletsState>
         emit(
           state.copyWith(
             status: WalletsUIStatus.loaded,
-            walletWithBalances: state.walletWithBalances.map((it) {
-              final processed = it.walletWithBalance.wallet.id == wallet.id;
+            wallets: state.wallets.map((it) {
+              final processed = it.wallet.id == wallet.id;
               if (!processed) return it;
               return it.copyWith(
                 status: WalletUIStatus.idle,

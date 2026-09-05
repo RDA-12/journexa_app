@@ -1,27 +1,27 @@
 import 'package:flutter/material.dart';
-import 'package:journexa_app/domain/entities/wallet.dart';
 import 'package:journexa_app/shared/formatter/decimal_formatter.dart';
 import 'package:journexa_app/shared/formatter/string_formatter.dart';
 import 'package:journexa_app/ui/shared/l10n/l10n.dart';
 import 'package:journexa_app/ui/shared/theme.dart';
 import 'package:journexa_app/ui/shared/widgets/app_card.dart';
+import 'package:journexa_app/ui/wallets/bloc/wallets_bloc.dart';
 import 'package:journexa_app/ui/wallets/widgets/delete_wallet_button.dart';
 import 'package:journexa_app/ui/wallets/widgets/update_wallet_button.dart';
 
-/// Creates new [Card] to shows [WalletWithBalance] data
+/// Creates new [Card] to shows [WalletUIModel] data
 class WalletCard extends StatelessWidget {
   /// Creates new [WalletCard]
   const WalletCard({
     required this.onDeletePressed,
-    required this.walletWithBalance,
+    required this.data,
     required this.onUpdatePressed,
     this.isDeleting = false,
     this.isUpdating = false,
     super.key,
   });
 
-  /// [WalletWithBalance] data that will be showed
-  final WalletWithBalance walletWithBalance;
+  /// wallet data that will be showed
+  final WalletUIModel data;
 
   /// Whether this wallet is in process of deleting
   final bool isDeleting;
@@ -41,8 +41,8 @@ class WalletCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final wallet = walletWithBalance.wallet;
-    final balance = walletWithBalance.balance;
+    final wallet = data.wallet;
+    final balance = data.balance;
     final languageCode = context.languageCode;
     final balanceString = balance.idrCurrency(languageCode);
 

@@ -17,7 +17,7 @@ enum WalletsUIStatus {
   failure,
 }
 
-/// Status for [WalletWithBalanceUIModel]
+/// Status for [WalletUIModel]
 enum WalletUIStatus {
   /// Idle status
   idle,
@@ -68,16 +68,19 @@ sealed class WalletUINotice with _$WalletUINotice {
   }) = _WalletUINoticeUpdateFailed;
 }
 
-/// Extends [WalletWithBalance] to includes state for UI
+/// Extends [Wallet] to includes balance and state for UI
 @freezed
-sealed class WalletWithBalanceUIModel with _$WalletWithBalanceUIModel {
-  const factory WalletWithBalanceUIModel({
-    /// The [WalletWithBalance]
-    required WalletWithBalance walletWithBalance,
+sealed class WalletUIModel with _$WalletUIModel {
+  const factory WalletUIModel({
+    /// The [Wallet]
+    required Wallet wallet,
+
+    /// Balance this [Wallet] has
+    required Decimal balance,
 
     /// Status for UI
     @Default(WalletUIStatus.idle) WalletUIStatus status,
-  }) = _WalletWithBalanceUIModel;
+  }) = _WalletUIModel;
 }
 
 /// States of [WalletsBloc]
@@ -89,7 +92,7 @@ sealed class WalletsState with _$WalletsState {
     @Default(WalletsUIStatus.initial) WalletsUIStatus status,
 
     /// List of wallets with their balances
-    @Default([]) List<WalletWithBalanceUIModel> walletWithBalances,
+    @Default([]) List<WalletUIModel> wallets,
 
     /// Exception that occurred when load or search event failed
     AppException? exception,

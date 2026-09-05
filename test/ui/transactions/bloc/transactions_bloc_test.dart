@@ -115,8 +115,8 @@ void main() {
     transferTransaction,
   ];
 
-  final expectedTransactionsUI = <TransactionUI>[
-    TransactionUI.income(
+  final expectedTransactionsUI = <TransactionUIModel>[
+    TransactionUIModel.income(
       id: incomeTransaction.id,
       wallet: wallet1,
       category: incomeCategory,
@@ -124,7 +124,7 @@ void main() {
       date: incomeTransaction.date,
       notes: incomeTransaction.notes,
     ),
-    TransactionUI.expense(
+    TransactionUIModel.expense(
       id: expenseTransaction.id,
       wallet: wallet1,
       category: expenseCategory,
@@ -132,7 +132,7 @@ void main() {
       date: expenseTransaction.date,
       notes: expenseTransaction.notes,
     ),
-    TransactionUI.transfer(
+    TransactionUIModel.transfer(
       id: transferTransaction.id,
       sourceWallet: wallet1,
       destinationWallet: wallet2,

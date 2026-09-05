@@ -2,9 +2,9 @@ part of 'transactions_bloc.dart';
 
 /// Represent [Transaction] model for UI
 @freezed
-sealed class TransactionUI with _$TransactionUI {
+sealed class TransactionUIModel with _$TransactionUIModel {
   /// Creates new [IncomeTransaction]
-  factory TransactionUI.income({
+  factory TransactionUIModel.income({
     /// Unique ID of this transaction
     required String id,
 
@@ -22,10 +22,10 @@ sealed class TransactionUI with _$TransactionUI {
 
     /// Notes or description
     String? notes,
-  }) = _IncomeTransactionUI;
+  }) = _IncomeTransactionUIModel;
 
   /// Creates new [ExpenseTransaction]
-  factory TransactionUI.expense({
+  factory TransactionUIModel.expense({
     /// Unique ID of this transaction
     required String id,
 
@@ -43,10 +43,10 @@ sealed class TransactionUI with _$TransactionUI {
 
     /// Notes or description
     String? notes,
-  }) = _ExpenseTransactionUI;
+  }) = _ExpenseTransactionUIModel;
 
   /// Creates new [TransferTransaction]
-  factory TransactionUI.transfer({
+  factory TransactionUIModel.transfer({
     /// Unique ID of this transaction
     required String id,
 
@@ -70,7 +70,7 @@ sealed class TransactionUI with _$TransactionUI {
 
     /// Notes or description
     String? notes,
-  }) = _TransferTransactionUI;
+  }) = _TransferTransactionUIModel;
 }
 
 /// States for [TransactionsBloc]
@@ -83,8 +83,9 @@ sealed class TransactionsState with _$TransactionsState {
   const factory TransactionsState.loading() = _Loading;
 
   /// State when transactions has been loaded
-  const factory TransactionsState.loaded(List<TransactionUI> transactions) =
-      _Loaded;
+  const factory TransactionsState.loaded(
+    List<TransactionUIModel> transactions,
+  ) = _Loaded;
 
   /// State when failed to fetch transactions
   const factory TransactionsState.failure(AppException exception) = _Failure;

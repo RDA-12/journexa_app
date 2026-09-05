@@ -74,7 +74,7 @@ class TransactionsBloc extends Bloc<TransactionsEvent, TransactionsState>
             'Wallets stream emits failure. Emit failure state',
             traceId: traceId,
           );
-          return AppResult<List<TransactionUI>>.failure(walletsExc);
+          return AppResult<List<TransactionUIModel>>.failure(walletsExc);
         }
         final wallets = walletsRes.valueOrNull!;
 
@@ -84,7 +84,7 @@ class TransactionsBloc extends Bloc<TransactionsEvent, TransactionsState>
             'Income categories stream emits failure. Emit failure state',
             traceId: traceId,
           );
-          return AppResult<List<TransactionUI>>.failure(incCatExc);
+          return AppResult<List<TransactionUIModel>>.failure(incCatExc);
         }
         final incCats = incomeCategoriesRes.valueOrNull!;
 
@@ -94,7 +94,7 @@ class TransactionsBloc extends Bloc<TransactionsEvent, TransactionsState>
             'Expense categories stream emits failure. Emit failure state',
             traceId: traceId,
           );
-          return AppResult<List<TransactionUI>>.failure(expCatExc);
+          return AppResult<List<TransactionUIModel>>.failure(expCatExc);
         }
         final expCats = expenseCategoriesRes.valueOrNull!;
 
@@ -104,10 +104,10 @@ class TransactionsBloc extends Bloc<TransactionsEvent, TransactionsState>
             'Transactions stream emits failure. Emit failure state',
             traceId: traceId,
           );
-          return AppResult<List<TransactionUI>>.failure(transactionsExc);
+          return AppResult<List<TransactionUIModel>>.failure(transactionsExc);
         }
 
-        final result = <TransactionUI>[];
+        final result = <TransactionUIModel>[];
         final transactions = transactionsRes.valueOrNull!;
         for (final tr in transactions) {
           tr.when(
@@ -126,7 +126,7 @@ class TransactionsBloc extends Bloc<TransactionsEvent, TransactionsState>
                 return;
               }
               result.add(
-                TransactionUI.income(
+                TransactionUIModel.income(
                   id: id,
                   wallet: wallet.wallet,
                   category: category,
@@ -151,7 +151,7 @@ class TransactionsBloc extends Bloc<TransactionsEvent, TransactionsState>
                 return;
               }
               result.add(
-                TransactionUI.expense(
+                TransactionUIModel.expense(
                   id: id,
                   wallet: wallet.wallet,
                   category: category,
@@ -185,7 +185,7 @@ class TransactionsBloc extends Bloc<TransactionsEvent, TransactionsState>
                     return;
                   }
                   result.add(
-                    TransactionUI.transfer(
+                    TransactionUIModel.transfer(
                       id: id,
                       sourceWallet: sourceWallet.wallet,
                       destinationWallet: destinationWallet.wallet,
@@ -203,7 +203,7 @@ class TransactionsBloc extends Bloc<TransactionsEvent, TransactionsState>
           'All streams emit success. Emit loaded state',
           traceId: traceId,
         );
-        return AppResult<List<TransactionUI>>.success(result);
+        return AppResult<List<TransactionUIModel>>.success(result);
       },
     );
 

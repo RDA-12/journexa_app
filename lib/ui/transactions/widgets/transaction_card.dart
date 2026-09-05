@@ -1,3 +1,4 @@
+import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:journexa_app/shared/formatter/formatter.dart';
 import 'package:journexa_app/ui/shared/l10n/l10n.dart';
@@ -18,6 +19,12 @@ class TransactionCard extends StatelessWidget {
     return data.map(
       income: (income) {
         return AppCard(
+          leading: CircleAvatar(
+            backgroundColor: context.color.primaryContainer,
+            foregroundColor: context.color.onPrimaryContainer,
+            radius: 24,
+            child: const Icon(Icons.call_received_rounded),
+          ),
           child: Semantics(
             container: true,
             excludeSemantics: true,
@@ -72,6 +79,12 @@ class TransactionCard extends StatelessWidget {
       },
       expense: (expense) {
         return AppCard(
+          leading: CircleAvatar(
+            backgroundColor: context.color.primaryContainer,
+            foregroundColor: context.color.onPrimaryContainer,
+            radius: 24,
+            child: const Icon(Icons.call_made_rounded),
+          ),
           child: Semantics(
             container: true,
             excludeSemantics: true,
@@ -126,6 +139,12 @@ class TransactionCard extends StatelessWidget {
       },
       transfer: (transfer) {
         return AppCard(
+          leading: CircleAvatar(
+            backgroundColor: context.color.primaryContainer,
+            foregroundColor: context.color.onPrimaryContainer,
+            radius: 24,
+            child: const Icon(Icons.swap_vert_rounded),
+          ),
           child: Semantics(
             container: true,
             excludeSemantics: true,

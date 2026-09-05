@@ -744,9 +744,119 @@
   "expenseFailureTitle": "Failed to record expense",
   "@expenseFailureTitle": {
     "description": "Title for toast failure state in expense page"
+  },
+  "transactionCardTransferSemantics": "Transfer {amount} to {destWallet} from {sourceWallet} at {time}",
+  "@transactionCardTransferSemantics": {
+    "description": "Semantics label for transaction card",
+    "placeholders": {
+      "destWallet": {
+        "type": "String",
+        "example": "bank hitam"
+      },
+      "sourceWallet": {
+        "type": "String",
+        "example": "bank putih"
+      },
+      "amount": {
+        "description": "amount with currency symbol",
+        "type": "String",
+        "example": "$100"
+      },
+      "time": {
+        "description": "time with DD MMMM yyyy format",
+        "type": "String",
+        "example": "01 January 2022"
+      }
+    }
+  },
+  "transactionCardIncomeSemantics": "Income {amount} to {walletName} for {categoryName} at {time}",
+  "@transactionCardIncomeSemantics": {
+    "description": "Semantics label for transaction card",
+    "placeholders": {
+      "walletName": {
+        "type": "String",
+        "example": "bank hitam"
+      },
+      "categoryName": {
+        "type": "String",
+        "example": "salary"
+      },
+      "amount": {
+        "description": "amount with currency symbol",
+        "type": "String",
+        "example": "$100"
+      },
+      "time": {
+        "description": "time with DD MMMM yyyy format",
+        "type": "String",
+        "example": "01 January 2022"
+      }
+    }
+  },
+  "transactionCardExpenseSemantics": "Expense {amount} from {walletName} for {categoryName} at {time}",
+  "@transactionCardExpenseSemantics": {
+    "description": "Semantics label for transaction card",
+    "placeholders": {
+      "walletName": {
+        "type": "String",
+        "example": "bank hitam"
+      },
+      "categoryName": {
+        "type": "String",
+        "example": "food"
+      },
+      "amount": {
+        "description": "amount with currency symbol",
+        "type": "String",
+        "example": "$100"
+      },
+      "time": {
+        "description": "time with DD MMMM yyyy format",
+        "type": "String",
+        "example": "01 January 2022"
+      }
+    }
+  },
+  "transactionCardTransferSubtitle": "from {sourceWallet}",
+  "@transactionCardTransferSubtitle": {
+    "description": "Subtitle for transaction card",
+    "placeholders": {
+      "sourceWallet": {
+        "type": "String",
+        "example": "bank hitam"
+      }
+    }
+  },
+  "transactionCardExpenseSubtitle": "from {walletName}",
+  "@transactionCardExpenseSubtitle": {
+    "description": "Subtitle for transaction card",
+    "placeholders": {
+      "walletName": {
+        "type": "String",
+        "example": "bank hitam"
+      }
+    }
+  },
+  "transactionCardIncomeSubtitle": "to {walletName}",
+  "@transactionCardIncomeSubtitle": {
+    "description": "Subtitle for transaction card",
+    "placeholders": {
+      "walletName": {
+        "type": "String",
+        "example": "bank hitam"
+      }
+    }
+  },
+  "transactionsListFailureTitle": "Failed to get transactions data",
+  "@transactionsListFailureTitle": {
+    "description": "Text shown when failed to get transactions data"
+  },
+  "transactionsListLoadingSemantics": "Loading transactions data",
+  "@transactionsListLoadingSemantics": {
+    "description": "Accessibility label for loading indicator in transactions list"
+  },
+  "transactionsListEmptyDescription": "No transactions data was found",
+  "@transactionsListEmptyDescription": {
+    "description": "Description for empty transactions list"
   }
 }
-
-
-
-

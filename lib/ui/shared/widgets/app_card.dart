@@ -31,7 +31,7 @@ class AppCard extends StatelessWidget {
       color: context.color.surface,
       elevation: 0,
       shape: RoundedRectangleBorder(
-        borderRadius: BorderRadiusGeometry.circular(24),
+        borderRadius: BorderRadiusGeometry.circular(16),
         side: BorderSide(
           color: context.color.outlineVariant,
         ),

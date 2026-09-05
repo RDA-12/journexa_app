@@ -485,4 +485,59 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get expenseFailureTitle => 'Failed to record expense';
+
+  @override
+  String transactionCardTransferSemantics(
+    String destWallet,
+    String sourceWallet,
+    String amount,
+    String time,
+  ) {
+    return 'Transfer $amount to $destWallet from $sourceWallet at $time';
+  }
+
+  @override
+  String transactionCardIncomeSemantics(
+    String walletName,
+    String categoryName,
+    String amount,
+    String time,
+  ) {
+    return 'Income $amount to $walletName for $categoryName at $time';
+  }
+
+  @override
+  String transactionCardExpenseSemantics(
+    String walletName,
+    String categoryName,
+    String amount,
+    String time,
+  ) {
+    return 'Expense $amount from $walletName for $categoryName at $time';
+  }
+
+  @override
+  String transactionCardTransferSubtitle(String sourceWallet) {
+    return 'from $sourceWallet';
+  }
+
+  @override
+  String transactionCardExpenseSubtitle(String walletName) {
+    return 'from $walletName';
+  }
+
+  @override
+  String transactionCardIncomeSubtitle(String walletName) {
+    return 'to $walletName';
+  }
+
+  @override
+  String get transactionsListFailureTitle => 'Failed to get transactions data';
+
+  @override
+  String get transactionsListLoadingSemantics => 'Loading transactions data';
+
+  @override
+  String get transactionsListEmptyDescription =>
+      'No transactions data was found';
 }

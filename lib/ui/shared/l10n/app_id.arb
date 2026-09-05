@@ -128,9 +128,14 @@
   "expenseSubmitButton": "Pengeluaran",
   "expenseSuccessTitle": "Pengeluaran tercatat",
   "expenseSuccessMessage": "Pengeluaran {amount} dari {walletName} untuk {categoryName} telah tercatat",
-  "expenseFailureTitle": "Gagal mencatat pengeluaran"
+  "expenseFailureTitle": "Gagal mencatat pengeluaran",
+  "transactionCardTransferSemantics": "Transfer {amount} ke {destWallet} dari {sourceWallet} pada {time}",
+  "transactionCardIncomeSemantics": "Pendapatan {amount} ke {walletName} untuk {categoryName} pada {time}",
+  "transactionCardExpenseSemantics": "Pengeluaran {amount} dari {walletName} untuk {categoryName} pada {time}",
+  "transactionCardTransferSubtitle": "dari {sourceWallet}",
+  "transactionCardIncomeSubtitle": "ke {walletName}",
+  "transactionCardExpenseSubtitle": "dari {walletName}",
+  "transactionsListFailureTitle": "Gagal mendapatkan data transaksi",
+  "transactionsListLoadingSemantics": "Memuat data transaksi",
+  "transactionsListEmptyDescription": "Tidak ada data transaksi yang ditemukan"
 }
-
-
-
-

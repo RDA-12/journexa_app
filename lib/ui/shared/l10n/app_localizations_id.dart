@@ -492,4 +492,59 @@ class AppLocalizationsId extends AppLocalizations {
 
   @override
   String get expenseFailureTitle => 'Gagal mencatat pengeluaran';
+
+  @override
+  String transactionCardTransferSemantics(
+    String destWallet,
+    String sourceWallet,
+    String amount,
+    String time,
+  ) {
+    return 'Transfer $amount ke $destWallet dari $sourceWallet pada $time';
+  }
+
+  @override
+  String transactionCardIncomeSemantics(
+    String walletName,
+    String categoryName,
+    String amount,
+    String time,
+  ) {
+    return 'Pendapatan $amount ke $walletName untuk $categoryName pada $time';
+  }
+
+  @override
+  String transactionCardExpenseSemantics(
+    String walletName,
+    String categoryName,
+    String amount,
+    String time,
+  ) {
+    return 'Pengeluaran $amount dari $walletName untuk $categoryName pada $time';
+  }
+
+  @override
+  String transactionCardTransferSubtitle(String sourceWallet) {
+    return 'dari $sourceWallet';
+  }
+
+  @override
+  String transactionCardExpenseSubtitle(String walletName) {
+    return 'dari $walletName';
+  }
+
+  @override
+  String transactionCardIncomeSubtitle(String walletName) {
+    return 'ke $walletName';
+  }
+
+  @override
+  String get transactionsListFailureTitle => 'Gagal mendapatkan data transaksi';
+
+  @override
+  String get transactionsListLoadingSemantics => 'Memuat data transaksi';
+
+  @override
+  String get transactionsListEmptyDescription =>
+      'Tidak ada data transaksi yang ditemukan';
 }

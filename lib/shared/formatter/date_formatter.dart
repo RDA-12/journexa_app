@@ -6,4 +6,15 @@ extension DateTimeX on DateTime {
   ///
   /// Example: `28-02-2026 12:00`
   String get dateTimeFormat => DateFormat('dd-MM-yyyy HH:mm').format(this);
+
+  /// Formats date to [String]
+  ///
+  /// Example: `28/02/2026`
+  String get dateOnlyFormat => DateFormat('dd/MM/yyyy').format(this);
+
+  /// Formats date to [String] with full month name
+  ///
+  /// Example: `28 February 2026`
+  String textedDateFormat([String? locale]) =>
+      DateFormat('dd MMMM yyyy', locale).format(this);
 }

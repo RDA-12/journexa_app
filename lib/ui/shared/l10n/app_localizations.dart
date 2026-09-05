@@ -883,6 +883,75 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Failed to record expense'**
   String get expenseFailureTitle;
+
+  /// Semantics label for transaction card
+  ///
+  /// In en, this message translates to:
+  /// **'Transfer {amount} to {destWallet} from {sourceWallet} at {time}'**
+  String transactionCardTransferSemantics(
+    String destWallet,
+    String sourceWallet,
+    String amount,
+    String time,
+  );
+
+  /// Semantics label for transaction card
+  ///
+  /// In en, this message translates to:
+  /// **'Income {amount} to {walletName} for {categoryName} at {time}'**
+  String transactionCardIncomeSemantics(
+    String walletName,
+    String categoryName,
+    String amount,
+    String time,
+  );
+
+  /// Semantics label for transaction card
+  ///
+  /// In en, this message translates to:
+  /// **'Expense {amount} from {walletName} for {categoryName} at {time}'**
+  String transactionCardExpenseSemantics(
+    String walletName,
+    String categoryName,
+    String amount,
+    String time,
+  );
+
+  /// Subtitle for transaction card
+  ///
+  /// In en, this message translates to:
+  /// **'from {sourceWallet}'**
+  String transactionCardTransferSubtitle(String sourceWallet);
+
+  /// Subtitle for transaction card
+  ///
+  /// In en, this message translates to:
+  /// **'from {walletName}'**
+  String transactionCardExpenseSubtitle(String walletName);
+
+  /// Subtitle for transaction card
+  ///
+  /// In en, this message translates to:
+  /// **'to {walletName}'**
+  String transactionCardIncomeSubtitle(String walletName);
+
+  /// Text shown when failed to get transactions data
+  ///
+  /// In en, this message translates to:
+  /// **'Failed to get transactions data'**
+  String get transactionsListFailureTitle;
+
+  /// Accessibility label for loading indicator in transactions list
+  ///
+  /// In en, this message translates to:
+  /// **'Loading transactions data'**
+  String get transactionsListLoadingSemantics;
+
+  /// Description for empty transactions list
+  ///
+  /// In en, this message translates to:
+  /// **'No transactions data was found'**
+  String get transactionsListEmptyDescription;
 }
 
 class _AppLocalizationsDelegate

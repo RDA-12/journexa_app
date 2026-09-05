@@ -7,7 +7,6 @@ import 'package:journexa_app/domain/entities/account.dart';
 import 'package:journexa_app/domain/entities/wallet.dart';
 import 'package:journexa_app/shared/app_exception.dart';
 import 'package:journexa_app/ui/shared/l10n/app_localizations.dart';
-import 'package:journexa_app/ui/shared/widgets/app_list_view.dart';
 import 'package:journexa_app/ui/shared/widgets/widgets.dart';
 import 'package:journexa_app/ui/wallets/bloc/wallets_bloc.dart';
 import 'package:journexa_app/ui/wallets/widgets/delete_wallet_button.dart';

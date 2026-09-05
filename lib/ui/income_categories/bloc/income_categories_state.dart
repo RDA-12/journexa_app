@@ -3,7 +3,7 @@ part of 'income_categories_bloc.dart';
 /// Status of [IncomeCategoriesBloc]
 ///
 /// Specifically for load and search events
-enum IncomeCategoriesStatus {
+enum IncomeCategoriesUIStatus {
   /// Initial status
   initial,
 
@@ -17,8 +17,8 @@ enum IncomeCategoriesStatus {
   failure,
 }
 
-/// Status for [IncomeCategoryWithState]
-enum IncomeCategoryStatus {
+/// Status for [IncomeCategoryUIModel]
+enum IncomeCategoryUIStatus {
   /// Idle status
   idle,
 
@@ -33,51 +33,51 @@ enum IncomeCategoryStatus {
 ///
 /// This class can be used as notice to show any notice to UI
 @freezed
-sealed class IncomeCategoryNotice with _$IncomeCategoryNotice {
-  /// Creates new [IncomeCategoryNotice] as deleted notice
-  const factory IncomeCategoryNotice.recentlyDeleted({
+sealed class IncomeCategoryUINotice with _$IncomeCategoryUINotice {
+  /// Creates new [IncomeCategoryUINotice] as deleted notice
+  const factory IncomeCategoryUINotice.recentlyDeleted({
     /// The [IncomeCategory] that was recently deleted
     required IncomeCategory category,
-  }) = _IncomeCategoryNoticeRecentlyDeleted;
+  }) = _IncomeCategoryUINoticeRecentlyDeleted;
 
-  /// Creates new [IncomeCategoryNotice] as updated notice
-  const factory IncomeCategoryNotice.recentlyUpdated({
+  /// Creates new [IncomeCategoryUINotice] as updated notice
+  const factory IncomeCategoryUINotice.recentlyUpdated({
     /// Old [IncomeCategory]
     required IncomeCategory from,
 
     /// New updated [IncomeCategory]
     required IncomeCategory to,
-  }) = _IncomeCategoryNoticeRecentlyUpdated;
+  }) = _IncomeCategoryUINoticeRecentlyUpdated;
 
-  /// Creates new [IncomeCategoryNotice] as delete failed notice
-  const factory IncomeCategoryNotice.deleteFailed({
+  /// Creates new [IncomeCategoryUINotice] as delete failed notice
+  const factory IncomeCategoryUINotice.deleteFailed({
     /// [IncomeCategory] that meant to be deleted
     required IncomeCategory category,
 
     /// Exception that occurred when delete event failed
     required AppException exception,
-  }) = _IncomeCategoryNoticeDeleteFailed;
+  }) = _IncomeCategoryUINoticeDeleteFailed;
 
-  /// Creates new [IncomeCategoryNotice] as update failed notice
-  const factory IncomeCategoryNotice.updateFailed({
+  /// Creates new [IncomeCategoryUINotice] as update failed notice
+  const factory IncomeCategoryUINotice.updateFailed({
     /// [IncomeCategory] that meant to be updated
     required IncomeCategory category,
 
     /// Exception that occurred when update event failed
     required AppException exception,
-  }) = _IncomeCategoryNoticeUpdateFailed;
+  }) = _IncomeCategoryUINoticeUpdateFailed;
 }
 
 /// Extends [IncomeCategory] to includes state for UI
 @freezed
-sealed class IncomeCategoryWithState with _$IncomeCategoryWithState {
-  const factory IncomeCategoryWithState({
+sealed class IncomeCategoryUIModel with _$IncomeCategoryUIModel {
+  const factory IncomeCategoryUIModel({
     /// The [IncomeCategory]
     required IncomeCategory category,
 
     /// Status for UI
-    @Default(IncomeCategoryStatus.idle) IncomeCategoryStatus status,
-  }) = _IncomeCategoryWithState;
+    @Default(IncomeCategoryUIStatus.idle) IncomeCategoryUIStatus status,
+  }) = _IncomeCategoryUIModel;
 }
 
 /// States of [IncomeCategoriesBloc]
@@ -86,16 +86,16 @@ sealed class IncomeCategoriesState with _$IncomeCategoriesState {
   /// Creates new [IncomeCategoriesState]
   const factory IncomeCategoriesState({
     /// Status of the state
-    @Default(IncomeCategoriesStatus.initial) IncomeCategoriesStatus status,
+    @Default(IncomeCategoriesUIStatus.initial) IncomeCategoriesUIStatus status,
 
     /// List of income categories with their balances
-    @Default([]) List<IncomeCategoryWithState> categories,
+    @Default([]) List<IncomeCategoryUIModel> categories,
 
     /// Exception that occurred when load or search event failed
     AppException? exception,
 
     /// Notice that meant to be announce by UI
-    IncomeCategoryNotice? notice,
+    IncomeCategoryUINotice? notice,
   }) = _IncomeCategoriesState;
 
   const IncomeCategoriesState._();

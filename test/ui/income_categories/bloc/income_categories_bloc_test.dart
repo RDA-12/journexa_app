@@ -39,7 +39,7 @@ void main() {
   });
   final incomeCategoriesWithState = incomeCategories
       .map(
-        (it) => IncomeCategoryWithState(category: it),
+        (it) => IncomeCategoryUIModel(category: it),
       )
       .toList();
   final updatedFirstCategory = incomeCategories.first.update(
@@ -123,9 +123,9 @@ void main() {
       ),
       wait: kDefaultDebounceDuration,
       expect: () => <IncomeCategoriesState>[
-        const IncomeCategoriesState(status: IncomeCategoriesStatus.loading),
+        const IncomeCategoriesState(status: IncomeCategoriesUIStatus.loading),
         IncomeCategoriesState(
-          status: IncomeCategoriesStatus.loaded,
+          status: IncomeCategoriesUIStatus.loaded,
           categories: incomeCategoriesWithState,
         ),
       ],
@@ -149,9 +149,9 @@ void main() {
       ),
       wait: kDefaultDebounceDuration,
       expect: () => <IncomeCategoriesState>[
-        const IncomeCategoriesState(status: IncomeCategoriesStatus.loading),
+        const IncomeCategoriesState(status: IncomeCategoriesUIStatus.loading),
         IncomeCategoriesState(
-          status: IncomeCategoriesStatus.loaded,
+          status: IncomeCategoriesUIStatus.loaded,
           categories: incomeCategoriesWithState,
         ),
       ],
@@ -186,9 +186,9 @@ void main() {
       ),
       wait: kDefaultDebounceDuration,
       expect: () => <IncomeCategoriesState>[
-        const IncomeCategoriesState(status: IncomeCategoriesStatus.loading),
+        const IncomeCategoriesState(status: IncomeCategoriesUIStatus.loading),
         IncomeCategoriesState(
-          status: IncomeCategoriesStatus.failure,
+          status: IncomeCategoriesUIStatus.failure,
           exception: AppException.test(),
         ),
       ],
@@ -209,7 +209,7 @@ void main() {
       'when deleteIncomeCategory returns success',
       seed: () {
         return IncomeCategoriesState(
-          status: IncomeCategoriesStatus.loaded,
+          status: IncomeCategoriesUIStatus.loaded,
           categories: incomeCategoriesWithState,
         );
       },
@@ -220,23 +220,23 @@ void main() {
       wait: kDefaultDebounceDuration,
       expect: () => <IncomeCategoriesState>[
         IncomeCategoriesState(
-          status: IncomeCategoriesStatus.loaded,
+          status: IncomeCategoriesUIStatus.loaded,
           categories: incomeCategoriesWithState.map((it) {
             final isDeleting =
                 it.category.id == incomeCategoriesWithState.first.category.id;
             if (!isDeleting) return it;
-            return it.copyWith(status: IncomeCategoryStatus.deleting);
+            return it.copyWith(status: IncomeCategoryUIStatus.deleting);
           }).toList(),
         ),
         IncomeCategoriesState(
-          status: IncomeCategoriesStatus.loaded,
+          status: IncomeCategoriesUIStatus.loaded,
           categories: incomeCategoriesWithState.map((it) {
             final isDeleting =
                 it.category.id == incomeCategoriesWithState.first.category.id;
             if (!isDeleting) return it;
-            return it.copyWith(status: IncomeCategoryStatus.deleting);
+            return it.copyWith(status: IncomeCategoryUIStatus.deleting);
           }).toList(),
-          notice: IncomeCategoryNotice.recentlyDeleted(
+          notice: IncomeCategoryUINotice.recentlyDeleted(
             category: incomeCategories.first,
           ),
         ),
@@ -266,7 +266,7 @@ void main() {
       },
       seed: () {
         return IncomeCategoriesState(
-          status: IncomeCategoriesStatus.loaded,
+          status: IncomeCategoriesUIStatus.loaded,
           categories: incomeCategoriesWithState,
         );
       },
@@ -277,18 +277,18 @@ void main() {
       wait: kDefaultDebounceDuration,
       expect: () => <IncomeCategoriesState>[
         IncomeCategoriesState(
-          status: IncomeCategoriesStatus.loaded,
+          status: IncomeCategoriesUIStatus.loaded,
           categories: incomeCategoriesWithState.map((it) {
             final isDeleting =
                 it.category.id == incomeCategoriesWithState.first.category.id;
             if (!isDeleting) return it;
-            return it.copyWith(status: IncomeCategoryStatus.deleting);
+            return it.copyWith(status: IncomeCategoryUIStatus.deleting);
           }).toList(),
         ),
         IncomeCategoriesState(
-          status: IncomeCategoriesStatus.loaded,
+          status: IncomeCategoriesUIStatus.loaded,
           categories: incomeCategoriesWithState,
-          notice: IncomeCategoryNotice.deleteFailed(
+          notice: IncomeCategoryUINotice.deleteFailed(
             category: incomeCategories.first,
             exception: AppException.test(),
           ),
@@ -310,7 +310,7 @@ void main() {
       'do nothing when category not found on categories',
       seed: () {
         return const IncomeCategoriesState(
-          status: IncomeCategoriesStatus.loaded,
+          status: IncomeCategoriesUIStatus.loaded,
         );
       },
       build: buildBloc,
@@ -331,7 +331,7 @@ void main() {
       'when updateIncomeCategory returns success',
       seed: () {
         return IncomeCategoriesState(
-          status: IncomeCategoriesStatus.loaded,
+          status: IncomeCategoriesUIStatus.loaded,
           categories: incomeCategoriesWithState,
         );
       },
@@ -344,23 +344,23 @@ void main() {
       ),
       expect: () => <IncomeCategoriesState>[
         IncomeCategoriesState(
-          status: IncomeCategoriesStatus.loaded,
+          status: IncomeCategoriesUIStatus.loaded,
           categories: incomeCategoriesWithState.map((it) {
             final isUpdating =
                 it.category.id == incomeCategoriesWithState.first.category.id;
             if (!isUpdating) return it;
-            return it.copyWith(status: IncomeCategoryStatus.updating);
+            return it.copyWith(status: IncomeCategoryUIStatus.updating);
           }).toList(),
         ),
         IncomeCategoriesState(
-          status: IncomeCategoriesStatus.loaded,
+          status: IncomeCategoriesUIStatus.loaded,
           categories: incomeCategoriesWithState.map((it) {
             final isUpdating =
                 it.category.id == incomeCategoriesWithState.first.category.id;
             if (!isUpdating) return it;
-            return it.copyWith(status: IncomeCategoryStatus.updating);
+            return it.copyWith(status: IncomeCategoryUIStatus.updating);
           }).toList(),
-          notice: IncomeCategoryNotice.recentlyUpdated(
+          notice: IncomeCategoryUINotice.recentlyUpdated(
             from: incomeCategoriesWithState.first.category,
             to: updatedFirstCategory,
           ),
@@ -398,7 +398,7 @@ void main() {
       },
       seed: () {
         return IncomeCategoriesState(
-          status: IncomeCategoriesStatus.loaded,
+          status: IncomeCategoriesUIStatus.loaded,
           categories: incomeCategoriesWithState,
         );
       },
@@ -411,18 +411,18 @@ void main() {
       ),
       expect: () => <IncomeCategoriesState>[
         IncomeCategoriesState(
-          status: IncomeCategoriesStatus.loaded,
+          status: IncomeCategoriesUIStatus.loaded,
           categories: incomeCategoriesWithState.map((it) {
             final isUpdating =
                 it.category.id == incomeCategoriesWithState.first.category.id;
             if (!isUpdating) return it;
-            return it.copyWith(status: IncomeCategoryStatus.updating);
+            return it.copyWith(status: IncomeCategoryUIStatus.updating);
           }).toList(),
         ),
         IncomeCategoriesState(
-          status: IncomeCategoriesStatus.loaded,
+          status: IncomeCategoriesUIStatus.loaded,
           categories: incomeCategoriesWithState,
-          notice: IncomeCategoryNotice.updateFailed(
+          notice: IncomeCategoryUINotice.updateFailed(
             category: incomeCategories.first,
             exception: AppException.test(),
           ),
@@ -445,7 +445,7 @@ void main() {
       'do nothing when account not found on categories',
       seed: () {
         return const IncomeCategoriesState(
-          status: IncomeCategoriesStatus.loaded,
+          status: IncomeCategoriesUIStatus.loaded,
         );
       },
       build: buildBloc,

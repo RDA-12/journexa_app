@@ -83,7 +83,7 @@ void main() {
         .copyWith(id: '$index');
   }).toList();
   final blocIncomeCategories = incomeCategories.map((it) {
-    return IncomeCategoryWithState(category: it);
+    return IncomeCategoryUIModel(category: it);
   }).toList();
 
   final expenseCategories = List.generate(5, (index) {
@@ -118,7 +118,7 @@ void main() {
       mockIncomeCategoriesBloc,
       Stream<IncomeCategoriesState>.value(
         IncomeCategoriesState(
-          status: IncomeCategoriesStatus.loaded,
+          status: IncomeCategoriesUIStatus.loaded,
           categories: blocIncomeCategories,
         ),
       ),

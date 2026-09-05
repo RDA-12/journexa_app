@@ -58,8 +58,7 @@ void main() {
         final widgetFinder = find.byType(AppSelector<IncomeCategory>);
         expect(widgetFinder, findsOneWidget);
 
-        final widget =
-            tester.widget<AppSelector<IncomeCategory>>(widgetFinder);
+        final widget = tester.widget<AppSelector<IncomeCategory>>(widgetFinder);
         expect(widget.isRequired, true);
       },
     );
@@ -72,8 +71,7 @@ void main() {
         final widgetFinder = find.byType(AppSelector<IncomeCategory>);
         expect(widgetFinder, findsOneWidget);
 
-        final widget =
-            tester.widget<AppSelector<IncomeCategory>>(widgetFinder);
+        final widget = tester.widget<AppSelector<IncomeCategory>>(widgetFinder);
         expect(widget.isRequired, false);
       },
     );
@@ -86,8 +84,7 @@ void main() {
         final widgetFinder = find.byType(AppSelector<IncomeCategory>);
         expect(widgetFinder, findsOneWidget);
 
-        final widget =
-            tester.widget<AppSelector<IncomeCategory>>(widgetFinder);
+        final widget = tester.widget<AppSelector<IncomeCategory>>(widgetFinder);
         expect(widget.label, 'Some text');
       },
     );
@@ -103,8 +100,7 @@ void main() {
         final widgetFinder = find.byType(AppSelector<IncomeCategory>);
         expect(widgetFinder, findsOneWidget);
 
-        final widget =
-            tester.widget<AppSelector<IncomeCategory>>(widgetFinder);
+        final widget = tester.widget<AppSelector<IncomeCategory>>(widgetFinder);
         expect(widget.controller, controller);
       },
     );
@@ -144,7 +140,7 @@ void main() {
       whenListen(
         mockIncomeCategoriesBloc,
         Stream<IncomeCategoriesState>.fromIterable([
-          const IncomeCategoriesState(status: IncomeCategoriesStatus.loading),
+          const IncomeCategoriesState(status: IncomeCategoriesUIStatus.loading),
         ]),
         initialState: const IncomeCategoriesState(),
       );
@@ -167,9 +163,9 @@ void main() {
         Stream<IncomeCategoriesState>.fromIterable([
           IncomeCategoriesState(
             categories: items
-                .map((it) => IncomeCategoryWithState(category: it))
+                .map((it) => IncomeCategoryUIModel(category: it))
                 .toList(),
-            status: IncomeCategoriesStatus.loaded,
+            status: IncomeCategoriesUIStatus.loaded,
           ),
         ]),
         initialState: const IncomeCategoriesState(),
@@ -190,7 +186,7 @@ void main() {
         Stream<IncomeCategoriesState>.fromIterable([
           IncomeCategoriesState(
             exception: AppException.test(),
-            status: IncomeCategoriesStatus.failure,
+            status: IncomeCategoriesUIStatus.failure,
           ),
         ]),
         initialState: const IncomeCategoriesState(),

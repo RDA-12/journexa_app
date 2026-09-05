@@ -55,7 +55,7 @@ void main() {
         .copyWith(id: '$index');
   }).toList();
   final blocCategories = categories.map((it) {
-    return IncomeCategoryWithState(category: it);
+    return IncomeCategoryUIModel(category: it);
   }).toList();
 
   late WalletsBloc mockWalletsBloc;
@@ -79,7 +79,7 @@ void main() {
       mockIncomeCategoriesBloc,
       Stream<IncomeCategoriesState>.value(
         IncomeCategoriesState(
-          status: IncomeCategoriesStatus.loaded,
+          status: IncomeCategoriesUIStatus.loaded,
           categories: blocCategories,
         ),
       ),

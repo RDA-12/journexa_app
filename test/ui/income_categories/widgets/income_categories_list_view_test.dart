@@ -56,7 +56,7 @@ void main() {
     );
   });
   final categoriesState = categories
-      .map((it) => IncomeCategoryWithState(category: it))
+      .map((it) => IncomeCategoryUIModel(category: it))
       .toList();
 
   late IncomeCategoriesBloc mockIncomeCategoriesBloc;
@@ -95,7 +95,7 @@ void main() {
           mockIncomeCategoriesBloc,
           const Stream<IncomeCategoriesState>.empty(),
           initialState: const IncomeCategoriesState(
-            status: IncomeCategoriesStatus.loading,
+            status: IncomeCategoriesUIStatus.loading,
           ),
         );
 
@@ -113,16 +113,16 @@ void main() {
           mockIncomeCategoriesBloc,
           const Stream<IncomeCategoriesState>.empty(),
           initialState: IncomeCategoriesState(
-            status: IncomeCategoriesStatus.loaded,
+            status: IncomeCategoriesUIStatus.loaded,
             categories: categoriesState,
           ),
         );
 
         await pumpWidget(tester);
 
-        final finder = find.byType(AppListView<IncomeCategoryWithState>);
+        final finder = find.byType(AppListView<IncomeCategoryUIModel>);
         expect(finder, findsOneWidget);
-        final widget = tester.widget<AppListView<IncomeCategoryWithState>>(
+        final widget = tester.widget<AppListView<IncomeCategoryUIModel>>(
           finder,
         );
         expect(widget.items, categoriesState);
@@ -141,7 +141,7 @@ void main() {
             mockIncomeCategoriesBloc,
             const Stream<IncomeCategoriesState>.empty(),
             initialState: IncomeCategoriesState(
-              status: IncomeCategoriesStatus.failure,
+              status: IncomeCategoriesUIStatus.failure,
               exception: AppException.test(),
             ),
           );
@@ -164,7 +164,7 @@ void main() {
             mockIncomeCategoriesBloc,
             const Stream<IncomeCategoriesState>.empty(),
             initialState: IncomeCategoriesState(
-              status: IncomeCategoriesStatus.loaded,
+              status: IncomeCategoriesUIStatus.loaded,
               categories: categoriesState,
             ),
           );
@@ -186,7 +186,7 @@ void main() {
             mockIncomeCategoriesBloc,
             const Stream<IncomeCategoriesState>.empty(),
             initialState: const IncomeCategoriesState(
-              status: IncomeCategoriesStatus.loaded,
+              status: IncomeCategoriesUIStatus.loaded,
             ),
           );
 
@@ -207,7 +207,7 @@ void main() {
             mockIncomeCategoriesBloc,
             const Stream<IncomeCategoriesState>.empty(),
             initialState: const IncomeCategoriesState(
-              status: IncomeCategoriesStatus.loaded,
+              status: IncomeCategoriesUIStatus.loaded,
             ),
           );
 
@@ -298,7 +298,7 @@ void main() {
           mockIncomeCategoriesBloc,
           const Stream<IncomeCategoriesState>.empty(),
           initialState: IncomeCategoriesState(
-            status: IncomeCategoriesStatus.loaded,
+            status: IncomeCategoriesUIStatus.loaded,
             categories: categoriesState,
           ),
         );
@@ -331,7 +331,7 @@ void main() {
           mockIncomeCategoriesBloc,
           const Stream<IncomeCategoriesState>.empty(),
           initialState: IncomeCategoriesState(
-            status: IncomeCategoriesStatus.loaded,
+            status: IncomeCategoriesUIStatus.loaded,
             categories: categoriesState,
           ),
         );
@@ -376,7 +376,7 @@ void main() {
             mockIncomeCategoriesBloc,
             const Stream<IncomeCategoriesState>.empty(),
             initialState: const IncomeCategoriesState(
-              status: IncomeCategoriesStatus.loading,
+              status: IncomeCategoriesUIStatus.loading,
             ),
           );
 
@@ -394,7 +394,7 @@ void main() {
             mockIncomeCategoriesBloc,
             const Stream<IncomeCategoriesState>.empty(),
             initialState: IncomeCategoriesState(
-              status: IncomeCategoriesStatus.loaded,
+              status: IncomeCategoriesUIStatus.loaded,
               categories: categoriesState,
             ),
           );
@@ -416,7 +416,7 @@ void main() {
             mockIncomeCategoriesBloc,
             const Stream<IncomeCategoriesState>.empty(),
             initialState: IncomeCategoriesState(
-              status: IncomeCategoriesStatus.loaded,
+              status: IncomeCategoriesUIStatus.loaded,
               categories: categoriesState,
             ),
           );

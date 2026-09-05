@@ -81,10 +81,10 @@ class _IncomeCategoriesListViewState extends State<IncomeCategoriesListView> {
         Expanded(
           child: BlocBuilder<IncomeCategoriesBloc, IncomeCategoriesState>(
             buildWhen: (p, c) =>
-                p.status == IncomeCategoriesStatus.loaded ||
-                c.status == IncomeCategoriesStatus.loading,
+                p.status == IncomeCategoriesUIStatus.loaded ||
+                c.status == IncomeCategoriesUIStatus.loading,
             builder: (context, loadState) {
-              if (loadState.status == IncomeCategoriesStatus.loading) {
+              if (loadState.status == IncomeCategoriesUIStatus.loading) {
                 return Center(
                   child: LoadingIndicator(
                     size: 32,
@@ -93,7 +93,7 @@ class _IncomeCategoriesListViewState extends State<IncomeCategoriesListView> {
                   ),
                 );
               }
-              if (loadState.status == IncomeCategoriesStatus.failure) {
+              if (loadState.status == IncomeCategoriesUIStatus.failure) {
                 return Center(
                   child: AppExceptionBox(
                     title: context.l10n.incomeCategoriesListFailureTitle,
@@ -125,7 +125,7 @@ class _IncomeCategoriesListViewState extends State<IncomeCategoriesListView> {
                       return BlocSelector<
                         IncomeCategoriesBloc,
                         IncomeCategoriesState,
-                        IncomeCategoryWithState?
+                        IncomeCategoryUIModel?
                       >(
                         selector: (state) {
                           return state.categories.firstWhereOrNull(
@@ -138,10 +138,10 @@ class _IncomeCategoriesListViewState extends State<IncomeCategoriesListView> {
                           }
                           final isDeleting =
                               incomeCategory.status ==
-                              IncomeCategoryStatus.deleting;
+                              IncomeCategoryUIStatus.deleting;
                           final isUpdating =
                               incomeCategory.status ==
-                              IncomeCategoryStatus.updating;
+                              IncomeCategoryUIStatus.updating;
                           return IncomeCategoryTile(
                             category: incomeCategory.category,
                             isDeleting: isDeleting,

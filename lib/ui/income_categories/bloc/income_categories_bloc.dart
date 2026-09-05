@@ -68,7 +68,7 @@ class IncomeCategoriesBloc
     );
     emit(
       const IncomeCategoriesState(
-        status: IncomeCategoriesStatus.loading,
+        status: IncomeCategoriesUIStatus.loading,
       ),
     );
 
@@ -89,13 +89,14 @@ class IncomeCategoriesBloc
               traceId: traceId,
             );
             return state.copyWith(
-              status: IncomeCategoriesStatus.loaded,
+              status: IncomeCategoriesUIStatus.loaded,
               categories: categories
                   .map(
-                    (it) => IncomeCategoryWithState(
+                    (it) => IncomeCategoryUIModel(
                       category: it,
                       status:
-                          currentItemState[it.id] ?? IncomeCategoryStatus.idle,
+                          currentItemState[it.id] ??
+                          IncomeCategoryUIStatus.idle,
                     ),
                   )
                   .toList(),
@@ -107,7 +108,7 @@ class IncomeCategoriesBloc
               traceId: traceId,
             );
             return state.copyWith(
-              status: IncomeCategoriesStatus.failure,
+              status: IncomeCategoriesUIStatus.failure,
               exception: exc,
             );
           },
@@ -143,7 +144,7 @@ class IncomeCategoriesBloc
         categories: state.categories.map((it) {
           final isDeleting = it.category.id == category.id;
           if (!isDeleting) return it;
-          return it.copyWith(status: IncomeCategoryStatus.deleting);
+          return it.copyWith(status: IncomeCategoryUIStatus.deleting);
         }).toList(),
       ),
     );
@@ -161,8 +162,8 @@ class IncomeCategoriesBloc
         );
         emit(
           state.copyWith(
-            status: IncomeCategoriesStatus.loaded,
-            notice: IncomeCategoryNotice.recentlyDeleted(category: category),
+            status: IncomeCategoriesUIStatus.loaded,
+            notice: IncomeCategoryUINotice.recentlyDeleted(category: category),
           ),
         );
       },
@@ -174,13 +175,13 @@ class IncomeCategoriesBloc
         );
         emit(
           state.copyWith(
-            status: IncomeCategoriesStatus.loaded,
+            status: IncomeCategoriesUIStatus.loaded,
             categories: state.categories.map((it) {
               final processed = it.category.id == category.id;
               if (!processed) return it;
-              return it.copyWith(status: IncomeCategoryStatus.idle);
+              return it.copyWith(status: IncomeCategoryUIStatus.idle);
             }).toList(),
-            notice: IncomeCategoryNotice.deleteFailed(
+            notice: IncomeCategoryUINotice.deleteFailed(
               category: category,
               exception: exc,
             ),
@@ -216,7 +217,7 @@ class IncomeCategoriesBloc
         categories: state.categories.map((it) {
           final isUpdating = it.category.id == category.id;
           if (!isUpdating) return it;
-          return it.copyWith(status: IncomeCategoryStatus.updating);
+          return it.copyWith(status: IncomeCategoryUIStatus.updating);
         }).toList(),
       ),
     );
@@ -238,8 +239,8 @@ class IncomeCategoriesBloc
         );
         emit(
           state.copyWith(
-            status: IncomeCategoriesStatus.loaded,
-            notice: IncomeCategoryNotice.recentlyUpdated(
+            status: IncomeCategoriesUIStatus.loaded,
+            notice: IncomeCategoryUINotice.recentlyUpdated(
               from: oldIncomeCategory,
               to: updated,
             ),
@@ -254,15 +255,15 @@ class IncomeCategoriesBloc
         );
         emit(
           state.copyWith(
-            status: IncomeCategoriesStatus.loaded,
+            status: IncomeCategoriesUIStatus.loaded,
             categories: state.categories.map((it) {
               final processed = it.category.id == category.id;
               if (!processed) return it;
               return it.copyWith(
-                status: IncomeCategoryStatus.idle,
+                status: IncomeCategoryUIStatus.idle,
               );
             }).toList(),
-            notice: IncomeCategoryNotice.updateFailed(
+            notice: IncomeCategoryUINotice.updateFailed(
               category: category,
               exception: exc,
             ),

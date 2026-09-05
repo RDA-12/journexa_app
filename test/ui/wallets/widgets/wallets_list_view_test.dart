@@ -65,7 +65,7 @@ void main() {
     );
   });
   final walletWithBalancesState = walletWithBalances
-      .map((it) => WalletWithBalanceState(walletWithBalance: it))
+      .map((it) => WalletWithBalanceUIModel(walletWithBalance: it))
       .toList();
 
   late WalletsBloc mockWalletsBloc;
@@ -104,7 +104,7 @@ void main() {
           mockWalletsBloc,
           const Stream<WalletsState>.empty(),
           initialState: const WalletsState(
-            status: WalletsStatus.loading,
+            status: WalletsUIStatus.loading,
           ),
         );
 
@@ -122,16 +122,16 @@ void main() {
           mockWalletsBloc,
           const Stream<WalletsState>.empty(),
           initialState: WalletsState(
-            status: WalletsStatus.loaded,
+            status: WalletsUIStatus.loaded,
             walletWithBalances: walletWithBalancesState,
           ),
         );
 
         await pumpWidget(tester);
 
-        final finder = find.byType(AppListView<WalletWithBalanceState>);
+        final finder = find.byType(AppListView<WalletWithBalanceUIModel>);
         expect(finder, findsOneWidget);
-        final widget = tester.widget<AppListView<WalletWithBalanceState>>(
+        final widget = tester.widget<AppListView<WalletWithBalanceUIModel>>(
           finder,
         );
         expect(widget.items, walletWithBalancesState);
@@ -150,7 +150,7 @@ void main() {
             mockWalletsBloc,
             const Stream<WalletsState>.empty(),
             initialState: WalletsState(
-              status: WalletsStatus.failure,
+              status: WalletsUIStatus.failure,
               exception: AppException.test(),
             ),
           );
@@ -173,7 +173,7 @@ void main() {
             mockWalletsBloc,
             const Stream<WalletsState>.empty(),
             initialState: WalletsState(
-              status: WalletsStatus.loaded,
+              status: WalletsUIStatus.loaded,
               walletWithBalances: walletWithBalancesState,
             ),
           );
@@ -195,7 +195,7 @@ void main() {
             mockWalletsBloc,
             const Stream<WalletsState>.empty(),
             initialState: const WalletsState(
-              status: WalletsStatus.loaded,
+              status: WalletsUIStatus.loaded,
             ),
           );
 
@@ -216,7 +216,7 @@ void main() {
             mockWalletsBloc,
             const Stream<WalletsState>.empty(),
             initialState: const WalletsState(
-              status: WalletsStatus.loaded,
+              status: WalletsUIStatus.loaded,
             ),
           );
 
@@ -306,7 +306,7 @@ void main() {
           mockWalletsBloc,
           const Stream<WalletsState>.empty(),
           initialState: WalletsState(
-            status: WalletsStatus.loaded,
+            status: WalletsUIStatus.loaded,
             walletWithBalances: walletWithBalancesState,
           ),
         );
@@ -343,7 +343,7 @@ void main() {
           mockWalletsBloc,
           const Stream<WalletsState>.empty(),
           initialState: WalletsState(
-            status: WalletsStatus.loaded,
+            status: WalletsUIStatus.loaded,
             walletWithBalances: walletWithBalancesState,
           ),
         );
@@ -394,7 +394,7 @@ void main() {
             mockWalletsBloc,
             const Stream<WalletsState>.empty(),
             initialState: const WalletsState(
-              status: WalletsStatus.loading,
+              status: WalletsUIStatus.loading,
             ),
           );
 
@@ -412,7 +412,7 @@ void main() {
             mockWalletsBloc,
             const Stream<WalletsState>.empty(),
             initialState: WalletsState(
-              status: WalletsStatus.loaded,
+              status: WalletsUIStatus.loaded,
               walletWithBalances: walletWithBalancesState,
             ),
           );
@@ -434,7 +434,7 @@ void main() {
             mockWalletsBloc,
             const Stream<WalletsState>.empty(),
             initialState: WalletsState(
-              status: WalletsStatus.loaded,
+              status: WalletsUIStatus.loaded,
               walletWithBalances: walletWithBalancesState,
             ),
           );
@@ -455,15 +455,15 @@ void main() {
             mockWalletsBloc,
             Stream<WalletsState>.fromIterable([
               WalletsState(
-                status: WalletsStatus.loaded,
+                status: WalletsUIStatus.loaded,
                 walletWithBalances: walletWithBalancesState,
-                notice: WalletNotice.recentlyDeleted(
+                notice: WalletUINotice.recentlyDeleted(
                   wallet: walletWithBalances.first.wallet,
                 ),
               ),
             ]),
             initialState: WalletsState(
-              status: WalletsStatus.loaded,
+              status: WalletsUIStatus.loaded,
               walletWithBalances: walletWithBalancesState,
             ),
           );
@@ -492,16 +492,16 @@ void main() {
             mockWalletsBloc,
             Stream<WalletsState>.fromIterable([
               WalletsState(
-                status: WalletsStatus.loaded,
+                status: WalletsUIStatus.loaded,
                 walletWithBalances: walletWithBalancesState,
-                notice: WalletNotice.deleteFailed(
+                notice: WalletUINotice.deleteFailed(
                   wallet: walletWithBalances.first.wallet,
                   exception: AppException.test(),
                 ),
               ),
             ]),
             initialState: WalletsState(
-              status: WalletsStatus.loaded,
+              status: WalletsUIStatus.loaded,
               walletWithBalances: walletWithBalancesState,
             ),
           );
@@ -536,15 +536,15 @@ void main() {
             mockWalletsBloc,
             Stream<WalletsState>.fromIterable([
               WalletsState(
-                status: WalletsStatus.loaded,
+                status: WalletsUIStatus.loaded,
                 walletWithBalances: walletWithBalancesState,
-                notice: WalletNotice.recentlyDeleted(
+                notice: WalletUINotice.recentlyDeleted(
                   wallet: walletWithBalances.first.wallet,
                 ),
               ),
             ]),
             initialState: WalletsState(
-              status: WalletsStatus.loaded,
+              status: WalletsUIStatus.loaded,
               walletWithBalances: walletWithBalancesState,
             ),
           );
@@ -570,16 +570,16 @@ void main() {
             mockWalletsBloc,
             Stream<WalletsState>.fromIterable([
               WalletsState(
-                status: WalletsStatus.loaded,
+                status: WalletsUIStatus.loaded,
                 walletWithBalances: walletWithBalancesState,
-                notice: WalletNotice.deleteFailed(
+                notice: WalletUINotice.deleteFailed(
                   wallet: walletWithBalances.first.wallet,
                   exception: AppException.test(),
                 ),
               ),
             ]),
             initialState: WalletsState(
-              status: WalletsStatus.loaded,
+              status: WalletsUIStatus.loaded,
               walletWithBalances: walletWithBalancesState,
             ),
           );

@@ -75,11 +75,11 @@ class _WalletSelectorState extends State<WalletSelector> {
       listenWhen: (p, c) => p.status != c.status,
       listener: (context, state) {
         switch (state.status) {
-          case WalletsStatus.loading:
+          case WalletsUIStatus.loading:
             _controller.isLoading = true;
-          case WalletsStatus.failure:
+          case WalletsUIStatus.failure:
             _controller.lastError = state.exception;
-          case WalletsStatus.loaded:
+          case WalletsUIStatus.loaded:
             _controller.isLoading = false;
             _controller.items = state.walletWithBalances
                 .map((it) => it.walletWithBalance.wallet)

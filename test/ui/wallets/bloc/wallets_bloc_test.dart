@@ -41,7 +41,7 @@ void main() {
   });
   final walletsWithState = wallets.map(
     (it) {
-      return WalletWithBalanceState(
+      return WalletWithBalanceUIModel(
         walletWithBalance: it,
       );
     },
@@ -66,7 +66,10 @@ void main() {
       DeleteWalletParams(wallet: wallets.first.wallet),
     );
     registerFallbackValue(
-      UpdateWalletParams(wallet: wallets.first.wallet),
+      UpdateWalletParams(
+        wallet: wallets.first.wallet,
+        name: 'new name',
+      ),
     );
   });
 
@@ -127,9 +130,9 @@ void main() {
       ),
       wait: kDefaultDebounceDuration,
       expect: () => <WalletsState>[
-        const WalletsState(status: WalletsStatus.loading),
+        const WalletsState(status: WalletsUIStatus.loading),
         WalletsState(
-          status: WalletsStatus.loaded,
+          status: WalletsUIStatus.loaded,
           walletWithBalances: walletsWithState,
         ),
       ],
@@ -153,9 +156,9 @@ void main() {
       ),
       wait: kDefaultDebounceDuration,
       expect: () => <WalletsState>[
-        const WalletsState(status: WalletsStatus.loading),
+        const WalletsState(status: WalletsUIStatus.loading),
         WalletsState(
-          status: WalletsStatus.loaded,
+          status: WalletsUIStatus.loaded,
           walletWithBalances: walletsWithState,
         ),
       ],
@@ -190,9 +193,9 @@ void main() {
       ),
       wait: kDefaultDebounceDuration,
       expect: () => <WalletsState>[
-        const WalletsState(status: WalletsStatus.loading),
+        const WalletsState(status: WalletsUIStatus.loading),
         WalletsState(
-          status: WalletsStatus.failure,
+          status: WalletsUIStatus.failure,
           exception: AppException.test(),
         ),
       ],
@@ -213,7 +216,7 @@ void main() {
       'when deleteWalletUseCase returns success',
       seed: () {
         return WalletsState(
-          status: WalletsStatus.loaded,
+          status: WalletsUIStatus.loaded,
           walletWithBalances: walletsWithState,
         );
       },
@@ -224,23 +227,23 @@ void main() {
       wait: kDefaultDebounceDuration,
       expect: () => <WalletsState>[
         WalletsState(
-          status: WalletsStatus.loaded,
+          status: WalletsUIStatus.loaded,
           walletWithBalances: walletsWithState.map((it) {
             final isDeleting =
                 it.walletWithBalance.wallet.id == wallets.first.wallet.id;
             if (!isDeleting) return it;
-            return it.copyWith(status: WalletStatus.deleting);
+            return it.copyWith(status: WalletUIStatus.deleting);
           }).toList(),
         ),
         WalletsState(
-          status: WalletsStatus.loaded,
+          status: WalletsUIStatus.loaded,
           walletWithBalances: walletsWithState.map((it) {
             final isDeleting =
                 it.walletWithBalance.wallet.id == wallets.first.wallet.id;
             if (!isDeleting) return it;
-            return it.copyWith(status: WalletStatus.deleting);
+            return it.copyWith(status: WalletUIStatus.deleting);
           }).toList(),
-          notice: WalletNotice.recentlyDeleted(wallet: wallets.first.wallet),
+          notice: WalletUINotice.recentlyDeleted(wallet: wallets.first.wallet),
         ),
       ],
       verify: (_) {
@@ -267,7 +270,7 @@ void main() {
       },
       seed: () {
         return WalletsState(
-          status: WalletsStatus.loaded,
+          status: WalletsUIStatus.loaded,
           walletWithBalances: walletsWithState,
         );
       },
@@ -278,18 +281,18 @@ void main() {
       wait: kDefaultDebounceDuration,
       expect: () => <WalletsState>[
         WalletsState(
-          status: WalletsStatus.loaded,
+          status: WalletsUIStatus.loaded,
           walletWithBalances: walletsWithState.map((it) {
             final isDeleting =
                 it.walletWithBalance.wallet.id == wallets.first.wallet.id;
             if (!isDeleting) return it;
-            return it.copyWith(status: WalletStatus.deleting);
+            return it.copyWith(status: WalletUIStatus.deleting);
           }).toList(),
         ),
         WalletsState(
-          status: WalletsStatus.loaded,
+          status: WalletsUIStatus.loaded,
           walletWithBalances: walletsWithState,
-          notice: WalletNotice.deleteFailed(
+          notice: WalletUINotice.deleteFailed(
             wallet: wallets.first.wallet,
             exception: AppException.test(),
           ),
@@ -311,7 +314,7 @@ void main() {
       'do nothing when wallet not found on walletWithBalances',
       seed: () {
         return const WalletsState(
-          status: WalletsStatus.loaded,
+          status: WalletsUIStatus.loaded,
         );
       },
       build: buildBloc,
@@ -332,7 +335,7 @@ void main() {
       'when updateWalletUseCase returns success',
       seed: () {
         return WalletsState(
-          status: WalletsStatus.loaded,
+          status: WalletsUIStatus.loaded,
           walletWithBalances: walletsWithState,
         );
       },
@@ -345,23 +348,23 @@ void main() {
       ),
       expect: () => <WalletsState>[
         WalletsState(
-          status: WalletsStatus.loaded,
+          status: WalletsUIStatus.loaded,
           walletWithBalances: walletsWithState.map((it) {
             final isUpdating =
                 it.walletWithBalance.wallet.id == wallets.first.wallet.id;
             if (!isUpdating) return it;
-            return it.copyWith(status: WalletStatus.updating);
+            return it.copyWith(status: WalletUIStatus.updating);
           }).toList(),
         ),
         WalletsState(
-          status: WalletsStatus.loaded,
+          status: WalletsUIStatus.loaded,
           walletWithBalances: walletsWithState.map((it) {
             final isUpdating =
                 it.walletWithBalance.wallet.id == wallets.first.wallet.id;
             if (!isUpdating) return it;
-            return it.copyWith(status: WalletStatus.updating);
+            return it.copyWith(status: WalletUIStatus.updating);
           }).toList(),
-          notice: WalletNotice.recentlyUpdated(
+          notice: WalletUINotice.recentlyUpdated(
             from: wallets.first.wallet,
             to: updatedFirstWallet,
           ),
@@ -399,7 +402,7 @@ void main() {
       },
       seed: () {
         return WalletsState(
-          status: WalletsStatus.loaded,
+          status: WalletsUIStatus.loaded,
           walletWithBalances: walletsWithState,
         );
       },
@@ -412,18 +415,18 @@ void main() {
       ),
       expect: () => <WalletsState>[
         WalletsState(
-          status: WalletsStatus.loaded,
+          status: WalletsUIStatus.loaded,
           walletWithBalances: walletsWithState.map((it) {
             final isUpdating =
                 it.walletWithBalance.wallet.id == wallets.first.wallet.id;
             if (!isUpdating) return it;
-            return it.copyWith(status: WalletStatus.updating);
+            return it.copyWith(status: WalletUIStatus.updating);
           }).toList(),
         ),
         WalletsState(
-          status: WalletsStatus.loaded,
+          status: WalletsUIStatus.loaded,
           walletWithBalances: walletsWithState,
-          notice: WalletNotice.updateFailed(
+          notice: WalletUINotice.updateFailed(
             wallet: wallets.first.wallet,
             exception: AppException.test(),
           ),
@@ -446,7 +449,7 @@ void main() {
       'do nothing when wallet not found on walletWithBalances',
       seed: () {
         return const WalletsState(
-          status: WalletsStatus.loaded,
+          status: WalletsUIStatus.loaded,
         );
       },
       build: buildBloc,

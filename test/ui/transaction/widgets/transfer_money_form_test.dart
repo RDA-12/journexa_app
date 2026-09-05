@@ -41,7 +41,7 @@ void main() {
     return Wallet.test().update(name: 'wallet $index').copyWith(id: '$index');
   }).toList();
   final blocWallets = wallets.map((it) {
-    return WalletWithBalanceState(
+    return WalletWithBalanceUIModel(
       walletWithBalance: WalletWithBalance(wallet: it, balance: Decimal.zero),
     );
   }).toList();
@@ -54,7 +54,7 @@ void main() {
       mockWalletsBloc,
       Stream<WalletsState>.value(
         WalletsState(
-          status: WalletsStatus.loaded,
+          status: WalletsUIStatus.loaded,
           walletWithBalances: blocWallets,
         ),
       ),

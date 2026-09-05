@@ -67,7 +67,7 @@ class WalletsBloc extends Bloc<WalletsEvent, WalletsState>
     );
     emit(
       const WalletsState(
-        status: WalletsStatus.loading,
+        status: WalletsUIStatus.loading,
       ),
     );
 
@@ -89,13 +89,13 @@ class WalletsBloc extends Bloc<WalletsEvent, WalletsState>
               traceId: traceId,
             );
             return state.copyWith(
-              status: WalletsStatus.loaded,
+              status: WalletsUIStatus.loaded,
               walletWithBalances: walletWithBalances
                   .map(
-                    (it) => WalletWithBalanceState(
+                    (it) => WalletWithBalanceUIModel(
                       walletWithBalance: it,
-                      status: currentItemState[it.wallet.id] ??
-                          WalletStatus.idle,
+                      status:
+                          currentItemState[it.wallet.id] ?? WalletUIStatus.idle,
                     ),
                   )
                   .toList(),
@@ -107,7 +107,7 @@ class WalletsBloc extends Bloc<WalletsEvent, WalletsState>
               traceId: traceId,
             );
             return state.copyWith(
-              status: WalletsStatus.failure,
+              status: WalletsUIStatus.failure,
               exception: exc,
             );
           },
@@ -143,7 +143,7 @@ class WalletsBloc extends Bloc<WalletsEvent, WalletsState>
         walletWithBalances: state.walletWithBalances.map((it) {
           final isDeleting = it.walletWithBalance.wallet.id == wallet.id;
           if (!isDeleting) return it;
-          return it.copyWith(status: WalletStatus.deleting);
+          return it.copyWith(status: WalletUIStatus.deleting);
         }).toList(),
       ),
     );
@@ -161,8 +161,8 @@ class WalletsBloc extends Bloc<WalletsEvent, WalletsState>
         );
         emit(
           state.copyWith(
-            status: WalletsStatus.loaded,
-            notice: WalletNotice.recentlyDeleted(wallet: wallet),
+            status: WalletsUIStatus.loaded,
+            notice: WalletUINotice.recentlyDeleted(wallet: wallet),
           ),
         );
       },
@@ -174,13 +174,13 @@ class WalletsBloc extends Bloc<WalletsEvent, WalletsState>
         );
         emit(
           state.copyWith(
-            status: WalletsStatus.loaded,
+            status: WalletsUIStatus.loaded,
             walletWithBalances: state.walletWithBalances.map((it) {
               final processed = it.walletWithBalance.wallet.id == wallet.id;
               if (!processed) return it;
-              return it.copyWith(status: WalletStatus.idle);
+              return it.copyWith(status: WalletUIStatus.idle);
             }).toList(),
-            notice: WalletNotice.deleteFailed(
+            notice: WalletUINotice.deleteFailed(
               wallet: wallet,
               exception: exc,
             ),
@@ -217,7 +217,7 @@ class WalletsBloc extends Bloc<WalletsEvent, WalletsState>
         walletWithBalances: state.walletWithBalances.map((it) {
           final isUpdating = it.walletWithBalance.wallet.id == wallet.id;
           if (!isUpdating) return it;
-          return it.copyWith(status: WalletStatus.updating);
+          return it.copyWith(status: WalletUIStatus.updating);
         }).toList(),
       ),
     );
@@ -236,8 +236,8 @@ class WalletsBloc extends Bloc<WalletsEvent, WalletsState>
         );
         emit(
           state.copyWith(
-            status: WalletsStatus.loaded,
-            notice: WalletNotice.recentlyUpdated(
+            status: WalletsUIStatus.loaded,
+            notice: WalletUINotice.recentlyUpdated(
               from: oldWallet,
               to: updated,
             ),
@@ -252,15 +252,15 @@ class WalletsBloc extends Bloc<WalletsEvent, WalletsState>
         );
         emit(
           state.copyWith(
-            status: WalletsStatus.loaded,
+            status: WalletsUIStatus.loaded,
             walletWithBalances: state.walletWithBalances.map((it) {
               final processed = it.walletWithBalance.wallet.id == wallet.id;
               if (!processed) return it;
               return it.copyWith(
-                status: WalletStatus.idle,
+                status: WalletUIStatus.idle,
               );
             }).toList(),
-            notice: WalletNotice.updateFailed(wallet: wallet, exception: exc),
+            notice: WalletUINotice.updateFailed(wallet: wallet, exception: exc),
           ),
         );
       },

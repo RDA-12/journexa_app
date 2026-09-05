@@ -141,7 +141,7 @@ void main() {
       whenListen(
         mockWalletsBloc,
         Stream<WalletsState>.fromIterable([
-          const WalletsState(status: WalletsStatus.loading),
+          const WalletsState(status: WalletsUIStatus.loading),
         ]),
         initialState: const WalletsState(),
       );
@@ -168,10 +168,10 @@ void main() {
                   (it) => WalletWithBalance(wallet: it, balance: Decimal.zero),
                 )
                 .map(
-                  (it) => WalletWithBalanceState(walletWithBalance: it),
+                  (it) => WalletWithBalanceUIModel(walletWithBalance: it),
                 )
                 .toList(),
-            status: WalletsStatus.loaded,
+            status: WalletsUIStatus.loaded,
           ),
         ]),
         initialState: const WalletsState(),
@@ -192,7 +192,7 @@ void main() {
         Stream<WalletsState>.fromIterable([
           WalletsState(
             exception: AppException.test(),
-            status: WalletsStatus.failure,
+            status: WalletsUIStatus.failure,
           ),
         ]),
         initialState: const WalletsState(),

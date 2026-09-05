@@ -3,7 +3,7 @@ part of 'wallets_bloc.dart';
 /// Status of [WalletsBloc]
 ///
 /// Specifically for load and search events
-enum WalletsStatus {
+enum WalletsUIStatus {
   /// Initial status
   initial,
 
@@ -17,8 +17,8 @@ enum WalletsStatus {
   failure,
 }
 
-/// Status for [WalletWithBalanceState]
-enum WalletStatus {
+/// Status for [WalletWithBalanceUIModel]
+enum WalletUIStatus {
   /// Idle status
   idle,
 
@@ -33,51 +33,51 @@ enum WalletStatus {
 ///
 /// This class can be used as notice to show any notice to UI
 @freezed
-sealed class WalletNotice with _$WalletNotice {
-  /// Creates new [WalletNotice] as deleted notice
-  const factory WalletNotice.recentlyDeleted({
+sealed class WalletUINotice with _$WalletUINotice {
+  /// Creates new [WalletUINotice] as deleted notice
+  const factory WalletUINotice.recentlyDeleted({
     /// The [Wallet] that was recently deleted
     required Wallet wallet,
-  }) = _WalletNoticeRecentlyDeleted;
+  }) = _WalletUINoticeRecentlyDeleted;
 
-  /// Creates new [WalletNotice] as updated notice
-  const factory WalletNotice.recentlyUpdated({
+  /// Creates new [WalletUINotice] as updated notice
+  const factory WalletUINotice.recentlyUpdated({
     /// Old [Wallet]
     required Wallet from,
 
     /// New updated [Wallet]
     required Wallet to,
-  }) = _WalletNoticeRecentlyUpdated;
+  }) = _WalletUINoticeRecentlyUpdated;
 
-  /// Creates new [WalletNotice] as delete failed notice
-  const factory WalletNotice.deleteFailed({
+  /// Creates new [WalletUINotice] as delete failed notice
+  const factory WalletUINotice.deleteFailed({
     /// [Wallet] that meant to be deleted
     required Wallet wallet,
 
     /// Exception that occurred when delete event failed
     required AppException exception,
-  }) = _WalletNoticeDeleteFailed;
+  }) = _WalletUINoticeDeleteFailed;
 
-  /// Creates new [WalletNotice] as update failed notice
-  const factory WalletNotice.updateFailed({
+  /// Creates new [WalletUINotice] as update failed notice
+  const factory WalletUINotice.updateFailed({
     /// [Wallet] that meant to be updated
     required Wallet wallet,
 
     /// Exception that occurred when update event failed
     required AppException exception,
-  }) = _WalletNoticeUpdateFailed;
+  }) = _WalletUINoticeUpdateFailed;
 }
 
 /// Extends [WalletWithBalance] to includes state for UI
 @freezed
-sealed class WalletWithBalanceState with _$WalletWithBalanceState {
-  const factory WalletWithBalanceState({
+sealed class WalletWithBalanceUIModel with _$WalletWithBalanceUIModel {
+  const factory WalletWithBalanceUIModel({
     /// The [WalletWithBalance]
     required WalletWithBalance walletWithBalance,
 
     /// Status for UI
-    @Default(WalletStatus.idle) WalletStatus status,
-  }) = _WalletWithBalanceState;
+    @Default(WalletUIStatus.idle) WalletUIStatus status,
+  }) = _WalletWithBalanceUIModel;
 }
 
 /// States of [WalletsBloc]
@@ -86,16 +86,16 @@ sealed class WalletsState with _$WalletsState {
   /// Creates new [WalletsState]
   const factory WalletsState({
     /// Status of the state
-    @Default(WalletsStatus.initial) WalletsStatus status,
+    @Default(WalletsUIStatus.initial) WalletsUIStatus status,
 
     /// List of wallets with their balances
-    @Default([]) List<WalletWithBalanceState> walletWithBalances,
+    @Default([]) List<WalletWithBalanceUIModel> walletWithBalances,
 
     /// Exception that occurred when load or search event failed
     AppException? exception,
 
     /// Notice that meant to be announce by UI
-    WalletNotice? notice,
+    WalletUINotice? notice,
   }) = _WalletsState;
 
   const WalletsState._();

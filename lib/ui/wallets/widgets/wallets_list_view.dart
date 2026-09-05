@@ -126,10 +126,10 @@ class _WalletsListViewState extends State<WalletsListView> {
           Expanded(
             child: BlocBuilder<WalletsBloc, WalletsState>(
               buildWhen: (p, c) =>
-                  p.status == WalletsStatus.loading ||
-                  c.status == WalletsStatus.loading,
+                  p.status == WalletsUIStatus.loading ||
+                  c.status == WalletsUIStatus.loading,
               builder: (context, loadState) {
-                if (loadState.status == WalletsStatus.loading) {
+                if (loadState.status == WalletsUIStatus.loading) {
                   return Center(
                     child: LoadingIndicator(
                       size: 32,
@@ -137,7 +137,7 @@ class _WalletsListViewState extends State<WalletsListView> {
                     ),
                   );
                 }
-                if (loadState.status == WalletsStatus.failure) {
+                if (loadState.status == WalletsUIStatus.failure) {
                   return Center(
                     child: AppExceptionBox(
                       title: context.l10n.walletsListFailureTitle,
@@ -170,7 +170,7 @@ class _WalletsListViewState extends State<WalletsListView> {
                         return BlocSelector<
                           WalletsBloc,
                           WalletsState,
-                          WalletWithBalanceState?
+                          WalletWithBalanceUIModel?
                         >(
                           selector: (state) {
                             return state.walletWithBalances.firstWhereOrNull(
@@ -185,9 +185,9 @@ class _WalletsListViewState extends State<WalletsListView> {
                             }
                             final walletWithBalance = wallet.walletWithBalance;
                             final isDeleting =
-                                wallet.status == WalletStatus.deleting;
+                                wallet.status == WalletUIStatus.deleting;
                             final isUpdating =
-                                wallet.status == WalletStatus.updating;
+                                wallet.status == WalletUIStatus.updating;
                             return WalletCard(
                               walletWithBalance: walletWithBalance,
                               isDeleting: isDeleting,

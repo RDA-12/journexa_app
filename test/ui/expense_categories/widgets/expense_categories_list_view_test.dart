@@ -56,7 +56,7 @@ void main() {
     );
   });
   final categoriesState = categories
-      .map((it) => ExpenseCategoryWithState(category: it))
+      .map((it) => ExpenseCategoryUIModel(category: it))
       .toList();
 
   late ExpenseCategoriesBloc mockExpenseCategoriesBloc;
@@ -95,7 +95,7 @@ void main() {
           mockExpenseCategoriesBloc,
           const Stream<ExpenseCategoriesState>.empty(),
           initialState: const ExpenseCategoriesState(
-            status: ExpenseCategoriesStatus.loading,
+            status: ExpenseCategoriesUIStatus.loading,
           ),
         );
 
@@ -113,16 +113,16 @@ void main() {
           mockExpenseCategoriesBloc,
           const Stream<ExpenseCategoriesState>.empty(),
           initialState: ExpenseCategoriesState(
-            status: ExpenseCategoriesStatus.loaded,
+            status: ExpenseCategoriesUIStatus.loaded,
             categories: categoriesState,
           ),
         );
 
         await pumpWidget(tester);
 
-        final finder = find.byType(AppListView<ExpenseCategoryWithState>);
+        final finder = find.byType(AppListView<ExpenseCategoryUIModel>);
         expect(finder, findsOneWidget);
-        final widget = tester.widget<AppListView<ExpenseCategoryWithState>>(
+        final widget = tester.widget<AppListView<ExpenseCategoryUIModel>>(
           finder,
         );
         expect(widget.items, categoriesState);
@@ -141,7 +141,7 @@ void main() {
             mockExpenseCategoriesBloc,
             const Stream<ExpenseCategoriesState>.empty(),
             initialState: ExpenseCategoriesState(
-              status: ExpenseCategoriesStatus.failure,
+              status: ExpenseCategoriesUIStatus.failure,
               exception: AppException.test(),
             ),
           );
@@ -164,7 +164,7 @@ void main() {
             mockExpenseCategoriesBloc,
             const Stream<ExpenseCategoriesState>.empty(),
             initialState: ExpenseCategoriesState(
-              status: ExpenseCategoriesStatus.loaded,
+              status: ExpenseCategoriesUIStatus.loaded,
               categories: categoriesState,
             ),
           );
@@ -186,7 +186,7 @@ void main() {
             mockExpenseCategoriesBloc,
             const Stream<ExpenseCategoriesState>.empty(),
             initialState: const ExpenseCategoriesState(
-              status: ExpenseCategoriesStatus.loaded,
+              status: ExpenseCategoriesUIStatus.loaded,
             ),
           );
 
@@ -207,7 +207,7 @@ void main() {
             mockExpenseCategoriesBloc,
             const Stream<ExpenseCategoriesState>.empty(),
             initialState: const ExpenseCategoriesState(
-              status: ExpenseCategoriesStatus.loaded,
+              status: ExpenseCategoriesUIStatus.loaded,
             ),
           );
 
@@ -298,7 +298,7 @@ void main() {
           mockExpenseCategoriesBloc,
           const Stream<ExpenseCategoriesState>.empty(),
           initialState: ExpenseCategoriesState(
-            status: ExpenseCategoriesStatus.loaded,
+            status: ExpenseCategoriesUIStatus.loaded,
             categories: categoriesState,
           ),
         );
@@ -331,7 +331,7 @@ void main() {
           mockExpenseCategoriesBloc,
           const Stream<ExpenseCategoriesState>.empty(),
           initialState: ExpenseCategoriesState(
-            status: ExpenseCategoriesStatus.loaded,
+            status: ExpenseCategoriesUIStatus.loaded,
             categories: categoriesState,
           ),
         );
@@ -376,7 +376,7 @@ void main() {
             mockExpenseCategoriesBloc,
             const Stream<ExpenseCategoriesState>.empty(),
             initialState: const ExpenseCategoriesState(
-              status: ExpenseCategoriesStatus.loading,
+              status: ExpenseCategoriesUIStatus.loading,
             ),
           );
 
@@ -394,7 +394,7 @@ void main() {
             mockExpenseCategoriesBloc,
             const Stream<ExpenseCategoriesState>.empty(),
             initialState: ExpenseCategoriesState(
-              status: ExpenseCategoriesStatus.loaded,
+              status: ExpenseCategoriesUIStatus.loaded,
               categories: categoriesState,
             ),
           );
@@ -416,7 +416,7 @@ void main() {
             mockExpenseCategoriesBloc,
             const Stream<ExpenseCategoriesState>.empty(),
             initialState: ExpenseCategoriesState(
-              status: ExpenseCategoriesStatus.loaded,
+              status: ExpenseCategoriesUIStatus.loaded,
               categories: categoriesState,
             ),
           );

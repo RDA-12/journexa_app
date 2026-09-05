@@ -92,7 +92,7 @@ void main() {
         .copyWith(id: '$index');
   }).toList();
   final blocExpenseCategories = expenseCategories.map((it) {
-    return ExpenseCategoryWithState(category: it);
+    return ExpenseCategoryUIModel(category: it);
   }).toList();
 
   late WalletsBloc mockWalletsBloc;
@@ -130,7 +130,7 @@ void main() {
       mockExpenseCategoriesBloc,
       Stream<ExpenseCategoriesState>.value(
         ExpenseCategoriesState(
-          status: ExpenseCategoriesStatus.loaded,
+          status: ExpenseCategoriesUIStatus.loaded,
           categories: blocExpenseCategories,
         ),
       ),

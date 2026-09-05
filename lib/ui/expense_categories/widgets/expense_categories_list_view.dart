@@ -81,10 +81,10 @@ class _ExpenseCategoriesListViewState extends State<ExpenseCategoriesListView> {
         Expanded(
           child: BlocBuilder<ExpenseCategoriesBloc, ExpenseCategoriesState>(
             buildWhen: (p, c) =>
-                p.status == ExpenseCategoriesStatus.loaded ||
-                c.status == ExpenseCategoriesStatus.loading,
+                p.status == ExpenseCategoriesUIStatus.loaded ||
+                c.status == ExpenseCategoriesUIStatus.loading,
             builder: (context, loadState) {
-              if (loadState.status == ExpenseCategoriesStatus.loading) {
+              if (loadState.status == ExpenseCategoriesUIStatus.loading) {
                 return Center(
                   child: LoadingIndicator(
                     size: 32,
@@ -93,7 +93,7 @@ class _ExpenseCategoriesListViewState extends State<ExpenseCategoriesListView> {
                   ),
                 );
               }
-              if (loadState.status == ExpenseCategoriesStatus.failure) {
+              if (loadState.status == ExpenseCategoriesUIStatus.failure) {
                 return Center(
                   child: AppExceptionBox(
                     title: context.l10n.expenseCategoriesListFailureTitle,
@@ -125,7 +125,7 @@ class _ExpenseCategoriesListViewState extends State<ExpenseCategoriesListView> {
                       return BlocSelector<
                         ExpenseCategoriesBloc,
                         ExpenseCategoriesState,
-                        ExpenseCategoryWithState?
+                        ExpenseCategoryUIModel?
                       >(
                         selector: (state) {
                           return state.categories.firstWhereOrNull(
@@ -138,10 +138,10 @@ class _ExpenseCategoriesListViewState extends State<ExpenseCategoriesListView> {
                           }
                           final isDeleting =
                               expenseCategory.status ==
-                              ExpenseCategoryStatus.deleting;
+                              ExpenseCategoryUIStatus.deleting;
                           final isUpdating =
                               expenseCategory.status ==
-                              ExpenseCategoryStatus.updating;
+                              ExpenseCategoryUIStatus.updating;
                           return ExpenseCategoryTile(
                             category: expenseCategory.category,
                             isDeleting: isDeleting,

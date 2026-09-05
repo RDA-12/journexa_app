@@ -39,7 +39,7 @@ void main() {
   });
   final expenseCategoriesWithState = expenseCategories
       .map(
-        (it) => ExpenseCategoryWithState(category: it),
+        (it) => ExpenseCategoryUIModel(category: it),
       )
       .toList();
   final updatedFirstCategory = expenseCategories.first.update(
@@ -123,9 +123,9 @@ void main() {
       ),
       wait: kDefaultDebounceDuration,
       expect: () => <ExpenseCategoriesState>[
-        const ExpenseCategoriesState(status: ExpenseCategoriesStatus.loading),
+        const ExpenseCategoriesState(status: ExpenseCategoriesUIStatus.loading),
         ExpenseCategoriesState(
-          status: ExpenseCategoriesStatus.loaded,
+          status: ExpenseCategoriesUIStatus.loaded,
           categories: expenseCategoriesWithState,
         ),
       ],
@@ -149,9 +149,9 @@ void main() {
       ),
       wait: kDefaultDebounceDuration,
       expect: () => <ExpenseCategoriesState>[
-        const ExpenseCategoriesState(status: ExpenseCategoriesStatus.loading),
+        const ExpenseCategoriesState(status: ExpenseCategoriesUIStatus.loading),
         ExpenseCategoriesState(
-          status: ExpenseCategoriesStatus.loaded,
+          status: ExpenseCategoriesUIStatus.loaded,
           categories: expenseCategoriesWithState,
         ),
       ],
@@ -186,9 +186,9 @@ void main() {
       ),
       wait: kDefaultDebounceDuration,
       expect: () => <ExpenseCategoriesState>[
-        const ExpenseCategoriesState(status: ExpenseCategoriesStatus.loading),
+        const ExpenseCategoriesState(status: ExpenseCategoriesUIStatus.loading),
         ExpenseCategoriesState(
-          status: ExpenseCategoriesStatus.failure,
+          status: ExpenseCategoriesUIStatus.failure,
           exception: AppException.test(),
         ),
       ],
@@ -209,7 +209,7 @@ void main() {
       'when deleteExpenseCategory returns success',
       seed: () {
         return ExpenseCategoriesState(
-          status: ExpenseCategoriesStatus.loaded,
+          status: ExpenseCategoriesUIStatus.loaded,
           categories: expenseCategoriesWithState,
         );
       },
@@ -220,23 +220,23 @@ void main() {
       wait: kDefaultDebounceDuration,
       expect: () => <ExpenseCategoriesState>[
         ExpenseCategoriesState(
-          status: ExpenseCategoriesStatus.loaded,
+          status: ExpenseCategoriesUIStatus.loaded,
           categories: expenseCategoriesWithState.map((it) {
             final isDeleting =
                 it.category.id == expenseCategoriesWithState.first.category.id;
             if (!isDeleting) return it;
-            return it.copyWith(status: ExpenseCategoryStatus.deleting);
+            return it.copyWith(status: ExpenseCategoryUIStatus.deleting);
           }).toList(),
         ),
         ExpenseCategoriesState(
-          status: ExpenseCategoriesStatus.loaded,
+          status: ExpenseCategoriesUIStatus.loaded,
           categories: expenseCategoriesWithState.map((it) {
             final isDeleting =
                 it.category.id == expenseCategoriesWithState.first.category.id;
             if (!isDeleting) return it;
-            return it.copyWith(status: ExpenseCategoryStatus.deleting);
+            return it.copyWith(status: ExpenseCategoryUIStatus.deleting);
           }).toList(),
-          notice: ExpenseCategoryNotice.recentlyDeleted(
+          notice: ExpenseCategoryUINotice.recentlyDeleted(
             category: expenseCategories.first,
           ),
         ),
@@ -266,7 +266,7 @@ void main() {
       },
       seed: () {
         return ExpenseCategoriesState(
-          status: ExpenseCategoriesStatus.loaded,
+          status: ExpenseCategoriesUIStatus.loaded,
           categories: expenseCategoriesWithState,
         );
       },
@@ -277,18 +277,18 @@ void main() {
       wait: kDefaultDebounceDuration,
       expect: () => <ExpenseCategoriesState>[
         ExpenseCategoriesState(
-          status: ExpenseCategoriesStatus.loaded,
+          status: ExpenseCategoriesUIStatus.loaded,
           categories: expenseCategoriesWithState.map((it) {
             final isDeleting =
                 it.category.id == expenseCategoriesWithState.first.category.id;
             if (!isDeleting) return it;
-            return it.copyWith(status: ExpenseCategoryStatus.deleting);
+            return it.copyWith(status: ExpenseCategoryUIStatus.deleting);
           }).toList(),
         ),
         ExpenseCategoriesState(
-          status: ExpenseCategoriesStatus.loaded,
+          status: ExpenseCategoriesUIStatus.loaded,
           categories: expenseCategoriesWithState,
-          notice: ExpenseCategoryNotice.deleteFailed(
+          notice: ExpenseCategoryUINotice.deleteFailed(
             category: expenseCategories.first,
             exception: AppException.test(),
           ),
@@ -310,7 +310,7 @@ void main() {
       'do nothing when category not found on categories',
       seed: () {
         return const ExpenseCategoriesState(
-          status: ExpenseCategoriesStatus.loaded,
+          status: ExpenseCategoriesUIStatus.loaded,
         );
       },
       build: buildBloc,
@@ -331,7 +331,7 @@ void main() {
       'when updateExpenseCategory returns success',
       seed: () {
         return ExpenseCategoriesState(
-          status: ExpenseCategoriesStatus.loaded,
+          status: ExpenseCategoriesUIStatus.loaded,
           categories: expenseCategoriesWithState,
         );
       },
@@ -344,23 +344,23 @@ void main() {
       ),
       expect: () => <ExpenseCategoriesState>[
         ExpenseCategoriesState(
-          status: ExpenseCategoriesStatus.loaded,
+          status: ExpenseCategoriesUIStatus.loaded,
           categories: expenseCategoriesWithState.map((it) {
             final isUpdating =
                 it.category.id == expenseCategoriesWithState.first.category.id;
             if (!isUpdating) return it;
-            return it.copyWith(status: ExpenseCategoryStatus.updating);
+            return it.copyWith(status: ExpenseCategoryUIStatus.updating);
           }).toList(),
         ),
         ExpenseCategoriesState(
-          status: ExpenseCategoriesStatus.loaded,
+          status: ExpenseCategoriesUIStatus.loaded,
           categories: expenseCategoriesWithState.map((it) {
             final isUpdating =
                 it.category.id == expenseCategoriesWithState.first.category.id;
             if (!isUpdating) return it;
-            return it.copyWith(status: ExpenseCategoryStatus.updating);
+            return it.copyWith(status: ExpenseCategoryUIStatus.updating);
           }).toList(),
-          notice: ExpenseCategoryNotice.recentlyUpdated(
+          notice: ExpenseCategoryUINotice.recentlyUpdated(
             from: expenseCategoriesWithState.first.category,
             to: updatedFirstCategory,
           ),
@@ -398,7 +398,7 @@ void main() {
       },
       seed: () {
         return ExpenseCategoriesState(
-          status: ExpenseCategoriesStatus.loaded,
+          status: ExpenseCategoriesUIStatus.loaded,
           categories: expenseCategoriesWithState,
         );
       },
@@ -411,18 +411,18 @@ void main() {
       ),
       expect: () => <ExpenseCategoriesState>[
         ExpenseCategoriesState(
-          status: ExpenseCategoriesStatus.loaded,
+          status: ExpenseCategoriesUIStatus.loaded,
           categories: expenseCategoriesWithState.map((it) {
             final isUpdating =
                 it.category.id == expenseCategoriesWithState.first.category.id;
             if (!isUpdating) return it;
-            return it.copyWith(status: ExpenseCategoryStatus.updating);
+            return it.copyWith(status: ExpenseCategoryUIStatus.updating);
           }).toList(),
         ),
         ExpenseCategoriesState(
-          status: ExpenseCategoriesStatus.loaded,
+          status: ExpenseCategoriesUIStatus.loaded,
           categories: expenseCategoriesWithState,
-          notice: ExpenseCategoryNotice.updateFailed(
+          notice: ExpenseCategoryUINotice.updateFailed(
             category: expenseCategories.first,
             exception: AppException.test(),
           ),
@@ -445,7 +445,7 @@ void main() {
       'do nothing when account not found on categories',
       seed: () {
         return const ExpenseCategoriesState(
-          status: ExpenseCategoriesStatus.loaded,
+          status: ExpenseCategoriesUIStatus.loaded,
         );
       },
       build: buildBloc,

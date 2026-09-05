@@ -76,11 +76,11 @@ class _ExpenseCategorySelectorState extends State<ExpenseCategorySelector> {
       listenWhen: (p, c) => p.status != c.status,
       listener: (context, state) {
         switch (state.status) {
-          case ExpenseCategoriesStatus.loading:
+          case ExpenseCategoriesUIStatus.loading:
             _controller.isLoading = true;
-          case ExpenseCategoriesStatus.failure:
+          case ExpenseCategoriesUIStatus.failure:
             _controller.lastError = state.exception;
-          case ExpenseCategoriesStatus.loaded:
+          case ExpenseCategoriesUIStatus.loaded:
             _controller.isLoading = false;
             _controller.items = state.categories
                 .map((it) => it.category)

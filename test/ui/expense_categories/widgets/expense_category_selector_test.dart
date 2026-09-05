@@ -148,7 +148,9 @@ void main() {
       whenListen(
         mockExpenseCategoriesBloc,
         Stream<ExpenseCategoriesState>.fromIterable([
-          const ExpenseCategoriesState(status: ExpenseCategoriesStatus.loading),
+          const ExpenseCategoriesState(
+            status: ExpenseCategoriesUIStatus.loading,
+          ),
         ]),
         initialState: const ExpenseCategoriesState(),
       );
@@ -171,9 +173,9 @@ void main() {
         Stream<ExpenseCategoriesState>.fromIterable([
           ExpenseCategoriesState(
             categories: items
-                .map((it) => ExpenseCategoryWithState(category: it))
+                .map((it) => ExpenseCategoryUIModel(category: it))
                 .toList(),
-            status: ExpenseCategoriesStatus.loaded,
+            status: ExpenseCategoriesUIStatus.loaded,
           ),
         ]),
         initialState: const ExpenseCategoriesState(),
@@ -194,7 +196,7 @@ void main() {
         Stream<ExpenseCategoriesState>.fromIterable([
           ExpenseCategoriesState(
             exception: AppException.test(),
-            status: ExpenseCategoriesStatus.failure,
+            status: ExpenseCategoriesUIStatus.failure,
           ),
         ]),
         initialState: const ExpenseCategoriesState(),

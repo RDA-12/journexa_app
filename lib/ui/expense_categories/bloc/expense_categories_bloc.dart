@@ -68,7 +68,7 @@ class ExpenseCategoriesBloc
     );
     emit(
       const ExpenseCategoriesState(
-        status: ExpenseCategoriesStatus.loading,
+        status: ExpenseCategoriesUIStatus.loading,
       ),
     );
 
@@ -89,13 +89,14 @@ class ExpenseCategoriesBloc
               traceId: traceId,
             );
             return state.copyWith(
-              status: ExpenseCategoriesStatus.loaded,
+              status: ExpenseCategoriesUIStatus.loaded,
               categories: categories
                   .map(
-                    (it) => ExpenseCategoryWithState(
+                    (it) => ExpenseCategoryUIModel(
                       category: it,
                       status:
-                          currentItemState[it.id] ?? ExpenseCategoryStatus.idle,
+                          currentItemState[it.id] ??
+                          ExpenseCategoryUIStatus.idle,
                     ),
                   )
                   .toList(),
@@ -107,7 +108,7 @@ class ExpenseCategoriesBloc
               traceId: traceId,
             );
             return state.copyWith(
-              status: ExpenseCategoriesStatus.failure,
+              status: ExpenseCategoriesUIStatus.failure,
               exception: exc,
             );
           },
@@ -143,7 +144,7 @@ class ExpenseCategoriesBloc
         categories: state.categories.map((it) {
           final isDeleting = it.category.id == category.id;
           if (!isDeleting) return it;
-          return it.copyWith(status: ExpenseCategoryStatus.deleting);
+          return it.copyWith(status: ExpenseCategoryUIStatus.deleting);
         }).toList(),
       ),
     );
@@ -161,8 +162,8 @@ class ExpenseCategoriesBloc
         );
         emit(
           state.copyWith(
-            status: ExpenseCategoriesStatus.loaded,
-            notice: ExpenseCategoryNotice.recentlyDeleted(category: category),
+            status: ExpenseCategoriesUIStatus.loaded,
+            notice: ExpenseCategoryUINotice.recentlyDeleted(category: category),
           ),
         );
       },
@@ -174,13 +175,13 @@ class ExpenseCategoriesBloc
         );
         emit(
           state.copyWith(
-            status: ExpenseCategoriesStatus.loaded,
+            status: ExpenseCategoriesUIStatus.loaded,
             categories: state.categories.map((it) {
               final processed = it.category.id == category.id;
               if (!processed) return it;
-              return it.copyWith(status: ExpenseCategoryStatus.idle);
+              return it.copyWith(status: ExpenseCategoryUIStatus.idle);
             }).toList(),
-            notice: ExpenseCategoryNotice.deleteFailed(
+            notice: ExpenseCategoryUINotice.deleteFailed(
               category: category,
               exception: exc,
             ),
@@ -216,7 +217,7 @@ class ExpenseCategoriesBloc
         categories: state.categories.map((it) {
           final isUpdating = it.category.id == category.id;
           if (!isUpdating) return it;
-          return it.copyWith(status: ExpenseCategoryStatus.updating);
+          return it.copyWith(status: ExpenseCategoryUIStatus.updating);
         }).toList(),
       ),
     );
@@ -238,8 +239,8 @@ class ExpenseCategoriesBloc
         );
         emit(
           state.copyWith(
-            status: ExpenseCategoriesStatus.loaded,
-            notice: ExpenseCategoryNotice.recentlyUpdated(
+            status: ExpenseCategoriesUIStatus.loaded,
+            notice: ExpenseCategoryUINotice.recentlyUpdated(
               from: oldExpenseCategory,
               to: updated,
             ),
@@ -254,15 +255,15 @@ class ExpenseCategoriesBloc
         );
         emit(
           state.copyWith(
-            status: ExpenseCategoriesStatus.loaded,
+            status: ExpenseCategoriesUIStatus.loaded,
             categories: state.categories.map((it) {
               final processed = it.category.id == category.id;
               if (!processed) return it;
               return it.copyWith(
-                status: ExpenseCategoryStatus.idle,
+                status: ExpenseCategoryUIStatus.idle,
               );
             }).toList(),
-            notice: ExpenseCategoryNotice.updateFailed(
+            notice: ExpenseCategoryUINotice.updateFailed(
               category: category,
               exception: exc,
             ),

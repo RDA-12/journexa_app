@@ -115,7 +115,8 @@ void main() {
     for (final locale in AppLocalizations.supportedLocales) {
       final expectedTranslation = expectedTranslations[locale.languageCode]!;
       testWidgets(
-        'shows AppExceptionBox when state is failure for ${locale.languageCode}',
+        'shows AppExceptionBox when state is failure '
+        'for ${locale.languageCode}',
         (tester) async {
           final expectedTitle = expectedTranslation['errorTitle']!;
           final expectedDesc = expectedTranslation['errorDesc']!;

@@ -10,6 +10,8 @@ class AppCard extends StatelessWidget {
     required this.child,
     this.leading,
     this.bottom,
+    this.backgroundColor,
+    this.borderColor,
     super.key,
   });
 
@@ -24,16 +26,22 @@ class AppCard extends StatelessWidget {
   /// Typically used for actions
   final Widget? bottom;
 
+  /// Color for the background
+  final Color? backgroundColor;
+
+  /// Color for the border
+  final Color? borderColor;
+
   @override
   Widget build(BuildContext context) {
     return Card(
       borderOnForeground: false,
-      color: context.color.surface,
+      color: backgroundColor ?? context.color.surface,
       elevation: 0,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadiusGeometry.circular(16),
         side: BorderSide(
-          color: context.color.outlineVariant,
+          color: borderColor ?? context.color.outlineVariant,
         ),
       ),
       child: Padding(

@@ -547,4 +547,14 @@ class AppLocalizationsId extends AppLocalizations {
   @override
   String get transactionsListEmptyDescription =>
       'Tidak ada data transaksi yang ditemukan';
+
+  @override
+  String get homeWalletsLoadingSemantics => 'Memuat data dompet';
+
+  @override
+  String get homeWalletsEmptyDescription =>
+      'Tidak ada data dompet yang ditemukan';
+
+  @override
+  String get homeWalletsFailureTitle => 'Gagal mendapatkan data dompet';
 }

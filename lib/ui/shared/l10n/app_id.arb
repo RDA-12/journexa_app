@@ -137,5 +137,8 @@
   "transactionCardExpenseSubtitle": "dari {walletName}",
   "transactionsListFailureTitle": "Gagal mendapatkan data transaksi",
   "transactionsListLoadingSemantics": "Memuat data transaksi",
-  "transactionsListEmptyDescription": "Tidak ada data transaksi yang ditemukan"
+  "transactionsListEmptyDescription": "Tidak ada data transaksi yang ditemukan",
+  "homeWalletsLoadingSemantics": "Memuat data dompet",
+  "homeWalletsEmptyDescription": "Tidak ada data dompet yang ditemukan",
+  "homeWalletsFailureTitle": "Gagal mendapatkan data dompet"
 }

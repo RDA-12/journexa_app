@@ -952,6 +952,24 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'No transactions data was found'**
   String get transactionsListEmptyDescription;
+
+  /// Semantics label for loading indicator in wallets carousel
+  ///
+  /// In en, this message translates to:
+  /// **'Loading wallets data'**
+  String get homeWalletsLoadingSemantics;
+
+  /// Description for empty wallets carousel
+  ///
+  /// In en, this message translates to:
+  /// **'No wallets data was found'**
+  String get homeWalletsEmptyDescription;
+
+  /// Title for toast failure state in home page
+  ///
+  /// In en, this message translates to:
+  /// **'Failed to get wallets data'**
+  String get homeWalletsFailureTitle;
 }
 
 class _AppLocalizationsDelegate

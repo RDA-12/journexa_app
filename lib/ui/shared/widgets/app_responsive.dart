@@ -43,6 +43,9 @@ extension SizeX on BuildContext {
 
   /// Return screen width of current device
   double get screenWidth => screenSize.width;
+
+  /// Return screen height of current device
+  double get screenHeight => screenSize.height;
 }
 
 /// Extension to helps get spacing based on

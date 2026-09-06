@@ -858,5 +858,17 @@
   "transactionsListEmptyDescription": "No transactions data was found",
   "@transactionsListEmptyDescription": {
     "description": "Description for empty transactions list"
+  },
+  "homeWalletsLoadingSemantics": "Loading wallets data",
+  "@homeWalletsLoadingSemantics": {
+    "description": "Semantics label for loading indicator in wallets carousel"
+  },
+  "homeWalletsEmptyDescription": "No wallets data was found",
+  "@homeWalletsEmptyDescription": {
+    "description": "Description for empty wallets carousel"
+  },
+  "homeWalletsFailureTitle": "Failed to get wallets data",
+  "@homeWalletsFailureTitle": {
+    "description": "Title for toast failure state in home page"
   }
 }

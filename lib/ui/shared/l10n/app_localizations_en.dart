@@ -540,4 +540,13 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get transactionsListEmptyDescription =>
       'No transactions data was found';
+
+  @override
+  String get homeWalletsLoadingSemantics => 'Loading wallets data';
+
+  @override
+  String get homeWalletsEmptyDescription => 'No wallets data was found';
+
+  @override
+  String get homeWalletsFailureTitle => 'Failed to get wallets data';
 }

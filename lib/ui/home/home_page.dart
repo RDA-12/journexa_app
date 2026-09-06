@@ -1,44 +1,51 @@
-import 'dart:async';
-
 import 'package:flutter/material.dart';
-import 'package:go_router/go_router.dart';
-import 'package:journexa_app/ui/shared/widgets/widgets.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:journexa_app/di.dart';
+import 'package:journexa_app/domain/use_cases/journal/watch_current_balance.dart';
+import 'package:journexa_app/domain/use_cases/wallet/watch_wallets.dart';
+import 'package:journexa_app/ui/home/bloc/home_bloc.dart';
+import 'package:journexa_app/ui/home/widgets/wallets_home_carousel.dart';
 
 /// Page that show when user is logged in
 class HomePage extends StatelessWidget {
   /// Creates new [HomePage]
-  const HomePage({super.key});
+  const HomePage({
+    this.homeBloc,
+    super.key,
+  });
+
+  /// [HomeBloc] to be provided to widget tree.
+  ///
+  /// Creates new one if null.
+  final HomeBloc? homeBloc;
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: Column(
-        children: [
-          AppButton(
-            onPressed: () {
-              unawaited(context.push('/wallet-accounts'));
-            },
-            label: 'Wallets',
-          ),
-          AppButton(
-            onPressed: () {
-              unawaited(context.push('/income-categories'));
-            },
-            label: 'Income Category',
-          ),
-          AppButton(
-            onPressed: () {
-              unawaited(context.push('/expense-categories'));
-            },
-            label: 'Expense Category',
-          ),
-          AppButton(
-            onPressed: () {
-              unawaited(context.push('/transactions'));
-            },
-            label: 'Transactions',
-          ),
-        ],
+    return BlocProvider(
+      create: (context) =>
+          (homeBloc ??
+                HomeBloc(
+                  watchCurrentBalance: getIt<WatchCurrentBalanceUseCase>(),
+                  watchWallets: getIt<WatchWalletsUseCase>(),
+                ))
+            ..add(const HomeEvent.subscriptionsRequested()),
+      child: const _HomeView(),
+    );
+  }
+}
+
+class _HomeView extends StatelessWidget {
+  const _HomeView();
+
+  @override
+  Widget build(BuildContext context) {
+    return const Scaffold(
+      body: SingleChildScrollView(
+        child: Column(
+          children: [
+            WalletsHomeCarousel(),
+          ],
+        ),
       ),
     );
   }

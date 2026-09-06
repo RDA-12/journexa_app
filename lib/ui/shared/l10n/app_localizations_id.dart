@@ -557,4 +557,7 @@ class AppLocalizationsId extends AppLocalizations {
 
   @override
   String get homeWalletsFailureTitle => 'Gagal mendapatkan data dompet';
+
+  @override
+  String get transactionsListTitle => 'Daftar Transaksi';
 }

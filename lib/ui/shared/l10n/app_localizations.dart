@@ -970,6 +970,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Failed to get wallets data'**
   String get homeWalletsFailureTitle;
+
+  /// Title to be showed in Transactions list page
+  ///
+  /// In en, this message translates to:
+  /// **'Transactions List'**
+  String get transactionsListTitle;
 }
 
 class _AppLocalizationsDelegate

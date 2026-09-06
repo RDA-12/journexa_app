@@ -140,5 +140,6 @@
   "transactionsListEmptyDescription": "Tidak ada data transaksi yang ditemukan",
   "homeWalletsLoadingSemantics": "Memuat data dompet",
   "homeWalletsEmptyDescription": "Tidak ada data dompet yang ditemukan",
-  "homeWalletsFailureTitle": "Gagal mendapatkan data dompet"
+  "homeWalletsFailureTitle": "Gagal mendapatkan data dompet",
+  "transactionsListTitle": "Daftar Transaksi"
 }

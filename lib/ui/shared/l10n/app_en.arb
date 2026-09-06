@@ -870,5 +870,9 @@
   "homeWalletsFailureTitle": "Failed to get wallets data",
   "@homeWalletsFailureTitle": {
     "description": "Title for toast failure state in home page"
+  },
+  "transactionsListTitle": "Transactions List",
+  "@transactionsListTitle": {
+    "description": "Title to be showed in Transactions list page"
   }
 }

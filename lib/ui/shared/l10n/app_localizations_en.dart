@@ -549,4 +549,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get homeWalletsFailureTitle => 'Failed to get wallets data';
+
+  @override
+  String get transactionsListTitle => 'Transactions List';
 }

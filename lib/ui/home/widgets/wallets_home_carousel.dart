@@ -3,17 +3,17 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:journexa_app/shared/app_exception.dart';
+import 'package:journexa_app/ui/home/bloc/home_bloc.dart';
 import 'package:journexa_app/ui/home/widgets/wallet_home_card.dart';
 import 'package:journexa_app/ui/shared/l10n/l10n.dart';
 import 'package:journexa_app/ui/shared/widgets/widgets.dart';
-import 'package:journexa_app/ui/wallets/bloc/wallets_bloc.dart';
 
 /// Creates new [CarouselView] to shows
 /// wallets data
 class WalletsHomeCarousel extends StatelessWidget {
   /// Creates new [WalletsHomeCarousel]
   ///
-  /// It reacts to [WalletsBloc]'s state changes.
+  /// It reacts to [HomeBloc]'s wallet state changes.
   /// So, make sure to provide that within the
   /// widget tree.
   const WalletsHomeCarousel({super.key});
@@ -25,12 +25,13 @@ class WalletsHomeCarousel extends StatelessWidget {
 
     return ConstrainedBox(
       constraints: BoxConstraints(maxHeight: maxHeight),
-      child: BlocBuilder<WalletsBloc, WalletsState>(
+      child: BlocBuilder<HomeBloc, HomeState>(
         buildWhen: (p, c) =>
-            p.status == WalletsUIStatus.loading ||
-            c.status == WalletsUIStatus.loading,
+            p.wallets.status == HomeUIStatus.loading ||
+            c.wallets.status == HomeUIStatus.loading,
         builder: (context, state) {
-          if (state.status == WalletsUIStatus.loading) {
+          final walletsState = state.wallets;
+          if (walletsState.status == HomeUIStatus.loading) {
             return Center(
               child: LoadingIndicator(
                 semanticsLabel: context.l10n.homeWalletsLoadingSemantics,
@@ -38,19 +39,19 @@ class WalletsHomeCarousel extends StatelessWidget {
             );
           }
 
-          if (state.status == WalletsUIStatus.failure) {
+          if (walletsState.status == HomeUIStatus.failure) {
             return Center(
               child: AppExceptionBox(
                 title: context.l10n.homeWalletsFailureTitle,
                 description:
-                    (state.exception?.code ??
+                    (walletsState.exception?.code ??
                             AppExceptionCode.internalException)
                         .toLocalizedString(context),
               ),
             );
           }
 
-          final wallets = state.wallets;
+          final wallets = walletsState.wallets;
           if (wallets.isEmpty) {
             return Center(
               child: AppEmptyBox(

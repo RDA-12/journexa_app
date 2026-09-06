@@ -6,16 +6,16 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:journexa_app/domain/entities/account.dart';
 import 'package:journexa_app/domain/entities/wallet.dart';
 import 'package:journexa_app/shared/app_exception.dart';
+import 'package:journexa_app/ui/home/bloc/home_bloc.dart';
 import 'package:journexa_app/ui/home/widgets/wallet_home_card.dart';
 import 'package:journexa_app/ui/home/widgets/wallets_home_carousel.dart';
 import 'package:journexa_app/ui/shared/l10n/app_localizations.dart';
 import 'package:journexa_app/ui/shared/widgets/widgets.dart';
-import 'package:journexa_app/ui/wallets/bloc/wallets_bloc.dart';
 import 'package:mocktail/mocktail.dart';
 
 import '../../util.dart';
 
-class MockWalletsBloc extends Mock implements WalletsBloc {}
+class MockHomeBloc extends Mock implements HomeBloc {}
 
 final expectedTranslations = {
   'id': {
@@ -39,7 +39,7 @@ final expectedTranslations = {
 void main() {
   final assetParent = SystemDefinedAccount.rootAsset;
   final walletsData = List.generate(3, (idx) {
-    return WalletUIModel(
+    return HomeWalletUIModel(
       wallet: Wallet(
         id: '$idx',
         name: 'asset $idx',
@@ -56,14 +56,14 @@ void main() {
 
   final expectedTotalBalance = Decimal.fromInt(60000);
 
-  late WalletsBloc mockWalletsBloc;
+  late HomeBloc mockHomeBloc;
 
   setUp(() {
-    mockWalletsBloc = MockWalletsBloc();
+    mockHomeBloc = MockHomeBloc();
     whenListen(
-      mockWalletsBloc,
-      const Stream<WalletsState>.empty(),
-      initialState: const WalletsState(),
+      mockHomeBloc,
+      const Stream<HomeState>.empty(),
+      initialState: const HomeState(),
     );
   });
 
@@ -74,8 +74,8 @@ void main() {
     return pumpForWidgetTest(
       tester,
       locale: locale,
-      widget: BlocProvider.value(
-        value: mockWalletsBloc,
+      widget: BlocProvider<HomeBloc>.value(
+        value: mockHomeBloc,
         child: const WalletsHomeCarousel(),
       ),
     );
@@ -86,10 +86,12 @@ void main() {
       'shows LoadingIndicator when state is loading',
       (tester) async {
         whenListen(
-          mockWalletsBloc,
-          const Stream<WalletsState>.empty(),
-          initialState: const WalletsState(
-            status: WalletsUIStatus.loading,
+          mockHomeBloc,
+          const Stream<HomeState>.empty(),
+          initialState: const HomeState(
+            wallets: HomeWalletsUIModel(
+              status: HomeUIStatus.loading,
+            ),
           ),
         );
 
@@ -103,11 +105,13 @@ void main() {
       'shows CarouselView with total balance at index 0 and wallets thereafter',
       (tester) async {
         whenListen(
-          mockWalletsBloc,
-          const Stream<WalletsState>.empty(),
-          initialState: WalletsState(
-            status: WalletsUIStatus.loaded,
-            wallets: walletsData,
+          mockHomeBloc,
+          const Stream<HomeState>.empty(),
+          initialState: HomeState(
+            wallets: HomeWalletsUIModel(
+              status: HomeUIStatus.loaded,
+              wallets: walletsData,
+            ),
           ),
         );
 
@@ -136,11 +140,13 @@ void main() {
         'for ${locale.languageCode}',
         (tester) async {
           whenListen(
-            mockWalletsBloc,
-            const Stream<WalletsState>.empty(),
-            initialState: WalletsState(
-              status: WalletsUIStatus.loaded,
-              wallets: walletsData,
+            mockHomeBloc,
+            const Stream<HomeState>.empty(),
+            initialState: HomeState(
+              wallets: HomeWalletsUIModel(
+                status: HomeUIStatus.loaded,
+                wallets: walletsData,
+              ),
             ),
           );
 
@@ -165,11 +171,13 @@ void main() {
           final expectedDesc = expectedTranslation['errorDesc']!;
 
           whenListen(
-            mockWalletsBloc,
-            const Stream<WalletsState>.empty(),
-            initialState: WalletsState(
-              status: WalletsUIStatus.failure,
-              exception: AppException.test(),
+            mockHomeBloc,
+            const Stream<HomeState>.empty(),
+            initialState: HomeState(
+              wallets: HomeWalletsUIModel(
+                status: HomeUIStatus.failure,
+                exception: AppException.test(),
+              ),
             ),
           );
 
@@ -189,10 +197,12 @@ void main() {
         'for ${locale.languageCode}',
         (tester) async {
           whenListen(
-            mockWalletsBloc,
-            const Stream<WalletsState>.empty(),
-            initialState: const WalletsState(
-              status: WalletsUIStatus.loaded,
+            mockHomeBloc,
+            const Stream<HomeState>.empty(),
+            initialState: const HomeState(
+              wallets: HomeWalletsUIModel(
+                status: HomeUIStatus.loaded,
+              ),
             ),
           );
 
@@ -216,10 +226,12 @@ void main() {
         'when state is loading for ${locale.languageCode}',
         (tester) async {
           whenListen(
-            mockWalletsBloc,
-            const Stream<WalletsState>.empty(),
-            initialState: const WalletsState(
-              status: WalletsUIStatus.loading,
+            mockHomeBloc,
+            const Stream<HomeState>.empty(),
+            initialState: const HomeState(
+              wallets: HomeWalletsUIModel(
+                status: HomeUIStatus.loading,
+              ),
             ),
           );
 

@@ -27,6 +27,7 @@ class WalletHomeCard extends StatelessWidget {
           Image.asset(
             'assets/pattern/pattern-1.png',
             fit: BoxFit.cover,
+            height: 80,
             width: double.infinity,
           ),
           Column(

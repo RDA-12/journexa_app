@@ -560,4 +560,7 @@ class AppLocalizationsId extends AppLocalizations {
 
   @override
   String get transactionsListTitle => 'Daftar Transaksi';
+
+  @override
+  String get homeWalletsTotalBalanceLabel => 'Total Saldo';
 }

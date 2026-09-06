@@ -874,5 +874,9 @@
   "transactionsListTitle": "Transactions List",
   "@transactionsListTitle": {
     "description": "Title to be showed in Transactions list page"
+  },
+  "homeWalletsTotalBalanceLabel": "Total Balance",
+  "@homeWalletsTotalBalanceLabel": {
+    "description": "Label to shows total wallets balances in home page"
   }
 }

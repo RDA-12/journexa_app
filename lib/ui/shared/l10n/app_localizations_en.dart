@@ -552,4 +552,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get transactionsListTitle => 'Transactions List';
+
+  @override
+  String get homeWalletsTotalBalanceLabel => 'Total Balance';
 }

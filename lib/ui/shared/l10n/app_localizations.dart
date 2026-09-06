@@ -976,6 +976,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Transactions List'**
   String get transactionsListTitle;
+
+  /// Label to shows total wallets balances in home page
+  ///
+  /// In en, this message translates to:
+  /// **'Total Balance'**
+  String get homeWalletsTotalBalanceLabel;
 }
 
 class _AppLocalizationsDelegate

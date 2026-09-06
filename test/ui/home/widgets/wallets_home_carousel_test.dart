@@ -23,18 +23,22 @@ final expectedTranslations = {
     'errorDesc': 'Terjadi kesalahan internal',
     'semanticsLoading': 'Memuat data dompet',
     'emptyDescription': 'Tidak ada data dompet yang ditemukan',
+    'totalBalanceLabel': 'Total Saldo',
+    'totalBalanceFormatted': 'Rp 60.000',
   },
   'en': {
     'errorTitle': 'Failed to get wallets data',
     'errorDesc': 'Internal exception error',
     'semanticsLoading': 'Loading wallets data',
     'emptyDescription': 'No wallets data was found',
+    'totalBalanceLabel': 'Total Balance',
+    'totalBalanceFormatted': 'Rp 60,000',
   },
 };
 
 void main() {
   final assetParent = SystemDefinedAccount.rootAsset;
-  final walletsData = List.generate(5, (idx) {
+  final walletsData = List.generate(3, (idx) {
     return WalletUIModel(
       wallet: Wallet(
         id: '$idx',
@@ -46,9 +50,11 @@ void main() {
           parent: assetParent,
         ),
       ),
-      balance: Decimal.zero,
+      balance: Decimal.fromInt((idx + 1) * 10000),
     );
   });
+
+  final expectedTotalBalance = Decimal.fromInt(60000);
 
   late WalletsBloc mockWalletsBloc;
 
@@ -94,7 +100,7 @@ void main() {
     );
 
     testWidgets(
-      'shows CarouselView with WalletHomeCard when state is loaded',
+      'shows CarouselView with total balance at index 0 and wallets thereafter',
       (tester) async {
         whenListen(
           mockWalletsBloc,
@@ -107,13 +113,50 @@ void main() {
 
         await pumpWidget(tester);
 
-        expect(find.byType(CarouselView), findsOneWidget);
-        expect(find.byType(WalletHomeCard), findsWidgets);
+        final carouselFinder = find.byType(CarouselView);
+        expect(carouselFinder, findsOneWidget);
+
+        final carouselWidgets = tester.widget<CarouselView>(carouselFinder);
+        expect(carouselWidgets.itemCount, walletsData.length + 1);
+
+        final cardFinder = find.byType(WalletHomeCard);
+        expect(cardFinder, findsAtLeastNWidgets(1));
+        final cardWidget = tester.widget<WalletHomeCard>(cardFinder.first);
+        expect(cardWidget.name, 'Total Balance');
+        expect(cardWidget.balance, expectedTotalBalance);
       },
     );
 
     for (final locale in AppLocalizations.supportedLocales) {
       final expectedTranslation = expectedTranslations[locale.languageCode]!;
+
+      testWidgets(
+        'shows total balance card '
+        'with correct localized label and formatted balance '
+        'for ${locale.languageCode}',
+        (tester) async {
+          whenListen(
+            mockWalletsBloc,
+            const Stream<WalletsState>.empty(),
+            initialState: WalletsState(
+              status: WalletsUIStatus.loaded,
+              wallets: walletsData,
+            ),
+          );
+
+          await pumpWidget(tester, locale: locale);
+
+          expect(
+            find.text(expectedTranslation['totalBalanceLabel']!),
+            findsOneWidget,
+          );
+          expect(
+            find.text(expectedTranslation['totalBalanceFormatted']!),
+            findsOneWidget,
+          );
+        },
+      );
+
       testWidgets(
         'shows AppExceptionBox when state is failure '
         'for ${locale.languageCode}',

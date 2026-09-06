@@ -21,7 +21,7 @@ class WalletsHomeCarousel extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final height = context.screenHeight;
-    final maxHeight = min<double>(height / 3, 250);
+    final maxHeight = min<double>(height / 2, 320);
 
     return ConstrainedBox(
       constraints: BoxConstraints(maxHeight: maxHeight),
@@ -59,12 +59,21 @@ class WalletsHomeCarousel extends StatelessWidget {
             );
           }
 
+          final totalBalance = wallets
+              .map((it) => it.balance)
+              .reduce((prev, curr) => prev + curr);
           return CarouselView.weightedBuilder(
-            itemCount: wallets.length,
+            itemCount: wallets.length + 1,
             flexWeights: const [1, 5, 1],
             itemBuilder: (context, index) {
-              final walletData = wallets[index];
+              if (index == 0) {
+                return WalletHomeCard(
+                  name: context.l10n.homeWalletsTotalBalanceLabel,
+                  balance: totalBalance,
+                );
+              }
 
+              final walletData = wallets[index - 1];
               return WalletHomeCard(
                 name: walletData.wallet.name,
                 balance: walletData.balance,

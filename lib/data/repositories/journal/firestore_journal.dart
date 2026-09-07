@@ -38,7 +38,7 @@ sealed class FirestoreJournalEntry with _$FirestoreJournalEntry {
     required String id,
 
     /// When this entry was happened
-    required DateTime transactionDate,
+    @DateTimeConverter() required DateTime transactionDate,
 
     /// Optional notes
     String? notes,

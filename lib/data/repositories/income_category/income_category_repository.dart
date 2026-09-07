@@ -1,8 +1,9 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:collection/collection.dart';
+import 'package:drift/drift.dart';
+import 'package:drift/native.dart';
 import 'package:injectable/injectable.dart';
-import 'package:journexa_app/data/repositories/account/firestore_account.dart';
-import 'package:journexa_app/data/repositories/income_category/firestore_income_category.dart';
+import 'package:journexa_app/data/database.dart';
+import 'package:journexa_app/data/repositories/account/account.dart';
+import 'package:journexa_app/data/repositories/income_category/income_category.dart';
 import 'package:journexa_app/domain/entities/account.dart';
 import 'package:journexa_app/domain/entities/income_category.dart';
 import 'package:journexa_app/domain/repositories/i_income_category_repository.dart';
@@ -12,18 +13,18 @@ import 'package:journexa_app/shared/app_result.dart';
 import 'package:mock_exceptions/mock_exceptions.dart';
 import 'package:rxdart/rxdart.dart';
 
-/// Firestore implementation of [IIncomeCategoryRepository]
+/// Drift implementation of [IIncomeCategoryRepository]
 @LazySingleton(as: IIncomeCategoryRepository)
-class FirestoreIncomeCategoryRepository
+class DriftIncomeCategoryRepository
     with Loggable
     implements IIncomeCategoryRepository {
-  /// Creates new [FirestoreIncomeCategoryRepository]
-  FirestoreIncomeCategoryRepository({required this._db});
+  /// Creates new [DriftIncomeCategoryRepository]
+  DriftIncomeCategoryRepository({required this._db});
 
-  final FirebaseFirestore _db;
+  final AppLocalDatabase _db;
 
   @override
-  String get logTag => 'FirestoreIncomeCategoryRepository';
+  String get logTag => 'DriftIncomeCategoryRepository';
 
   @override
   Future<AppResult<Null>> save({
@@ -34,19 +35,24 @@ class FirestoreIncomeCategoryRepository
     try {
       maybeThrowException(this, Invocation.method(#save, null));
       logInfo(
-        'Starts checking income category name',
+        'Starts transactions to writes income category and account',
         traceId: traceId,
-        extras: {'name': category.name},
+        extras: {
+          'incomeCategoryId': category.id,
+          'accountCode': category.account.code,
+        },
       );
-      final incomeCategoriesCol = _db.collection(
-        'users/$userId/incomeCategories',
+      await _db.transaction(() async {
+        await _db.into(_db.incomeCategoryDB).insert(category.toDB());
+        await _db.into(_db.accountDB).insert(category.account.toDB());
+      });
+      logInfo(
+        'Successfully written income category and account to database',
+        traceId: traceId,
       );
-      final incomeCategoriesQuery = incomeCategoriesCol.where(
-        'name',
-        isEqualTo: category.name,
-      );
-      final incomeCategoriesSnaps = await incomeCategoriesQuery.get();
-      if (incomeCategoriesSnaps.docs.isNotEmpty) {
+      return const AppResult.success(null);
+    } on SqliteException catch (e) {
+      if (e.extendedResultCode == 2067) {
         logInfo('Name already exists', traceId: traceId);
         return const AppResult.failure(
           AppException(
@@ -55,38 +61,9 @@ class FirestoreIncomeCategoryRepository
           ),
         );
       }
-
-      final incomeCategoryFirestore = FirestoreIncomeCategory.fromDomain(
-        category,
-      );
-      final accountFirestore = FirestoreAccount.fromDomain(category.account);
-      logInfo(
-        'Name not yet exists. Starts batch writes income category and account',
-        traceId: traceId,
-        extras: {
-          'incomeCategory': incomeCategoryFirestore.toJson(),
-          'account': accountFirestore.toJson(),
-        },
-      );
-      final incomeCategoryDoc = _db.doc(
-        'users/$userId/incomeCategories/${category.id}',
-      );
-      final accountDoc = _db.doc(
-        'users/$userId/accounts/${category.account.code}',
-      );
-      final batch = _db.batch()
-        ..set(incomeCategoryDoc, incomeCategoryFirestore.toJson())
-        ..set(accountDoc, accountFirestore.toJson());
-      await batch.commit();
-      logInfo(
-        'Successfully written income category and account to database',
-        traceId: traceId,
-      );
-      return const AppResult.success(null);
-    } on FirebaseException catch (e) {
       logError('$e', traceId: traceId, error: e);
       return AppResult.failure(
-        AppException('$e', code: AppExceptionCode.serverException),
+        AppException('$e', code: AppExceptionCode.internalException),
       );
     } on Exception catch (e, st) {
       logError('$e', traceId: traceId, error: e, stackTrace: st);
@@ -108,89 +85,48 @@ class FirestoreIncomeCategoryRepository
       traceId: traceId,
       extras: {'query': query},
     );
-    Query<Map<String, Object?>> categoriesQuery = _db.collection(
-      'users/$userId/incomeCategories',
-    );
-    Query<Map<String, Object?>> accountsQuery = _db.collection(
-      'users/$userId/accounts',
-    );
+    final statement = _db.select(_db.incomeCategoryDB).join([
+      leftOuterJoin(
+        _db.accountDB,
+        _db.incomeCategoryDB.accountCode.equalsExp(_db.accountDB.code),
+      ),
+    ]);
     if (query != null) {
-      categoriesQuery = categoriesQuery
-          .where('nameLower', isGreaterThanOrEqualTo: query)
-          .where('nameLower', isLessThanOrEqualTo: '$query~');
-      accountsQuery = accountsQuery
-          .where('nameLower', isGreaterThanOrEqualTo: query)
-          .where('nameLower', isLessThanOrEqualTo: '$query~');
+      statement.where(_db.incomeCategoryDB.name.like('%$query%'));
     }
     if (isDeleted != null) {
-      categoriesQuery = categoriesQuery.where(
-        'isDeleted',
-        isEqualTo: isDeleted,
-      );
-      accountsQuery = accountsQuery.where(
-        'isDeleted',
-        isEqualTo: isDeleted,
-      );
+      statement.where(_db.incomeCategoryDB.isDeleted.equals(isDeleted));
     }
-    final categoriesStream = categoriesQuery.snapshots();
-    final accountsStream = accountsQuery.snapshots();
+    final stream = statement.watch();
     logInfo(
-      'Streams constructed. Return combined streams',
+      'Streams constructed. Return mapped streams',
       traceId: traceId,
     );
-    return CombineLatestStream.combine2(
-      categoriesStream,
-      accountsStream,
-      (catSnap, accountSnap) {
-        maybeThrowException(this, Invocation.method(#watch, null));
-        logInfo(
-          'Either category or account changed. '
-          'Starts constructing income categories',
-          traceId: traceId,
-        );
-        final catDocs = catSnap.docs;
-        final accountDocs = accountSnap.docs;
-        final result = <IncomeCategory>[];
-        for (final catDoc in catDocs) {
-          final firestoreCat = FirestoreIncomeCategory.fromJson(
-            catDoc.data(),
+    return stream
+        .map(
+          (rows) {
+            maybeThrowException(this, Invocation.method(#watch, null));
+            final result = <IncomeCategory>[];
+            for (final row in rows) {
+              final incomeCategoryDB = row.readTable(_db.incomeCategoryDB);
+              final accountDB = row.readTable(_db.accountDB);
+              result.add(
+                incomeCategoryDB.toDomain(
+                  account: accountDB.toDomain(
+                    parent: SystemDefinedAccount.rootRevenue,
+                  ),
+                ),
+              );
+            }
+            return AppResult.success(result);
+          },
+        )
+        .onErrorReturnWith((err, st) {
+          logError('$err', traceId: traceId, error: err, stackTrace: st);
+          return AppResult.failure(
+            AppException('$err', code: AppExceptionCode.internalException),
           );
-          final accountDoc = accountDocs.firstWhereOrNull((it) {
-            return it.data()['code'] == firestoreCat.accountCode;
-          });
-          if (accountDoc == null) {
-            logWarning(
-              'Account for income category ${firestoreCat.id} not found',
-              traceId: traceId,
-              extras: {
-                'incomeCategoryId': firestoreCat.id,
-              },
-            );
-            continue;
-          }
-          final firestoreAccount = FirestoreAccount.fromJson(
-            accountDoc.data(),
-          );
-          final category = firestoreCat.toDomain(
-            firestoreAccount.toDomain().copyWith(
-              parent: SystemDefinedAccount.rootRevenue,
-            ),
-          );
-          result.add(category);
-        }
-        return AppResult.success(result);
-      },
-    ).onErrorReturnWith((err, st) {
-      logError('$err', traceId: traceId, error: err, stackTrace: st);
-      if (err is FirebaseException) {
-        return AppResult.failure(
-          AppException('$err', code: AppExceptionCode.serverException),
-        );
-      }
-      return AppResult.failure(
-        AppException('$err', code: AppExceptionCode.internalException),
-      );
-    });
+        });
   }
 
   @override
@@ -201,51 +137,33 @@ class FirestoreIncomeCategoryRepository
   }) async {
     try {
       maybeThrowException(this, Invocation.method(#delete, null));
-      final categoryFirestore = FirestoreIncomeCategory.fromDomain(category);
-      final accountFirestore = FirestoreAccount.fromDomain(category.account);
       logInfo(
-        'Starts deleting category',
+        'Starts deleting income category and its account',
         traceId: traceId,
         extras: {
-          'category': categoryFirestore.toJson(),
-          'account': accountFirestore.toJson(),
+          'categoryId': category.id,
+          'accountCode': category.account.code,
         },
       );
-
-      final categoryRef = _db.doc(
-        'users/$userId/incomeCategories/${category.id}',
-      );
-      final categorySnap = await categoryRef.get();
-      final categoryExists = categorySnap.exists;
-      final accountRef = _db.doc(
-        'users/$userId/accounts/${category.account.code}',
-      );
-      final accountSnap = await accountRef.get();
-      final accountExists = accountSnap.exists;
-      final batch = _db.batch();
-      if (categoryExists) {
-        batch.set(
-          categoryRef,
-          categoryFirestore.copyWith(isDeleted: true).toJson(),
+      await _db.transaction(() async {
+        final updateCategoryStatement = _db.update(
+          _db.incomeCategoryDB,
+        )..where((it) => it.id.equals(category.id));
+        await updateCategoryStatement.write(
+          const IncomeCategoryDBCompanion(isDeleted: Value(true)),
         );
-      }
-      if (accountExists) {
-        batch.set(
-          accountRef,
-          accountFirestore.copyWith(isDeleted: true).toJson(),
+        final updateAccountStatement = _db.update(
+          _db.accountDB,
+        )..where((it) => it.code.equals(category.account.code));
+        await updateAccountStatement.write(
+          const AccountDBCompanion(isDeleted: Value(true)),
         );
-      }
-      await batch.commit();
+      });
       logInfo(
         'Successfully deleted category and account',
         traceId: traceId,
       );
       return const AppResult.success(null);
-    } on FirebaseException catch (e) {
-      logError('$e', traceId: traceId, error: e);
-      return AppResult.failure(
-        AppException('$e', code: AppExceptionCode.serverException),
-      );
     } on Exception catch (e, st) {
       logError('$e', traceId: traceId, error: e, stackTrace: st);
       return AppResult.failure(
@@ -262,41 +180,29 @@ class FirestoreIncomeCategoryRepository
   }) async {
     try {
       maybeThrowException(this, Invocation.method(#update, null));
-      final categoryFirestore = FirestoreIncomeCategory.fromDomain(
-        updatedCategory,
-      );
-      final accountFirestore = FirestoreAccount.fromDomain(
-        updatedCategory.account,
-      );
-
       logInfo(
         'Starts updating category',
         traceId: traceId,
         extras: {
-          'category': categoryFirestore.toJson(),
-          'account': accountFirestore.toJson(),
+          'categoryId': updatedCategory.id,
+          'accountCode': updatedCategory.account.code,
         },
       );
-      final batch = _db.batch();
-      final categoryRef = _db.doc(
-        'users/$userId/incomeCategories/${updatedCategory.id}',
-      );
-      batch.set(categoryRef, categoryFirestore.toJson());
-      final accountRef = _db.doc(
-        'users/$userId/accounts/${updatedCategory.account.code}',
-      );
-      batch.set(accountRef, accountFirestore.toJson());
-      await batch.commit();
+      await _db.transaction(() async {
+        final updateCategoryStatement = _db.update(
+          _db.incomeCategoryDB,
+        );
+        await updateCategoryStatement.replace(updatedCategory.toDB());
+        final updateAccountStatement = _db.update(
+          _db.accountDB,
+        );
+        await updateAccountStatement.replace(updatedCategory.account.toDB());
+      });
       logInfo(
         'Successfully updated category and account',
         traceId: traceId,
       );
       return const AppResult.success(null);
-    } on FirebaseException catch (e) {
-      logError('$e', traceId: traceId, error: e);
-      return AppResult.failure(
-        AppException('$e', code: AppExceptionCode.serverException),
-      );
     } on Exception catch (e, st) {
       logError('$e', traceId: traceId, error: e, stackTrace: st);
       return AppResult.failure(

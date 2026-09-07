@@ -41,7 +41,8 @@ void main() {
     );
   });
   final currentBalances = <String, Decimal>{
-    for (var idx = 0; idx < 5; idx++) '$idx': Decimal.fromInt(idx * 1000),
+    for (var idx = 0; idx < 5; idx++)
+      '10.000${idx + 1}': Decimal.fromInt(idx * 1000),
   };
   final walletsWithState = List.generate(5, (idx) {
     return WalletUIModel(
@@ -192,7 +193,7 @@ void main() {
 
     blocTest<WalletsBloc, WalletsState>(
       'defaults wallet balance to Decimal.zero '
-      'when wallet id is missing from currentBalances',
+      'when wallet account code is missing from currentBalances',
       setUp: () {
         when(
           () => mockWatchCurrentBalance.execute(traceId: traceId),

@@ -1,5 +1,6 @@
 import 'package:bloc/bloc.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
+import 'package:injectable/injectable.dart';
 import 'package:journexa_app/domain/use_cases/auth/login_with_google.dart';
 import 'package:journexa_app/shared/app_exception.dart';
 import 'package:journexa_app/shared/app_logger.dart';
@@ -11,6 +12,7 @@ part 'login_state.dart';
 part 'login_bloc.freezed.dart';
 
 /// Bloc to handles all login operations
+@injectable
 class LoginBloc extends Bloc<LoginEvent, LoginState>
     with Loggable, GenerateUid {
   /// Creates new [LoginBloc]

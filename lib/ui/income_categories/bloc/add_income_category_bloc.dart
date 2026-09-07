@@ -1,5 +1,6 @@
 import 'package:bloc/bloc.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
+import 'package:injectable/injectable.dart';
 import 'package:journexa_app/domain/use_cases/income_category/add_income_category.dart';
 import 'package:journexa_app/shared/app_exception.dart';
 import 'package:journexa_app/shared/app_logger.dart';
@@ -11,6 +12,7 @@ part 'add_income_category_state.dart';
 part 'add_income_category_bloc.freezed.dart';
 
 /// Bloc to add new income category
+@injectable
 class AddIncomeCategoryBloc
     extends Bloc<AddIncomeCategoryEvent, AddIncomeCategoryState>
     with Loggable, GenerateUid {

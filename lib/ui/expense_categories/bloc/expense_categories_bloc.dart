@@ -1,5 +1,6 @@
 import 'package:bloc/bloc.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
+import 'package:injectable/injectable.dart';
 import 'package:journexa_app/domain/entities/expense_category.dart';
 import 'package:journexa_app/domain/use_cases/expense_category/delete_expense_category.dart';
 import 'package:journexa_app/domain/use_cases/expense_category/update_expense_category.dart';
@@ -15,6 +16,7 @@ part 'expense_categories_event.dart';
 part 'expense_categories_state.dart';
 
 /// Bloc to handle expense categories
+@injectable
 class ExpenseCategoriesBloc
     extends Bloc<ExpenseCategoriesEvent, ExpenseCategoriesState>
     with Loggable, GenerateUid {

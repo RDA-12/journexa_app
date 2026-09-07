@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:journexa_app/di.dart';
-import 'package:journexa_app/domain/use_cases/income_category/add_income_category.dart';
 import 'package:journexa_app/ui/income_categories/bloc/add_income_category_bloc.dart';
 import 'package:journexa_app/ui/income_categories/widgets/add_income_category_view.dart';
 import 'package:journexa_app/ui/shared/l10n/l10n.dart';
@@ -21,10 +20,7 @@ class AddIncomeCategoryPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return BlocProvider(
       create: (context) =>
-          addIncomeCategoryBloc ??
-          AddIncomeCategoryBloc(
-            addIncomeCategory: getIt<AddIncomeCategoryUseCase>(),
-          ),
+          addIncomeCategoryBloc ?? getIt<AddIncomeCategoryBloc>(),
       child: Scaffold(
         appBar: AppBar(
           title: Text(context.l10n.addIncomeCategoryTitle),

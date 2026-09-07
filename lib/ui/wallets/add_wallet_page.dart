@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:journexa_app/di.dart';
-import 'package:journexa_app/domain/use_cases/wallet/add_wallet.dart';
 import 'package:journexa_app/ui/shared/l10n/l10n.dart';
 import 'package:journexa_app/ui/shared/widgets/app_responsive.dart';
 import 'package:journexa_app/ui/wallets/bloc/add_wallet_bloc.dart';
@@ -20,11 +19,7 @@ class AddWalletPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (context) =>
-          addWalletBloc ??
-          AddWalletBloc(
-            addWallet: getIt<AddWalletUseCase>(),
-          ),
+      create: (context) => addWalletBloc ?? getIt<AddWalletBloc>(),
       child: Scaffold(
         appBar: AppBar(
           title: Text(context.l10n.addWalletTitle),

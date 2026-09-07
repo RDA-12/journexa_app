@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:journexa_app/di.dart';
-import 'package:journexa_app/domain/use_cases/journal/watch_current_balance.dart';
-import 'package:journexa_app/domain/use_cases/wallet/watch_wallets.dart';
 import 'package:journexa_app/ui/home/bloc/home_bloc.dart';
 import 'package:journexa_app/ui/home/widgets/wallets_home_carousel.dart';
 
@@ -23,11 +21,7 @@ class HomePage extends StatelessWidget {
   Widget build(BuildContext context) {
     return BlocProvider(
       create: (context) =>
-          (homeBloc ??
-                HomeBloc(
-                  watchCurrentBalance: getIt<WatchCurrentBalanceUseCase>(),
-                  watchWallets: getIt<WatchWalletsUseCase>(),
-                ))
+          (homeBloc ?? getIt<HomeBloc>())
             ..add(const HomeEvent.subscriptionsRequested()),
       child: const _HomeView(),
     );

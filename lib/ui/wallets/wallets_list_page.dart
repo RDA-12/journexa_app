@@ -2,10 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:journexa_app/di.dart';
-import 'package:journexa_app/domain/use_cases/journal/watch_current_balance.dart';
-import 'package:journexa_app/domain/use_cases/wallet/delete_wallet.dart';
-import 'package:journexa_app/domain/use_cases/wallet/update_wallet.dart';
-import 'package:journexa_app/domain/use_cases/wallet/watch_wallets.dart';
 import 'package:journexa_app/ui/shared/l10n/l10n.dart';
 import 'package:journexa_app/ui/shared/widgets/app_responsive.dart';
 import 'package:journexa_app/ui/wallets/bloc/wallets_bloc.dart';
@@ -28,13 +24,7 @@ class WalletsListPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return BlocProvider(
       create: (context) =>
-          (walletsBloc ??
-                WalletsBloc(
-                  watchWallets: getIt<WatchWalletsUseCase>(),
-                  watchCurrentBalance: getIt<WatchCurrentBalanceUseCase>(),
-                  deleteWallet: getIt<DeleteWalletUseCase>(),
-                  updateWallet: getIt<UpdateWalletUseCase>(),
-                ))
+          (walletsBloc ?? getIt<WalletsBloc>())
             ..add(const WalletsEvent.subscriptionRequested()),
       child: const _WalletListView(),
     );

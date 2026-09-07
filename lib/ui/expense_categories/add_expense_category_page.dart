@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:journexa_app/di.dart';
-import 'package:journexa_app/domain/use_cases/expense_category/add_expense_category.dart';
 import 'package:journexa_app/ui/expense_categories/bloc/add_expense_category_bloc.dart';
 import 'package:journexa_app/ui/expense_categories/widgets/add_expense_category_view.dart';
 import 'package:journexa_app/ui/shared/l10n/l10n.dart';
@@ -21,10 +20,7 @@ class AddExpenseCategoryPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return BlocProvider(
       create: (context) =>
-          addExpenseCategoryBloc ??
-          AddExpenseCategoryBloc(
-            addExpenseCategory: getIt<AddExpenseCategoryUseCase>(),
-          ),
+          addExpenseCategoryBloc ?? getIt<AddExpenseCategoryBloc>(),
       child: Scaffold(
         appBar: AppBar(
           title: Text(context.l10n.addExpenseCategoryTitle),

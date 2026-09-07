@@ -1,6 +1,7 @@
 import 'package:bloc/bloc.dart';
 import 'package:decimal/decimal.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
+import 'package:injectable/injectable.dart';
 import 'package:journexa_app/domain/entities/wallet.dart';
 import 'package:journexa_app/domain/use_cases/journal/watch_current_balance.dart';
 import 'package:journexa_app/domain/use_cases/wallet/delete_wallet.dart';
@@ -18,6 +19,7 @@ part 'wallets_event.dart';
 part 'wallets_state.dart';
 
 /// Bloc to get all wallets current user have
+@injectable
 class WalletsBloc extends Bloc<WalletsEvent, WalletsState>
     with GenerateUid, Loggable {
   /// Creates new [WalletsBloc]

@@ -1,5 +1,6 @@
 import 'package:bloc/bloc.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
+import 'package:injectable/injectable.dart';
 import 'package:journexa_app/domain/use_cases/wallet/add_wallet.dart';
 import 'package:journexa_app/shared/app_exception.dart';
 import 'package:journexa_app/shared/app_logger.dart';
@@ -11,6 +12,7 @@ part 'add_wallet_state.dart';
 part 'add_wallet_bloc.freezed.dart';
 
 /// Bloc to handle creating new wallet
+@injectable
 class AddWalletBloc extends Bloc<AddWalletEvent, AddWalletState>
     with Loggable, GenerateUid {
   /// Creates new [AddWalletBloc]

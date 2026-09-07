@@ -1,5 +1,6 @@
 import 'package:bloc/bloc.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
+import 'package:injectable/injectable.dart';
 import 'package:journexa_app/domain/use_cases/auth/check_auth.dart';
 import 'package:journexa_app/shared/app_exception.dart';
 import 'package:journexa_app/shared/app_logger.dart';
@@ -11,6 +12,7 @@ part 'auth_check_state.dart';
 part 'auth_check_bloc.freezed.dart';
 
 /// Bloc for checking current user authentication state
+@injectable
 class AuthCheckBloc extends Bloc<AuthCheckEvent, AuthCheckState>
     with Loggable, GenerateUid {
   /// Creates new [AuthCheckBloc]

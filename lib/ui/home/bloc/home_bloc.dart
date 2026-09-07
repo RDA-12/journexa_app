@@ -1,6 +1,7 @@
 import 'package:bloc/bloc.dart';
 import 'package:decimal/decimal.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
+import 'package:injectable/injectable.dart';
 import 'package:journexa_app/domain/entities/wallet.dart';
 import 'package:journexa_app/domain/use_cases/journal/watch_current_balance.dart';
 import 'package:journexa_app/domain/use_cases/wallet/watch_wallets.dart';
@@ -15,6 +16,7 @@ part 'home_state.dart';
 part 'home_bloc.freezed.dart';
 
 /// Bloc to manage Home page
+@injectable
 class HomeBloc extends Bloc<HomeEvent, HomeState> with Loggable, GenerateUid {
   /// Creates new [HomeBloc]
   HomeBloc({

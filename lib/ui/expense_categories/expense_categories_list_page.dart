@@ -2,9 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:journexa_app/di.dart';
-import 'package:journexa_app/domain/use_cases/expense_category/delete_expense_category.dart';
-import 'package:journexa_app/domain/use_cases/expense_category/update_expense_category.dart';
-import 'package:journexa_app/domain/use_cases/expense_category/watch_expense_categories.dart';
 import 'package:journexa_app/ui/expense_categories/bloc/expense_categories_bloc.dart';
 import 'package:journexa_app/ui/expense_categories/widgets/expense_categories_list_view.dart';
 import 'package:journexa_app/ui/shared/l10n/l10n.dart';
@@ -27,13 +24,7 @@ class ExpenseCategoriesListPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return BlocProvider(
       create: (context) =>
-          (expenseCategoriesBloc ??
-                ExpenseCategoriesBloc(
-                  watchExpenseCategories:
-                      getIt<WatchExpenseCategoriesUseCase>(),
-                  deleteExpenseCategory: getIt<DeleteExpenseCategoryUseCase>(),
-                  updateExpenseCategory: getIt<UpdateExpenseCategoryUseCase>(),
-                ))
+          (expenseCategoriesBloc ?? getIt<ExpenseCategoriesBloc>())
             ..add(const ExpenseCategoriesEvent.subscriptionRequested()),
       child: const _ExpenseCategoriesListView(),
     );

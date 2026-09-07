@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:journexa_app/di.dart';
-import 'package:journexa_app/domain/use_cases/auth/login_with_google.dart';
 import 'package:journexa_app/ui/login/bloc/login_bloc.dart';
 import 'package:journexa_app/ui/login/widgets/widgets.dart';
 
@@ -19,11 +18,7 @@ class LoginPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (context) =>
-          loginBloc ??
-          LoginBloc(
-            loginWithGoogleUseCase: getIt<LoginWithGoogleUseCase>(),
-          ),
+      create: (context) => loginBloc ?? getIt<LoginBloc>(),
       child: const Scaffold(
         body: _LoginView(),
       ),

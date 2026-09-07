@@ -1,5 +1,6 @@
 import 'package:bloc/bloc.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
+import 'package:injectable/injectable.dart';
 import 'package:journexa_app/domain/use_cases/account/initialize_accounts.dart';
 import 'package:journexa_app/shared/app_exception.dart';
 import 'package:journexa_app/shared/app_logger.dart';
@@ -13,6 +14,7 @@ part 'initialize_bloc.freezed.dart';
 /// Bloc to handle initialize operations
 ///
 /// It includes initialization of default system accounts.
+@injectable
 class InitializeBloc extends Bloc<InitializeEvent, InitializeState>
     with Loggable, GenerateUid {
   /// Creates new [InitializeBloc]

@@ -2,6 +2,7 @@ import 'package:bloc/bloc.dart';
 import 'package:collection/collection.dart';
 import 'package:decimal/decimal.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
+import 'package:injectable/injectable.dart';
 import 'package:journexa_app/domain/entities/expense_category.dart';
 import 'package:journexa_app/domain/entities/income_category.dart';
 import 'package:journexa_app/domain/entities/transaction.dart';
@@ -22,6 +23,7 @@ part 'transactions_state.dart';
 part 'transactions_bloc.freezed.dart';
 
 /// BLoc to handles [Transaction] data
+@injectable
 class TransactionsBloc extends Bloc<TransactionsEvent, TransactionsState>
     with Loggable, GenerateUid {
   /// Creates new [TransactionsBloc]

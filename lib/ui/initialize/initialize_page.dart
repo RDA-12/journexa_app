@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:journexa_app/di.dart';
-import 'package:journexa_app/domain/use_cases/account/initialize_accounts.dart';
 import 'package:journexa_app/ui/initialize/bloc/initialize_bloc.dart';
 import 'package:journexa_app/ui/initialize/widgets/initializing_box.dart';
 
@@ -25,10 +24,7 @@ class InitializePage extends StatelessWidget {
   Widget build(BuildContext context) {
     return BlocProvider(
       create: (context) =>
-          (initializeBloc ??
-                InitializeBloc(
-                  initializeAccounts: getIt<InitializeAccountsUseCase>(),
-                ))
+          (initializeBloc ?? getIt<InitializeBloc>())
             ..add(
               const InitializeEvent.initialize(),
             ),

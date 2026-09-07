@@ -1,6 +1,7 @@
 import 'package:bloc/bloc.dart';
 import 'package:decimal/decimal.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
+import 'package:injectable/injectable.dart';
 import 'package:journexa_app/domain/entities/expense_category.dart';
 import 'package:journexa_app/domain/entities/income_category.dart';
 import 'package:journexa_app/domain/entities/transaction.dart';
@@ -18,6 +19,7 @@ part 'add_transaction_state.dart';
 part 'add_transaction_bloc.freezed.dart';
 
 /// Bloc to handle adding new Transaction
+@injectable
 class AddTransactionBloc extends Bloc<AddTransactionEvent, AddTransactionState>
     with Loggable, GenerateUid {
   /// Creates new [AddTransactionBloc]

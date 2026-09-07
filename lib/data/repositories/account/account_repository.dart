@@ -1,4 +1,3 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:drift/drift.dart';
 import 'package:injectable/injectable.dart';
 import 'package:journexa_app/data/database.dart';
@@ -50,18 +49,6 @@ class DriftAccountRepository with Loggable implements IAccountRepository {
         }
       }
       return const AppResult.success(null);
-    } on FirebaseException catch (e) {
-      logError(
-        'FirebaseException: [${e.code}] ${e.message}',
-        traceId: traceId,
-        error: e,
-      );
-      return AppResult.failure(
-        AppException(
-          e.message ?? e.code,
-          code: AppExceptionCode.serverException,
-        ),
-      );
     } on Exception catch (e, st) {
       logError(
         'Exception: $e',
@@ -107,11 +94,6 @@ class DriftAccountRepository with Loggable implements IAccountRepository {
         extras: {'count': count},
       );
       return AppResult.success(count);
-    } on FirebaseException catch (e) {
-      logError('$e', traceId: traceId, error: e);
-      return AppResult.failure(
-        AppException('$e', code: AppExceptionCode.serverException),
-      );
     } on Exception catch (e, st) {
       logError('$e', traceId: traceId, error: e, stackTrace: st);
       return AppResult.failure(

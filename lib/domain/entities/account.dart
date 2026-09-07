@@ -51,6 +51,30 @@ enum AccountType {
     AccountType.equity,
     AccountType.revenue,
   ];
+
+  /// Return key for this account type
+  String get key => switch (this) {
+    AccountType.asset => 'asset',
+    AccountType.liability => 'liability',
+    AccountType.equity => 'equity',
+    AccountType.revenue => 'revenue',
+    AccountType.expense => 'expense',
+  };
+
+  /// Return [AccountType] from [key].
+  static AccountType fromKey(String key) {
+    return switch (key) {
+      'asset' => AccountType.asset,
+      'liability' => AccountType.liability,
+      'equity' => AccountType.equity,
+      'revenue' => AccountType.revenue,
+      'expense' => AccountType.expense,
+      _ => throw AppException(
+        'invalid account type: $key',
+        code: AppExceptionCode.internalException,
+      ),
+    };
+  }
 }
 
 /// Types of balance

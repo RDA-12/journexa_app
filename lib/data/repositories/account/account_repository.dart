@@ -1,6 +1,8 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:drift/drift.dart';
 import 'package:injectable/injectable.dart';
-import 'package:journexa_app/data/repositories/account/firestore_account.dart';
+import 'package:journexa_app/data/database.dart';
+import 'package:journexa_app/data/repositories/account/account_db.dart';
 import 'package:journexa_app/domain/entities/account.dart';
 import 'package:journexa_app/domain/repositories/i_account_repository.dart';
 import 'package:journexa_app/shared/app_exception.dart';
@@ -8,16 +10,16 @@ import 'package:journexa_app/shared/app_logger.dart';
 import 'package:journexa_app/shared/app_result.dart';
 import 'package:mock_exceptions/mock_exceptions.dart';
 
-/// Firestre implementation of [IAccountRepository]
+/// Drift implementation of [IAccountRepository]
 @LazySingleton(as: IAccountRepository)
-class FirestoreAccountRepository with Loggable implements IAccountRepository {
-  /// Creates new [FirestoreAccountRepository]
-  FirestoreAccountRepository({required this._db});
+class DriftAccountRepository with Loggable implements IAccountRepository {
+  /// Creates new [DriftAccountRepository]
+  DriftAccountRepository({required this._db});
 
   @override
-  String get logTag => 'FirestoreAccountRepository';
+  String get logTag => 'DriftAccountRepository';
 
-  final FirebaseFirestore _db;
+  final AppLocalDatabase _db;
 
   @override
   Future<AppResult<Null>> ensureSaved(
@@ -26,20 +28,23 @@ class FirestoreAccountRepository with Loggable implements IAccountRepository {
     required String traceId,
   }) async {
     try {
+      maybeThrowException(this, Invocation.method(#ensureSaved, null));
       logInfo(
         'Start ensuring accounts saved',
         traceId: traceId,
       );
       for (final account in accounts) {
         logInfo('Checks ${account.name}', traceId: traceId);
-        final doc = _db.doc('users/$userId/accounts/${account.code}');
-        final data = await doc.get();
-        if (!data.exists) {
+        final statement = _db.accountDB.count(
+          where: (it) => it.code.equals(account.code),
+        );
+        final count = await statement.getSingle();
+        if (count == 0) {
           logInfo(
             '${account.name} doesnt exists. Save the default account',
             traceId: traceId,
           );
-          await doc.set(FirestoreAccount.fromDomain(account).toJson());
+          await _db.into(_db.accountDB).insert(account.toDB());
         } else {
           logInfo('${account.name} exists', traceId: traceId);
         }
@@ -80,9 +85,6 @@ class FirestoreAccountRepository with Loggable implements IAccountRepository {
     required String traceId,
   }) async {
     try {
-      // Uses internal expections_mocks
-      // since default exception from FakeFiresbaseFirestore
-      // didnt support AggregateQuery's get() method.
       maybeThrowException(
         this,
         Invocation.method(#getChildrenCountByParentCode, null, {
@@ -95,10 +97,10 @@ class FirestoreAccountRepository with Loggable implements IAccountRepository {
         traceId: traceId,
         extras: {'parentCode': parentCode},
       );
-      final colRef = _db.collection('users/$userId/accounts');
-      final query = colRef.where('parentCode', isEqualTo: parentCode).count();
-      final snap = await query.get();
-      final count = snap.count ?? 0;
+      final statement = _db.accountDB.count(
+        where: (it) => it.parentCode.equals(parentCode),
+      );
+      final count = await statement.getSingle();
       logInfo(
         'Found $count children for parentCode $parentCode',
         traceId: traceId,

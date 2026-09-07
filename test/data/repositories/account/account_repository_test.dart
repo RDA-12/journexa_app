@@ -1,6 +1,6 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:fake_cloud_firestore/fake_cloud_firestore.dart';
+import 'package:drift/drift.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:journexa_app/data/database.dart';
 import 'package:journexa_app/data/repositories/account/account.dart';
 import 'package:journexa_app/domain/entities/account.dart';
 import 'package:journexa_app/domain/repositories/i_account_repository.dart';
@@ -40,22 +40,20 @@ void main() {
     ),
   ];
 
-  late FirebaseFirestore fakeFirestore;
+  late AppLocalDatabase db;
   late IAccountRepository repository;
 
   setUp(() async {
-    fakeFirestore = FakeFirebaseFirestore();
+    db = AppLocalDatabase.test();
     for (final account in initialAccounts) {
-      final doc = fakeFirestore.doc(
-        'users/$userId/accounts/${account.code}',
-      );
-      await doc.set(FirestoreAccount.fromDomain(account).toJson());
+      await db.into(db.accountDB).insert(account.toDB());
     }
-    repository = FirestoreAccountRepository(db: fakeFirestore);
+    repository = DriftAccountRepository(db: db);
   });
 
   tearDown(() async {
-    await fakeFirestore.clearPersistence();
+    await db.accountDB.delete().go();
+    await db.close();
   });
 
   group('ensureSaved', () {
@@ -70,12 +68,19 @@ void main() {
 
         expect(result, const AppResult.success(null));
 
-        final colRef = fakeFirestore.collection('users/$userId/accounts');
-        final data = await colRef.get();
+        final parentDB = db.alias(db.accountDB, 'parent');
+        final data = await db.select(db.accountDB).join([
+          leftOuterJoin(
+            parentDB,
+            db.accountDB.parentCode.equalsExp(parentDB.code),
+          ),
+        ]).get();
         final dbAccounts = <Account>[];
-        for (final account in data.docs) {
+        for (final item in data) {
+          final accountData = item.readTable(db.accountDB);
+          final parentData = item.readTableOrNull(parentDB);
           dbAccounts.add(
-            FirestoreAccount.fromJson(account.data()).toDomain(),
+            accountData.toDomain(parent: parentData?.toDomain()),
           );
         }
 
@@ -84,23 +89,18 @@ void main() {
           [
             ...initialAccounts,
             ...accounts,
-          ].map((it) => it.copyWith(parent: null)),
+          ],
         );
       },
     );
 
     test(
-      'returns failure with serverException code '
-      'when firestore throws unexpected Exception',
+      'returns failure with internalException code '
+      'when drift throw DriftWrappedException',
       () async {
-        for (final account in accounts) {
-          final doc = fakeFirestore.doc(
-            'users/$userId/accounts/${account.code}',
-          );
-          whenCalling(
-            Invocation.method(#get, null),
-          ).on(doc).thenThrow(FirebaseException(plugin: 'firestore'));
-        }
+        whenCalling(
+          Invocation.method(#ensureSaved, null),
+        ).on(repository).thenThrow(DriftWrappedException(message: ''));
 
         final result = await repository.ensureSaved(
           userId,
@@ -113,7 +113,7 @@ void main() {
           isA<AppResultFailure<Null>>().having(
             (e) => e.error.code,
             'error.code',
-            AppExceptionCode.serverException,
+            AppExceptionCode.internalException,
           ),
         );
       },
@@ -123,12 +123,9 @@ void main() {
       'returns failure with internalException '
       'when unexpected Exception thrown',
       () async {
-        final doc = fakeFirestore.doc(
-          'users/$userId/accounts/${accounts[0].code}',
-        );
         whenCalling(
-          Invocation.method(#get, null),
-        ).on(doc).thenThrow(Exception('exeption'));
+          Invocation.method(#ensureSaved, null),
+        ).on(repository).thenThrow(Exception('exeption'));
 
         final result = await repository.ensureSaved(
           userId,
@@ -163,8 +160,7 @@ void main() {
             type: AccountType.asset,
             parent: parent,
           );
-          final doc = fakeFirestore.doc('users/$userId/accounts/${child.code}');
-          await doc.set(FirestoreAccount.fromDomain(child).toJson());
+          await db.into(db.accountDB).insert(child.toDB());
         }
 
         final result = await repository.getChildrenCountByParentCode(
@@ -183,13 +179,13 @@ void main() {
     );
 
     test(
-      'returns failure with serverException code '
-      'when firestore throws FirebaseException',
+      'returns failure with internalException code '
+      'when drift throws DriftWrappedException',
       () async {
         whenCalling(Invocation.method(#getChildrenCountByParentCode, null))
             .on(repository)
             .thenThrow(
-              FirebaseException(plugin: 'firestore'),
+              DriftWrappedException(message: ''),
             );
 
         final result = await repository.getChildrenCountByParentCode(
@@ -203,7 +199,7 @@ void main() {
           isA<AppResultFailure<int>>().having(
             (e) => e.error.code,
             'error.code',
-            AppExceptionCode.serverException,
+            AppExceptionCode.internalException,
           ),
         );
       },

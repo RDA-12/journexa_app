@@ -3,7 +3,7 @@ import 'package:firebase_auth_mocks/firebase_auth_mocks.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:google_sign_in_mocks/google_sign_in_mocks.dart';
-import 'package:journexa_app/data/repositories/auth_repository.dart';
+import 'package:journexa_app/data/repositories/auth/auth_repository.dart';
 import 'package:journexa_app/shared/app_exception.dart';
 import 'package:journexa_app/shared/app_result.dart';
 import 'package:mock_exceptions/mock_exceptions.dart';

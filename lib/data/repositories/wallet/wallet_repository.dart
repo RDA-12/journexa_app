@@ -1,8 +1,9 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:collection/collection.dart';
+import 'package:drift/drift.dart';
+import 'package:drift/native.dart';
 import 'package:injectable/injectable.dart';
+import 'package:journexa_app/data/database.dart';
 import 'package:journexa_app/data/repositories/account/account.dart';
-import 'package:journexa_app/data/repositories/wallet/firestore_wallet.dart';
+import 'package:journexa_app/data/repositories/wallet/wallet.dart';
 import 'package:journexa_app/domain/entities/account.dart';
 import 'package:journexa_app/domain/entities/wallet.dart';
 import 'package:journexa_app/domain/repositories/i_wallet_respository.dart';
@@ -12,16 +13,16 @@ import 'package:journexa_app/shared/app_result.dart';
 import 'package:mock_exceptions/mock_exceptions.dart';
 import 'package:rxdart/rxdart.dart';
 
-/// Firestore implementation of [IWalletRepository]
+/// Drift implementation of [IWalletRepository]
 @LazySingleton(as: IWalletRepository)
-class FirestoreWalletRepository with Loggable implements IWalletRepository {
-  /// Creates new [FirestoreWalletRepository]
-  FirestoreWalletRepository({required this._db});
+class DriftWalletRepository with Loggable implements IWalletRepository {
+  /// Creates new [DriftWalletRepository]
+  DriftWalletRepository({required this._db});
 
-  final FirebaseFirestore _db;
+  final AppLocalDatabase _db;
 
   @override
-  String get logTag => 'FirestoreWalletRepository';
+  String get logTag => 'DriftWalletRepository';
 
   @override
   Future<AppResult<Null>> save({
@@ -32,14 +33,24 @@ class FirestoreWalletRepository with Loggable implements IWalletRepository {
     try {
       maybeThrowException(this, Invocation.method(#save, null));
       logInfo(
-        'Starts checking wallet name',
+        'Starts transactions to writes wallet and account',
         traceId: traceId,
-        extras: {'name': wallet.name},
+        extras: {
+          'walletId': wallet.id,
+          'accountCode': wallet.account.code,
+        },
       );
-      final walletsCol = _db.collection('users/$userId/wallets');
-      final walletsQuery = walletsCol.where('name', isEqualTo: wallet.name);
-      final walletsSnaps = await walletsQuery.get();
-      if (walletsSnaps.docs.isNotEmpty) {
+      await _db.transaction(() async {
+        await _db.into(_db.walletDB).insert(wallet.toDB());
+        await _db.into(_db.accountDB).insert(wallet.account.toDB());
+      });
+      logInfo(
+        'Successfully written wallet and account to database',
+        traceId: traceId,
+      );
+      return const AppResult.success(null);
+    } on SqliteException catch (e) {
+      if (e.extendedResultCode == 2067) {
         logInfo('Name already exists', traceId: traceId);
         return const AppResult.failure(
           AppException(
@@ -48,34 +59,9 @@ class FirestoreWalletRepository with Loggable implements IWalletRepository {
           ),
         );
       }
-
-      final walletFirestore = FirestoreWallet.fromDomain(wallet);
-      final accountFirestore = FirestoreAccount.fromDomain(wallet.account);
-      logInfo(
-        'Name not yet exists. Starts batch writes wallet and account',
-        traceId: traceId,
-        extras: {
-          'wallet': walletFirestore.toJson(),
-          'account': accountFirestore.toJson(),
-        },
-      );
-      final walletDoc = _db.doc('users/$userId/wallets/${wallet.id}');
-      final accountDoc = _db.doc(
-        'users/$userId/accounts/${wallet.account.code}',
-      );
-      final batch = _db.batch()
-        ..set(walletDoc, walletFirestore.toJson())
-        ..set(accountDoc, accountFirestore.toJson());
-      await batch.commit();
-      logInfo(
-        'Successfully written wallet and account to database',
-        traceId: traceId,
-      );
-      return const AppResult.success(null);
-    } on FirebaseException catch (e) {
       logError('$e', traceId: traceId, error: e);
       return AppResult.failure(
-        AppException('$e', code: AppExceptionCode.serverException),
+        AppException('$e', code: AppExceptionCode.internalException),
       );
     } on Exception catch (e, st) {
       logError('$e', traceId: traceId, error: e, stackTrace: st);
@@ -97,89 +83,48 @@ class FirestoreWalletRepository with Loggable implements IWalletRepository {
       traceId: traceId,
       extras: {'query': query},
     );
-    Query<Map<String, Object?>> walletsQuery = _db.collection(
-      'users/$userId/wallets',
-    );
-    Query<Map<String, Object?>> accountsQuery = _db.collection(
-      'users/$userId/accounts',
-    );
+    final statement = _db.select(_db.walletDB).join([
+      leftOuterJoin(
+        _db.accountDB,
+        _db.walletDB.accountCode.equalsExp(_db.accountDB.code),
+      ),
+    ]);
     if (query != null) {
-      walletsQuery = walletsQuery
-          .where('nameLower', isGreaterThanOrEqualTo: query)
-          .where('nameLower', isLessThanOrEqualTo: '$query~');
-      accountsQuery = accountsQuery
-          .where('nameLower', isGreaterThanOrEqualTo: query)
-          .where('nameLower', isLessThanOrEqualTo: '$query~');
+      statement.where(_db.walletDB.name.like('%$query%'));
     }
     if (isDeleted != null) {
-      walletsQuery = walletsQuery.where(
-        'isDeleted',
-        isEqualTo: isDeleted,
-      );
-      accountsQuery = accountsQuery.where(
-        'isDeleted',
-        isEqualTo: isDeleted,
-      );
+      statement.where(_db.walletDB.isDeleted.equals(isDeleted));
     }
-    final walletsStream = walletsQuery.snapshots();
-    final accountsStream = accountsQuery.snapshots();
+    final stream = statement.watch();
     logInfo(
-      'Streams constructed. Return combined streams',
+      'Streams constructed. Return mapped streams',
       traceId: traceId,
     );
-    return CombineLatestStream.combine2(
-      walletsStream,
-      accountsStream,
-      (walletSnap, accountSnap) {
-        maybeThrowException(this, Invocation.method(#watch, null));
-        logInfo(
-          'Either wallet or account changed. '
-          'Starts constructing wallets',
-          traceId: traceId,
-        );
-        final walletDocs = walletSnap.docs;
-        final accountDocs = accountSnap.docs;
-        final result = <Wallet>[];
-        for (final walletDoc in walletDocs) {
-          final firestoreWallet = FirestoreWallet.fromJson(
-            walletDoc.data(),
+    return stream
+        .map(
+          (rows) {
+            maybeThrowException(this, Invocation.method(#watch, null));
+            final result = <Wallet>[];
+            for (final row in rows) {
+              final walletDB = row.readTable(_db.walletDB);
+              final accountDB = row.readTable(_db.accountDB);
+              result.add(
+                walletDB.toDomain(
+                  account: accountDB.toDomain(
+                    parent: SystemDefinedAccount.rootAsset,
+                  ),
+                ),
+              );
+            }
+            return AppResult.success(result);
+          },
+        )
+        .onErrorReturnWith((err, st) {
+          logError('$err', traceId: traceId, error: err, stackTrace: st);
+          return AppResult.failure(
+            AppException('$err', code: AppExceptionCode.internalException),
           );
-          final accountDoc = accountDocs.firstWhereOrNull((it) {
-            return it.data()['code'] == firestoreWallet.accountCode;
-          });
-          if (accountDoc == null) {
-            logWarning(
-              'Account for wallet ${firestoreWallet.id} not found',
-              traceId: traceId,
-              extras: {
-                'walletId': firestoreWallet.id,
-              },
-            );
-            continue;
-          }
-          final firestoreAccount = FirestoreAccount.fromJson(
-            accountDoc.data(),
-          );
-          final wallet = firestoreWallet.toDomain(
-            firestoreAccount.toDomain().copyWith(
-              parent: SystemDefinedAccount.rootAsset,
-            ),
-          );
-          result.add(wallet);
-        }
-        return AppResult.success(result);
-      },
-    ).onErrorReturnWith((err, st) {
-      logError('$err', traceId: traceId, error: err, stackTrace: st);
-      if (err is FirebaseException) {
-        return AppResult.failure(
-          AppException('$err', code: AppExceptionCode.serverException),
-        );
-      }
-      return AppResult.failure(
-        AppException('$err', code: AppExceptionCode.internalException),
-      );
-    });
+        });
   }
 
   @override
@@ -190,49 +135,33 @@ class FirestoreWalletRepository with Loggable implements IWalletRepository {
   }) async {
     try {
       maybeThrowException(this, Invocation.method(#delete, null));
-      final walletFirestore = FirestoreWallet.fromDomain(wallet);
-      final accountFirestore = FirestoreAccount.fromDomain(wallet.account);
       logInfo(
-        'Starts deleting wallet',
+        'Starts deleting wallet and its account',
         traceId: traceId,
         extras: {
-          'wallet': walletFirestore.toJson(),
-          'account': accountFirestore.toJson(),
+          'walletId': wallet.id,
+          'accountCode': wallet.account.code,
         },
       );
-
-      final walletRef = _db.doc('users/$userId/wallets/${wallet.id}');
-      final walletSnap = await walletRef.get();
-      final walletExists = walletSnap.exists;
-      final accountRef = _db.doc(
-        'users/$userId/accounts/${wallet.account.code}',
-      );
-      final accountSnap = await accountRef.get();
-      final accountExists = accountSnap.exists;
-      final batch = _db.batch();
-      if (walletExists) {
-        batch.set(
-          walletRef,
-          walletFirestore.copyWith(isDeleted: true).toJson(),
+      await _db.transaction(() async {
+        final updateWalletStatement = _db.update(
+          _db.walletDB,
+        )..where((it) => it.id.equals(wallet.id));
+        await updateWalletStatement.write(
+          const WalletDBCompanion(isDeleted: Value(true)),
         );
-      }
-      if (accountExists) {
-        batch.set(
-          accountRef,
-          accountFirestore.copyWith(isDeleted: true).toJson(),
+        final updateAccountStatement = _db.update(
+          _db.accountDB,
+        )..where((it) => it.code.equals(wallet.account.code));
+        await updateAccountStatement.write(
+          const AccountDBCompanion(isDeleted: Value(true)),
         );
-      }
-      await batch.commit();
+      });
       logInfo(
         'Successfully deleted wallet and account',
         traceId: traceId,
       );
       return const AppResult.success(null);
-    } on FirebaseException catch (e) {
-      logError('$e', traceId: traceId, error: e);
-      return AppResult.failure(
-        AppException('$e', code: AppExceptionCode.serverException),
-      );
     } on Exception catch (e, st) {
       logError('$e', traceId: traceId, error: e, stackTrace: st);
       return AppResult.failure(
@@ -249,37 +178,29 @@ class FirestoreWalletRepository with Loggable implements IWalletRepository {
   }) async {
     try {
       maybeThrowException(this, Invocation.method(#update, null));
-      final walletFirestore = FirestoreWallet.fromDomain(updatedWallet);
-      final accountFirestore = FirestoreAccount.fromDomain(
-        updatedWallet.account,
-      );
-
       logInfo(
         'Starts updating wallet',
         traceId: traceId,
         extras: {
-          'wallet': walletFirestore.toJson(),
-          'account': accountFirestore.toJson(),
+          'walletId': updatedWallet.id,
+          'accountCode': updatedWallet.account.code,
         },
       );
-      final batch = _db.batch();
-      final walletRef = _db.doc('users/$userId/wallets/${updatedWallet.id}');
-      batch.set(walletRef, walletFirestore.toJson());
-      final accountRef = _db.doc(
-        'users/$userId/accounts/${updatedWallet.account.code}',
-      );
-      batch.set(accountRef, accountFirestore.toJson());
-      await batch.commit();
+      await _db.transaction(() async {
+        final updateWalletStatement = _db.update(
+          _db.walletDB,
+        );
+        await updateWalletStatement.replace(updatedWallet.toDB());
+        final updateAccountStatement = _db.update(
+          _db.accountDB,
+        );
+        await updateAccountStatement.replace(updatedWallet.account.toDB());
+      });
       logInfo(
         'Successfully updated wallet and account',
         traceId: traceId,
       );
       return const AppResult.success(null);
-    } on FirebaseException catch (e) {
-      logError('$e', traceId: traceId, error: e);
-      return AppResult.failure(
-        AppException('$e', code: AppExceptionCode.serverException),
-      );
     } on Exception catch (e, st) {
       logError('$e', traceId: traceId, error: e, stackTrace: st);
       return AppResult.failure(

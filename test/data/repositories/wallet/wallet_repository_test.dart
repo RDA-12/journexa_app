@@ -1,6 +1,6 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:fake_cloud_firestore/fake_cloud_firestore.dart';
+import 'package:drift/drift.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:journexa_app/data/database.dart';
 import 'package:journexa_app/data/repositories/account/account.dart';
 import 'package:journexa_app/data/repositories/wallet/wallet.dart';
 import 'package:journexa_app/domain/entities/account.dart';
@@ -14,102 +14,93 @@ void main() {
   const userId = 'userId';
   const traceId = 'traceId';
 
-  final parent = SystemDefinedAccount.rootAsset;
+  final parentAccount = SystemDefinedAccount.rootAsset;
   final initialWallets = List.generate(5, (index) {
     return Wallet(
-      id: '$index',
-      name: 'wallet $index',
-      account: Account(
-        code: '10.000${index + 1}',
-        name: 'wallet $index',
-        type: AccountType.asset,
-        parent: parent,
+      id: 'wallet_id_$index',
+      name: 'Wallet $index',
+      account: Account.user(
+        parent: parentAccount,
+        name: 'Wallet $index',
+        currentChildrenCount: index,
       ),
     );
   });
 
-  late FirebaseFirestore fakeFirestore;
+  late AppLocalDatabase db;
   late IWalletRepository repository;
 
   setUp(() async {
-    fakeFirestore = FakeFirebaseFirestore();
-    final parentFirestore = FirestoreAccount.fromDomain(parent);
-    final parentDoc = fakeFirestore.doc(
-      'users/$userId/accounts/${parent.code}',
-    );
-    await parentDoc.set(parentFirestore.toJson());
+    db = AppLocalDatabase.test();
+    await db.into(db.accountDB).insert(parentAccount.toDB());
     for (final wallet in initialWallets) {
-      final walletFirestore = FirestoreWallet.fromDomain(wallet);
-      final walletDoc = fakeFirestore.doc('users/$userId/wallets/${wallet.id}');
-      await walletDoc.set(walletFirestore.toJson());
-      final walletAccount = FirestoreAccount.fromDomain(wallet.account);
-      final accountDoc = fakeFirestore.doc(
-        'users/$userId/accounts/${wallet.account.code}',
-      );
-      await accountDoc.set(walletAccount.toJson());
+      await db.into(db.walletDB).insert(wallet.toDB());
+      await db.into(db.accountDB).insert(wallet.account.toDB());
     }
 
-    repository = FirestoreWalletRepository(db: fakeFirestore);
+    repository = DriftWalletRepository(db: db);
   });
 
   tearDown(() async {
-    await fakeFirestore.clearPersistence();
+    await db.delete(db.walletDB).go();
+    await db.delete(db.accountDB).go();
+    await db.close();
   });
 
   group('save', () {
     final newWallet = Wallet(
-      id: 'new',
-      name: 'new wallet',
-      account: Account(
-        code: '10.1000',
-        name: 'new wallet',
-        type: AccountType.asset,
-        parent: parent,
+      id: 'completely-new',
+      name: 'completely new',
+      account: Account.user(
+        parent: parentAccount,
+        name: 'completely new',
+        currentChildrenCount: initialWallets.length,
       ),
     );
 
+    test('returns success and save correct wallet and account', () async {
+      final result = await repository.save(
+        userId: userId,
+        traceId: traceId,
+        wallet: newWallet,
+      );
+
+      expect(result, const AppResult.success(null));
+
+      final statement = db.select(db.walletDB).join([
+        leftOuterJoin(
+          db.accountDB,
+          db.accountDB.code.equalsExp(db.walletDB.accountCode),
+        ),
+      ])..where(db.walletDB.id.equals(newWallet.id));
+      final row = await statement.getSingle();
+      expect(
+        row
+            .readTable(db.walletDB)
+            .toDomain(
+              account: row
+                  .readTable(db.accountDB)
+                  .toDomain(parent: SystemDefinedAccount.rootAsset),
+            ),
+        newWallet,
+      );
+    });
+
     test(
-      'returns success and save correct Wallet and Account',
+      'returns failure with walletNameAlreadyExists code '
+      'when saving existing wallet name',
       () async {
-        final result = await repository.save(
-          userId: userId,
-          wallet: newWallet,
-          traceId: traceId,
-        );
-
-        expect(result, const AppResult.success(null));
-
-        final walletDocRef = fakeFirestore.doc(
-          'users/$userId/wallets/${newWallet.id}',
-        );
-        final walletSnapshot = await walletDocRef.get();
-        expect(
-          walletSnapshot.data(),
-          FirestoreWallet.fromDomain(newWallet).toJson(),
-        );
-
-        final accountDocRef = fakeFirestore.doc(
-          'users/$userId/accounts/${newWallet.account.code}',
-        );
-        final accountSnapshot = await accountDocRef.get();
-        final firestoreAccount = FirestoreAccount.fromDomain(newWallet.account);
-        expect(accountSnapshot.data(), firestoreAccount.toJson());
-      },
-    );
-
-    test(
-      'returns failure with walletAlreadyExists '
-      'when wallet with same name exists',
-      () async {
-        final expected = newWallet.copyWith(
-          name: initialWallets.first.name,
-          account: newWallet.account.copyWith(name: initialWallets.first.name),
-        );
+        final existingName = initialWallets.first.name;
 
         final result = await repository.save(
           userId: userId,
-          wallet: expected,
           traceId: traceId,
+          wallet: newWallet.copyWith(
+            name: existingName,
+            account: newWallet.account.copyWith(
+              name: existingName,
+            ),
+          ),
         );
 
         expect(
@@ -124,14 +115,12 @@ void main() {
     );
 
     test(
-      'returns failure with serverException code '
-      'when firestore throws FirebaseException',
+      'returns failure with internalException code '
+      'when db throws DriftWrapperException',
       () async {
-        whenCalling(Invocation.method(#save, null))
-            .on(repository)
-            .thenThrow(
-              FirebaseException(plugin: 'firestore'),
-            );
+        whenCalling(
+          Invocation.method(#save, null),
+        ).on(repository).thenThrow(DriftWrappedException(message: ''));
 
         final result = await repository.save(
           userId: userId,
@@ -144,7 +133,7 @@ void main() {
           isA<AppResultFailure<Null>>().having(
             (e) => e.error.code,
             'error.code',
-            AppExceptionCode.serverException,
+            AppExceptionCode.internalException,
           ),
         );
       },
@@ -152,7 +141,7 @@ void main() {
 
     test(
       'returns failure with internalException code '
-      'when firestore throws Exception',
+      'when db throws Exception',
       () async {
         whenCalling(
           Invocation.method(#save, null),
@@ -178,7 +167,7 @@ void main() {
 
   group('watch', () {
     test(
-      'emits success with correct Wallets',
+      'emits success with correct wallets',
       () async {
         final result = repository.watch(
           userId: userId,
@@ -190,7 +179,7 @@ void main() {
     );
 
     test(
-      'emits success with correct Wallets when query provided',
+      'emits success with correct wallets when query provided',
       () async {
         final expectedWallet = Wallet(
           id: 'expected',
@@ -199,21 +188,11 @@ void main() {
             code: '10.1000',
             name: 'expected name',
             type: AccountType.asset,
-            parent: parent,
+            parent: parentAccount,
           ),
         );
-        final walletDoc = fakeFirestore.doc(
-          'users/$userId/wallets/${expectedWallet.id}',
-        );
-        await walletDoc.set(
-          FirestoreWallet.fromDomain(expectedWallet).toJson(),
-        );
-        final accountDoc = fakeFirestore.doc(
-          'users/$userId/accounts/${expectedWallet.account.code}',
-        );
-        await accountDoc.set(
-          FirestoreAccount.fromDomain(expectedWallet.account).toJson(),
-        );
+        await db.into(db.walletDB).insert(expectedWallet.toDB());
+        await db.into(db.accountDB).insert(expectedWallet.account.toDB());
 
         final result = repository.watch(
           userId: userId,
@@ -226,7 +205,7 @@ void main() {
     );
 
     test(
-      'emits success with correct Wallets when isDeleted provided',
+      'emits success with correct wallets when isDeleted provided',
       () async {
         final expectedWallet = Wallet(
           id: 'expected',
@@ -235,25 +214,23 @@ void main() {
             code: '10.1000',
             name: 'expected name',
             type: AccountType.asset,
-            parent: parent,
+            parent: parentAccount,
           ),
         );
-        final walletDoc = fakeFirestore.doc(
-          'users/$userId/wallets/${expectedWallet.id}',
-        );
-        await walletDoc.set(
-          FirestoreWallet.fromDomain(
-            expectedWallet,
-          ).copyWith(isDeleted: true).toJson(),
-        );
-        final accountDoc = fakeFirestore.doc(
-          'users/$userId/accounts/${expectedWallet.account.code}',
-        );
-        await accountDoc.set(
-          FirestoreAccount.fromDomain(
-            expectedWallet.account,
-          ).copyWith(isDeleted: true).toJson(),
-        );
+        await db
+            .into(db.walletDB)
+            .insert(
+              expectedWallet.toDB().copyWith(
+                isDeleted: const Value(true),
+              ),
+            );
+        await db
+            .into(db.accountDB)
+            .insert(
+              expectedWallet.account.toDB().copyWith(
+                isDeleted: const Value(true),
+              ),
+            );
 
         final result = repository.watch(
           userId: userId,
@@ -274,14 +251,12 @@ void main() {
     );
 
     test(
-      'emits failure with serverException code '
-      'when firestore throws FirebaseException',
+      'emits failure with internalException code '
+      'when db emits DriftWrappedException',
       () async {
-        whenCalling(Invocation.method(#watch, null))
-            .on(repository)
-            .thenThrow(
-              FirebaseException(plugin: 'firestore'),
-            );
+        whenCalling(
+          Invocation.method(#watch, null),
+        ).on(repository).thenThrow(DriftWrappedException(message: ''));
 
         final result = repository.watch(
           userId: userId,
@@ -294,7 +269,7 @@ void main() {
             isA<AppResultFailure<List<Wallet>>>().having(
               (e) => e.error.code,
               'error.code',
-              AppExceptionCode.serverException,
+              AppExceptionCode.internalException,
             ),
           ),
         );
@@ -303,7 +278,7 @@ void main() {
 
     test(
       'emits failure with internalException code '
-      'when firestore throws Exception',
+      'when db stream emits exception',
       () async {
         whenCalling(
           Invocation.method(#watch, null),
@@ -343,17 +318,16 @@ void main() {
 
         expect(result, const AppResult.success(null));
 
-        final walletDocRef = fakeFirestore.doc(
-          'users/$userId/wallets/${deletedWallet.id}',
-        );
-        final walletSnapshot = await walletDocRef.get();
-        expect(walletSnapshot.data()!['isDeleted'], isTrue);
+        final statement = db.select(db.walletDB).join([
+          leftOuterJoin(
+            db.accountDB,
+            db.accountDB.code.equalsExp(db.walletDB.accountCode),
+          ),
+        ])..where(db.walletDB.id.equals(deletedWallet.id));
+        final row = await statement.getSingle();
 
-        final accountDocRef = fakeFirestore.doc(
-          'users/$userId/accounts/${deletedWallet.account.code}',
-        );
-        final accountSnapshot = await accountDocRef.get();
-        expect(accountSnapshot.data()!['isDeleted'], isTrue);
+        expect(row.readTable(db.walletDB).isDeleted, isTrue);
+        expect(row.readTable(db.accountDB).isDeleted, isTrue);
       },
     );
 
@@ -367,7 +341,7 @@ void main() {
             code: '10.0100',
             name: 'non-existent',
             type: AccountType.asset,
-            parent: parent,
+            parent: parentAccount,
           ),
         );
 
@@ -379,27 +353,25 @@ void main() {
 
         expect(result, const AppResult.success(null));
 
-        final walletDocRef = fakeFirestore.doc(
-          'users/$userId/wallets/${nonExistentWallet.id}',
-        );
-        final walletSnapshot = await walletDocRef.get();
-        expect(walletSnapshot.exists, isFalse);
+        final statement = db.select(db.walletDB).join([
+          leftOuterJoin(
+            db.accountDB,
+            db.accountDB.code.equalsExp(db.walletDB.accountCode),
+          ),
+        ])..where(db.walletDB.id.equals(nonExistentWallet.id));
+        final row = await statement.getSingleOrNull();
 
-        final accountDocRef = fakeFirestore.doc(
-          'users/$userId/accounts/${nonExistentWallet.account.code}',
-        );
-        final accountSnapshot = await accountDocRef.get();
-        expect(accountSnapshot.exists, isFalse);
+        expect(row, null);
       },
     );
 
     test(
-      'returns failure with serverException '
-      'when firestore throws FirebaseException',
+      'returns failure with internalException '
+      'when db throws DriftWrappedException',
       () async {
         whenCalling(
           Invocation.method(#delete, null),
-        ).on(repository).thenThrow(FirebaseException(plugin: 'firestore'));
+        ).on(repository).thenThrow(DriftWrappedException(message: ''));
 
         final result = await repository.delete(
           userId: userId,
@@ -412,7 +384,7 @@ void main() {
           isA<AppResultFailure<Null>>().having(
             (e) => e.error.code,
             'error.code',
-            AppExceptionCode.serverException,
+            AppExceptionCode.internalException,
           ),
         );
       },
@@ -420,7 +392,7 @@ void main() {
 
     test(
       'returns failure with internalException '
-      'when firestore throws Exception',
+      'when db throws Exception',
       () async {
         whenCalling(
           Invocation.method(#delete, null),
@@ -468,31 +440,30 @@ void main() {
           traceId: traceId,
         );
 
-        final walletDoc = await fakeFirestore
-            .doc('users/$userId/wallets/${updatedWallet.id}')
-            .get();
-        expect(
-          walletDoc.data(),
-          FirestoreWallet.fromDomain(updatedWallet).toJson(),
-        );
-
-        final accountDoc = await fakeFirestore
-            .doc('users/$userId/accounts/${updatedWallet.account.code}')
-            .get();
-        expect(
-          accountDoc.data(),
-          FirestoreAccount.fromDomain(updatedWallet.account).toJson(),
-        );
+        final statement = db.select(db.walletDB).join([
+          leftOuterJoin(
+            db.accountDB,
+            db.accountDB.code.equalsExp(db.walletDB.accountCode),
+          ),
+        ])..where(db.walletDB.id.equals(updatedWallet.id));
+        final row = await statement.getSingle();
+        final account = row
+            .readTable(db.accountDB)
+            .toDomain(parent: SystemDefinedAccount.rootAsset);
+        final wallet = row
+            .readTable(db.walletDB)
+            .toDomain(account: account);
+        expect(wallet, updatedWallet);
       },
     );
 
     test(
-      'returns failure with serverException '
-      'when firestore throws FirebaseException',
+      'returns failure with internalException '
+      'when db throws DriftWrappedException',
       () async {
         whenCalling(
           Invocation.method(#update, null),
-        ).on(repository).thenThrow(FirebaseException(plugin: 'firestore'));
+        ).on(repository).thenThrow(DriftWrappedException(message: ''));
 
         final result = await repository.update(
           userId: userId,
@@ -505,7 +476,7 @@ void main() {
           isA<AppResultFailure<Null>>().having(
             (e) => e.error.code,
             'error.code',
-            AppExceptionCode.serverException,
+            AppExceptionCode.internalException,
           ),
         );
       },
@@ -513,7 +484,7 @@ void main() {
 
     test(
       'returns failure with internalException '
-      'when firestore throws Exception',
+      'when db throws Exception',
       () async {
         whenCalling(
           Invocation.method(#update, null),

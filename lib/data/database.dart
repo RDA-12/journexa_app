@@ -5,6 +5,7 @@ import 'package:injectable/injectable.dart';
 import 'package:journexa_app/data/repositories/account/account.dart';
 import 'package:journexa_app/data/repositories/expense_category/expense_category.dart';
 import 'package:journexa_app/data/repositories/income_category/income_category.dart';
+import 'package:journexa_app/data/repositories/wallet/wallet.dart';
 import 'package:meta/meta.dart';
 import 'package:path_provider/path_provider.dart';
 
@@ -12,7 +13,14 @@ part 'database.g.dart';
 
 /// Local app database
 @lazySingleton
-@DriftDatabase(tables: [AccountDB, ExpenseCategoryDB, IncomeCategoryDB])
+@DriftDatabase(
+  tables: [
+    AccountDB,
+    ExpenseCategoryDB,
+    IncomeCategoryDB,
+    WalletDB,
+  ],
+)
 class AppLocalDatabase extends _$AppLocalDatabase {
   /// Creates new [AppLocalDatabase]
   @factoryMethod

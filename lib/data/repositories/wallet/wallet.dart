@@ -1,2 +1,2 @@
-export 'firestore_wallet.dart';
+export 'wallet_db.dart';
 export 'wallet_repository.dart';

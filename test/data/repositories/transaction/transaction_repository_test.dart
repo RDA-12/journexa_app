@@ -1,13 +1,16 @@
-import 'package:cloud_firestore/cloud_firestore.dart' hide Transaction;
 import 'package:decimal/decimal.dart';
-import 'package:fake_cloud_firestore/fake_cloud_firestore.dart';
+import 'package:drift/drift.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:journexa_app/data/repositories/journal/firestore_journal.dart';
-import 'package:journexa_app/data/repositories/transaction/firestore_transaction.dart';
-import 'package:journexa_app/data/repositories/transaction/transaction_repository.dart';
+import 'package:journexa_app/data/database.dart';
+import 'package:journexa_app/data/repositories/account/account.dart';
+import 'package:journexa_app/data/repositories/income_category/income_category.dart';
+import 'package:journexa_app/data/repositories/transaction/transaction.dart';
+import 'package:journexa_app/data/repositories/wallet/wallet.dart';
 import 'package:journexa_app/domain/entities/account.dart';
+import 'package:journexa_app/domain/entities/income_category.dart';
 import 'package:journexa_app/domain/entities/journal.dart';
 import 'package:journexa_app/domain/entities/transaction.dart';
+import 'package:journexa_app/domain/entities/wallet.dart';
 import 'package:journexa_app/domain/repositories/i_transaction_repository.dart';
 import 'package:journexa_app/shared/app_exception.dart';
 import 'package:journexa_app/shared/app_result.dart';
@@ -16,48 +19,99 @@ import 'package:mock_exceptions/mock_exceptions.dart';
 void main() {
   const userId = 'userId';
   const traceId = 'traceId';
+
+  final assetParent = SystemDefinedAccount.rootAsset;
+  final revenueParent = SystemDefinedAccount.rootRevenue;
+  final expenseParent = SystemDefinedAccount.rootExpense;
+
+  final walletAccount = Account(
+    code: '10.0001',
+    name: 'Wallet 1',
+    type: AccountType.asset,
+    parent: assetParent,
+  );
+  final wallet = Wallet(
+    id: 'wallet-1',
+    name: 'Wallet 1',
+    account: walletAccount,
+  );
+
+  final incomeCategoryAccount = Account(
+    code: '40.0001',
+    name: 'Income Cat 1',
+    type: AccountType.revenue,
+    parent: revenueParent,
+  );
+  final incomeCategory = IncomeCategory(
+    id: 'income-1',
+    name: 'Income Cat 1',
+    icon: 'icon',
+    account: incomeCategoryAccount,
+  );
+
   final initialTransactions = List.generate(5, (index) {
     return Transaction.income(
       id: 'id$index',
-      walletId: 'wallet-1',
-      incomeCategoryId: 'income-1',
+      walletId: wallet.id,
+      incomeCategoryId: incomeCategory.id,
       amount: Decimal.fromInt(100 * (index + 1)),
-      date: DateTime.now(),
+      date: DateTime(2026, 9, 7, 10, index),
     );
   });
 
-  late FirebaseFirestore fakeFirestore;
+  late AppLocalDatabase db;
   late ITransactionRepository repository;
 
   setUp(() async {
-    fakeFirestore = FakeFirebaseFirestore();
+    db = AppLocalDatabase.test();
+
+    await db.into(db.accountDB).insert(assetParent.toDB());
+    await db.into(db.accountDB).insert(revenueParent.toDB());
+    await db.into(db.accountDB).insert(expenseParent.toDB());
+
+    await db.into(db.accountDB).insert(walletAccount.toDB());
+    await db.into(db.walletDB).insert(wallet.toDB());
+
+    await db.into(db.accountDB).insert(incomeCategoryAccount.toDB());
+    await db.into(db.incomeCategoryDB).insert(incomeCategory.toDB());
+
     for (final tr in initialTransactions) {
-      final doc = fakeFirestore.doc('users/$userId/transactions/${tr.id}');
-      await doc.set(FirestoreTransaction.fromDomain(tr).toJson());
+      await db.into(db.transactionDB).insert(tr.toDB());
     }
 
-    repository = FirestoreTransactionRepository(db: fakeFirestore);
+    repository = DriftTransactionRepository(db: db);
   });
 
   tearDown(() async {
-    await fakeFirestore.clearPersistence();
+    await db.delete(db.journalEntryLineDB).go();
+    await db.delete(db.journalEntryDB).go();
+    await db.delete(db.transactionDB).go();
+    await db.delete(db.incomeCategoryDB).go();
+    await db.delete(db.expenseCategoryDB).go();
+    await db.delete(db.walletDB).go();
+    await db.delete(db.accountDB).go();
+    await db.close();
   });
 
   group('save', () {
-    final transaction = Transaction.testIncome(
+    final transaction = Transaction.income(
+      id: 'new-tx',
+      walletId: wallet.id,
+      incomeCategoryId: incomeCategory.id,
       amount: Decimal.fromInt(100),
-      date: DateTime.now(),
+      date: DateTime(2026, 9, 7, 12),
+      notes: 'New tx note',
     );
     final entry = JournalEntry(
       id: transaction.id,
       transactionDate: transaction.date,
       lines: [
         JournalEntryLine.fromAccount(
-          account: Account.test(),
+          account: walletAccount,
           amount: transaction.amount,
         ),
         JournalEntryLine.fromAccount(
-          account: Account.test(AccountType.revenue),
+          account: incomeCategoryAccount,
           amount: transaction.amount,
         ),
       ],
@@ -65,7 +119,7 @@ void main() {
     );
 
     test(
-      'returns succesn and save correct transaction, '
+      'returns success and save correct transaction, '
       'journal entry and its lines data',
       () async {
         final result = await repository.save(
@@ -77,44 +131,38 @@ void main() {
 
         expect(result, const AppResult.success(null));
 
-        final transactionSnapshot = await fakeFirestore
-            .doc('users/$userId/transactions/${transaction.id}')
-            .get();
-        expect(transactionSnapshot.exists, true);
-        expect(
-          FirestoreTransaction.fromJson(transactionSnapshot.data()!),
-          FirestoreTransaction.fromDomain(transaction),
-        );
+        final txRow = await (db.select(
+          db.transactionDB,
+        )..where((t) => t.id.equals(transaction.id))).getSingle();
+        expect(txRow.toDomain(), transaction);
 
-        final entrySnapshot = await fakeFirestore
-            .doc('users/$userId/journalEntries/${entry.id}')
-            .get();
-        expect(entrySnapshot.exists, true);
-        expect(
-          FirestoreJournalEntry.fromJson(entrySnapshot.data()!),
-          FirestoreJournalEntry.fromDomain(entry),
-        );
+        final entryRow = await (db.select(
+          db.journalEntryDB,
+        )..where((e) => e.id.equals(entry.id))).getSingle();
+        expect(entryRow.id, entry.id);
+        expect(entryRow.transactionDate, entry.transactionDate);
+        expect(entryRow.notes, entry.description);
 
-        final linesSnapshot = await fakeFirestore
-            .collection('users/$userId/journalEntries/${entry.id}/lines')
-            .get();
-        expect(linesSnapshot.docs.length, 2);
-        expect(
-          linesSnapshot.docs.map(
-            (doc) => FirestoreJournalEntryLine.fromJson(doc.data()),
-          ),
-          entry.lines.map(FirestoreJournalEntryLine.fromDomain),
-        );
+        final lineRows = await (db.select(
+          db.journalEntryLineDB,
+        )..where((l) => l.journalId.equals(entry.id))).get();
+        expect(lineRows.length, 2);
+        expect(lineRows[0].accountCode, entry.lines[0].account.code);
+        expect(lineRows[0].debit, entry.lines[0].debit);
+        expect(lineRows[0].credit, entry.lines[0].credit);
+        expect(lineRows[1].accountCode, entry.lines[1].account.code);
+        expect(lineRows[1].debit, entry.lines[1].debit);
+        expect(lineRows[1].credit, entry.lines[1].credit);
       },
     );
 
     test(
-      'returns failure with serverException code '
-      'when firestore throws FirebaseException',
+      'returns failure with internalException code '
+      'when db throws DriftWrappedException',
       () async {
         whenCalling(
           Invocation.method(#save, null),
-        ).on(repository).thenThrow(FirebaseException(plugin: 'firestore'));
+        ).on(repository).thenThrow(DriftWrappedException(message: ''));
 
         final result = await repository.save(
           userId: userId,
@@ -128,7 +176,7 @@ void main() {
           isA<AppResultFailure<Null>>().having(
             (e) => e.error.code,
             'error.code',
-            AppExceptionCode.serverException,
+            AppExceptionCode.internalException,
           ),
         );
       },
@@ -169,12 +217,12 @@ void main() {
     });
 
     test(
-      'emits failure with serverException code '
-      'when firestore throws FirebaseException',
+      'emits failure with internalException code '
+      'when db emits DriftWrappedException',
       () async {
         whenCalling(
           Invocation.method(#watch, null),
-        ).on(repository).thenThrow(FirebaseException(plugin: 'firestore'));
+        ).on(repository).thenThrow(DriftWrappedException(message: ''));
 
         final result = repository.watch(
           userId: userId,
@@ -187,7 +235,7 @@ void main() {
             isA<AppResultFailure<List<Transaction>>>().having(
               (e) => e.error.code,
               'error.code',
-              AppExceptionCode.serverException,
+              AppExceptionCode.internalException,
             ),
           ),
         );
@@ -196,7 +244,7 @@ void main() {
 
     test(
       'emits failure with internalException code '
-      'when firestore throws Exception',
+      'when db throws Exception',
       () async {
         whenCalling(
           Invocation.method(#watch, null),

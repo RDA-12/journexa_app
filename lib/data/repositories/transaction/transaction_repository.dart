@@ -1,7 +1,7 @@
-import 'package:cloud_firestore/cloud_firestore.dart' hide Transaction;
 import 'package:injectable/injectable.dart';
-import 'package:journexa_app/data/repositories/journal/firestore_journal.dart';
-import 'package:journexa_app/data/repositories/transaction/firestore_transaction.dart';
+import 'package:journexa_app/data/database.dart';
+import 'package:journexa_app/data/repositories/journal/journal.dart';
+import 'package:journexa_app/data/repositories/transaction/transaction.dart';
 import 'package:journexa_app/domain/entities/journal.dart';
 import 'package:journexa_app/domain/entities/transaction.dart';
 import 'package:journexa_app/domain/repositories/i_transaction_repository.dart';
@@ -11,18 +11,18 @@ import 'package:journexa_app/shared/app_result.dart';
 import 'package:mock_exceptions/mock_exceptions.dart';
 import 'package:rxdart/rxdart.dart';
 
-/// Firestore implementation of [ITransactionRepository]
+/// Drift implementation of [ITransactionRepository]
 @LazySingleton(as: ITransactionRepository)
-class FirestoreTransactionRepository
+class DriftTransactionRepository
     with Loggable
     implements ITransactionRepository {
-  /// Creates new [FirestoreTransactionRepository]
-  FirestoreTransactionRepository({required this._db});
+  /// Creates new [DriftTransactionRepository]
+  DriftTransactionRepository({required this._db});
 
-  final FirebaseFirestore _db;
+  final AppLocalDatabase _db;
 
   @override
-  String get logTag => 'FirestoreTransactionRepository';
+  String get logTag => 'DriftTransactionRepository';
 
   @override
   Future<AppResult<Null>> save({
@@ -34,50 +34,35 @@ class FirestoreTransactionRepository
     try {
       maybeThrowException(this, Invocation.method(#save, null));
       logInfo(
-        'Creates firestore object for transaction, journal entry and its lints',
-        traceId: traceId,
-      );
-      final firestoreTransaction = FirestoreTransaction.fromDomain(transaction);
-      final firestoreJournalEntry = FirestoreJournalEntry.fromDomain(
-        journalEntry,
-      );
-      final firestoreLines = journalEntry.lines
-          .map(FirestoreJournalEntryLine.fromDomain)
-          .toList();
-      logInfo(
-        'Objects created. Starts batch write',
+        'Starts transaction to write transaction, journal entry, and its lines',
         traceId: traceId,
         extras: {
-          'transactionId': firestoreTransaction.id,
-          'journalEntryId': firestoreJournalEntry.id,
-          'lineCount': firestoreLines.length,
+          'transactionId': transaction.id,
+          'journalEntryId': journalEntry.id,
+          'lineCount': journalEntry.lines.length,
         },
       );
-      final batch = _db.batch();
-      final transactionRef = _db.doc(
-        'users/$userId/transactions/${firestoreTransaction.id}',
+      await _db.transaction(() async {
+        await _db.into(_db.transactionDB).insert(transaction.toDB());
+        await _db.into(_db.journalEntryDB).insert(journalEntry.toDB());
+        for (var i = 0; i < journalEntry.lines.length; i++) {
+          final line = journalEntry.lines[i];
+          await _db
+              .into(_db.journalEntryLineDB)
+              .insert(
+                line.toDB(
+                  id: '${journalEntry.id}-$i',
+                  journalId: journalEntry.id,
+                ),
+              );
+        }
+      });
+      logInfo(
+        'Successfully written transaction, journal entry, '
+        'and lines to database',
+        traceId: traceId,
       );
-      batch.set(transactionRef, firestoreTransaction.toJson());
-      final journalEntryRef = _db.doc(
-        'users/$userId/journalEntries/${firestoreJournalEntry.id}',
-      );
-      batch.set(journalEntryRef, firestoreJournalEntry.toJson());
-      for (var i = 0; i < firestoreLines.length; i++) {
-        final line = firestoreLines[i];
-        final lineColRef = _db.collection(
-          'users/$userId/journalEntries/${firestoreJournalEntry.id}/lines',
-        );
-        batch.set(lineColRef.doc(), line.toJson());
-      }
-      logInfo('Batch write prepared. Executes.', traceId: traceId);
-      await batch.commit();
-      logInfo('Batch write completed successfully.', traceId: traceId);
       return const AppResult.success(null);
-    } on FirebaseException catch (e) {
-      logError('$e', traceId: traceId, error: e);
-      return AppResult.failure(
-        AppException('$e', code: AppExceptionCode.serverException),
-      );
     } on Exception catch (e, st) {
       logError('$e', traceId: traceId, error: e, stackTrace: st);
       return AppResult.failure(
@@ -96,35 +81,26 @@ class FirestoreTransactionRepository
       traceId: traceId,
       extras: {'userId': userId},
     );
-    final colRef = _db.collection('users/$userId/transactions');
-    return colRef
-        .snapshots()
-        .map((snap) {
-          maybeThrowException(this, Invocation.method(#watch, null));
-          logInfo(
-            'Transactions snapshot obtained. Starts mapping',
-            traceId: traceId,
-          );
-          final result = <Transaction>[];
-          for (final doc in snap.docs) {
-            final data = doc.data();
-            final firestoreTransaction = FirestoreTransaction.fromJson(data);
-            result.add(firestoreTransaction.toModel());
-          }
-          logInfo(
-            'Mapping completed. Returns results',
-            traceId: traceId,
-            extras: {'count': result.length},
-          );
-          return AppResult.success(result);
-        })
-        .onErrorReturnWith((e, st) {
-          if (e is FirebaseException) {
-            logError('$e', traceId: traceId, error: e);
-            return AppResult.failure(
-              AppException('$e', code: AppExceptionCode.serverException),
+    final statement = _db.select(_db.transactionDB);
+    final stream = statement.watch();
+    return stream
+        .map(
+          (rows) {
+            maybeThrowException(this, Invocation.method(#watch, null));
+            logInfo(
+              'Transactions rows obtained. Starts mapping',
+              traceId: traceId,
             );
-          }
+            final result = rows.map((row) => row.toDomain()).toList();
+            logInfo(
+              'Mapping completed. Returns results',
+              traceId: traceId,
+              extras: {'count': result.length},
+            );
+            return AppResult.success(result);
+          },
+        )
+        .onErrorReturnWith((e, st) {
           logError('$e', traceId: traceId, error: e, stackTrace: st);
           return AppResult.failure(
             AppException('$e', code: AppExceptionCode.internalException),

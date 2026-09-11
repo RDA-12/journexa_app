@@ -168,6 +168,91 @@ void main() {
     });
 
     test(
+      'emits filtered data when from and to filters are provided',
+      () async {
+        final entry2 = JournalEntry(
+          id: 'entry-2',
+          transactionDate: DateTime(2026, 9, 15),
+          lines: [
+            JournalEntryLine.fromAccount(
+              account: debitAccount,
+              amount: Decimal.fromInt(5000),
+            ),
+            JournalEntryLine.fromAccount(
+              account: creditAccount,
+              amount: Decimal.fromInt(5000),
+            ),
+          ],
+        );
+        await db.into(db.journalEntryDB).insert(entry2.toDB());
+        for (var i = 0; i < entry2.lines.length; i++) {
+          await db.into(db.journalEntryLineDB).insert(
+                entry2.lines[i].toDB(id: 'line-entry2-$i', journalId: entry2.id),
+              );
+        }
+
+        // Filter: only entries from 2026-09-10 (includes entry-2 only)
+        final fromResult = repository.watchAccountBalances(
+          traceId: traceId,
+          from: DateTime(2026, 9, 10),
+        );
+        expect(
+          fromResult,
+          emits(
+            AppResult.success({
+              debitAccount.code: Decimal.fromInt(5000),
+              creditAccount.code: Decimal.fromInt(5000),
+            }),
+          ),
+        );
+
+        // Filter: only entries up to 2026-09-10 (includes entry-1 only)
+        final toResult = repository.watchAccountBalances(
+          traceId: traceId,
+          to: DateTime(2026, 9, 10),
+        );
+        expect(
+          toResult,
+          emits(
+            AppResult.success({
+              debitAccount.code: Decimal.fromInt(10000),
+              creditAccount.code: Decimal.fromInt(10000),
+            }),
+          ),
+        );
+
+        // Filter: date range matching both entries (2026-09-07 to 2026-09-15)
+        final rangeResult = repository.watchAccountBalances(
+          traceId: traceId,
+          from: DateTime(2026, 9, 7),
+          to: DateTime(2026, 9, 15),
+        );
+        expect(
+          rangeResult,
+          emits(
+            AppResult.success({
+              debitAccount.code: Decimal.fromInt(15000),
+              creditAccount.code: Decimal.fromInt(15000),
+            }),
+          ),
+        );
+
+        // Filter: date range matching no entries
+        final emptyResult = repository.watchAccountBalances(
+          traceId: traceId,
+          from: DateTime(2026, 9, 8),
+          to: DateTime(2026, 9, 14),
+        );
+        expect(
+          emptyResult,
+          emits(
+            AppResult.success(<String, Decimal>{}),
+          ),
+        );
+      },
+    );
+
+    test(
       'emits failure with internalException code '
       'when db emits DriftWrappedException',
       () async {

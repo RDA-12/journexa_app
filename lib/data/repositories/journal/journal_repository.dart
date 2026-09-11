@@ -1,6 +1,7 @@
 import 'package:decimal/decimal.dart';
 import 'package:drift/drift.dart';
 import 'package:injectable/injectable.dart';
+import 'package:journexa_app/data/converter.dart';
 import 'package:journexa_app/data/database.dart';
 import 'package:journexa_app/domain/entities/account.dart';
 import 'package:journexa_app/domain/repositories/i_journal_repository.dart';
@@ -67,6 +68,8 @@ class DriftJournalRepository with Loggable implements IJournalRepository {
   @override
   Stream<AppResult<Map<String, Decimal>>> watchAccountBalances({
     required String traceId,
+    DateTime? from,
+    DateTime? to,
   }) {
     logInfo(
       'Starts watching current balance for all accounts',
@@ -77,7 +80,41 @@ class DriftJournalRepository with Loggable implements IJournalRepository {
         _db.accountDB,
         _db.accountDB.code.equalsExp(_db.journalEntryLineDB.accountCode),
       ),
+      innerJoin(
+        _db.journalEntryDB,
+        _db.journalEntryDB.id.equalsExp(_db.journalEntryLineDB.journalId),
+        useColumns: false,
+      ),
     ]);
+
+    if (from != null) {
+      logInfo(
+        'from filter provided. Adding filter to statement',
+        traceId: traceId,
+        extras: {
+          'from': from.toIso8601String(),
+        },
+      );
+      statement.where(
+        _db.journalEntryDB.transactionDate.isBiggerOrEqualValue(
+          const DriftDateTimeConverter().toSql(from),
+        ),
+      );
+    }
+    if (to != null) {
+      logInfo(
+        'to filter provided. Adding filter to statement',
+        traceId: traceId,
+        extras: {
+          'to': to.toIso8601String(),
+        },
+      );
+      statement.where(
+        _db.journalEntryDB.transactionDate.isSmallerOrEqualValue(
+          const DriftDateTimeConverter().toSql(to),
+        ),
+      );
+    }
 
     return statement
         .watch()

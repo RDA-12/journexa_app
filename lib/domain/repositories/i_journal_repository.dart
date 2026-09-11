@@ -12,7 +12,15 @@ abstract interface class IJournalRepository {
   });
 
   /// Watch [Account] balances. Emits Map of account code and current balance
+  ///
+  /// If [from] is provided, it will return balance from that date (inclusive).
+  /// If [to] is provided, it will return balance up to that date (inclusive).
+  ///
+  /// If [from] and [to] not provided, it will return balance from
+  /// start to now.
   Stream<AppResult<Map<String, Decimal>>> watchAccountBalances({
     required String traceId,
+    DateTime? from,
+    DateTime? to,
   });
 }

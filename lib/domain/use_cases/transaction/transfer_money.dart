@@ -5,7 +5,6 @@ import 'package:journexa_app/domain/entities/account.dart';
 import 'package:journexa_app/domain/entities/journal.dart';
 import 'package:journexa_app/domain/entities/transaction.dart';
 import 'package:journexa_app/domain/entities/wallet.dart';
-import 'package:journexa_app/domain/repositories/i_auth_repository.dart';
 import 'package:journexa_app/domain/repositories/i_journal_repository.dart';
 import 'package:journexa_app/domain/repositories/i_transaction_repository.dart';
 import 'package:journexa_app/domain/use_cases/base_use_case.dart';
@@ -41,19 +40,17 @@ sealed class TransferMoneyParams with _$TransferMoneyParams {
   }) = _TransferMoneyParams;
 }
 
-/// Use case to transfer money between wallets for current user
+/// Use case to transfer money between wallets
 @lazySingleton
 class TransferMoneyUseCase
     with GenerateUid, Loggable
     implements FutureBaseUseCase<TransferMoneyParams, Transaction> {
   /// Creates new [TransferMoneyUseCase]
   TransferMoneyUseCase({
-    required this._authRepository,
     required this._journalRepository,
     required this._transactionRepository,
   });
 
-  final IAuthRepository _authRepository;
   final IJournalRepository _journalRepository;
   final ITransactionRepository _transactionRepository;
 
@@ -66,31 +63,13 @@ class TransferMoneyUseCase
     required String traceId,
   }) async {
     logInfo(
-      'Starts getting current user id',
-      traceId: traceId,
-    );
-    final getCurrentUserIdResult = await _authRepository.getCurrentUserId(
-      traceId: traceId,
-    );
-    final getCurrentUserIdExc = getCurrentUserIdResult.errorOrNull;
-    if (getCurrentUserIdExc != null) {
-      logInfo(
-        'Failed to get current user id.',
-        traceId: traceId,
-      );
-      return AppResult.failure(getCurrentUserIdExc);
-    }
-
-    final userId = getCurrentUserIdResult.valueOrNull!;
-    logInfo(
-      'User ID obtained. Get source wallet balance',
+      'Starts getting source wallet balance',
       traceId: traceId,
       extras: {
         'sourceWalletId': params.source.id,
       },
     );
     final walletBalanceResult = await _journalRepository.getCurrentBalance(
-      userId: userId,
       accounts: [params.source.account],
       traceId: traceId,
     );
@@ -184,7 +163,6 @@ class TransferMoneyUseCase
       },
     );
     final saveResult = await _transactionRepository.save(
-      userId: userId,
       transaction: transaction,
       journalEntry: journalEntry,
       traceId: traceId,

@@ -26,7 +26,6 @@ class DriftTransactionRepository
 
   @override
   Future<AppResult<Null>> save({
-    required String userId,
     required Transaction transaction,
     required JournalEntry journalEntry,
     required String traceId,
@@ -73,13 +72,11 @@ class DriftTransactionRepository
 
   @override
   Stream<AppResult<List<Transaction>>> watch({
-    required String userId,
     required String traceId,
   }) {
     logInfo(
       'Starts watching transactions',
       traceId: traceId,
-      extras: {'userId': userId},
     );
     final statement = _db.select(_db.transactionDB);
     final stream = statement.watch();

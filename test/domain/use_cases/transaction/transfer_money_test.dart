@@ -4,7 +4,6 @@ import 'package:journexa_app/domain/entities/account.dart';
 import 'package:journexa_app/domain/entities/journal.dart';
 import 'package:journexa_app/domain/entities/transaction.dart';
 import 'package:journexa_app/domain/entities/wallet.dart';
-import 'package:journexa_app/domain/repositories/i_auth_repository.dart';
 import 'package:journexa_app/domain/repositories/i_journal_repository.dart';
 import 'package:journexa_app/domain/repositories/i_transaction_repository.dart';
 import 'package:journexa_app/domain/use_cases/transaction/transfer_money.dart';
@@ -12,8 +11,6 @@ import 'package:journexa_app/shared/app_exception.dart';
 import 'package:journexa_app/shared/app_result.dart';
 import 'package:journexa_app/shared/uid_generator.dart';
 import 'package:mocktail/mocktail.dart';
-
-class MockAuthRepository extends Mock implements IAuthRepository {}
 
 class MockJournalRepository extends Mock implements IJournalRepository {}
 
@@ -24,7 +21,6 @@ class MockUidGenerator extends Mock implements UidGenerator {}
 
 void main() {
   const traceId = 'traceId';
-  const userId = 'userId';
   const id = 'id';
   final date = DateTime.now();
   final amount = Decimal.fromInt(100000);
@@ -49,7 +45,6 @@ void main() {
     date: date,
   );
 
-  late IAuthRepository mockAuthRepository;
   late ITransactionRepository mockTransactionRepository;
   late IJournalRepository mockJournalRepository;
   late UidGenerator mockUidGenerator;
@@ -66,15 +61,9 @@ void main() {
   });
 
   setUp(() {
-    mockAuthRepository = MockAuthRepository();
-    when(
-      () => mockAuthRepository.getCurrentUserId(traceId: traceId),
-    ).thenAnswer((_) async => const AppResult.success(userId));
-
     mockJournalRepository = MockJournalRepository();
     when(
       () => mockJournalRepository.getCurrentBalance(
-        userId: userId,
         accounts: any(named: 'accounts'),
         traceId: traceId,
       ),
@@ -90,7 +79,6 @@ void main() {
     mockTransactionRepository = MockTransactionRepository();
     when(
       () => mockTransactionRepository.save(
-        userId: userId,
         transaction: any<Transaction>(named: 'transaction'),
         journalEntry: any<JournalEntry>(named: 'journalEntry'),
         traceId: traceId,
@@ -101,26 +89,10 @@ void main() {
     when(mockUidGenerator.generateUid).thenReturn(id);
 
     useCase = TransferMoneyUseCase(
-      authRepository: mockAuthRepository,
       journalRepository: mockJournalRepository,
       transactionRepository: mockTransactionRepository,
     )..customGenerator = mockUidGenerator;
   });
-
-  test(
-    'calls AuthRepository.getCurrentUserId once '
-    'to get current user id',
-    () async {
-      await useCase.execute(
-        params,
-        traceId: traceId,
-      );
-
-      verify(
-        () => mockAuthRepository.getCurrentUserId(traceId: traceId),
-      ).called(1);
-    },
-  );
 
   test(
     'calls JournalRepository.getCurrentBalance once '
@@ -133,7 +105,6 @@ void main() {
 
       verify(
         () => mockJournalRepository.getCurrentBalance(
-          userId: userId,
           accounts: [source.account],
           traceId: traceId,
         ),
@@ -152,7 +123,6 @@ void main() {
 
       verify(
         () => mockTransactionRepository.save(
-          userId: userId,
           transaction: transaction,
           journalEntry: JournalEntry.test(
             lines: [
@@ -195,29 +165,10 @@ void main() {
 
   test(
     'returns failure and not save Transaction '
-    'when AuthRepository.getCurrentUserId fails',
-    () async {
-      when(
-        () => mockAuthRepository.getCurrentUserId(traceId: traceId),
-      ).thenAnswer((_) async => AppResult.failure(AppException.test()));
-
-      final result = await useCase.execute(
-        params,
-        traceId: traceId,
-      );
-
-      expect(result, AppResult<Transaction>.failure(AppException.test()));
-      verifyZeroInteractions(mockTransactionRepository);
-    },
-  );
-
-  test(
-    'returns failure and not save Transaction '
     'when source wallet balance is not enough for amount + fee',
     () async {
       when(
         () => mockJournalRepository.getCurrentBalance(
-          userId: userId,
           accounts: any(named: 'accounts'),
           traceId: traceId,
         ),
@@ -249,7 +200,6 @@ void main() {
     () async {
       when(
         () => mockTransactionRepository.save(
-          userId: userId,
           transaction: any<Transaction>(named: 'transaction'),
           journalEntry: any<JournalEntry>(named: 'journalEntry'),
           traceId: traceId,

@@ -7,14 +7,12 @@ import 'package:journexa_app/shared/app_result.dart';
 abstract interface class IJournalRepository {
   /// Return map of account code and account balance
   Future<AppResult<Map<String, AccountBalance>>> getCurrentBalance({
-    required String userId,
     required List<Account> accounts,
     required String traceId,
   });
 
   /// Watch [Account] balances. Emits Map of account code and current balance
   Stream<AppResult<Map<String, Decimal>>> watchCurrentBalance({
-    required String userId,
     required String traceId,
   });
 }

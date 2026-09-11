@@ -17,7 +17,6 @@ import 'package:journexa_app/shared/app_result.dart';
 import 'package:mock_exceptions/mock_exceptions.dart';
 
 void main() {
-  const userId = 'userId';
   const traceId = 'traceId';
 
   final assetParent = SystemDefinedAccount.rootAsset;
@@ -123,7 +122,6 @@ void main() {
       'journal entry and its lines data',
       () async {
         final result = await repository.save(
-          userId: userId,
           transaction: transaction,
           journalEntry: entry,
           traceId: traceId,
@@ -165,7 +163,6 @@ void main() {
         ).on(repository).thenThrow(DriftWrappedException(message: ''));
 
         final result = await repository.save(
-          userId: userId,
           transaction: transaction,
           journalEntry: entry,
           traceId: traceId,
@@ -191,7 +188,6 @@ void main() {
         ).on(repository).thenThrow(Exception('exception'));
 
         final result = await repository.save(
-          userId: userId,
           transaction: transaction,
           journalEntry: entry,
           traceId: traceId,
@@ -211,7 +207,7 @@ void main() {
 
   group('watch', () {
     test('emits success with correct transactions list', () async {
-      final result = repository.watch(userId: userId, traceId: traceId);
+      final result = repository.watch(traceId: traceId);
 
       expect(result, emits(AppResult.success(initialTransactions)));
     });
@@ -225,7 +221,6 @@ void main() {
         ).on(repository).thenThrow(DriftWrappedException(message: ''));
 
         final result = repository.watch(
-          userId: userId,
           traceId: traceId,
         );
 
@@ -251,7 +246,6 @@ void main() {
         ).on(repository).thenThrow(Exception('exception'));
 
         final result = repository.watch(
-          userId: userId,
           traceId: traceId,
         );
 

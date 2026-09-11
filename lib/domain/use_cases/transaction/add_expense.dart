@@ -5,7 +5,6 @@ import 'package:journexa_app/domain/entities/expense_category.dart';
 import 'package:journexa_app/domain/entities/journal.dart';
 import 'package:journexa_app/domain/entities/transaction.dart';
 import 'package:journexa_app/domain/entities/wallet.dart';
-import 'package:journexa_app/domain/repositories/i_auth_repository.dart';
 import 'package:journexa_app/domain/repositories/i_journal_repository.dart';
 import 'package:journexa_app/domain/repositories/i_transaction_repository.dart';
 import 'package:journexa_app/domain/use_cases/base_use_case.dart';
@@ -38,19 +37,17 @@ sealed class AddExpenseParams with _$AddExpenseParams {
   }) = _AddExpenseParams;
 }
 
-/// Use case to add expense record for current user
+/// Use case to add expense record
 @lazySingleton
 class AddExpenseUseCase
     with GenerateUid, Loggable
     implements FutureBaseUseCase<AddExpenseParams, Transaction> {
   /// Creates new [AddExpenseUseCase]
   AddExpenseUseCase({
-    required this._authRepository,
     required this._journalRepository,
     required this._transactionRepository,
   });
 
-  final IAuthRepository _authRepository;
   final IJournalRepository _journalRepository;
   final ITransactionRepository _transactionRepository;
 
@@ -63,31 +60,13 @@ class AddExpenseUseCase
     required String traceId,
   }) async {
     logInfo(
-      'Starts getting current user id',
-      traceId: traceId,
-    );
-    final getCurrentUserIdResult = await _authRepository.getCurrentUserId(
-      traceId: traceId,
-    );
-    final getCurrentUserIdExc = getCurrentUserIdResult.errorOrNull;
-    if (getCurrentUserIdExc != null) {
-      logInfo(
-        'Failed to get current user id.',
-        traceId: traceId,
-      );
-      return AppResult.failure(getCurrentUserIdExc);
-    }
-
-    final userId = getCurrentUserIdResult.valueOrNull!;
-    logInfo(
-      'User ID obtained. Get Wallet balance',
+      'Starts getting wallet balance',
       traceId: traceId,
       extras: {
         'walletId': params.wallet.id,
       },
     );
     final walletBalanceResult = await _journalRepository.getCurrentBalance(
-      userId: userId,
       accounts: [params.wallet.account],
       traceId: traceId,
     );
@@ -171,7 +150,6 @@ class AddExpenseUseCase
       },
     );
     final saveResult = await _transactionRepository.save(
-      userId: userId,
       transaction: transaction,
       journalEntry: journalEntry,
       traceId: traceId,

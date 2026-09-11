@@ -24,7 +24,6 @@ class DriftJournalRepository with Loggable implements IJournalRepository {
 
   @override
   Future<AppResult<Map<String, AccountBalance>>> getCurrentBalance({
-    required String userId,
     required List<Account> accounts,
     required String traceId,
   }) async {
@@ -72,7 +71,6 @@ class DriftJournalRepository with Loggable implements IJournalRepository {
 
   @override
   Stream<AppResult<Map<String, Decimal>>> watchCurrentBalance({
-    required String userId,
     required String traceId,
   }) {
     logInfo(

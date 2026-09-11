@@ -5,7 +5,6 @@ import 'package:journexa_app/domain/entities/income_category.dart';
 import 'package:journexa_app/domain/entities/journal.dart';
 import 'package:journexa_app/domain/entities/transaction.dart';
 import 'package:journexa_app/domain/entities/wallet.dart';
-import 'package:journexa_app/domain/repositories/i_auth_repository.dart';
 import 'package:journexa_app/domain/repositories/i_transaction_repository.dart';
 import 'package:journexa_app/domain/use_cases/base_use_case.dart';
 import 'package:journexa_app/shared/app_logger.dart';
@@ -36,18 +35,16 @@ sealed class AddIncomeParams with _$AddIncomeParams {
   }) = _AddIncomeParams;
 }
 
-/// Use case to add income record for current user
+/// Use case to add income record
 @lazySingleton
 class AddIncomeUseCase
     with GenerateUid, Loggable
     implements FutureBaseUseCase<AddIncomeParams, Transaction> {
   /// Creates new [AddIncomeUseCase]
   AddIncomeUseCase({
-    required this._authRepository,
     required this._transactionRepository,
   });
 
-  final IAuthRepository _authRepository;
   final ITransactionRepository _transactionRepository;
 
   @override
@@ -59,24 +56,7 @@ class AddIncomeUseCase
     required String traceId,
   }) async {
     logInfo(
-      'Starts getting current user id',
-      traceId: traceId,
-    );
-    final getCurrentUserIdResult = await _authRepository.getCurrentUserId(
-      traceId: traceId,
-    );
-    final getCurrentUserIdExc = getCurrentUserIdResult.errorOrNull;
-    if (getCurrentUserIdExc != null) {
-      logInfo(
-        'Failed to get current user id.',
-        traceId: traceId,
-      );
-      return AppResult.failure(getCurrentUserIdExc);
-    }
-
-    final userId = getCurrentUserIdResult.valueOrNull!;
-    logInfo(
-      'User ID obtained. Creates new transaction and journal entry',
+      'Creates new transaction and journal entry',
       traceId: traceId,
       extras: {
         'walletId': params.wallet.id,
@@ -117,7 +97,6 @@ class AddIncomeUseCase
       },
     );
     final saveResult = await _transactionRepository.save(
-      userId: userId,
       transaction: transaction,
       journalEntry: journalEntry,
       traceId: traceId,

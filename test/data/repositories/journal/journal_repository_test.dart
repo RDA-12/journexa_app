@@ -12,7 +12,6 @@ import 'package:journexa_app/shared/app_result.dart';
 import 'package:mock_exceptions/mock_exceptions.dart';
 
 void main() {
-  const userId = 'userId';
   const traceId = 'traceId';
 
   final assetParent = SystemDefinedAccount.rootAsset;
@@ -81,7 +80,6 @@ void main() {
   group('getCurrentBalance', () {
     test('returns success with correct mapped data', () async {
       final result = await repository.getCurrentBalance(
-        userId: userId,
         accounts: [debitAccount],
         traceId: traceId,
       );
@@ -101,7 +99,6 @@ void main() {
       );
 
       final result = await repository.getCurrentBalance(
-        userId: userId,
         accounts: [debitAccount, zeroBalanceAccount],
         traceId: traceId,
       );
@@ -127,7 +124,6 @@ void main() {
         ).on(repository).thenThrow(Exception());
 
         final result = await repository.getCurrentBalance(
-          userId: userId,
           accounts: [debitAccount],
           traceId: traceId,
         );
@@ -147,7 +143,6 @@ void main() {
   group('watchCurrentBalance', () {
     test('emits success with correct mapped data', () async {
       final result = repository.watchCurrentBalance(
-        userId: userId,
         traceId: traceId,
       );
 
@@ -171,7 +166,6 @@ void main() {
         ).on(repository).thenThrow(DriftWrappedException(message: ''));
 
         final result = repository.watchCurrentBalance(
-          userId: userId,
           traceId: traceId,
         );
 
@@ -197,7 +191,6 @@ void main() {
         ).on(repository).thenThrow(Exception());
 
         final result = repository.watchCurrentBalance(
-          userId: userId,
           traceId: traceId,
         );
 

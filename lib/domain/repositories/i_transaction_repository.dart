@@ -4,17 +4,15 @@ import 'package:journexa_app/shared/app_result.dart';
 
 /// Repository to handles all [Transaction] operations
 abstract interface class ITransactionRepository {
-  /// Save [transaction] and [journalEntry] into [userId] database
+  /// Save [transaction] and [journalEntry] into database
   Future<AppResult<Null>> save({
-    required String userId,
     required Transaction transaction,
     required JournalEntry journalEntry,
     required String traceId,
   });
 
-  /// Watch all [Transaction]'s in [userId] database
+  /// Watch all [Transaction]'s in database
   Stream<AppResult<List<Transaction>>> watch({
-    required String userId,
     required String traceId,
   });
 }

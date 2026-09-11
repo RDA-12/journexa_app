@@ -21,8 +21,7 @@ class DriftAccountRepository with Loggable implements IAccountRepository {
   final AppLocalDatabase _db;
 
   @override
-  Future<AppResult<Null>> ensureSaved(
-    String userId, {
+  Future<AppResult<Null>> ensureSaved({
     required List<Account> accounts,
     required String traceId,
   }) async {
@@ -67,17 +66,13 @@ class DriftAccountRepository with Loggable implements IAccountRepository {
 
   @override
   Future<AppResult<int>> getChildrenCountByParentCode({
-    required String userId,
     required String parentCode,
     required String traceId,
   }) async {
     try {
       maybeThrowException(
         this,
-        Invocation.method(#getChildrenCountByParentCode, null, {
-          #userId: userId,
-          #parentCode: parentCode,
-        }),
+        Invocation.method(#getChildrenCountByParentCode, null),
       );
       logInfo(
         'Start get parentCode children count',

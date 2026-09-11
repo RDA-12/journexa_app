@@ -2,15 +2,12 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:journexa_app/domain/entities/account.dart';
 import 'package:journexa_app/domain/entities/expense_category.dart';
 import 'package:journexa_app/domain/repositories/i_account_repository.dart';
-import 'package:journexa_app/domain/repositories/i_auth_repository.dart';
 import 'package:journexa_app/domain/repositories/i_expense_category_repository.dart';
 import 'package:journexa_app/domain/use_cases/expense_category/add_expense_category.dart';
 import 'package:journexa_app/shared/app_exception.dart';
 import 'package:journexa_app/shared/app_result.dart';
 import 'package:journexa_app/shared/uid_generator.dart';
 import 'package:mocktail/mocktail.dart';
-
-class MockAuthRepository extends Mock implements IAuthRepository {}
 
 class MockAccountRepository extends Mock implements IAccountRepository {}
 
@@ -21,7 +18,6 @@ class MockUidGenerator extends Mock implements UidGenerator {}
 
 void main() {
   const traceId = 'trace';
-  const userId = 'userId';
   const currentChildrenCount = 10;
   const params = AddExpenseCategoryParams(
     name: 'rent',
@@ -37,7 +33,6 @@ void main() {
     ),
   );
 
-  late IAuthRepository mockAuthRepository;
   late IAccountRepository mockAccountRepository;
   late IExpenseCategoryRepository mockExpenseCategoryRepository;
   late UidGenerator mockUidGenerator;
@@ -49,17 +44,9 @@ void main() {
   });
 
   setUp(() {
-    mockAuthRepository = MockAuthRepository();
-    when(
-      () => mockAuthRepository.getCurrentUserId(traceId: traceId),
-    ).thenAnswer(
-      (_) async => const AppResult.success(userId),
-    );
-
     mockAccountRepository = MockAccountRepository();
     when(
       () => mockAccountRepository.getChildrenCountByParentCode(
-        userId: any<String>(named: 'userId'),
         parentCode: any<String>(named: 'parentCode'),
         traceId: traceId,
       ),
@@ -70,7 +57,6 @@ void main() {
     mockExpenseCategoryRepository = MockExpenseCategoryRepository();
     when(
       () => mockExpenseCategoryRepository.save(
-        userId: any<String>(named: 'userId'),
         category: any<ExpenseCategory>(named: 'category'),
         traceId: traceId,
       ),
@@ -82,23 +68,10 @@ void main() {
     when(mockUidGenerator.generateUid).thenReturn(expectedCategory.id);
 
     useCase = AddExpenseCategoryUseCase(
-      authRepository: mockAuthRepository,
       accountRepository: mockAccountRepository,
       expenseCategoryRepository: mockExpenseCategoryRepository,
     )..customGenerator = mockUidGenerator;
   });
-
-  test(
-    'calls AuthRepository.getCurrentUserId once '
-    'to get current user id',
-    () async {
-      await useCase.execute(params, traceId: traceId);
-
-      verify(
-        () => mockAuthRepository.getCurrentUserId(traceId: traceId),
-      ).called(1);
-    },
-  );
 
   test(
     'calls AccountRepository.getChildrenCountByParentCode once '
@@ -108,7 +81,6 @@ void main() {
 
       verify(
         () => mockAccountRepository.getChildrenCountByParentCode(
-          userId: userId,
           parentCode: '50.0000',
           traceId: traceId,
         ),
@@ -124,7 +96,6 @@ void main() {
 
       verify(
         () => mockExpenseCategoryRepository.save(
-          userId: userId,
           category: expectedCategory,
           traceId: traceId,
         ),
@@ -142,30 +113,11 @@ void main() {
   );
 
   test(
-    'returns AppResult.failure and not save Account '
-    'when AuthRepository.getCurrentUserId failed',
-    () async {
-      when(
-        () => mockAuthRepository.getCurrentUserId(traceId: traceId),
-      ).thenAnswer(
-        (_) async => AppResult.failure(AppException.test()),
-      );
-
-      final result = await useCase.execute(params, traceId: traceId);
-
-      expect(result, AppResult<Null>.failure(AppException.test()));
-      verifyZeroInteractions(mockAccountRepository);
-      verifyZeroInteractions(mockExpenseCategoryRepository);
-    },
-  );
-
-  test(
     'return AppResult.failure and not save Account '
     'when AccountRepository.getChildrenCountByParentCode failed',
     () async {
       when(
         () => mockAccountRepository.getChildrenCountByParentCode(
-          userId: userId,
           parentCode: any<String>(named: 'parentCode'),
           traceId: traceId,
         ),
@@ -178,7 +130,6 @@ void main() {
       expect(result, AppResult<Null>.failure(AppException.test()));
       verify(
         () => mockAccountRepository.getChildrenCountByParentCode(
-          userId: userId,
           parentCode: '50.0000',
           traceId: traceId,
         ),
@@ -194,7 +145,6 @@ void main() {
     () async {
       when(
         () => mockExpenseCategoryRepository.save(
-          userId: userId,
           category: any<ExpenseCategory>(named: 'category'),
           traceId: traceId,
         ),
@@ -207,14 +157,12 @@ void main() {
       expect(result, AppResult<Null>.failure(AppException.test()));
       verify(
         () => mockAccountRepository.getChildrenCountByParentCode(
-          userId: userId,
           parentCode: '50.0000',
           traceId: traceId,
         ),
       ).called(1);
       verify(
         () => mockExpenseCategoryRepository.save(
-          userId: userId,
           category: expectedCategory,
           traceId: traceId,
         ),

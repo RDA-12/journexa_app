@@ -28,7 +28,6 @@ class DriftExpenseCategoryRepository
 
   @override
   Future<AppResult<Null>> save({
-    required String userId,
     required ExpenseCategory category,
     required String traceId,
   }) async {
@@ -75,7 +74,6 @@ class DriftExpenseCategoryRepository
 
   @override
   Stream<AppResult<List<ExpenseCategory>>> watch({
-    required String userId,
     required String traceId,
     String? query,
     bool? isDeleted,
@@ -131,7 +129,6 @@ class DriftExpenseCategoryRepository
 
   @override
   Future<AppResult<Null>> delete({
-    required String userId,
     required ExpenseCategory category,
     required String traceId,
   }) async {
@@ -174,7 +171,6 @@ class DriftExpenseCategoryRepository
 
   @override
   Future<AppResult<Null>> update({
-    required String userId,
     required ExpenseCategory updatedCategory,
     required String traceId,
   }) async {

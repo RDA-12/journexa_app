@@ -84,7 +84,6 @@ class AddWalletUseCase
 
     final getChildrenCountResult = await _accountRepository
         .getChildrenCountByParentCode(
-          userId: userId,
           parentCode: parentAssetAccount.code,
           traceId: traceId,
         );

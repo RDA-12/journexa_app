@@ -50,7 +50,6 @@ void main() {
     mockAccountRepository = MockAccountRepository();
     when(
       () => mockAccountRepository.getChildrenCountByParentCode(
-        userId: any<String>(named: 'userId'),
         parentCode: any<String>(named: 'parentCode'),
         traceId: traceId,
       ),
@@ -99,7 +98,6 @@ void main() {
 
       verify(
         () => mockAccountRepository.getChildrenCountByParentCode(
-          userId: userId,
           parentCode: '10.0000',
           traceId: traceId,
         ),
@@ -168,7 +166,6 @@ void main() {
     () async {
       when(
         () => mockAccountRepository.getChildrenCountByParentCode(
-          userId: userId,
           parentCode: any<String>(named: 'parentCode'),
           traceId: traceId,
         ),
@@ -181,7 +178,6 @@ void main() {
       expect(result, AppResult<Null>.failure(AppException.test()));
       verify(
         () => mockAccountRepository.getChildrenCountByParentCode(
-          userId: userId,
           parentCode: '10.0000',
           traceId: traceId,
         ),
@@ -210,7 +206,6 @@ void main() {
       expect(result, AppResult<Null>.failure(AppException.test()));
       verify(
         () => mockAccountRepository.getChildrenCountByParentCode(
-          userId: userId,
           parentCode: '10.0000',
           traceId: traceId,
         ),

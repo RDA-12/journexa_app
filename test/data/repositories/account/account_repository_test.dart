@@ -9,7 +9,6 @@ import 'package:journexa_app/shared/app_result.dart';
 import 'package:mock_exceptions/mock_exceptions.dart';
 
 void main() {
-  const userId = 'userId';
   const traceId = 'trace';
   final parent = Account(
     code: '10.0000',
@@ -61,7 +60,6 @@ void main() {
       'returns success when all accounts saved',
       () async {
         final result = await repository.ensureSaved(
-          userId,
           accounts: accounts,
           traceId: traceId,
         );
@@ -103,7 +101,6 @@ void main() {
         ).on(repository).thenThrow(DriftWrappedException(message: ''));
 
         final result = await repository.ensureSaved(
-          userId,
           accounts: accounts,
           traceId: traceId,
         );
@@ -128,7 +125,6 @@ void main() {
         ).on(repository).thenThrow(Exception('exeption'));
 
         final result = await repository.ensureSaved(
-          userId,
           accounts: accounts,
           traceId: traceId,
         );
@@ -164,7 +160,6 @@ void main() {
         }
 
         final result = await repository.getChildrenCountByParentCode(
-          userId: userId,
           parentCode: parent.code,
           traceId: traceId,
         );
@@ -189,7 +184,6 @@ void main() {
             );
 
         final result = await repository.getChildrenCountByParentCode(
-          userId: userId,
           parentCode: parent.code,
           traceId: traceId,
         );
@@ -216,7 +210,6 @@ void main() {
             );
 
         final result = await repository.getChildrenCountByParentCode(
-          userId: userId,
           parentCode: parent.code,
           traceId: traceId,
         );

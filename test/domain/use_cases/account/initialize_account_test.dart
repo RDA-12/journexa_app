@@ -1,7 +1,6 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:journexa_app/domain/entities/account.dart';
 import 'package:journexa_app/domain/repositories/i_account_repository.dart';
-import 'package:journexa_app/domain/repositories/i_auth_repository.dart';
 import 'package:journexa_app/domain/use_cases/account/initialize_accounts.dart';
 import 'package:journexa_app/shared/app_exception.dart';
 import 'package:journexa_app/shared/app_result.dart';
@@ -9,17 +8,12 @@ import 'package:mocktail/mocktail.dart';
 
 class MockAccountRepository extends Mock implements IAccountRepository {}
 
-class MockAuthRepository extends Mock implements IAuthRepository {}
-
 void main() {
   const traceId = 'trace';
-  const userId = 'userIdTest';
 
-  final IAuthRepository mockAuthRepository = MockAuthRepository();
   final IAccountRepository mockAccountRepository = MockAccountRepository();
   final useCase = InitializeAccountsUseCase(
     accountRepository: mockAccountRepository,
-    authRepository: mockAuthRepository,
   );
 
   setUpAll(() {
@@ -29,19 +23,14 @@ void main() {
   setUp(() {
     when(
       () => mockAccountRepository.ensureSaved(
-        userId,
         accounts: SystemDefinedAccount.accounts,
         traceId: traceId,
       ),
     ).thenAnswer((_) async => const AppResult.success(null));
-    when(
-      () => mockAuthRepository.getCurrentUserId(traceId: traceId),
-    ).thenAnswer((_) async => const AppResult.success(userId));
   });
 
   tearDown(() {
     reset(mockAccountRepository);
-    reset(mockAuthRepository);
   });
 
   test(
@@ -52,7 +41,6 @@ void main() {
 
       verify(
         () => mockAccountRepository.ensureSaved(
-          userId,
           accounts: SystemDefinedAccount.accounts,
           traceId: traceId,
         ),
@@ -66,7 +54,6 @@ void main() {
     () async {
       when(
         () => mockAccountRepository.ensureSaved(
-          userId,
           accounts: SystemDefinedAccount.accounts,
           traceId: traceId,
         ),
@@ -81,7 +68,6 @@ void main() {
       expect(result, AppResult<void>.failure(AppException.test()));
       verify(
         () => mockAccountRepository.ensureSaved(
-          userId,
           accounts: SystemDefinedAccount.accounts,
           traceId: traceId,
         ),

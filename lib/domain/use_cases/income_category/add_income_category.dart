@@ -77,7 +77,6 @@ class AddIncomeCategoryUseCase
 
     final getChildrenCountResult = await _accountRepository
         .getChildrenCountByParentCode(
-          userId: userId,
           parentCode: parentRevenueAccount.code,
           traceId: traceId,
         );

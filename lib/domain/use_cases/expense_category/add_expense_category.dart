@@ -3,7 +3,6 @@ import 'package:injectable/injectable.dart';
 import 'package:journexa_app/domain/entities/account.dart';
 import 'package:journexa_app/domain/entities/expense_category.dart';
 import 'package:journexa_app/domain/repositories/i_account_repository.dart';
-import 'package:journexa_app/domain/repositories/i_auth_repository.dart';
 import 'package:journexa_app/domain/repositories/i_expense_category_repository.dart';
 import 'package:journexa_app/domain/use_cases/base_use_case.dart';
 import 'package:journexa_app/shared/app_logger.dart';
@@ -32,12 +31,10 @@ class AddExpenseCategoryUseCase
     implements FutureBaseUseCase<AddExpenseCategoryParams, Null> {
   /// Creates new [AddExpenseCategoryUseCase]
   AddExpenseCategoryUseCase({
-    required this._authRepository,
     required this._accountRepository,
     required this._expenseCategoryRepository,
   });
 
-  final IAuthRepository _authRepository;
   final IAccountRepository _accountRepository;
   final IExpenseCategoryRepository _expenseCategoryRepository;
 
@@ -50,24 +47,10 @@ class AddExpenseCategoryUseCase
     required String traceId,
   }) async {
     logInfo(
-      'Start adding new expense category. Get current user id',
+      'Start adding new expense category',
       traceId: traceId,
       extras: params.extras,
     );
-    final getCurrentUserIdResult = await _authRepository.getCurrentUserId(
-      traceId: traceId,
-    );
-    final getCurrentUserIdExc = getCurrentUserIdResult.errorOrNull;
-    if (getCurrentUserIdExc != null) {
-      logInfo(
-        'Failed to get current user id.',
-        traceId: traceId,
-      );
-      return AppResult.failure(getCurrentUserIdExc);
-    }
-
-    logInfo('userId obtained', traceId: traceId);
-    final userId = getCurrentUserIdResult.valueOrNull!;
     logInfo('Get parent Account for expense', traceId: traceId);
     final parentExpenseAccount = SystemDefinedAccount.rootExpense;
     logInfo(
@@ -77,7 +60,6 @@ class AddExpenseCategoryUseCase
 
     final getChildrenCountResult = await _accountRepository
         .getChildrenCountByParentCode(
-          userId: userId,
           parentCode: parentExpenseAccount.code,
           traceId: traceId,
         );
@@ -110,7 +92,6 @@ class AddExpenseCategoryUseCase
     logInfo('New objects created. Saving ExpenseCategory', traceId: traceId);
 
     final saveResult = await _expenseCategoryRepository.save(
-      userId: userId,
       category: newCategory,
       traceId: traceId,
     );

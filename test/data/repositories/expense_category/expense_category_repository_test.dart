@@ -11,7 +11,6 @@ import 'package:journexa_app/shared/app_result.dart';
 import 'package:mock_exceptions/mock_exceptions.dart';
 
 void main() {
-  const userId = 'userId';
   const traceId = 'traceId';
 
   final parentAccount = SystemDefinedAccount.rootExpense;
@@ -62,7 +61,6 @@ void main() {
 
     test('returns success and save correct category and account', () async {
       final result = await repository.save(
-        userId: userId,
         traceId: traceId,
         category: newCategory,
       );
@@ -95,7 +93,6 @@ void main() {
         final existingName = initialCategories.first.name;
 
         final result = await repository.save(
-          userId: userId,
           traceId: traceId,
           category: newCategory.copyWith(
             name: existingName,
@@ -125,7 +122,6 @@ void main() {
         ).on(repository).thenThrow(DriftWrappedException(message: ''));
 
         final result = await repository.save(
-          userId: userId,
           category: newCategory,
           traceId: traceId,
         );
@@ -150,7 +146,6 @@ void main() {
         ).on(repository).thenThrow(Exception());
 
         final result = await repository.save(
-          userId: userId,
           category: newCategory,
           traceId: traceId,
         );
@@ -172,7 +167,6 @@ void main() {
       'emits success with correct categories',
       () async {
         final result = repository.watch(
-          userId: userId,
           traceId: traceId,
         );
 
@@ -198,7 +192,6 @@ void main() {
         await db.into(db.accountDB).insert(expectedCategory.account.toDB());
 
         final result = repository.watch(
-          userId: userId,
           query: 'expected',
           traceId: traceId,
         );
@@ -237,7 +230,6 @@ void main() {
             );
 
         final result = repository.watch(
-          userId: userId,
           isDeleted: false,
           traceId: traceId,
         );
@@ -245,7 +237,6 @@ void main() {
         expect(result, emits(AppResult.success(initialCategories)));
 
         final result2 = repository.watch(
-          userId: userId,
           isDeleted: true,
           traceId: traceId,
         );
@@ -263,7 +254,6 @@ void main() {
         ).on(repository).thenThrow(DriftWrappedException(message: ''));
 
         final result = repository.watch(
-          userId: userId,
           traceId: traceId,
         );
 
@@ -289,7 +279,6 @@ void main() {
         ).on(repository).thenThrow(Exception());
 
         final result = repository.watch(
-          userId: userId,
           traceId: traceId,
         );
 
@@ -315,7 +304,6 @@ void main() {
         final deletedCategory = initialCategories.first;
 
         final result = await repository.delete(
-          userId: userId,
           category: deletedCategory,
           traceId: traceId,
         );
@@ -351,7 +339,6 @@ void main() {
         );
 
         final result = await repository.delete(
-          userId: userId,
           category: nonExistentCategory,
           traceId: traceId,
         );
@@ -379,7 +366,6 @@ void main() {
         ).on(repository).thenThrow(DriftWrappedException(message: ''));
 
         final result = await repository.delete(
-          userId: userId,
           category: initialCategories.first,
           traceId: traceId,
         );
@@ -404,7 +390,6 @@ void main() {
         ).on(repository).thenThrow(Exception());
 
         final result = await repository.delete(
-          userId: userId,
           category: initialCategories.first,
           traceId: traceId,
         );
@@ -427,7 +412,6 @@ void main() {
       'returns success when succeeded',
       () async {
         final result = await repository.update(
-          userId: userId,
           updatedCategory: updatedCategory,
           traceId: traceId,
         );
@@ -440,7 +424,6 @@ void main() {
       'update both Category and Account',
       () async {
         await repository.update(
-          userId: userId,
           updatedCategory: updatedCategory,
           traceId: traceId,
         );
@@ -471,7 +454,6 @@ void main() {
         ).on(repository).thenThrow(DriftWrappedException(message: ''));
 
         final result = await repository.update(
-          userId: userId,
           updatedCategory: updatedCategory,
           traceId: traceId,
         );
@@ -496,7 +478,6 @@ void main() {
         ).on(repository).thenThrow(Exception());
 
         final result = await repository.update(
-          userId: userId,
           updatedCategory: updatedCategory,
           traceId: traceId,
         );

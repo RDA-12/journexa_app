@@ -1,7 +1,6 @@
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:injectable/injectable.dart';
 import 'package:journexa_app/domain/entities/expense_category.dart';
-import 'package:journexa_app/domain/repositories/i_auth_repository.dart';
 import 'package:journexa_app/domain/repositories/i_expense_category_repository.dart';
 import 'package:journexa_app/domain/use_cases/base_use_case.dart';
 import 'package:journexa_app/shared/app_logger.dart';
@@ -26,14 +25,12 @@ class WatchExpenseCategoriesUseCase
         StreamBaseUseCase<WatchExpenseCategoriesParams, List<ExpenseCategory>> {
   /// Creates new [WatchExpenseCategoriesUseCase]
   WatchExpenseCategoriesUseCase({
-    required this._authRepository,
     required this._expenseCategoryRepository,
   });
 
   @override
   String get logTag => 'WatchExpenseCategoriesUseCase';
 
-  final IAuthRepository _authRepository;
   final IExpenseCategoryRepository _expenseCategoryRepository;
 
   /// Execute getting stream expense categories from current user
@@ -42,24 +39,11 @@ class WatchExpenseCategoriesUseCase
     WatchExpenseCategoriesParams params, {
     required String traceId,
   }) async* {
-    logInfo('Starts getting current user id ', traceId: traceId);
-    final currentUserIdResult = await _authRepository.getCurrentUserId(
-      traceId: traceId,
-    );
-    final currentUserIdExc = currentUserIdResult.errorOrNull;
-    if (currentUserIdExc != null) {
-      logInfo('Failed to get current user id', traceId: traceId);
-      yield AppResult.failure(currentUserIdExc);
-      return;
-    }
-
-    final userId = currentUserIdResult.valueOrNull!;
     logInfo(
-      'Got current user id. Starts getting expense categories',
+      'Starts getting expense categories',
       traceId: traceId,
     );
     yield* _expenseCategoryRepository.watch(
-      userId: userId,
       query: params.query,
       traceId: traceId,
       isDeleted: false,

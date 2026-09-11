@@ -186,8 +186,13 @@ void main() {
         );
         await db.into(db.journalEntryDB).insert(entry2.toDB());
         for (var i = 0; i < entry2.lines.length; i++) {
-          await db.into(db.journalEntryLineDB).insert(
-                entry2.lines[i].toDB(id: 'line-entry2-$i', journalId: entry2.id),
+          await db
+              .into(db.journalEntryLineDB)
+              .insert(
+                entry2.lines[i].toDB(
+                  id: 'line-entry2-$i',
+                  journalId: entry2.id,
+                ),
               );
         }
 
@@ -246,7 +251,7 @@ void main() {
         expect(
           emptyResult,
           emits(
-            AppResult.success(<String, Decimal>{}),
+            const AppResult.success(<String, Decimal>{}),
           ),
         );
       },

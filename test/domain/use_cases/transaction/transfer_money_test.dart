@@ -63,17 +63,13 @@ void main() {
   setUp(() {
     mockJournalRepository = MockJournalRepository();
     when(
-      () => mockJournalRepository.getCurrentBalance(
-        accounts: any(named: 'accounts'),
+      () => mockJournalRepository.getAccountBalance(
+        account: any(named: 'account'),
         traceId: traceId,
       ),
     ).thenAnswer(
-      (_) async => AppResult.success({
-        source.account.code: AccountBalance(
-          balance: amount + fee + Decimal.fromInt(100000),
-          account: source.account,
-        ),
-      }),
+      (_) async =>
+          AppResult.success(amount + fee + Decimal.fromInt(100000)),
     );
 
     mockTransactionRepository = MockTransactionRepository();
@@ -95,7 +91,7 @@ void main() {
   });
 
   test(
-    'calls JournalRepository.getCurrentBalance once '
+    'calls JournalRepository.getAccountBalance once '
     'with correct params',
     () async {
       await useCase.execute(
@@ -104,8 +100,8 @@ void main() {
       );
 
       verify(
-        () => mockJournalRepository.getCurrentBalance(
-          accounts: [source.account],
+        () => mockJournalRepository.getAccountBalance(
+          account: source.account,
           traceId: traceId,
         ),
       ).called(1);
@@ -168,17 +164,13 @@ void main() {
     'when source wallet balance is not enough for amount + fee',
     () async {
       when(
-        () => mockJournalRepository.getCurrentBalance(
-          accounts: any(named: 'accounts'),
+        () => mockJournalRepository.getAccountBalance(
+          account: any(named: 'account'),
           traceId: traceId,
         ),
       ).thenAnswer(
-        (_) async => AppResult.success({
-          source.account.code: AccountBalance(
-            balance: amount + fee - Decimal.fromInt(1),
-            account: source.account,
-          ),
-        }),
+        (_) async =>
+            AppResult.success(amount + fee - Decimal.fromInt(1)),
       );
 
       final result = await useCase.execute(params, traceId: traceId);

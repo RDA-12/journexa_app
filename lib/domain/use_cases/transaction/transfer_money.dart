@@ -69,8 +69,8 @@ class TransferMoneyUseCase
         'sourceWalletId': params.source.id,
       },
     );
-    final walletBalanceResult = await _journalRepository.getCurrentBalance(
-      accounts: [params.source.account],
+    final walletBalanceResult = await _journalRepository.getAccountBalance(
+      account: params.source.account,
       traceId: traceId,
     );
     final walletBalanceExc = walletBalanceResult.errorOrNull;
@@ -82,26 +82,25 @@ class TransferMoneyUseCase
       return AppResult.failure(walletBalanceExc);
     }
 
-    final walletBalance =
-        walletBalanceResult.valueOrNull![params.source.account.code]!;
+    final walletBalance = walletBalanceResult.valueOrNull!;
     final requiredAmount = params.amount + params.fee;
     logInfo(
       'Source wallet balance obtained. Check it against requested total amount',
       traceId: traceId,
       extras: {
-        'walletBalance': walletBalance.balance,
+        'walletBalance': walletBalance,
         'amount': params.amount,
         'fee': params.fee,
         'requiredAmount': requiredAmount,
       },
     );
-    if (walletBalance.balance < requiredAmount) {
+    if (walletBalance < requiredAmount) {
       logInfo(
         'Source wallet balance is not enough.',
         traceId: traceId,
         extras: {
           'sourceWalletId': params.source.id,
-          'walletBalance': walletBalance.balance,
+          'walletBalance': walletBalance,
           'requiredAmount': requiredAmount,
         },
       );

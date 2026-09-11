@@ -3,7 +3,6 @@ import 'package:drift/drift.dart';
 import 'package:injectable/injectable.dart';
 import 'package:journexa_app/data/database.dart';
 import 'package:journexa_app/domain/entities/account.dart';
-import 'package:journexa_app/domain/entities/journal.dart';
 import 'package:journexa_app/domain/repositories/i_journal_repository.dart';
 import 'package:journexa_app/shared/app_exception.dart';
 import 'package:journexa_app/shared/app_logger.dart';
@@ -23,44 +22,40 @@ class DriftJournalRepository with Loggable implements IJournalRepository {
   String get logTag => 'DriftJournalRepository';
 
   @override
-  Future<AppResult<Map<String, AccountBalance>>> getCurrentBalance({
-    required List<Account> accounts,
+  Future<AppResult<Decimal>> getAccountBalance({
+    required Account account,
     required String traceId,
   }) async {
     try {
-      maybeThrowException(this, Invocation.method(#getCurrentBalance, null));
-      logInfo('Starts get current balance for accounts', traceId: traceId);
-      final result = <String, AccountBalance>{};
-      for (final account in accounts) {
-        logInfo('Get balance for account ${account.name}', traceId: traceId);
-        final statement = _db.select(_db.journalEntryLineDB)
-          ..where((tbl) => tbl.accountCode.equals(account.code));
-        final lines = await statement.get();
+      maybeThrowException(this, Invocation.method(#getAccountBalance, null));
+      logInfo(
+        'Starts get balance for account',
+        traceId: traceId,
+        extras: {
+          'accountCode': account.code,
+        },
+      );
+      final statement = _db.select(_db.journalEntryLineDB)
+        ..where((tbl) => tbl.accountCode.equals(account.code));
+      final lines = await statement.get();
+      var totalDebit = Decimal.zero;
+      var totalCredit = Decimal.zero;
+      for (final line in lines) {
+        totalDebit += line.debit;
+        totalCredit += line.credit;
+      }
 
-        var totalDebit = Decimal.zero;
-        var totalCredit = Decimal.zero;
-        for (final line in lines) {
-          totalDebit += line.debit;
-          totalCredit += line.credit;
-        }
-
-        final Decimal balance;
-        if (account.normalBalance == BalanceType.debit) {
-          balance = totalDebit - totalCredit;
-        } else {
-          balance = totalCredit - totalDebit;
-        }
-
-        result[account.code] = AccountBalance(
-          account: account,
-          balance: balance,
-        );
+      final Decimal balance;
+      if (account.normalBalance == BalanceType.debit) {
+        balance = totalDebit - totalCredit;
+      } else {
+        balance = totalCredit - totalDebit;
       }
       logInfo(
-        'Get current balance for all accounts finished',
+        'Get account balance finished',
         traceId: traceId,
       );
-      return AppResult.success(result);
+      return AppResult.success(balance);
     } on Exception catch (e, st) {
       logError('$e', traceId: traceId, error: e, stackTrace: st);
       return AppResult.failure(

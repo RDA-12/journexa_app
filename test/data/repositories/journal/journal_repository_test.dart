@@ -77,18 +77,36 @@ void main() {
     await db.close();
   });
 
-  group('getCurrentBalance', () {
-    test('returns success with correct mapped data', () async {
-      final result = await repository.getCurrentBalance(
-        accounts: [debitAccount],
-        traceId: traceId,
-      );
+  group('getAccountBalance', () {
+    test(
+      'returns success with correct balance for debit normal balance account',
+      () async {
+        final result = await repository.getAccountBalance(
+          account: debitAccount,
+          traceId: traceId,
+        );
 
-      expect(
-        result,
-        AppResult.success({debitAccount.code: debitAccountBalance}),
-      );
-    });
+        expect(
+          result,
+          AppResult.success(Decimal.fromInt(10000)),
+        );
+      },
+    );
+
+    test(
+      'returns success with correct balance for credit normal balance account',
+      () async {
+        final result = await repository.getAccountBalance(
+          account: creditAccount,
+          traceId: traceId,
+        );
+
+        expect(
+          result,
+          AppResult.success(Decimal.fromInt(10000)),
+        );
+      },
+    );
 
     test('returns success with zero balance for non-exists accounts', () async {
       final zeroBalanceAccount = Account(
@@ -98,20 +116,14 @@ void main() {
         parent: assetParent,
       );
 
-      final result = await repository.getCurrentBalance(
-        accounts: [debitAccount, zeroBalanceAccount],
+      final result = await repository.getAccountBalance(
+        account: zeroBalanceAccount,
         traceId: traceId,
       );
 
       expect(
         result,
-        AppResult.success({
-          debitAccount.code: debitAccountBalance,
-          zeroBalanceAccount.code: AccountBalance(
-            account: zeroBalanceAccount,
-            balance: Decimal.zero,
-          ),
-        }),
+        AppResult.success(Decimal.zero),
       );
     });
 
@@ -120,17 +132,17 @@ void main() {
       'when db throws Exception',
       () async {
         whenCalling(
-          Invocation.method(#getCurrentBalance, null),
+          Invocation.method(#getAccountBalance, null),
         ).on(repository).thenThrow(Exception());
 
-        final result = await repository.getCurrentBalance(
-          accounts: [debitAccount],
+        final result = await repository.getAccountBalance(
+          account: debitAccount,
           traceId: traceId,
         );
 
         expect(
           result,
-          isA<AppResultFailure<Map<String, AccountBalance>>>().having(
+          isA<AppResultFailure<Decimal>>().having(
             (e) => e.error.code,
             'error.code',
             AppExceptionCode.internalException,

@@ -109,17 +109,3 @@ sealed class JournalEntryLine with _$JournalEntryLine {
     );
   }
 }
-
-/// Represent balance of a single [Account]
-@freezed
-sealed class AccountBalance with _$AccountBalance {
-  /// Creates new [AccountBalance]
-  const factory AccountBalance({
-    /// Account of this balance
-    required Account account,
-
-    /// Current balance
-    required Decimal balance,
-  }) = _AccountBalance;
-  const AccountBalance._();
-}

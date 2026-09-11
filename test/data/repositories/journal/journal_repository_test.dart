@@ -29,11 +29,7 @@ void main() {
     type: AccountType.revenue,
     parent: revenueParent,
   );
-
-  final debitAccountBalance = AccountBalance(
-    account: debitAccount,
-    balance: Decimal.fromInt(10000),
-  );
+  final debitBalance = Decimal.fromInt(10000);
 
   late AppLocalDatabase db;
   late IJournalRepository repository;
@@ -62,9 +58,11 @@ void main() {
 
     await db.into(db.journalEntryDB).insert(entry.toDB());
     for (var i = 0; i < entry.lines.length; i++) {
-      await db.into(db.journalEntryLineDB).insert(
-        entry.lines[i].toDB(id: 'line-$i', journalId: entry.id),
-      );
+      await db
+          .into(db.journalEntryLineDB)
+          .insert(
+            entry.lines[i].toDB(id: 'line-$i', journalId: entry.id),
+          );
     }
 
     repository = DriftJournalRepository(db: db);
@@ -162,7 +160,7 @@ void main() {
         result,
         emits(
           AppResult.success({
-            debitAccount.code: debitAccountBalance.balance,
+            debitAccount.code: debitBalance,
             creditAccount.code: Decimal.fromInt(10000),
           }),
         ),

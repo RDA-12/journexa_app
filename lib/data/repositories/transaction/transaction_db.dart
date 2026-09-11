@@ -29,6 +29,7 @@ class TransactionDB extends Table {
   late final Column<String> notes = text().nullable()();
 
   /// Wallet ID for income and expense transactions
+  @ReferenceName('tr_wallet_ref')
   late final Column<String>? walletId = text().nullable().references(
     WalletDB,
     #id,
@@ -47,21 +48,25 @@ class TransactionDB extends Table {
   )();
 
   /// Source wallet ID for transfer transactions
+  @ReferenceName('tr_source_wallet_ref')
   late final Column<String>? sourceWalletId = text().nullable().references(
     WalletDB,
     #id,
   )();
 
   /// Destination wallet ID for transfer transactions
+  @ReferenceName('tr_destination_wallet_ref')
   late final Column<String>? destinationWalletId = text().nullable().references(
     WalletDB,
     #id,
   )();
 
   /// Fee for transfer transactions
-  late final Column<String> fee = text().map(
-    const DriftDecimalConverter(),
-  ).nullable()();
+  late final Column<String> fee = text()
+      .map(
+        const DriftDecimalConverter(),
+      )
+      .nullable()();
 
   @override
   Set<Column<Object>>? get primaryKey => {id};
@@ -132,26 +137,27 @@ extension TransactionX on Transaction {
           expenseCategoryId: Value(categoryId),
         );
       },
-      transfer: (
-        id,
-        sourceWalletId,
-        destinationWalletId,
-        amount,
-        fee,
-        date,
-        notes,
-      ) {
-        return TransactionDBCompanion.insert(
-          id: id,
-          type: TransactionType.transfer.name,
-          amount: amount,
-          date: date,
-          notes: Value(notes),
-          sourceWalletId: Value(sourceWalletId),
-          destinationWalletId: Value(destinationWalletId),
-          fee: Value(fee),
-        );
-      },
+      transfer:
+          (
+            id,
+            sourceWalletId,
+            destinationWalletId,
+            amount,
+            fee,
+            date,
+            notes,
+          ) {
+            return TransactionDBCompanion.insert(
+              id: id,
+              type: TransactionType.transfer.name,
+              amount: amount,
+              date: date,
+              notes: Value(notes),
+              sourceWalletId: Value(sourceWalletId),
+              destinationWalletId: Value(destinationWalletId),
+              fee: Value(fee),
+            );
+          },
     );
   }
 }

@@ -158,4 +158,76 @@ class DriftJournalRepository with Loggable implements IJournalRepository {
           );
         });
   }
+
+  @override
+  Stream<AppResult<Decimal>> watchAccountBalance({
+    required Account account,
+    required String traceId,
+    DateTime? from,
+    DateTime? to,
+  }) {
+    logInfo(
+      'Starts watching balance for account',
+      traceId: traceId,
+      extras: {
+        'accountCode': account.code,
+      },
+    );
+    final statement = _db.select(_db.journalEntryLineDB).join([
+      innerJoin(
+        _db.journalEntryDB,
+        _db.journalEntryDB.id.equalsExp(_db.journalEntryLineDB.journalId),
+        useColumns: false,
+      ),
+    ])..where(_db.journalEntryLineDB.accountCode.equals(account.code));
+    if (from != null) {
+      statement.where(
+        _db.journalEntryDB.transactionDate.isBiggerOrEqualValue(
+          const DriftDateTimeConverter().toSql(from),
+        ),
+      );
+    }
+    if (to != null) {
+      statement.where(
+        _db.journalEntryDB.transactionDate.isSmallerOrEqualValue(
+          const DriftDateTimeConverter().toSql(to),
+        ),
+      );
+    }
+    return statement
+        .watch()
+        .map((rows) {
+          logInfo(
+            'Account balance updated',
+            traceId: traceId,
+            extras: {
+              'accountCode': account.code,
+            },
+          );
+          maybeThrowException(
+            this,
+            Invocation.method(#watchAccountBalance, null),
+          );
+          var totalDebit = Decimal.zero;
+          var totalCredit = Decimal.zero;
+          for (final row in rows) {
+            final line = row.readTable(_db.journalEntryLineDB);
+            totalDebit += line.debit;
+            totalCredit += line.credit;
+          }
+          final Decimal balance;
+          if (account.normalBalance == BalanceType.debit) {
+            balance = totalDebit - totalCredit;
+          } else {
+            balance = totalCredit - totalDebit;
+          }
+          return AppResult.success(balance);
+        })
+        .onErrorReturnWith((err, st) {
+          logError('$err', traceId: traceId, error: err, stackTrace: st);
+          return AppResult.failure(
+            AppException('$err', code: AppExceptionCode.internalException),
+          );
+        });
+  }
 }

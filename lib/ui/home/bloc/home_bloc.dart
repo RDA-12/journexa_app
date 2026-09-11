@@ -21,7 +21,7 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> with Loggable, GenerateUid {
   /// Creates new [HomeBloc]
   HomeBloc({
     required this._watchWallets,
-    required this._watchCurrentBalance,
+    required this._watchAccountBalances,
   }) : super(const HomeState()) {
     on<_SubscriptionsRequested>(
       (event, emit) => _onSubscriptionRequested(emit: emit),
@@ -29,7 +29,7 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> with Loggable, GenerateUid {
   }
 
   final WatchWalletsUseCase _watchWallets;
-  final WatchCurrentBalanceUseCase _watchCurrentBalance;
+  final WatchCurrentBalanceUseCase _watchAccountBalances;
 
   @override
   String get logTag => 'HomeBloc';
@@ -53,7 +53,7 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> with Loggable, GenerateUid {
 
     final walletsStream = CombineLatestStream.combine2(
       _watchWallets.execute(const WatchWalletsParams(), traceId: traceId),
-      _watchCurrentBalance.execute(traceId: traceId),
+      _watchAccountBalances.execute(traceId: traceId),
       (walletsRes, balanceRes) {
         logInfo('New data received', traceId: traceId);
         final balanceExc = balanceRes.errorOrNull;

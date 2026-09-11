@@ -22,7 +22,7 @@ void main() {
   setUp(() {
     mockJournalRepository = MockJournalRepository();
     when(
-      () => mockJournalRepository.watchCurrentBalance(
+      () => mockJournalRepository.watchAccountBalances(
         traceId: traceId,
       ),
     ).thenAnswer((_) => Stream.value(AppResult.success(balances)));
@@ -33,7 +33,7 @@ void main() {
   });
 
   test(
-    'calls JournalRepository.watchCurrentBalance once '
+    'calls JournalRepository.watchAccountBalances once '
     'with correct args',
     () async {
       final result = useCase.execute(
@@ -42,7 +42,7 @@ void main() {
       await result.first;
 
       verify(
-        () => mockJournalRepository.watchCurrentBalance(
+        () => mockJournalRepository.watchAccountBalances(
           traceId: traceId,
         ),
       ).called(1);
@@ -62,10 +62,10 @@ void main() {
 
   test(
     'emits failure '
-    'when JournalRepository.watchCurrentBalance emits failure',
+    'when JournalRepository.watchAccountBalances emits failure',
     () async {
       when(
-        () => mockJournalRepository.watchCurrentBalance(
+        () => mockJournalRepository.watchAccountBalances(
           traceId: traceId,
         ),
       ).thenAnswer(

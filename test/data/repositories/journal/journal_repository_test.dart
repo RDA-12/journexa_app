@@ -150,9 +150,9 @@ void main() {
     );
   });
 
-  group('watchCurrentBalance', () {
+  group('watchAccountBalances', () {
     test('emits success with correct mapped data', () async {
-      final result = repository.watchCurrentBalance(
+      final result = repository.watchAccountBalances(
         traceId: traceId,
       );
 
@@ -172,10 +172,10 @@ void main() {
       'when db emits DriftWrappedException',
       () async {
         whenCalling(
-          Invocation.method(#watchCurrentBalance, null),
+          Invocation.method(#watchAccountBalances, null),
         ).on(repository).thenThrow(DriftWrappedException(message: ''));
 
-        final result = repository.watchCurrentBalance(
+        final result = repository.watchAccountBalances(
           traceId: traceId,
         );
 
@@ -197,10 +197,10 @@ void main() {
       'when db throws Exception',
       () async {
         whenCalling(
-          Invocation.method(#watchCurrentBalance, null),
+          Invocation.method(#watchAccountBalances, null),
         ).on(repository).thenThrow(Exception());
 
-        final result = repository.watchCurrentBalance(
+        final result = repository.watchAccountBalances(
           traceId: traceId,
         );
 

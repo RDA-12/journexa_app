@@ -25,7 +25,7 @@ class WalletsBloc extends Bloc<WalletsEvent, WalletsState>
   /// Creates new [WalletsBloc]
   WalletsBloc({
     required this._watchWallets,
-    required this._watchCurrentBalance,
+    required this._watchAccountBalances,
     required this._deleteWallet,
     required this._updateWallet,
   }) : super(const WalletsState()) {
@@ -58,7 +58,7 @@ class WalletsBloc extends Bloc<WalletsEvent, WalletsState>
   String get logTag => 'WalletsBloc';
 
   final WatchWalletsUseCase _watchWallets;
-  final WatchCurrentBalanceUseCase _watchCurrentBalance;
+  final WatchCurrentBalanceUseCase _watchAccountBalances;
   final DeleteWalletUseCase _deleteWallet;
   final UpdateWalletUseCase _updateWallet;
 
@@ -80,7 +80,7 @@ class WalletsBloc extends Bloc<WalletsEvent, WalletsState>
 
     final stream = CombineLatestStream.combine2(
       _watchWallets.execute(params, traceId: traceId),
-      _watchCurrentBalance.execute(traceId: traceId),
+      _watchAccountBalances.execute(traceId: traceId),
       (walletsRes, currentBalanceRes) {
         logInfo('New data recevied', traceId: traceId);
         final currentBalancesExc = currentBalanceRes.errorOrNull;

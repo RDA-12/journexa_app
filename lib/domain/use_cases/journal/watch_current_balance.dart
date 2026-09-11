@@ -28,7 +28,7 @@ class WatchCurrentBalanceUseCase
       'Starts watching current balance',
       traceId: traceId,
     );
-    yield* _journalRepository.watchCurrentBalance(
+    yield* _journalRepository.watchAccountBalances(
       traceId: traceId,
     );
   }

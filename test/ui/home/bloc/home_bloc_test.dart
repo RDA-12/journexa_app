@@ -79,7 +79,7 @@ void main() {
   HomeBloc buildBloc() {
     return HomeBloc(
       watchWallets: mockWatchWallets,
-      watchCurrentBalance: mockWatchCurrentBalance,
+      watchAccountBalances: mockWatchCurrentBalance,
     )..customGenerator = mockUidGenerator;
   }
 
@@ -201,7 +201,7 @@ void main() {
 
       blocTest<HomeBloc, HomeState>(
         'emits [loading, failure] '
-        'when watchCurrentBalance emits failure',
+        'when watchAccountBalances emits failure',
         setUp: () {
           when(
             () => mockWatchCurrentBalance.execute(traceId: traceId),

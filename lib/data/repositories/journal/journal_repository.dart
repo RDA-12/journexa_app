@@ -65,7 +65,7 @@ class DriftJournalRepository with Loggable implements IJournalRepository {
   }
 
   @override
-  Stream<AppResult<Map<String, Decimal>>> watchCurrentBalance({
+  Stream<AppResult<Map<String, Decimal>>> watchAccountBalances({
     required String traceId,
   }) {
     logInfo(
@@ -84,7 +84,7 @@ class DriftJournalRepository with Loggable implements IJournalRepository {
         .map((rows) {
           maybeThrowException(
             this,
-            Invocation.method(#watchCurrentBalance, null),
+            Invocation.method(#watchAccountBalances, null),
           );
           final accountDebits = <String, Decimal>{};
           final accountCredits = <String, Decimal>{};

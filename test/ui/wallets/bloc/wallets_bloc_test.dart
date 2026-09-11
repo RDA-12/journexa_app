@@ -121,7 +121,7 @@ void main() {
   WalletsBloc buildBloc() {
     return WalletsBloc(
       watchWallets: mockWatchWallets,
-      watchCurrentBalance: mockWatchCurrentBalance,
+      watchAccountBalances: mockWatchCurrentBalance,
       deleteWallet: mockDeleteWalletUseCase,
       updateWallet: mockUpdateWalletUseCase,
     )..customGenerator = mockUidGenerator;
@@ -256,7 +256,7 @@ void main() {
 
     blocTest<WalletsBloc, WalletsState>(
       'emits [loading, failure] '
-      'when watchCurrentBalance emits failure',
+      'when watchAccountBalances emits failure',
       setUp: () {
         when(
           () => mockWatchCurrentBalance.execute(traceId: traceId),

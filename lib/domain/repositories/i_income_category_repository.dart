@@ -3,31 +3,27 @@ import 'package:journexa_app/shared/app_result.dart';
 
 /// Repository to handles operations for [IncomeCategory]
 abstract interface class IIncomeCategoryRepository {
-  /// Save [category] in [userId] database
+  /// Save [category] in database
   Future<AppResult<Null>> save({
-    required String userId,
     required IncomeCategory category,
     required String traceId,
   });
 
-  /// Watch all [IncomeCategory] from [userId] database
+  /// Watch all [IncomeCategory] from database
   Stream<AppResult<List<IncomeCategory>>> watch({
-    required String userId,
     required String traceId,
     String? query,
     bool? isDeleted,
   });
 
-  /// Delete [category] from [userId] database
+  /// Delete [category] from database
   Future<AppResult<Null>> delete({
-    required String userId,
     required IncomeCategory category,
     required String traceId,
   });
 
-  /// Update [updatedCategory] in [userId] database
+  /// Update [updatedCategory] in database
   Future<AppResult<Null>> update({
-    required String userId,
     required IncomeCategory updatedCategory,
     required String traceId,
   });

@@ -3,7 +3,6 @@ import 'package:injectable/injectable.dart';
 import 'package:journexa_app/domain/entities/account.dart';
 import 'package:journexa_app/domain/entities/income_category.dart';
 import 'package:journexa_app/domain/repositories/i_account_repository.dart';
-import 'package:journexa_app/domain/repositories/i_auth_repository.dart';
 import 'package:journexa_app/domain/repositories/i_income_category_repository.dart';
 import 'package:journexa_app/domain/use_cases/base_use_case.dart';
 import 'package:journexa_app/shared/app_logger.dart';
@@ -32,12 +31,10 @@ class AddIncomeCategoryUseCase
     implements FutureBaseUseCase<AddIncomeCategoryParams, Null> {
   /// Creates new [AddIncomeCategoryUseCase]
   AddIncomeCategoryUseCase({
-    required this._authRepository,
     required this._accountRepository,
     required this._incomeCategoryRepository,
   });
 
-  final IAuthRepository _authRepository;
   final IAccountRepository _accountRepository;
   final IIncomeCategoryRepository _incomeCategoryRepository;
 
@@ -50,24 +47,10 @@ class AddIncomeCategoryUseCase
     required String traceId,
   }) async {
     logInfo(
-      'Start adding new income category. Get current user id',
+      'Start adding new income category',
       traceId: traceId,
       extras: params.extras,
     );
-    final getCurrentUserIdResult = await _authRepository.getCurrentUserId(
-      traceId: traceId,
-    );
-    final getCurrentUserIdExc = getCurrentUserIdResult.errorOrNull;
-    if (getCurrentUserIdExc != null) {
-      logInfo(
-        'Failed to get current user id.',
-        traceId: traceId,
-      );
-      return AppResult.failure(getCurrentUserIdExc);
-    }
-
-    logInfo('userId obtained', traceId: traceId);
-    final userId = getCurrentUserIdResult.valueOrNull!;
     logInfo('Get parent Account for revenue', traceId: traceId);
     final parentRevenueAccount = SystemDefinedAccount.rootRevenue;
     logInfo(
@@ -90,7 +73,8 @@ class AddIncomeCategoryUseCase
     }
     final childrenCount = getChildrenCountResult.valueOrNull!;
     logInfo(
-      'children count obtained. Creating new Account and IncomeCategory object',
+      'children count obtained. '
+      'Creating new Account and IncomeCategory object',
       traceId: traceId,
     );
 
@@ -108,7 +92,6 @@ class AddIncomeCategoryUseCase
     logInfo('New objects created. Saving IncomeCategory', traceId: traceId);
 
     final saveResult = await _incomeCategoryRepository.save(
-      userId: userId,
       category: newCategory,
       traceId: traceId,
     );

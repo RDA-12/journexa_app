@@ -3,7 +3,6 @@ import 'package:injectable/injectable.dart';
 import 'package:journexa_app/domain/entities/account.dart';
 import 'package:journexa_app/domain/entities/wallet.dart';
 import 'package:journexa_app/domain/repositories/i_account_repository.dart';
-import 'package:journexa_app/domain/repositories/i_auth_repository.dart';
 import 'package:journexa_app/domain/repositories/i_wallet_respository.dart';
 import 'package:journexa_app/domain/use_cases/base_use_case.dart';
 import 'package:journexa_app/shared/app_logger.dart';
@@ -37,14 +36,12 @@ class AddWalletUseCase
   /// Creates new [AddWalletUseCase]
   AddWalletUseCase({
     required this._accountRepository,
-    required this._authRepository,
     required this._walletRepository,
   });
 
   @override
   String get logTag => 'AddWalletUseCase';
 
-  final IAuthRepository _authRepository;
   final IAccountRepository _accountRepository;
   final IWalletRepository _walletRepository;
 
@@ -55,27 +52,14 @@ class AddWalletUseCase
     required String traceId,
   }) async {
     logInfo(
-      'Start adding new wallet. Get current user id',
+      'Start adding new wallet',
       traceId: traceId,
       extras: params.extras,
     );
-    final getCurrentUserIdResult = await _authRepository.getCurrentUserId(
-      traceId: traceId,
-    );
-    final getCurrentUserIdExc = getCurrentUserIdResult.errorOrNull;
-    if (getCurrentUserIdExc != null) {
-      logInfo(
-        'Failed to get current user id.',
-        traceId: traceId,
-      );
-      return AppResult.failure(getCurrentUserIdExc);
-    }
-
     logInfo(
-      'userId obtained. Start finding parent Asset Account',
+      'Start finding parent Asset Account',
       traceId: traceId,
     );
-    final userId = getCurrentUserIdResult.valueOrNull!;
     final parentAssetAccount = SystemDefinedAccount.rootAsset;
     logInfo(
       'Asset parent Account obtained. Get children count',
@@ -117,7 +101,6 @@ class AddWalletUseCase
       traceId: traceId,
     );
     final saveResult = await _walletRepository.save(
-      userId: userId,
       wallet: wallet,
       traceId: traceId,
     );

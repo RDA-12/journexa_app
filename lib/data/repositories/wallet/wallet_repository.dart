@@ -26,7 +26,6 @@ class DriftWalletRepository with Loggable implements IWalletRepository {
 
   @override
   Future<AppResult<Null>> save({
-    required String userId,
     required Wallet wallet,
     required String traceId,
   }) async {
@@ -73,7 +72,6 @@ class DriftWalletRepository with Loggable implements IWalletRepository {
 
   @override
   Stream<AppResult<List<Wallet>>> watch({
-    required String userId,
     required String traceId,
     String? query,
     bool? isDeleted,
@@ -129,7 +127,6 @@ class DriftWalletRepository with Loggable implements IWalletRepository {
 
   @override
   Future<AppResult<Null>> delete({
-    required String userId,
     required Wallet wallet,
     required String traceId,
   }) async {
@@ -172,7 +169,6 @@ class DriftWalletRepository with Loggable implements IWalletRepository {
 
   @override
   Future<AppResult<Null>> update({
-    required String userId,
     required Wallet updatedWallet,
     required String traceId,
   }) async {

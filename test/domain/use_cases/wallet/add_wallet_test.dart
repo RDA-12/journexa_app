@@ -2,15 +2,12 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:journexa_app/domain/entities/account.dart';
 import 'package:journexa_app/domain/entities/wallet.dart';
 import 'package:journexa_app/domain/repositories/i_account_repository.dart';
-import 'package:journexa_app/domain/repositories/i_auth_repository.dart';
 import 'package:journexa_app/domain/repositories/i_wallet_respository.dart';
 import 'package:journexa_app/domain/use_cases/wallet/add_wallet.dart';
 import 'package:journexa_app/shared/app_exception.dart';
 import 'package:journexa_app/shared/app_result.dart';
 import 'package:journexa_app/shared/uid_generator.dart';
 import 'package:mocktail/mocktail.dart';
-
-class MockAuthRepository extends Mock implements IAuthRepository {}
 
 class MockAccountRepository extends Mock implements IAccountRepository {}
 
@@ -20,7 +17,6 @@ class MockUidGenerator extends Mock implements UidGenerator {}
 
 void main() {
   const traceId = 'trace';
-  const userId = 'userId';
   const walletId = 'walletId';
   const currentChildrenCount = 10;
   const nextCode = '10.0011';
@@ -28,7 +24,6 @@ void main() {
     name: 'my wallet',
   );
 
-  late IAuthRepository mockAuthRepository;
   late IAccountRepository mockAccountRepository;
   late IWalletRepository mockWalletRepository;
   late UidGenerator mockUidGenerator;
@@ -40,13 +35,6 @@ void main() {
   });
 
   setUp(() {
-    mockAuthRepository = MockAuthRepository();
-    when(
-      () => mockAuthRepository.getCurrentUserId(traceId: traceId),
-    ).thenAnswer(
-      (_) async => const AppResult.success(userId),
-    );
-
     mockAccountRepository = MockAccountRepository();
     when(
       () => mockAccountRepository.getChildrenCountByParentCode(
@@ -60,7 +48,6 @@ void main() {
     mockWalletRepository = MockWalletRepository();
     when(
       () => mockWalletRepository.save(
-        userId: any<String>(named: 'userId'),
         wallet: any<Wallet>(named: 'wallet'),
         traceId: traceId,
       ),
@@ -72,23 +59,10 @@ void main() {
     when(mockUidGenerator.generateUid).thenReturn(walletId);
 
     useCase = AddWalletUseCase(
-      authRepository: mockAuthRepository,
       accountRepository: mockAccountRepository,
       walletRepository: mockWalletRepository,
     )..customGenerator = mockUidGenerator;
   });
-
-  test(
-    'calls AuthRepository.getCurrentUserId once '
-    'to get current user id',
-    () async {
-      await useCase.execute(params, traceId: traceId);
-
-      verify(
-        () => mockAuthRepository.getCurrentUserId(traceId: traceId),
-      ).called(1);
-    },
-  );
 
   test(
     'calls AccountRepository.getChildrenCountByParentCode once '
@@ -107,7 +81,7 @@ void main() {
 
   test(
     'calls WalletRepository.save once '
-    'with correct userId and Account',
+    'with correct Account',
     () async {
       final expectedAccount = Account(
         code: nextCode,
@@ -125,7 +99,6 @@ void main() {
 
       verify(
         () => mockWalletRepository.save(
-          userId: userId,
           wallet: expected,
           traceId: traceId,
         ),
@@ -139,24 +112,6 @@ void main() {
       final result = await useCase.execute(params, traceId: traceId);
 
       expect(result, const AppResult<Null>.success(null));
-    },
-  );
-
-  test(
-    'returns AppResult.failure and not save Wallet '
-    'when AuthRepository.getCurrentUserId failed',
-    () async {
-      when(
-        () => mockAuthRepository.getCurrentUserId(traceId: traceId),
-      ).thenAnswer(
-        (_) async => AppResult.failure(AppException.test()),
-      );
-
-      final result = await useCase.execute(params, traceId: traceId);
-
-      expect(result, AppResult<Null>.failure(AppException.test()));
-      verifyZeroInteractions(mockAccountRepository);
-      verifyZeroInteractions(mockWalletRepository);
     },
   );
 
@@ -193,7 +148,6 @@ void main() {
     () async {
       when(
         () => mockWalletRepository.save(
-          userId: any<String>(named: 'userId'),
           wallet: any<Wallet>(named: 'wallet'),
           traceId: traceId,
         ),
@@ -212,7 +166,6 @@ void main() {
       ).called(1);
       verify(
         () => mockWalletRepository.save(
-          userId: userId,
           wallet: any<Wallet>(named: 'wallet'),
           traceId: traceId,
         ),

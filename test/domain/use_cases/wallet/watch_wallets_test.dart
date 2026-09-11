@@ -1,7 +1,6 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:journexa_app/domain/entities/account.dart';
 import 'package:journexa_app/domain/entities/wallet.dart';
-import 'package:journexa_app/domain/repositories/i_auth_repository.dart';
 import 'package:journexa_app/domain/repositories/i_wallet_respository.dart';
 import 'package:journexa_app/domain/use_cases/wallet/watch_wallets.dart';
 import 'package:journexa_app/shared/app_exception.dart';
@@ -10,10 +9,7 @@ import 'package:mocktail/mocktail.dart';
 
 class MockWalletRepository extends Mock implements IWalletRepository {}
 
-class MockAuthRepository extends Mock implements IAuthRepository {}
-
 void main() {
-  const userId = 'userId';
   const traceId = 'traceId';
   const expectedParentCode = '10.0000';
   final parent = Account(
@@ -41,20 +37,13 @@ void main() {
       )
       .toList();
 
-  late IAuthRepository mockAuthRepository;
   late IWalletRepository mockWalletRepository;
   late WatchWalletsUseCase useCase;
 
   setUp(() {
-    mockAuthRepository = MockAuthRepository();
-    when(
-      () => mockAuthRepository.getCurrentUserId(traceId: traceId),
-    ).thenAnswer((_) async => const AppResult.success(userId));
-
     mockWalletRepository = MockWalletRepository();
     when(
       () => mockWalletRepository.watch(
-        userId: userId,
         traceId: traceId,
         query: any(named: 'query'),
         isDeleted: any(named: 'isDeleted'),
@@ -62,26 +51,9 @@ void main() {
     ).thenAnswer((_) => Stream.value(AppResult.success(wallets)));
 
     useCase = WatchWalletsUseCase(
-      authRepository: mockAuthRepository,
       walletRepository: mockWalletRepository,
     );
   });
-
-  test(
-    'calls AuthRepository.getCurrentUserId once '
-    'to get current user id',
-    () async {
-      final result = useCase.execute(
-        const WatchWalletsParams(),
-        traceId: traceId,
-      );
-      await result.first;
-
-      verify(
-        () => mockAuthRepository.getCurrentUserId(traceId: traceId),
-      ).called(1);
-    },
-  );
 
   test(
     'calls WalletRepository.watch once '
@@ -95,7 +67,6 @@ void main() {
 
       verify(
         () => mockWalletRepository.watch(
-          userId: userId,
           traceId: traceId,
           isDeleted: false,
         ),
@@ -115,7 +86,6 @@ void main() {
 
       verify(
         () => mockWalletRepository.watch(
-          userId: userId,
           traceId: traceId,
           query: 'query',
           isDeleted: false,
@@ -141,37 +111,11 @@ void main() {
   );
 
   test(
-    'emits failure and not fetch Accounts '
-    'when AuthRepository.getCurrentUserId failed',
-    () async {
-      when(
-        () => mockAuthRepository.getCurrentUserId(traceId: traceId),
-      ).thenAnswer((_) async => AppResult<String>.failure(AppException.test()));
-
-      final result = useCase.execute(
-        const WatchWalletsParams(),
-        traceId: traceId,
-      );
-
-      expect(
-        result,
-        emits(
-          AppResult<List<Wallet>>.failure(
-            AppException.test(),
-          ),
-        ),
-      );
-      verifyZeroInteractions(mockWalletRepository);
-    },
-  );
-
-  test(
     'emits failure '
     'when WalletRepository.watch emits failure',
     () async {
       when(
         () => mockWalletRepository.watch(
-          userId: userId,
           traceId: traceId,
           isDeleted: false,
         ),

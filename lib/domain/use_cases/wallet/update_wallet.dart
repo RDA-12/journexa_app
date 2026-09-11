@@ -1,7 +1,6 @@
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:injectable/injectable.dart';
 import 'package:journexa_app/domain/entities/wallet.dart';
-import 'package:journexa_app/domain/repositories/i_auth_repository.dart';
 import 'package:journexa_app/domain/repositories/i_wallet_respository.dart';
 import 'package:journexa_app/domain/use_cases/base_use_case.dart';
 import 'package:journexa_app/shared/app_logger.dart';
@@ -28,14 +27,12 @@ class UpdateWalletUseCase
     implements FutureBaseUseCase<UpdateWalletParams, Wallet> {
   /// Creates new [UpdateWalletUseCase]
   UpdateWalletUseCase({
-    required this._authRepository,
     required this._walletRepository,
   });
 
   @override
   String get logTag => 'UpdateWalletUseCase';
 
-  final IAuthRepository _authRepository;
   final IWalletRepository _walletRepository;
 
   /// Execute updating an [Wallet]
@@ -44,29 +41,11 @@ class UpdateWalletUseCase
     UpdateWalletParams params, {
     required String traceId,
   }) async {
-    logInfo('Start getting current user id', traceId: traceId);
-    final userIdResult = await _authRepository.getCurrentUserId(
-      traceId: traceId,
-    );
-    final userIdExc = userIdResult.errorOrNull;
-    if (userIdExc != null) {
-      logInfo('Failed to get current user id', traceId: traceId);
-      return AppResult.failure(userIdExc);
-    }
-
-    logInfo(
-      'User id obtained. Starts updating the Wallet',
-      traceId: traceId,
-      extras: {
-        'id': params.wallet.id,
-      },
-    );
-    final userId = userIdResult.valueOrNull!;
+    logInfo('Start updating wallet', traceId: traceId);
     final updatedWallet = params.wallet.update(
       name: params.name,
     );
     final saveResult = await _walletRepository.update(
-      userId: userId,
       updatedWallet: updatedWallet,
       traceId: traceId,
     );

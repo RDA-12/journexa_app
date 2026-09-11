@@ -11,7 +11,6 @@ import 'package:journexa_app/shared/app_result.dart';
 import 'package:mock_exceptions/mock_exceptions.dart';
 
 void main() {
-  const userId = 'userId';
   const traceId = 'traceId';
 
   final parentAccount = SystemDefinedAccount.rootAsset;
@@ -60,7 +59,6 @@ void main() {
 
     test('returns success and save correct wallet and account', () async {
       final result = await repository.save(
-        userId: userId,
         traceId: traceId,
         wallet: newWallet,
       );
@@ -93,7 +91,6 @@ void main() {
         final existingName = initialWallets.first.name;
 
         final result = await repository.save(
-          userId: userId,
           traceId: traceId,
           wallet: newWallet.copyWith(
             name: existingName,
@@ -123,7 +120,6 @@ void main() {
         ).on(repository).thenThrow(DriftWrappedException(message: ''));
 
         final result = await repository.save(
-          userId: userId,
           wallet: newWallet,
           traceId: traceId,
         );
@@ -148,7 +144,6 @@ void main() {
         ).on(repository).thenThrow(Exception());
 
         final result = await repository.save(
-          userId: userId,
           wallet: newWallet,
           traceId: traceId,
         );
@@ -170,7 +165,6 @@ void main() {
       'emits success with correct wallets',
       () async {
         final result = repository.watch(
-          userId: userId,
           traceId: traceId,
         );
 
@@ -195,7 +189,6 @@ void main() {
         await db.into(db.accountDB).insert(expectedWallet.account.toDB());
 
         final result = repository.watch(
-          userId: userId,
           query: 'expected',
           traceId: traceId,
         );
@@ -233,7 +226,6 @@ void main() {
             );
 
         final result = repository.watch(
-          userId: userId,
           isDeleted: false,
           traceId: traceId,
         );
@@ -241,7 +233,6 @@ void main() {
         expect(result, emits(AppResult.success(initialWallets)));
 
         final result2 = repository.watch(
-          userId: userId,
           isDeleted: true,
           traceId: traceId,
         );
@@ -259,7 +250,6 @@ void main() {
         ).on(repository).thenThrow(DriftWrappedException(message: ''));
 
         final result = repository.watch(
-          userId: userId,
           traceId: traceId,
         );
 
@@ -285,7 +275,6 @@ void main() {
         ).on(repository).thenThrow(Exception());
 
         final result = repository.watch(
-          userId: userId,
           traceId: traceId,
         );
 
@@ -311,7 +300,6 @@ void main() {
         final deletedWallet = initialWallets.first;
 
         final result = await repository.delete(
-          userId: userId,
           wallet: deletedWallet,
           traceId: traceId,
         );
@@ -346,7 +334,6 @@ void main() {
         );
 
         final result = await repository.delete(
-          userId: userId,
           wallet: nonExistentWallet,
           traceId: traceId,
         );
@@ -374,7 +361,6 @@ void main() {
         ).on(repository).thenThrow(DriftWrappedException(message: ''));
 
         final result = await repository.delete(
-          userId: userId,
           wallet: initialWallets.first,
           traceId: traceId,
         );
@@ -399,7 +385,6 @@ void main() {
         ).on(repository).thenThrow(Exception());
 
         final result = await repository.delete(
-          userId: userId,
           wallet: initialWallets.first,
           traceId: traceId,
         );
@@ -422,7 +407,6 @@ void main() {
       'returns success when succeeded',
       () async {
         final result = await repository.update(
-          userId: userId,
           updatedWallet: updatedWallet,
           traceId: traceId,
         );
@@ -435,7 +419,6 @@ void main() {
       'update both Wallet and Account',
       () async {
         await repository.update(
-          userId: userId,
           updatedWallet: updatedWallet,
           traceId: traceId,
         );
@@ -466,7 +449,6 @@ void main() {
         ).on(repository).thenThrow(DriftWrappedException(message: ''));
 
         final result = await repository.update(
-          userId: userId,
           updatedWallet: updatedWallet,
           traceId: traceId,
         );
@@ -491,7 +473,6 @@ void main() {
         ).on(repository).thenThrow(Exception());
 
         final result = await repository.update(
-          userId: userId,
           updatedWallet: updatedWallet,
           traceId: traceId,
         );

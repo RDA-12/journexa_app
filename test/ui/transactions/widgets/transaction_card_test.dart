@@ -52,7 +52,7 @@ void main() {
     name: 'Main Wallet',
     account: Account.test().copyWith(
       name: 'Main Wallet',
-      parent: SystemDefinedAccount.rootAsset,
+      parent: SystemDefinedAccount.walletParent,
     ),
   );
 
@@ -61,7 +61,7 @@ void main() {
     name: 'Source Wallet',
     account: Account.test().copyWith(
       name: 'Source Wallet',
-      parent: SystemDefinedAccount.rootAsset,
+      parent: SystemDefinedAccount.walletParent,
     ),
   );
 
@@ -70,7 +70,7 @@ void main() {
     name: 'Dest Wallet',
     account: Account.test().copyWith(
       name: 'Dest Wallet',
-      parent: SystemDefinedAccount.rootAsset,
+      parent: SystemDefinedAccount.walletParent,
     ),
   );
 
@@ -78,7 +78,7 @@ void main() {
     name: 'Salary',
     account: Account.test(AccountType.revenue).copyWith(
       name: 'Salary',
-      parent: SystemDefinedAccount.rootRevenue,
+      parent: SystemDefinedAccount.incomeParent,
     ),
   );
 
@@ -86,7 +86,7 @@ void main() {
     name: 'Groceries',
     account: Account.test(AccountType.expense).copyWith(
       name: 'Groceries',
-      parent: SystemDefinedAccount.rootExpense,
+      parent: SystemDefinedAccount.expenseParent,
     ),
   );
 

@@ -52,7 +52,7 @@ class AddIncomeCategoryUseCase
       extras: params.extras,
     );
     logInfo('Get parent Account for revenue', traceId: traceId);
-    final parentRevenueAccount = SystemDefinedAccount.rootRevenue;
+    final parentRevenueAccount = SystemDefinedAccount.incomeParent;
     logInfo(
       'Revenue parent Account obtained. Get children count',
       traceId: traceId,
@@ -60,7 +60,7 @@ class AddIncomeCategoryUseCase
 
     final getChildrenCountResult = await _accountRepository
         .getChildrenCountByParentCode(
-          parentCode: parentRevenueAccount.code,
+          parentCode: parentRevenueAccount.code.value,
           traceId: traceId,
         );
     final getChildrenCountExc = getChildrenCountResult.errorOrNull;
@@ -78,7 +78,7 @@ class AddIncomeCategoryUseCase
       traceId: traceId,
     );
 
-    final newAccount = Account.user(
+    final newAccount = Account.sub(
       parent: parentRevenueAccount,
       name: params.name,
       currentChildrenCount: childrenCount,

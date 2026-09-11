@@ -5,15 +5,15 @@ import 'package:journexa_app/domain/entities/journal.dart';
 import 'package:journexa_app/shared/app_exception.dart';
 
 void main() {
-  final assetAccount = Account(
-    code: '10.0001',
+  final walletAccount = Account.sub(
     name: 'asset 1',
-    type: AccountType.asset,
+    parent: SystemDefinedAccount.walletParent,
+    currentChildrenCount: 0,
   );
-  final revenueAccount = Account(
-    code: '40.0001',
+  final incomeAccount = Account.sub(
     name: 'revenue 1',
-    type: AccountType.revenue,
+    parent: SystemDefinedAccount.incomeParent,
+    currentChildrenCount: 0,
   );
 
   group(
@@ -23,12 +23,12 @@ void main() {
         'throws AppException when lines is not balanced',
         () {
           final line1 = JournalEntryLine(
-            account: assetAccount,
+            account: walletAccount,
             debit: Decimal.fromInt(10000),
             credit: Decimal.fromInt(0),
           );
           final line2 = JournalEntryLine(
-            account: revenueAccount,
+            account: incomeAccount,
             debit: Decimal.fromInt(0),
             credit: Decimal.fromInt(5000),
           );
@@ -60,13 +60,13 @@ void main() {
           '$type should set debit when amount is posivite',
           () {
             final line = JournalEntryLine.fromAccount(
-              account: assetAccount,
+              account: walletAccount,
               amount: Decimal.fromInt(1000),
             );
             expect(
               line,
               JournalEntryLine(
-                account: assetAccount,
+                account: walletAccount,
                 debit: Decimal.fromInt(1000),
                 credit: Decimal.zero,
               ),
@@ -78,13 +78,13 @@ void main() {
           '$type should set credit when amount is negative',
           () {
             final line = JournalEntryLine.fromAccount(
-              account: assetAccount,
+              account: walletAccount,
               amount: Decimal.fromInt(-1000),
             );
             expect(
               line,
               JournalEntryLine(
-                account: assetAccount,
+                account: walletAccount,
                 debit: Decimal.zero,
                 credit: Decimal.fromInt(1000),
               ),
@@ -98,13 +98,13 @@ void main() {
           '$type should set credit when amount is posivite',
           () {
             final line = JournalEntryLine.fromAccount(
-              account: revenueAccount,
+              account: incomeAccount,
               amount: Decimal.fromInt(1000),
             );
             expect(
               line,
               JournalEntryLine(
-                account: revenueAccount,
+                account: incomeAccount,
                 debit: Decimal.zero,
                 credit: Decimal.fromInt(1000),
               ),
@@ -116,13 +116,13 @@ void main() {
           '$type should set debit when amount is negative',
           () {
             final line = JournalEntryLine.fromAccount(
-              account: revenueAccount,
+              account: incomeAccount,
               amount: Decimal.fromInt(-1000),
             );
             expect(
               line,
               JournalEntryLine(
-                account: revenueAccount,
+                account: incomeAccount,
                 debit: Decimal.fromInt(1000),
                 credit: Decimal.zero,
               ),

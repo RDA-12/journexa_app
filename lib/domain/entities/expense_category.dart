@@ -28,7 +28,7 @@ sealed class ExpenseCategory with _$ExpenseCategory {
     name: 'name',
     icon: 'icon',
     account: Account.test(AccountType.expense).copyWith(
-      parent: SystemDefinedAccount.rootExpense,
+      parent: SystemDefinedAccount.expenseParent,
     ),
   );
 
@@ -39,7 +39,7 @@ sealed class ExpenseCategory with _$ExpenseCategory {
         code: AppExceptionCode.internalException,
       );
     }
-    if (account.parent != SystemDefinedAccount.rootExpense) {
+    if (account.parent != SystemDefinedAccount.expenseParent) {
       throw AppException(
         'ExpenseCategory must have Account with parent to system expense '
         'Account. Got: ${account.parent}',

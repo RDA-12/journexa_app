@@ -8,12 +8,12 @@ void main() {
   group('AccountDBData.toDomain', () {
     test('returns correct Account', () {
       final expected = Account(
-        code: '10.0001',
+        code: AccountCode.fromString('1.001.001'),
         name: 'name',
         type: AccountType.asset,
       );
       const dbData = AccountDBData(
-        code: '10.0001',
+        code: '1.001.001',
         name: 'name',
         type: 'asset',
         isSystemAccount: false,
@@ -26,20 +26,20 @@ void main() {
     });
 
     test('returns correct Account with parent', () {
-      final parent = SystemDefinedAccount.rootAsset;
+      final parent = SystemDefinedAccount.walletParent;
       final expected = Account(
-        code: '10.0001',
+        code: AccountCode.fromString('1.001.001'),
         name: 'name',
         type: AccountType.asset,
         parent: parent,
       );
-      const dbData = AccountDBData(
-        code: '10.0001',
+      final dbData = AccountDBData(
+        code: '1.001.001',
         name: 'name',
         type: 'asset',
         isSystemAccount: false,
         isDeleted: false,
-        parentCode: '10.0000',
+        parentCode: parent.code.value,
       );
 
       final actual = dbData.toDomain(parent: parent);
@@ -51,16 +51,16 @@ void main() {
   group('Account.toDB', () {
     test('returns correct AccountDBCompanion', () {
       final expected = AccountDBCompanion.insert(
-        code: '10.0000',
+        code: '1.001',
         name: 'name',
         type: 'asset',
         isSystemAccount: const Value(true),
+        parentCode: const Value(null),
       );
-      final input = Account(
-        code: '10.0000',
+      final input = Account.root(
+        systemCode: '001',
         name: 'name',
         type: AccountType.asset,
-        isSystemAccount: true,
       );
 
       final actual = input.toDB();
@@ -69,19 +69,18 @@ void main() {
     });
 
     test('returns correct AccountDBCompanion with parent code', () {
-      final parent = SystemDefinedAccount.rootAsset;
+      final parent = SystemDefinedAccount.walletParent;
       final expected = AccountDBCompanion.insert(
-        code: '10.0001',
+        code: '1.001.001',
         name: 'name',
         type: 'asset',
         isSystemAccount: const Value(false),
-        parentCode: Value(parent.code),
+        parentCode: Value(parent.code.value),
       );
-      final input = Account(
-        code: '10.0001',
-        name: 'name',
-        type: AccountType.asset,
+      final input = Account.sub(
         parent: parent,
+        name: 'name',
+        currentChildrenCount: 0,
       );
 
       final actual = input.toDB();

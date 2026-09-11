@@ -33,11 +33,16 @@ class DriftJournalRepository with Loggable implements IJournalRepository {
         'Starts get balance for account',
         traceId: traceId,
         extras: {
-          'accountCode': account.code,
+          'accountCode': account.code.value,
         },
       );
+      final targetCode = account.code.value;
       final statement = _db.select(_db.journalEntryLineDB)
-        ..where((tbl) => tbl.accountCode.equals(account.code));
+        ..where(
+          (tbl) =>
+              tbl.accountCode.equals(targetCode) |
+              tbl.accountCode.like('$targetCode.%'),
+        );
       final lines = await statement.get();
       var totalDebit = Decimal.zero;
       var totalCredit = Decimal.zero;
@@ -166,20 +171,25 @@ class DriftJournalRepository with Loggable implements IJournalRepository {
     DateTime? from,
     DateTime? to,
   }) {
+    final targetCode = account.code.value;
     logInfo(
       'Starts watching balance for account',
       traceId: traceId,
       extras: {
-        'accountCode': account.code,
+        'accountCode': targetCode,
       },
     );
-    final statement = _db.select(_db.journalEntryLineDB).join([
-      innerJoin(
-        _db.journalEntryDB,
-        _db.journalEntryDB.id.equalsExp(_db.journalEntryLineDB.journalId),
-        useColumns: false,
-      ),
-    ])..where(_db.journalEntryLineDB.accountCode.equals(account.code));
+    final statement =
+        _db.select(_db.journalEntryLineDB).join([
+          innerJoin(
+            _db.journalEntryDB,
+            _db.journalEntryDB.id.equalsExp(_db.journalEntryLineDB.journalId),
+            useColumns: false,
+          ),
+        ])..where(
+          _db.journalEntryLineDB.accountCode.equals(targetCode) |
+              _db.journalEntryLineDB.accountCode.like('$targetCode.%'),
+        );
     if (from != null) {
       statement.where(
         _db.journalEntryDB.transactionDate.isBiggerOrEqualValue(

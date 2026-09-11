@@ -12,26 +12,19 @@ class MockIncomeCategoryRepository extends Mock
 
 void main() {
   const traceId = 'traceId';
-  const expectedParentCode = '40.0000';
-  final parent = Account(
-    code: expectedParentCode,
-    name: 'revenue',
-    type: AccountType.revenue,
-    isSystemAccount: true,
-  );
+  final parent = SystemDefinedAccount.incomeParent;
   final accounts = List.generate(
     5,
-    (idx) => Account(
-      code: '40.000${idx + 1}',
+    (idx) => Account.sub(
       name: 'income $idx',
-      type: parent.type,
       parent: parent,
+      currentChildrenCount: idx,
     ),
   );
   final categories = accounts
       .map(
         (it) => IncomeCategory(
-          id: it.code,
+          id: it.code.value,
           name: it.name,
           icon: '',
           account: it,

@@ -11,26 +11,19 @@ class MockWalletRepository extends Mock implements IWalletRepository {}
 
 void main() {
   const traceId = 'traceId';
-  const expectedParentCode = '10.0000';
-  final parent = Account(
-    code: expectedParentCode,
-    name: 'asset',
-    type: AccountType.asset,
-    isSystemAccount: true,
-  );
+  final parent = SystemDefinedAccount.walletParent;
   final accounts = List.generate(
     5,
-    (idx) => Account(
-      code: '10.000${idx + 1}',
+    (idx) => Account.sub(
       name: 'asset $idx',
-      type: parent.type,
       parent: parent,
+      currentChildrenCount: idx,
     ),
   );
   final wallets = accounts
       .map(
         (it) => Wallet(
-          id: it.code,
+          id: it.code.value,
           name: it.name,
           account: it,
         ),

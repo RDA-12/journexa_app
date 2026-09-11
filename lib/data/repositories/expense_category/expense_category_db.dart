@@ -49,7 +49,7 @@ extension ExpenseCategoryX on ExpenseCategory {
       id: id,
       name: name,
       icon: icon,
-      accountCode: account.code,
+      accountCode: account.code.value,
     );
   }
 }

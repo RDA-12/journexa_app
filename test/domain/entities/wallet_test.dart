@@ -4,7 +4,9 @@ import 'package:journexa_app/domain/entities/wallet.dart';
 import 'package:journexa_app/shared/app_exception.dart';
 
 void main() {
-  final assetParent = SystemDefinedAccount.rootAsset;
+  final assetParent = SystemDefinedAccount.walletParent;
+  final incomeParent = SystemDefinedAccount.incomeParent;
+
   group('constructor', () {
     test(
       'throws AppException when connected Account is not an asset',
@@ -13,11 +15,10 @@ void main() {
           () => Wallet(
             id: '1234',
             name: 'name',
-            account: Account(
-              code: '40.0001',
+            account: Account.sub(
+              parent: incomeParent,
               name: 'name',
-              type: AccountType.revenue,
-              parent: assetParent,
+              currentChildrenCount: 0,
             ),
           ),
           throwsA(
@@ -39,11 +40,10 @@ void main() {
           () => Wallet(
             id: '1234',
             name: 'name',
-            account: Account(
-              code: '10.0001',
-              name: 'asset',
-              type: AccountType.asset,
+            account: Account.sub(
               parent: assetParent,
+              name: 'asset',
+              currentChildrenCount: 0,
             ),
           ),
           throwsA(
@@ -62,8 +62,8 @@ void main() {
       'throws AppException when connected Account '
       'is not have asset Account as parent',
       () {
-        final account = Account(
-          code: '10.1200',
+        final account = Account.root(
+          systemCode: '001',
           name: 'name',
           type: AccountType.asset,
         );
@@ -92,21 +92,19 @@ void main() {
       final expected = Wallet(
         id: 'id',
         name: 'new name',
-        account: Account(
-          code: '10.1200',
+        account: Account.sub(
           name: 'new name',
-          type: AccountType.asset,
           parent: assetParent,
+          currentChildrenCount: 0,
         ),
       );
       final old = Wallet(
         id: 'id',
         name: 'old name',
-        account: Account(
-          code: '10.1200',
+        account: Account.sub(
           name: 'old name',
-          type: AccountType.asset,
           parent: assetParent,
+          currentChildrenCount: 0,
         ),
       );
 

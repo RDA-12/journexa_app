@@ -99,7 +99,7 @@ class WalletsBloc extends Bloc<WalletsEvent, WalletsState>
         final wallets = walletsRes.valueOrNull!;
         final result = <WalletUIModel>[];
         for (final wallet in wallets) {
-          final balance = currentBalances[wallet.account.code];
+          final balance = currentBalances[wallet.account.code.value];
           result.add(
             WalletUIModel(
               wallet: wallet,

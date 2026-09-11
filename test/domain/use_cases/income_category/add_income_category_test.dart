@@ -26,8 +26,8 @@ void main() {
     id: 'id',
     name: params.name,
     icon: 'icon',
-    account: Account.user(
-      parent: SystemDefinedAccount.rootRevenue,
+    account: Account.sub(
+      parent: SystemDefinedAccount.incomeParent,
       name: params.name,
       currentChildrenCount: currentChildrenCount,
     ),
@@ -81,7 +81,7 @@ void main() {
 
       verify(
         () => mockAccountRepository.getChildrenCountByParentCode(
-          parentCode: '40.0000',
+          parentCode: SystemDefinedAccount.incomeParent.code.value,
           traceId: traceId,
         ),
       ).called(1);
@@ -130,7 +130,7 @@ void main() {
       expect(result, AppResult<Null>.failure(AppException.test()));
       verify(
         () => mockAccountRepository.getChildrenCountByParentCode(
-          parentCode: '40.0000',
+          parentCode: SystemDefinedAccount.incomeParent.code.value,
           traceId: traceId,
         ),
       ).called(1);
@@ -157,7 +157,7 @@ void main() {
       expect(result, AppResult<Null>.failure(AppException.test()));
       verify(
         () => mockAccountRepository.getChildrenCountByParentCode(
-          parentCode: '40.0000',
+          parentCode: SystemDefinedAccount.incomeParent.code.value,
           traceId: traceId,
         ),
       ).called(1);

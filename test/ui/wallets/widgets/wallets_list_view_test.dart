@@ -47,17 +47,16 @@ final expectedTranslations = {
 };
 
 void main() {
-  final assetParent = SystemDefinedAccount.rootAsset;
+  final assetParent = SystemDefinedAccount.walletParent;
   final walletsData = List.generate(5, (idx) {
     return WalletUIModel(
       wallet: Wallet(
         id: '$idx',
         name: 'asset $idx',
-        account: Account(
-          code: '10.000${idx + 1}',
+        account: Account.sub(
           name: 'asset $idx',
-          type: AccountType.asset,
           parent: assetParent,
+          currentChildrenCount: idx,
         ),
       ),
       balance: Decimal.zero,

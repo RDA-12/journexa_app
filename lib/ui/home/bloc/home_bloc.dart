@@ -75,7 +75,7 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> with Loggable, GenerateUid {
           uiWallets.add(
             HomeWalletUIModel(
               wallet: wallet,
-              balance: balances[wallet.account.code] ?? Decimal.zero,
+              balance: balances[wallet.account.code.value] ?? Decimal.zero,
             ),
           );
         }

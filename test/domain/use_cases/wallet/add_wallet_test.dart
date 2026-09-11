@@ -19,7 +19,6 @@ void main() {
   const traceId = 'trace';
   const walletId = 'walletId';
   const currentChildrenCount = 10;
-  const nextCode = '10.0011';
   const params = AddWalletParams(
     name: 'my wallet',
   );
@@ -72,7 +71,7 @@ void main() {
 
       verify(
         () => mockAccountRepository.getChildrenCountByParentCode(
-          parentCode: '10.0000',
+          parentCode: SystemDefinedAccount.walletParent.code.value,
           traceId: traceId,
         ),
       ).called(1);
@@ -83,11 +82,10 @@ void main() {
     'calls WalletRepository.save once '
     'with correct Account',
     () async {
-      final expectedAccount = Account(
-        code: nextCode,
+      final expectedAccount = Account.sub(
+        parent: SystemDefinedAccount.walletParent,
         name: params.name,
-        type: AccountType.asset,
-        parent: SystemDefinedAccount.rootAsset,
+        currentChildrenCount: currentChildrenCount,
       );
       final expected = Wallet(
         id: walletId,
@@ -133,7 +131,7 @@ void main() {
       expect(result, AppResult<Null>.failure(AppException.test()));
       verify(
         () => mockAccountRepository.getChildrenCountByParentCode(
-          parentCode: '10.0000',
+          parentCode: SystemDefinedAccount.walletParent.code.value,
           traceId: traceId,
         ),
       ).called(1);
@@ -160,7 +158,7 @@ void main() {
       expect(result, AppResult<Null>.failure(AppException.test()));
       verify(
         () => mockAccountRepository.getChildrenCountByParentCode(
-          parentCode: '10.0000',
+          parentCode: SystemDefinedAccount.walletParent.code.value,
           traceId: traceId,
         ),
       ).called(1);

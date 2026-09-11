@@ -52,7 +52,7 @@ class AddExpenseCategoryUseCase
       extras: params.extras,
     );
     logInfo('Get parent Account for expense', traceId: traceId);
-    final parentExpenseAccount = SystemDefinedAccount.rootExpense;
+    final parentExpenseAccount = SystemDefinedAccount.expenseParent;
     logInfo(
       'Expense parent Account obtained. Get children count',
       traceId: traceId,
@@ -60,7 +60,7 @@ class AddExpenseCategoryUseCase
 
     final getChildrenCountResult = await _accountRepository
         .getChildrenCountByParentCode(
-          parentCode: parentExpenseAccount.code,
+          parentCode: parentExpenseAccount.code.value,
           traceId: traceId,
         );
     final getChildrenCountExc = getChildrenCountResult.errorOrNull;
@@ -78,7 +78,7 @@ class AddExpenseCategoryUseCase
       traceId: traceId,
     );
 
-    final newAccount = Account.user(
+    final newAccount = Account.sub(
       parent: parentExpenseAccount,
       name: params.name,
       currentChildrenCount: childrenCount,

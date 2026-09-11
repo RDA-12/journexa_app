@@ -13,13 +13,13 @@ import 'package:mock_exceptions/mock_exceptions.dart';
 void main() {
   const traceId = 'traceId';
 
-  final parentAccount = SystemDefinedAccount.rootExpense;
+  final parentAccount = SystemDefinedAccount.expenseParent;
   final initialCategories = List.generate(5, (index) {
     return ExpenseCategory(
       id: 'category_id_$index',
       name: 'Category $index',
       icon: 'category_$index',
-      account: Account.user(
+      account: Account.sub(
         parent: parentAccount,
         name: 'Category $index',
         currentChildrenCount: index,
@@ -52,7 +52,7 @@ void main() {
       id: 'completely-new',
       name: 'completely new',
       icon: 'icon',
-      account: Account.user(
+      account: Account.sub(
         parent: parentAccount,
         name: 'completely new',
         currentChildrenCount: initialCategories.length,
@@ -80,7 +80,7 @@ void main() {
             .toDomain(
               account: row
                   .readTable(db.accountDB)
-                  .toDomain(parent: SystemDefinedAccount.rootExpense),
+                  .toDomain(parent: SystemDefinedAccount.expenseParent),
             ),
         newCategory,
       );
@@ -181,11 +181,10 @@ void main() {
           id: 'expected',
           name: 'expected name',
           icon: 'icon',
-          account: Account(
-            code: '50.1000',
+          account: Account.sub(
             name: 'expected name',
-            type: AccountType.expense,
             parent: parentAccount,
+            currentChildrenCount: initialCategories.length,
           ),
         );
         await db.into(db.expenseCategoryDB).insert(expectedCategory.toDB());
@@ -207,11 +206,10 @@ void main() {
           id: 'expected',
           name: 'expected name',
           icon: 'icon',
-          account: Account(
-            code: '50.1000',
+          account: Account.sub(
             name: 'expected name',
-            type: AccountType.expense,
             parent: parentAccount,
+            currentChildrenCount: initialCategories.length,
           ),
         );
         await db
@@ -330,11 +328,10 @@ void main() {
           id: 'non-existent',
           name: 'non-existent',
           icon: 'icon',
-          account: Account(
-            code: '50.0100',
+          account: Account.sub(
             name: 'non-existent',
-            type: AccountType.expense,
             parent: parentAccount,
+            currentChildrenCount: 0,
           ),
         );
 
@@ -437,7 +434,7 @@ void main() {
         final row = await statement.getSingle();
         final account = row
             .readTable(db.accountDB)
-            .toDomain(parent: SystemDefinedAccount.rootExpense);
+            .toDomain(parent: SystemDefinedAccount.expenseParent);
         final category = row
             .readTable(db.expenseCategoryDB)
             .toDomain(account: account);

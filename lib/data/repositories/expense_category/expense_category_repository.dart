@@ -111,7 +111,7 @@ class DriftExpenseCategoryRepository
               result.add(
                 expenseCategoryDB.toDomain(
                   account: accountDB.toDomain(
-                    parent: SystemDefinedAccount.rootExpense,
+                    parent: SystemDefinedAccount.expenseParent,
                   ),
                 ),
               );
@@ -151,7 +151,7 @@ class DriftExpenseCategoryRepository
         );
         final updateAccountStatement = _db.update(
           _db.accountDB,
-        )..where((it) => it.code.equals(category.account.code));
+        )..where((it) => it.code.equals(category.account.code.value));
         await updateAccountStatement.write(
           const AccountDBCompanion(isDeleted: Value(true)),
         );

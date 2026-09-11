@@ -91,11 +91,10 @@ void main() {
             initialWallet: Wallet(
               id: 'id',
               name: 'name',
-              account: Account(
-                code: '10.0001',
+              account: Account.sub(
                 name: 'name',
-                type: AccountType.asset,
-                parent: SystemDefinedAccount.rootAsset,
+                parent: SystemDefinedAccount.walletParent,
+                currentChildrenCount: 0,
               ),
             ),
           );

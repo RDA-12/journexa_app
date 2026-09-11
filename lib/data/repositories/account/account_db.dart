@@ -35,6 +35,7 @@ class AccountDB extends Table {
 extension AccountDBDataX on AccountDBData {
   /// Return [Account] from this [AccountDBData]
   Account toDomain({Account? parent}) {
+    final code = AccountCode.fromString(this.code);
     return Account(
       code: code,
       name: name,
@@ -50,11 +51,11 @@ extension AccountX on Account {
   /// Return [AccountDBData] from this [Account]
   AccountDBCompanion toDB() {
     return AccountDBCompanion.insert(
-      code: code,
+      code: code.value,
       name: name,
       type: type.key,
       isSystemAccount: Value(isSystemAccount),
-      parentCode: Value(parent?.code),
+      parentCode: Value(parent?.code.value),
     );
   }
 }

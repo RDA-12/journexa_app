@@ -7,11 +7,10 @@ import 'package:journexa_app/domain/entities/wallet.dart';
 void main() {
   group('WalletDBData.toDomain', () {
     test('returns correct Wallet', () {
-      final expectedAccount = Account(
-        code: '10.0001',
+      final expectedAccount = Account.sub(
         name: 'name',
-        type: AccountType.asset,
-        parent: SystemDefinedAccount.rootAsset,
+        parent: SystemDefinedAccount.walletParent,
+        currentChildrenCount: 0,
       );
       final expected = Wallet(
         id: 'id',
@@ -36,14 +35,13 @@ void main() {
       final expected = WalletDBCompanion.insert(
         id: 'id',
         name: 'name',
-        accountCode: '10.0001',
+        accountCode: '1.001.001',
       );
-      final parentAccount = SystemDefinedAccount.rootAsset;
-      final inputAccount = Account(
-        code: '10.0001',
+      final parentAccount = SystemDefinedAccount.walletParent;
+      final inputAccount = Account.sub(
         name: 'name',
-        type: AccountType.asset,
         parent: parentAccount,
+        currentChildrenCount: 0,
       );
       final input = Wallet(
         id: 'id',

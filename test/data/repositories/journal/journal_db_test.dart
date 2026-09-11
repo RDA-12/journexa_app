@@ -6,11 +6,10 @@ import 'package:journexa_app/domain/entities/journal.dart';
 
 void main() {
   final testDate = DateTime(2026, 9, 7, 12);
-  final testAccount = Account(
-    code: '10.0001',
+  final testAccount = Account.sub(
     name: 'Asset Account',
-    type: AccountType.asset,
-    parent: SystemDefinedAccount.rootAsset,
+    parent: SystemDefinedAccount.walletParent,
+    currentChildrenCount: 0,
   );
 
   group('JournalEntry.toDB', () {
@@ -50,7 +49,7 @@ void main() {
 
       expect(companion.id.value, 'line-1');
       expect(companion.journalId.value, 'entry-1');
-      expect(companion.accountCode.value, testAccount.code);
+      expect(companion.accountCode.value, testAccount.code.value);
       expect(companion.debit.value, Decimal.fromInt(100));
       expect(companion.credit.value, Decimal.zero);
     });

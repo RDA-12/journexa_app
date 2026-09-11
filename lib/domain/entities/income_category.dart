@@ -28,7 +28,7 @@ sealed class IncomeCategory with _$IncomeCategory {
     name: 'name',
     icon: 'icon',
     account: Account.test(AccountType.revenue).copyWith(
-      parent: SystemDefinedAccount.rootRevenue,
+      parent: SystemDefinedAccount.incomeParent,
     ),
   );
 
@@ -39,7 +39,7 @@ sealed class IncomeCategory with _$IncomeCategory {
         code: AppExceptionCode.internalException,
       );
     }
-    if (account.parent != SystemDefinedAccount.rootRevenue) {
+    if (account.parent != SystemDefinedAccount.incomeParent) {
       throw AppException(
         'IncomeCategory must have Account with parent to system revenue '
         'Account. Got: ${account.parent}',

@@ -19,15 +19,14 @@ import 'package:mock_exceptions/mock_exceptions.dart';
 void main() {
   const traceId = 'traceId';
 
-  final assetParent = SystemDefinedAccount.rootAsset;
-  final revenueParent = SystemDefinedAccount.rootRevenue;
-  final expenseParent = SystemDefinedAccount.rootExpense;
+  final walletParent = SystemDefinedAccount.walletParent;
+  final incomeParent = SystemDefinedAccount.incomeParent;
+  final expenseParent = SystemDefinedAccount.expenseParent;
 
-  final walletAccount = Account(
-    code: '10.0001',
+  final walletAccount = Account.sub(
     name: 'Wallet 1',
-    type: AccountType.asset,
-    parent: assetParent,
+    parent: walletParent,
+    currentChildrenCount: 0,
   );
   final wallet = Wallet(
     id: 'wallet-1',
@@ -35,11 +34,10 @@ void main() {
     account: walletAccount,
   );
 
-  final incomeCategoryAccount = Account(
-    code: '40.0001',
+  final incomeCategoryAccount = Account.sub(
     name: 'Income Cat 1',
-    type: AccountType.revenue,
-    parent: revenueParent,
+    parent: incomeParent,
+    currentChildrenCount: 0,
   );
   final incomeCategory = IncomeCategory(
     id: 'income-1',
@@ -64,8 +62,8 @@ void main() {
   setUp(() async {
     db = AppLocalDatabase.test();
 
-    await db.into(db.accountDB).insert(assetParent.toDB());
-    await db.into(db.accountDB).insert(revenueParent.toDB());
+    await db.into(db.accountDB).insert(walletParent.toDB());
+    await db.into(db.accountDB).insert(incomeParent.toDB());
     await db.into(db.accountDB).insert(expenseParent.toDB());
 
     await db.into(db.accountDB).insert(walletAccount.toDB());
@@ -145,10 +143,10 @@ void main() {
           db.journalEntryLineDB,
         )..where((l) => l.journalId.equals(entry.id))).get();
         expect(lineRows.length, 2);
-        expect(lineRows[0].accountCode, entry.lines[0].account.code);
+        expect(lineRows[0].accountCode, entry.lines[0].account.code.value);
         expect(lineRows[0].debit, entry.lines[0].debit);
         expect(lineRows[0].credit, entry.lines[0].credit);
-        expect(lineRows[1].accountCode, entry.lines[1].account.code);
+        expect(lineRows[1].accountCode, entry.lines[1].account.code.value);
         expect(lineRows[1].debit, entry.lines[1].debit);
         expect(lineRows[1].credit, entry.lines[1].credit);
       },

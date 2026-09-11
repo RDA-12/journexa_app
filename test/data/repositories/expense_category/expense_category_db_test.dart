@@ -7,11 +7,10 @@ import 'package:journexa_app/domain/entities/expense_category.dart';
 void main() {
   group('ExpenseCategoryDBData.toDomain', () {
     test('returns correct ExpenseCategory', () {
-      final expectedAccount = Account(
-        code: '50.0001',
+      final expectedAccount = Account.sub(
         name: 'name',
-        type: AccountType.expense,
-        parent: SystemDefinedAccount.rootExpense,
+        parent: SystemDefinedAccount.expenseParent,
+        currentChildrenCount: 0,
       );
       final expected = ExpenseCategory(
         id: 'id',
@@ -24,7 +23,7 @@ void main() {
         isDeleted: false,
         id: 'id',
         icon: 'icon',
-        accountCode: '50.0001',
+        accountCode: '5.001.001',
       );
 
       final actual = dbData.toDomain(account: expectedAccount);
@@ -39,14 +38,13 @@ void main() {
         id: 'id',
         name: 'name',
         icon: 'icon',
-        accountCode: '50.0001',
+        accountCode: '5.001.001',
       );
-      final parentAccount = SystemDefinedAccount.rootExpense;
-      final inputAccount = Account(
-        code: '50.0001',
+      final parentAccount = SystemDefinedAccount.expenseParent;
+      final inputAccount = Account.sub(
         name: 'name',
-        type: AccountType.expense,
         parent: parentAccount,
+        currentChildrenCount: 0,
       );
       final input = ExpenseCategory(
         id: 'id',

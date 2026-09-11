@@ -30,8 +30,8 @@ void main() {
       id: '$idx',
       name: 'name $idx',
       icon: 'icon',
-      account: Account.user(
-        parent: SystemDefinedAccount.rootExpense,
+      account: Account.sub(
+        parent: SystemDefinedAccount.expenseParent,
         name: 'name $idx',
         currentChildrenCount: idx,
       ),

@@ -5,11 +5,10 @@ import 'package:journexa_app/shared/app_exception.dart';
 
 void main() {
   group('constructor', () {
-    final expenseAccount = Account(
-      code: '50.0101',
+    final expenseAccount = Account.sub(
       name: 'expense',
-      type: AccountType.expense,
-      parent: SystemDefinedAccount.rootExpense,
+      parent: SystemDefinedAccount.expenseParent,
+      currentChildrenCount: 0,
     );
 
     test(
@@ -20,9 +19,10 @@ void main() {
             id: 'id',
             name: 'name',
             icon: 'icon',
-            account: expenseAccount.copyWith(
-              code: '10.0010',
-              type: AccountType.asset,
+            account: Account.sub(
+              name: 'expense',
+              parent: SystemDefinedAccount.walletParent,
+              currentChildrenCount: 0,
             ),
           ),
           throwsA(
@@ -30,7 +30,7 @@ void main() {
               (e) => e.message,
               'message',
               'ExpenseCategory must have expense typed Account. '
-              'Got: AccountType.asset',
+                  'Got: AccountType.asset',
             ),
           ),
         );
@@ -53,8 +53,8 @@ void main() {
               (e) => e.message,
               'message',
               'ExpenseCategory must have Account with '
-              'parent to system expense Account. '
-              'Got: null',
+                  'parent to system expense Account. '
+                  'Got: null',
             ),
           ),
         );

@@ -42,7 +42,7 @@ void main() {
     name: 'Main Wallet',
     account: Account.test().copyWith(
       name: 'Main Wallet',
-      parent: SystemDefinedAccount.rootAsset,
+      parent: SystemDefinedAccount.walletParent,
     ),
   );
 
@@ -50,7 +50,7 @@ void main() {
     name: 'Salary',
     account: Account.test(AccountType.revenue).copyWith(
       name: 'Salary',
-      parent: SystemDefinedAccount.rootRevenue,
+      parent: SystemDefinedAccount.incomeParent,
     ),
   );
 

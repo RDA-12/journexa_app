@@ -7,11 +7,10 @@ import 'package:journexa_app/domain/entities/income_category.dart';
 void main() {
   group('IncomeCategoryDBData.toDomain', () {
     test('returns correct IncomeCategory', () {
-      final expectedAccount = Account(
-        code: '40.0001',
+      final expectedAccount = Account.sub(
         name: 'name',
-        type: AccountType.revenue,
-        parent: SystemDefinedAccount.rootRevenue,
+        parent: SystemDefinedAccount.incomeParent,
+        currentChildrenCount: 0,
       );
       final expected = IncomeCategory(
         id: 'id',
@@ -24,7 +23,7 @@ void main() {
         isDeleted: false,
         id: 'id',
         icon: 'icon',
-        accountCode: '40.0001',
+        accountCode: '4.001.001',
       );
 
       final actual = dbData.toDomain(account: expectedAccount);
@@ -39,14 +38,13 @@ void main() {
         id: 'id',
         name: 'name',
         icon: 'icon',
-        accountCode: '40.0001',
+        accountCode: '4.001.001',
       );
-      final parentAccount = SystemDefinedAccount.rootRevenue;
-      final inputAccount = Account(
-        code: '40.0001',
+      final parentAccount = SystemDefinedAccount.incomeParent;
+      final inputAccount = Account.sub(
         name: 'name',
-        type: AccountType.revenue,
         parent: parentAccount,
+        currentChildrenCount: 0,
       );
       final input = IncomeCategory(
         id: 'id',

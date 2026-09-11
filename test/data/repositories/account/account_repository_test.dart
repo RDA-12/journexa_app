@@ -10,32 +10,25 @@ import 'package:mock_exceptions/mock_exceptions.dart';
 
 void main() {
   const traceId = 'trace';
-  final parent = Account(
-    code: '10.0000',
-    name: 'asset',
-    type: AccountType.asset,
-    isSystemAccount: true,
-  );
+  final parent = SystemDefinedAccount.walletParent;
   final initialAccounts = [
     parent,
-    Account(
-      code: '10.0001',
+    Account.sub(
+      parent: parent,
       name: 'Dompet Hitam',
-      type: AccountType.asset,
-      parent: parent,
+      currentChildrenCount: 0,
     ),
-    Account(
-      code: '10.0002',
-      name: 'Bank BRI',
-      type: AccountType.asset,
+    Account.sub(
       parent: parent,
+      name: 'Bank BRI',
+      currentChildrenCount: 1,
     ),
   ];
   final accounts = [
-    Account(
-      code: '10.0010',
+    Account.sub(
+      parent: parent,
       name: 'Bank Jago',
-      type: AccountType.asset,
+      currentChildrenCount: 2,
     ),
   ];
 
@@ -150,17 +143,16 @@ void main() {
       () async {
         const expectedChildrenCount = 5;
         for (var i = 1; i <= expectedChildrenCount; i++) {
-          final child = Account(
-            code: '${parent.code.split('.')[0]}.100$i',
+          final child = Account.sub(
             name: 'child $i',
-            type: AccountType.asset,
             parent: parent,
+            currentChildrenCount: 3 + i,
           );
           await db.into(db.accountDB).insert(child.toDB());
         }
 
         final result = await repository.getChildrenCountByParentCode(
-          parentCode: parent.code,
+          parentCode: parent.code.value,
           traceId: traceId,
         );
 
@@ -184,7 +176,7 @@ void main() {
             );
 
         final result = await repository.getChildrenCountByParentCode(
-          parentCode: parent.code,
+          parentCode: parent.code.value,
           traceId: traceId,
         );
 
@@ -210,7 +202,7 @@ void main() {
             );
 
         final result = await repository.getChildrenCountByParentCode(
-          parentCode: parent.code,
+          parentCode: parent.code.value,
           traceId: traceId,
         );
 

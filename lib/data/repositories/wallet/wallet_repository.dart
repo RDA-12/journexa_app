@@ -109,7 +109,7 @@ class DriftWalletRepository with Loggable implements IWalletRepository {
               result.add(
                 walletDB.toDomain(
                   account: accountDB.toDomain(
-                    parent: SystemDefinedAccount.rootAsset,
+                    parent: SystemDefinedAccount.walletParent,
                   ),
                 ),
               );
@@ -149,7 +149,7 @@ class DriftWalletRepository with Loggable implements IWalletRepository {
         );
         final updateAccountStatement = _db.update(
           _db.accountDB,
-        )..where((it) => it.code.equals(wallet.account.code));
+        )..where((it) => it.code.equals(wallet.account.code.value));
         await updateAccountStatement.write(
           const AccountDBCompanion(isDeleted: Value(true)),
         );

@@ -44,7 +44,7 @@ extension WalletX on Wallet {
     return WalletDBCompanion.insert(
       id: id,
       name: name,
-      accountCode: account.code,
+      accountCode: account.code.value,
     );
   }
 }

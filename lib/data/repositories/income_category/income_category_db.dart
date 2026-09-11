@@ -49,7 +49,7 @@ extension IncomeCategoryX on IncomeCategory {
       id: id,
       name: name,
       icon: icon,
-      accountCode: account.code,
+      accountCode: account.code.value,
     );
   }
 }

@@ -34,7 +34,7 @@ class DriftAccountRepository with Loggable implements IAccountRepository {
       for (final account in accounts) {
         logInfo('Checks ${account.name}', traceId: traceId);
         final statement = _db.accountDB.count(
-          where: (it) => it.code.equals(account.code),
+          where: (it) => it.code.equals(account.code.value),
         );
         final count = await statement.getSingle();
         if (count == 0) {

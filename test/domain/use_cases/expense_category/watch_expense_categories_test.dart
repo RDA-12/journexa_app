@@ -12,26 +12,19 @@ class MockExpenseCategoryRepository extends Mock
 
 void main() {
   const traceId = 'traceId';
-  const expectedParentCode = '50.0000';
-  final parent = Account(
-    code: expectedParentCode,
-    name: 'expense',
-    type: AccountType.expense,
-    isSystemAccount: true,
-  );
+  final parent = SystemDefinedAccount.expenseParent;
   final accounts = List.generate(
     5,
-    (idx) => Account(
-      code: '50.000${idx + 1}',
+    (idx) => Account.sub(
       name: 'expense $idx',
-      type: parent.type,
       parent: parent,
+      currentChildrenCount: idx,
     ),
   );
   final categories = accounts
       .map(
         (it) => ExpenseCategory(
-          id: it.code,
+          id: it.code.value,
           name: it.name,
           icon: '',
           account: it,

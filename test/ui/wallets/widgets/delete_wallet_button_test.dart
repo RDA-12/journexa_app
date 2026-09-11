@@ -27,8 +27,8 @@ void main() {
   final wallet = Wallet(
     id: 'id',
     name: 'dompet hitam',
-    account: Account.user(
-      parent: SystemDefinedAccount.rootAsset,
+    account: Account.sub(
+      parent: SystemDefinedAccount.walletParent,
       name: 'dompet hitam',
       currentChildrenCount: 0,
     ),

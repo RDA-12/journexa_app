@@ -70,7 +70,7 @@ extension JournalEntryLineX on JournalEntryLine {
       id: id,
       credit: credit,
       debit: debit,
-      accountCode: account.code,
+      accountCode: account.code.value,
       journalId: journalId,
     );
   }

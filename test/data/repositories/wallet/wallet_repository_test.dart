@@ -13,12 +13,12 @@ import 'package:mock_exceptions/mock_exceptions.dart';
 void main() {
   const traceId = 'traceId';
 
-  final parentAccount = SystemDefinedAccount.rootAsset;
+  final parentAccount = SystemDefinedAccount.walletParent;
   final initialWallets = List.generate(5, (index) {
     return Wallet(
       id: 'wallet_id_$index',
       name: 'Wallet $index',
-      account: Account.user(
+      account: Account.sub(
         parent: parentAccount,
         name: 'Wallet $index',
         currentChildrenCount: index,
@@ -50,7 +50,7 @@ void main() {
     final newWallet = Wallet(
       id: 'completely-new',
       name: 'completely new',
-      account: Account.user(
+      account: Account.sub(
         parent: parentAccount,
         name: 'completely new',
         currentChildrenCount: initialWallets.length,
@@ -78,7 +78,7 @@ void main() {
             .toDomain(
               account: row
                   .readTable(db.accountDB)
-                  .toDomain(parent: SystemDefinedAccount.rootAsset),
+                  .toDomain(parent: SystemDefinedAccount.walletParent),
             ),
         newWallet,
       );
@@ -178,11 +178,10 @@ void main() {
         final expectedWallet = Wallet(
           id: 'expected',
           name: 'expected name',
-          account: Account(
-            code: '10.1000',
+          account: Account.sub(
             name: 'expected name',
-            type: AccountType.asset,
             parent: parentAccount,
+            currentChildrenCount: 100,
           ),
         );
         await db.into(db.walletDB).insert(expectedWallet.toDB());
@@ -203,11 +202,10 @@ void main() {
         final expectedWallet = Wallet(
           id: 'expected',
           name: 'expected name',
-          account: Account(
-            code: '10.1000',
+          account: Account.sub(
             name: 'expected name',
-            type: AccountType.asset,
             parent: parentAccount,
+            currentChildrenCount: 100,
           ),
         );
         await db
@@ -325,11 +323,10 @@ void main() {
         final nonExistentWallet = Wallet(
           id: 'non-existent',
           name: 'non-existent',
-          account: Account(
-            code: '10.0100',
+          account: Account.sub(
             name: 'non-existent',
-            type: AccountType.asset,
             parent: parentAccount,
+            currentChildrenCount: 100,
           ),
         );
 
@@ -432,10 +429,8 @@ void main() {
         final row = await statement.getSingle();
         final account = row
             .readTable(db.accountDB)
-            .toDomain(parent: SystemDefinedAccount.rootAsset);
-        final wallet = row
-            .readTable(db.walletDB)
-            .toDomain(account: account);
+            .toDomain(parent: SystemDefinedAccount.walletParent);
+        final wallet = row.readTable(db.walletDB).toDomain(account: account);
         expect(wallet, updatedWallet);
       },
     );

@@ -111,7 +111,7 @@ class DriftIncomeCategoryRepository
               result.add(
                 incomeCategoryDB.toDomain(
                   account: accountDB.toDomain(
-                    parent: SystemDefinedAccount.rootRevenue,
+                    parent: SystemDefinedAccount.incomeParent,
                   ),
                 ),
               );
@@ -151,7 +151,7 @@ class DriftIncomeCategoryRepository
         );
         final updateAccountStatement = _db.update(
           _db.accountDB,
-        )..where((it) => it.code.equals(category.account.code));
+        )..where((it) => it.code.equals(category.account.code.value));
         await updateAccountStatement.write(
           const AccountDBCompanion(isDeleted: Value(true)),
         );

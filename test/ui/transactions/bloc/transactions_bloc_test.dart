@@ -37,8 +37,8 @@ void main() {
   final wallet1 = Wallet(
     id: 'wallet-1',
     name: 'Wallet 1',
-    account: Account.user(
-      parent: SystemDefinedAccount.rootAsset,
+    account: Account.sub(
+      parent: SystemDefinedAccount.walletParent,
       name: 'Wallet 1',
       currentChildrenCount: 0,
     ),
@@ -47,8 +47,8 @@ void main() {
   final wallet2 = Wallet(
     id: 'wallet-2',
     name: 'Wallet 2',
-    account: Account.user(
-      parent: SystemDefinedAccount.rootAsset,
+    account: Account.sub(
+      parent: SystemDefinedAccount.walletParent,
       name: 'Wallet 2',
       currentChildrenCount: 1,
     ),
@@ -60,8 +60,8 @@ void main() {
     id: 'inc-cat-1',
     name: 'Salary',
     icon: 'salary_icon',
-    account: Account.user(
-      parent: SystemDefinedAccount.rootRevenue,
+    account: Account.sub(
+      parent: SystemDefinedAccount.incomeParent,
       name: 'Salary',
       currentChildrenCount: 0,
     ),
@@ -71,8 +71,8 @@ void main() {
     id: 'exp-cat-1',
     name: 'Groceries',
     icon: 'groceries_icon',
-    account: Account.user(
-      parent: SystemDefinedAccount.rootExpense,
+    account: Account.sub(
+      parent: SystemDefinedAccount.expenseParent,
       name: 'Groceries',
       currentChildrenCount: 0,
     ),

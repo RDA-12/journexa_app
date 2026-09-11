@@ -47,8 +47,8 @@ void main() {
     id: 'id',
     name: 'name',
     icon: 'icon',
-    account: Account.user(
-      parent: SystemDefinedAccount.rootRevenue,
+    account: Account.sub(
+      parent: SystemDefinedAccount.incomeParent,
       name: 'name',
       currentChildrenCount: 0,
     ),

@@ -5,11 +5,10 @@ import 'package:journexa_app/shared/app_exception.dart';
 
 void main() {
   group('constructor', () {
-    final revenueAccount = Account(
-      code: '40.0101',
+    final revenueAccount = Account.sub(
       name: 'revenue',
-      type: AccountType.revenue,
-      parent: SystemDefinedAccount.rootRevenue,
+      parent: SystemDefinedAccount.incomeParent,
+      currentChildrenCount: 0,
     );
 
     test(
@@ -20,9 +19,10 @@ void main() {
             id: 'id',
             name: 'name',
             icon: 'icon',
-            account: revenueAccount.copyWith(
-              code: '10.0010',
-              type: AccountType.asset,
+            account: Account.sub(
+              name: 'revenue',
+              parent: SystemDefinedAccount.walletParent,
+              currentChildrenCount: 0,
             ),
           ),
           throwsA(

@@ -14,11 +14,10 @@ void main() {
   final wallet = Wallet(
     id: 'id',
     name: 'asset 1',
-    account: Account(
-      code: '10.0001',
+    account: Account.sub(
       name: 'asset 1',
-      type: AccountType.asset,
-      parent: SystemDefinedAccount.rootAsset,
+      parent: SystemDefinedAccount.walletParent,
+      currentChildrenCount: 0,
     ),
   );
   final params = UpdateWalletParams(

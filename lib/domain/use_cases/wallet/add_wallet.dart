@@ -60,7 +60,7 @@ class AddWalletUseCase
       'Start finding parent Asset Account',
       traceId: traceId,
     );
-    final parentAssetAccount = SystemDefinedAccount.rootAsset;
+    final parentAssetAccount = SystemDefinedAccount.walletParent;
     logInfo(
       'Asset parent Account obtained. Get children count',
       traceId: traceId,
@@ -68,7 +68,7 @@ class AddWalletUseCase
 
     final getChildrenCountResult = await _accountRepository
         .getChildrenCountByParentCode(
-          parentCode: parentAssetAccount.code,
+          parentCode: parentAssetAccount.code.value,
           traceId: traceId,
         );
     final getChildrenCountExc = getChildrenCountResult.errorOrNull;
@@ -85,7 +85,7 @@ class AddWalletUseCase
       'children count obtained. Creating new Wallet object',
       traceId: traceId,
     );
-    final newAccount = Account.user(
+    final newAccount = Account.sub(
       parent: parentAssetAccount,
       name: params.name,
       currentChildrenCount: childrenCount,

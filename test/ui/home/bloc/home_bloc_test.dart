@@ -20,22 +20,21 @@ class MockUidGenerator extends Mock implements UidGenerator {}
 
 void main() {
   const traceId = 'traceId';
-  final assetParent = SystemDefinedAccount.rootAsset;
+  final assetParent = SystemDefinedAccount.walletParent;
   final wallets = List.generate(5, (idx) {
     return Wallet(
       id: '$idx',
       name: 'asset $idx',
-      account: Account(
-        code: '10.000${idx + 1}',
+      account: Account.sub(
         name: 'asset $idx',
-        type: AccountType.asset,
         parent: assetParent,
+        currentChildrenCount: idx,
       ),
     );
   });
   final currentBalances = <String, Decimal>{
-    for (var idx = 0; idx < 5; idx++)
-      '10.000${idx + 1}': Decimal.fromInt(idx * 1000),
+    for (final wallet in wallets)
+      wallet.account.code.value: Decimal.fromInt(int.parse(wallet.id) * 1000),
   };
   final walletsWithState = List.generate(5, (idx) {
     return HomeWalletUIModel(

@@ -88,46 +88,170 @@ enum BalanceType {
 
 /// Holds system defined accounts
 abstract class SystemDefinedAccount {
-  /// Root asset account.
-  static Account get rootAsset => Account(
-    code: '10.0000',
-    name: 'asset',
+  /// Wallet parent account
+  static Account get walletParent => Account.root(
+    name: 'wallet',
     type: AccountType.asset,
-    isSystemAccount: true,
+    systemCode: '001',
   );
 
-  /// Root revenue account.
-  static Account get rootRevenue => Account(
-    code: '40.0000',
-    name: 'revenue',
+  /// Income parent account
+  static Account get incomeParent => Account.root(
+    name: 'income',
     type: AccountType.revenue,
-    isSystemAccount: true,
+    systemCode: '001',
   );
 
-  /// Root expense account.
-  static Account get rootExpense => Account(
-    code: '50.0000',
+  /// Expense parent account
+  static Account get expenseParent => Account.root(
     name: 'expense',
     type: AccountType.expense,
-    isSystemAccount: true,
+    systemCode: '001',
   );
 
   /// Default expense account for transfer transaction fee
-  static Account get feeTransfer => Account(
-    code: '50.0001',
+  static Account get feeTransfer => Account.sub(
+    parent: expenseParent,
     name: 'transfer fee',
-    type: AccountType.expense,
+    currentChildrenCount: 0,
     isSystemAccount: true,
-    parent: rootExpense,
   );
 
   /// All system defined accounts
   static List<Account> get accounts => [
-    rootAsset,
-    rootRevenue,
-    rootExpense,
+    walletParent,
+    incomeParent,
+    expenseParent,
     feeTransfer,
   ];
+}
+
+/// Represent account code structure
+///
+/// It will formed `<typeCode>.<systemCode>.<subCodes>...`.
+/// `<typeCode>` is 1 digit code based on [AccountType].
+/// `<systemCode>` is 3 digits code defined by system.
+/// `<subCodes>` is 3 digits sub code
+///
+/// For example:
+/// `1.001.001`:
+/// - 1 -> asset type
+/// - 001 -> 3-digits system code, e.g. wallet
+/// - 001 -> sub code
+///
+/// NOTE: specific for root accounts (asset,liability,revenue,expense,equity),
+/// it will only have `<typeCode>`
+@freezed
+sealed class AccountCode with _$AccountCode {
+  /// Creates new [AccountCode]
+  factory AccountCode({
+    /// Type code of the [Account]
+    required String typeCode,
+
+    /// Code defined by system (e.g. "000")
+    required String systemCode,
+
+    /// Sub code (e.g. [001, 002])
+    required List<String> subCodes,
+  }) = _AccountCode;
+  AccountCode._() {
+    if (!AccountType.values.any((e) => e.prefixCode == typeCode)) {
+      throw AppException(
+        'invalid account type code. Got $typeCode. '
+        'Expected one of ${AccountType.values.map((e) => e.prefixCode)}',
+        code: AppExceptionCode.internalException,
+      );
+    }
+    if (systemCode.length != 3) {
+      throw AppException(
+        'invalid system code length. Got ${systemCode.length}. '
+        'Expected 3 characters',
+        code: AppExceptionCode.internalException,
+      );
+    }
+    if (int.tryParse(systemCode) == null) {
+      throw AppException(
+        'invalid system code format. Got $systemCode. '
+        'Expected digits',
+        code: AppExceptionCode.internalException,
+      );
+    }
+    for (final (index, code) in subCodes.indexed) {
+      if (code.length != 3) {
+        throw AppException(
+          'invalid sub code length at $index. Got ${code.length}. '
+          'Expected 3 characters',
+          code: AppExceptionCode.internalException,
+        );
+      }
+      if (int.tryParse(code) == null) {
+        throw AppException(
+          'invalid sub code format at $index. Got $code. '
+          'Expected digits',
+          code: AppExceptionCode.internalException,
+        );
+      }
+    }
+  }
+
+  /// Creates new [AccountCode] for root account
+  factory AccountCode.root({
+    required AccountType type,
+    required String systemCode,
+  }) => AccountCode(
+    typeCode: type.prefixCode,
+    systemCode: systemCode,
+    subCodes: [],
+  );
+
+  /// Creates new [AccountCode] for sub account
+  factory AccountCode.sub({
+    required Account parent,
+    required String subCode,
+  }) => AccountCode(
+    typeCode: parent.code.typeCode,
+    systemCode: parent.code.systemCode,
+    subCodes: [
+      ...parent.code.subCodes,
+      subCode,
+    ],
+  );
+
+  /// Parse [AccountCode] from [String]
+  ///
+  /// [code] must be in format `<typeCode>.<systemCode>.<subCodes>...`
+  factory AccountCode.fromString(String code) {
+    final codes = code.split('.');
+    if (codes.length < 2) {
+      throw AppException(
+        'invalid account code format. Got $code. ',
+        code: AppExceptionCode.internalException,
+      );
+    }
+    final typeCode = codes[0];
+    final systemCode = codes[1];
+    final subCodes = codes.sublist(2);
+    return AccountCode(
+      typeCode: typeCode,
+      systemCode: systemCode,
+      subCodes: subCodes,
+    );
+  }
+
+  @override
+  String toString() {
+    final codes = [typeCode, systemCode, ...subCodes];
+    return codes.join('.');
+  }
+
+  /// Get formatted [AccountCode] with dots (e.g. "1.001.001")
+  String get value => toString();
+
+  /// Returns whether this code represents a root account
+  bool get isRoot => subCodes.isEmpty;
+
+  /// Returns whether this code represents a sub account
+  bool get isSub => !isRoot;
 }
 
 /// Represent single account in a double-entry accounting system
@@ -136,11 +260,7 @@ sealed class Account with _$Account {
   /// Creates new [Account]
   factory Account({
     /// Unique code for an [Account]
-    ///
-    /// Code will be formatted as `<SystemCode>.<UserCreatedCode>`
-    /// - SystemCode will have 2 digits.
-    /// - UserCreatedCode will have 4 digits.
-    required String code,
+    required AccountCode code,
 
     /// Unique name of the [Account]
     required String name,
@@ -157,63 +277,45 @@ sealed class Account with _$Account {
 
   /// Creates new [Account] to helps testing
   factory Account.test([AccountType type = AccountType.asset]) => Account(
-    code: '${type.prefixCode}0.0000',
+    code: AccountCode.root(type: type, systemCode: '001'),
     name: 'test',
     type: type,
   );
 
-  /// Creates new [Account] which code is derived from parent code
-  factory Account.user({
+  /// Creates new [Account] that will be sub account
+  ///
+  /// It will create code by appending `<currentChildrenCount + 1>` to
+  /// parent's [AccountCode].
+  factory Account.sub({
     required Account parent,
     required String name,
     required int currentChildrenCount,
+    bool isSystemAccount = false,
   }) {
-    final nextUserCode = (currentChildrenCount + 1).toString().padLeft(4, '0');
-    final code = '${parent.code.split('.')[0]}.$nextUserCode';
+    final code = (currentChildrenCount + 1).toString().padLeft(3, '0');
 
     return Account(
-      code: code,
+      code: AccountCode.sub(parent: parent, subCode: code),
       name: name,
       type: parent.type,
       parent: parent,
+      isSystemAccount: isSystemAccount,
     );
   }
 
-  Account._() {
-    if (!code.startsWith(type.prefixCode)) {
-      throw AppException(
-        'account with type $type '
-        'must have code prefixed with ${type.prefixCode}. '
-        'got ${code[0]} instead',
-        code: AppExceptionCode.internalException,
-      );
-    }
-    final splitted = code.split('.');
-    if (splitted.length != 2) {
-      throw AppException(
-        'invalid code length. '
-        'it must have 2 parts, system and user code, splitted by ".". '
-        'got $splitted instead',
-        code: AppExceptionCode.internalException,
-      );
-    }
-    final systemCode = splitted[0];
-    if (systemCode.length != 2) {
-      throw AppException(
-        'invalid system part in code, it must 2 character long. '
-        'got $systemCode instead',
-        code: AppExceptionCode.internalException,
-      );
-    }
-    final userCode = splitted[1];
-    if (userCode.length != 4) {
-      throw AppException(
-        'invalid user part in code, it must 4 character long. '
-        'got $userCode instead',
-        code: AppExceptionCode.internalException,
-      );
-    }
-  }
+  /// Creates new [Account] for root accounts
+  factory Account.root({
+    required String name,
+    required AccountType type,
+    required String systemCode,
+  }) => Account(
+    code: AccountCode.root(type: type, systemCode: systemCode),
+    name: name,
+    type: type,
+    isSystemAccount: true,
+  );
+
+  Account._();
 
   /// Return normal balance of this [Account].
   ///

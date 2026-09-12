@@ -19,7 +19,7 @@ void main() {
     whenListen(
       mockHomeBloc,
       const Stream<HomeState>.empty(),
-      initialState: const HomeState(),
+      initialState: HomeState(),
     );
     when(mockHomeBloc.close).thenAnswer((_) async {});
   });

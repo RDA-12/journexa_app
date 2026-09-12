@@ -4,6 +4,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:journexa_app/domain/entities/account.dart';
 import 'package:journexa_app/domain/entities/wallet.dart';
 import 'package:journexa_app/domain/use_cases/journal/watch_current_balance.dart';
+import 'package:journexa_app/domain/use_cases/journal/watch_total_mtd_income.dart';
 import 'package:journexa_app/domain/use_cases/wallet/watch_wallets.dart';
 import 'package:journexa_app/shared/app_exception.dart';
 import 'package:journexa_app/shared/app_result.dart';
@@ -17,6 +18,9 @@ class MockWatchCurrentBalanceUseCase extends Mock
     implements WatchCurrentBalanceUseCase {}
 
 class MockUidGenerator extends Mock implements UidGenerator {}
+
+class MockWatchTotalMTDIncomeUseCase extends Mock
+    implements WatchTotalMTDIncomeUseCase {}
 
 void main() {
   const traceId = 'traceId';
@@ -42,15 +46,22 @@ void main() {
       balance: Decimal.fromInt(idx * 1000),
     );
   });
+  final mtdTargetDate = DateTime.now();
+  final watchMTDIncomeParams = WatchTotalMTDIncomeParams(
+    targetDate: mtdTargetDate,
+  );
+  final totalMTDIncome = Decimal.fromInt(1000);
 
-  late MockWatchWalletsUseCase mockWatchWallets;
-  late MockWatchCurrentBalanceUseCase mockWatchCurrentBalance;
-  late MockUidGenerator mockUidGenerator;
+  late WatchWalletsUseCase mockWatchWallets;
+  late WatchCurrentBalanceUseCase mockWatchCurrentBalance;
+  late UidGenerator mockUidGenerator;
+  late WatchTotalMTDIncomeUseCase mockWatchTotalMTDIncome;
 
   setUpAll(() {
     registerFallbackValue(
       const WatchWalletsParams(),
     );
+    registerFallbackValue(watchMTDIncomeParams);
   });
 
   setUp(() {
@@ -73,18 +84,27 @@ void main() {
     ).thenAnswer(
       (_) => Stream.value(AppResult.success(currentBalances)),
     );
+
+    mockWatchTotalMTDIncome = MockWatchTotalMTDIncomeUseCase();
+    when(
+      () => mockWatchTotalMTDIncome.execute(
+        watchMTDIncomeParams,
+        traceId: traceId,
+      ),
+    ).thenAnswer((_) => Stream.value(AppResult.success(totalMTDIncome)));
   });
 
   HomeBloc buildBloc() {
     return HomeBloc(
       watchWallets: mockWatchWallets,
       watchAccountBalances: mockWatchCurrentBalance,
+      watchTotalMTDIncome: mockWatchTotalMTDIncome,
     )..customGenerator = mockUidGenerator;
   }
 
   test('has initial state of HomeState()', () {
     final bloc = buildBloc();
-    expect(bloc.state, const HomeState());
+    expect(bloc.state, HomeState());
   });
 
   group('subscriptionsRequested', () {
@@ -98,8 +118,8 @@ void main() {
           const HomeEvent.subscriptionsRequested(),
         ),
         expect: () => <HomeState>[
-          const HomeState(
-            wallets: HomeWalletsUIModel(
+          HomeState(
+            wallets: const HomeWalletsUIModel(
               status: HomeUIStatus.loading,
             ),
           ),
@@ -138,8 +158,8 @@ void main() {
           const HomeEvent.subscriptionsRequested(),
         ),
         expect: () => <HomeState>[
-          const HomeState(
-            wallets: HomeWalletsUIModel(
+          HomeState(
+            wallets: const HomeWalletsUIModel(
               status: HomeUIStatus.loading,
             ),
           ),
@@ -176,8 +196,8 @@ void main() {
           const HomeEvent.subscriptionsRequested(),
         ),
         expect: () => <HomeState>[
-          const HomeState(
-            wallets: HomeWalletsUIModel(
+          HomeState(
+            wallets: const HomeWalletsUIModel(
               status: HomeUIStatus.loading,
             ),
           ),
@@ -215,8 +235,8 @@ void main() {
           const HomeEvent.subscriptionsRequested(),
         ),
         expect: () => <HomeState>[
-          const HomeState(
-            wallets: HomeWalletsUIModel(
+          HomeState(
+            wallets: const HomeWalletsUIModel(
               status: HomeUIStatus.loading,
             ),
           ),
@@ -234,5 +254,91 @@ void main() {
         },
       );
     });
+  });
+
+  group('mtdSubscriptionRequested', () {
+    blocTest<HomeBloc, HomeState>(
+      'emits [loading, loaded] '
+      'with correct total income '
+      'when all watch mtd data success',
+      build: buildBloc,
+      act: (bloc) => bloc.add(
+        HomeEvent.mtdSubscriptionRequested(
+          targetDate: mtdTargetDate,
+        ),
+      ),
+      expect: () => <HomeState>[
+        HomeState(
+          mtdData: HomeMTDDataUIModel(
+            status: HomeUIStatus.loading,
+            totalIncome: Decimal.zero,
+            totalExpense: Decimal.zero,
+          ),
+        ),
+        HomeState(
+          mtdData: HomeMTDDataUIModel(
+            status: HomeUIStatus.loaded,
+            totalIncome: totalMTDIncome,
+            totalExpense: Decimal.zero,
+          ),
+        ),
+      ],
+      verify: (_) {
+        verify(
+          () => mockWatchTotalMTDIncome.execute(
+            watchMTDIncomeParams,
+            traceId: traceId,
+          ),
+        ).called(1);
+      },
+    );
+
+    blocTest<HomeBloc, HomeState>(
+      'emits [loading, failure] '
+      'when watchTotalMTDIncome emits failure',
+      setUp: () {
+        when(
+          () => mockWatchTotalMTDIncome.execute(
+            watchMTDIncomeParams,
+            traceId: traceId,
+          ),
+        ).thenAnswer(
+          (_) => Stream.value(
+            AppResult<Decimal>.failure(AppException.test()),
+          ),
+        );
+      },
+      build: buildBloc,
+      act: (bloc) => bloc.add(
+        HomeEvent.mtdSubscriptionRequested(
+          targetDate: mtdTargetDate,
+        ),
+      ),
+      expect: () => <HomeState>[
+        HomeState(
+          mtdData: HomeMTDDataUIModel(
+            status: HomeUIStatus.loading,
+            totalIncome: Decimal.zero,
+            totalExpense: Decimal.zero,
+          ),
+        ),
+        HomeState(
+          mtdData: HomeMTDDataUIModel(
+            status: HomeUIStatus.failure,
+            totalIncome: Decimal.zero,
+            totalExpense: Decimal.zero,
+            exception: AppException.test(),
+          ),
+        ),
+      ],
+      verify: (_) {
+        verify(
+          () => mockWatchTotalMTDIncome.execute(
+            watchMTDIncomeParams,
+            traceId: traceId,
+          ),
+        ).called(1);
+      },
+    );
   });
 }

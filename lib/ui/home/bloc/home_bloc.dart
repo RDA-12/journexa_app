@@ -4,6 +4,7 @@ import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:injectable/injectable.dart';
 import 'package:journexa_app/domain/entities/wallet.dart';
 import 'package:journexa_app/domain/use_cases/journal/watch_current_balance.dart';
+import 'package:journexa_app/domain/use_cases/journal/watch_total_mtd_income.dart';
 import 'package:journexa_app/domain/use_cases/wallet/watch_wallets.dart';
 import 'package:journexa_app/shared/app_exception.dart';
 import 'package:journexa_app/shared/app_logger.dart';
@@ -22,14 +23,22 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> with Loggable, GenerateUid {
   HomeBloc({
     required this._watchWallets,
     required this._watchAccountBalances,
-  }) : super(const HomeState()) {
+    required this._watchTotalMTDIncome,
+  }) : super(HomeState()) {
     on<_SubscriptionsRequested>(
       (event, emit) => _onSubscriptionRequested(emit: emit),
+    );
+    on<_MTDSubscriptionRequested>(
+      (event, emit) => _onMTDDataSubscriptionRequested(
+        targetDate: event.targetDate,
+        emit: emit,
+      ),
     );
   }
 
   final WatchWalletsUseCase _watchWallets;
   final WatchCurrentBalanceUseCase _watchAccountBalances;
+  final WatchTotalMTDIncomeUseCase _watchTotalMTDIncome;
 
   @override
   String get logTag => 'HomeBloc';
@@ -104,6 +113,54 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> with Loggable, GenerateUid {
               wallets: state.wallets.copyWith(
                 exception: exc,
                 status: HomeUIStatus.failure,
+              ),
+            );
+          },
+        );
+      },
+    );
+  }
+
+  Future<void> _onMTDDataSubscriptionRequested({
+    required DateTime targetDate,
+    required Emitter<HomeState> emit,
+  }) async {
+    final traceId = generateUid();
+    logInfo(
+      'Starts subscribe to total mtd for income. '
+      'Emits loading state',
+      traceId: traceId,
+    );
+    emit(
+      state.copyWith(
+        mtdData: state.mtdData.copyWith(
+          status: HomeUIStatus.loading,
+        ),
+      ),
+    );
+
+    final incomeStream = _watchTotalMTDIncome.execute(
+      WatchTotalMTDIncomeParams(targetDate: targetDate),
+      traceId: traceId,
+    );
+
+    await emit.forEach(
+      incomeStream,
+      onData: (result) {
+        return result.when(
+          success: (income) {
+            return state.copyWith(
+              mtdData: state.mtdData.copyWith(
+                status: HomeUIStatus.loaded,
+                totalIncome: income,
+              ),
+            );
+          },
+          failure: (exc) {
+            return state.copyWith(
+              mtdData: state.mtdData.copyWith(
+                status: HomeUIStatus.failure,
+                exception: exc,
               ),
             );
           },

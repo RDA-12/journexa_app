@@ -62,7 +62,7 @@ void main() {
     whenListen(
       mockHomeBloc,
       const Stream<HomeState>.empty(),
-      initialState: const HomeState(),
+      initialState: HomeState(),
     );
   });
 
@@ -87,8 +87,8 @@ void main() {
         whenListen(
           mockHomeBloc,
           const Stream<HomeState>.empty(),
-          initialState: const HomeState(
-            wallets: HomeWalletsUIModel(
+          initialState: HomeState(
+            wallets: const HomeWalletsUIModel(
               status: HomeUIStatus.loading,
             ),
           ),
@@ -198,8 +198,8 @@ void main() {
           whenListen(
             mockHomeBloc,
             const Stream<HomeState>.empty(),
-            initialState: const HomeState(
-              wallets: HomeWalletsUIModel(
+            initialState: HomeState(
+              wallets: const HomeWalletsUIModel(
                 status: HomeUIStatus.loaded,
               ),
             ),
@@ -227,8 +227,8 @@ void main() {
           whenListen(
             mockHomeBloc,
             const Stream<HomeState>.empty(),
-            initialState: const HomeState(
-              wallets: HomeWalletsUIModel(
+            initialState: HomeState(
+              wallets: const HomeWalletsUIModel(
                 status: HomeUIStatus.loading,
               ),
             ),

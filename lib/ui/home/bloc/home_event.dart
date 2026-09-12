@@ -5,4 +5,9 @@ part of 'home_bloc.dart';
 class HomeEvent with _$HomeEvent {
   /// Event to trigger subscriptions to all data required by [HomeBloc]
   const factory HomeEvent.subscriptionsRequested() = _SubscriptionsRequested;
+
+  /// Event to trigger to subscribe to mtd data
+  const factory HomeEvent.mtdSubscriptionRequested({
+    required DateTime targetDate,
+  }) = _MTDSubscriptionRequested;
 }

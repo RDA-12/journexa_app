@@ -1,4 +1,5 @@
 import 'package:bloc_test/bloc_test.dart';
+import 'package:clock/clock.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -53,6 +54,23 @@ void main() {
             const HomeEvent.subscriptionsRequested(),
           ),
         ).called(1);
+      },
+    );
+
+    testWidgets(
+      'add HomeEvent.mtdSubscriptionRequested event on start '
+      'with current date',
+      (tester) async {
+        final now = DateTime.now();
+        await withClock(Clock.fixed(now), () async {
+          await pumpWidget(tester);
+
+          verify(
+            () => mockHomeBloc.add(
+              HomeEvent.mtdSubscriptionRequested(targetDate: now),
+            ),
+          ).called(1);
+        });
       },
     );
   });

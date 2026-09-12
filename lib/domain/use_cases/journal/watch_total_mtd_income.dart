@@ -7,35 +7,34 @@ import 'package:journexa_app/domain/use_cases/base_use_case.dart';
 import 'package:journexa_app/shared/app_logger.dart';
 import 'package:journexa_app/shared/app_result.dart';
 
-part 'watch_total_mtd_income_balance.freezed.dart';
+part 'watch_total_mtd_income.freezed.dart';
 
-/// Params for [WatchTotalMTDIncomeBalanceUseCase]
+/// Params for [WatchTotalMTDIncomeUseCase]
 @freezed
-sealed class WatchTotalMTDIncomeBalanceParams
-    with _$WatchTotalMTDIncomeBalanceParams {
-  const factory WatchTotalMTDIncomeBalanceParams({
+sealed class WatchTotalMTDIncomeParams with _$WatchTotalMTDIncomeParams {
+  const factory WatchTotalMTDIncomeParams({
     required DateTime targetDate,
-  }) = _WatchTotalMTDIncomeBalanceParams;
+  }) = _WatchTotalMTDIncomeParams;
 }
 
 /// Use case to get total month to date (MTD) income balance
 @lazySingleton
-class WatchTotalMTDIncomeBalanceUseCase
+class WatchTotalMTDIncomeUseCase
     with Loggable
-    implements StreamBaseUseCase<WatchTotalMTDIncomeBalanceParams, Decimal> {
-  /// Creates new [WatchTotalMTDIncomeBalanceUseCase]
-  WatchTotalMTDIncomeBalanceUseCase({
+    implements StreamBaseUseCase<WatchTotalMTDIncomeParams, Decimal> {
+  /// Creates new [WatchTotalMTDIncomeUseCase]
+  WatchTotalMTDIncomeUseCase({
     required this._journalRepository,
   });
 
   @override
-  String get logTag => 'WatchTotalMTDIncomeBalanceUseCase';
+  String get logTag => 'WatchTotalMTDIncomeUseCase';
 
   final IJournalRepository _journalRepository;
 
   @override
   Stream<AppResult<Decimal>> execute(
-    WatchTotalMTDIncomeBalanceParams params, {
+    WatchTotalMTDIncomeParams params, {
     required String traceId,
   }) {
     final targetDate = params.targetDate;

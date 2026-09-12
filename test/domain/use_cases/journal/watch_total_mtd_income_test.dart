@@ -2,7 +2,7 @@ import 'package:decimal/decimal.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:journexa_app/domain/entities/account.dart';
 import 'package:journexa_app/domain/repositories/i_journal_repository.dart';
-import 'package:journexa_app/domain/use_cases/journal/watch_total_mtd_income_balance.dart';
+import 'package:journexa_app/domain/use_cases/journal/watch_total_mtd_income.dart';
 import 'package:journexa_app/shared/app_exception.dart';
 import 'package:journexa_app/shared/app_result.dart';
 import 'package:mocktail/mocktail.dart';
@@ -12,14 +12,14 @@ class MockJournalRepository extends Mock implements IJournalRepository {}
 void main() {
   const traceId = 'traceId';
   final targetDate = DateTime(2026, 10, 12, 22, 30);
-  final params = WatchTotalMTDIncomeBalanceParams(targetDate: targetDate);
+  final params = WatchTotalMTDIncomeParams(targetDate: targetDate);
   final expectedFromDate = DateTime(2026, 10);
   final expectedToDate = DateTime(2026, 10, 12, 23, 59, 59, 999);
   final expectedAccount = SystemDefinedAccount.incomeParent;
   final totalBalance = Decimal.fromInt(100000);
 
   late IJournalRepository mockJournalRepository;
-  late WatchTotalMTDIncomeBalanceUseCase useCase;
+  late WatchTotalMTDIncomeUseCase useCase;
 
   setUpAll(() {
     registerFallbackValue(expectedAccount);
@@ -36,7 +36,7 @@ void main() {
       ),
     ).thenAnswer((_) => Stream.value(AppResult.success(totalBalance)));
 
-    useCase = WatchTotalMTDIncomeBalanceUseCase(
+    useCase = WatchTotalMTDIncomeUseCase(
       journalRepository: mockJournalRepository,
     );
   });

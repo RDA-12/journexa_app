@@ -564,4 +564,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get mtdCardNetLabel => 'Net Balance';
+
+  @override
+  String get mtdSectionLoadingSemantics => 'Loading net balance this month';
 }

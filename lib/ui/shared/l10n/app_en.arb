@@ -890,5 +890,9 @@
   "mtdCardNetLabel": "Net Balance",
   "@mtdCardNetLabel": {
     "description": "Label for MTDCard type net"
+  },
+  "mtdSectionLoadingSemantics": "Loading net balance this month",
+  "@mtdSectionLoadingSemantics": {
+    "description": "Semantics label for loading indicator in mtd section"
   }
 }

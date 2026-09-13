@@ -145,5 +145,6 @@
   "homeWalletsTotalBalanceLabel": "Total Saldo",
   "mtdCardExpenseLabel": "Total Pengeluaran",
   "mtdCardIncomeLabel": "Total Pendapatan",
-  "mtdCardNetLabel": "Saldo Bersih"
+  "mtdCardNetLabel": "Saldo Bersih",
+  "mtdSectionLoadingSemantics": "Memuat data saldo bersih bulan ini"
 }

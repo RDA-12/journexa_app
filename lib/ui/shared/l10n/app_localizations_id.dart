@@ -572,4 +572,7 @@ class AppLocalizationsId extends AppLocalizations {
 
   @override
   String get mtdCardNetLabel => 'Saldo Bersih';
+
+  @override
+  String get mtdSectionLoadingSemantics => 'Memuat data saldo bersih bulan ini';
 }

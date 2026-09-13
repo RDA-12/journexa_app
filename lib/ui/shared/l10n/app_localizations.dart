@@ -1000,6 +1000,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Net Balance'**
   String get mtdCardNetLabel;
+
+  /// Semantics label for loading indicator in mtd section
+  ///
+  /// In en, this message translates to:
+  /// **'Loading net balance this month'**
+  String get mtdSectionLoadingSemantics;
 }
 
 class _AppLocalizationsDelegate

@@ -23,7 +23,7 @@ class HomePage extends StatelessWidget with AppClockMixin {
   Widget build(BuildContext context) {
     return BlocProvider(
       create: (context) => (homeBloc ?? getIt<HomeBloc>())
-        ..add(const HomeEvent.subscriptionsRequested())
+        ..add(const HomeEvent.walletsSubscriptionRequested())
         ..add(
           HomeEvent.mtdSubscriptionRequested(targetDate: getCurrentDateTime()),
         ),

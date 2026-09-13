@@ -52,7 +52,7 @@ void main() {
 
         verify(
           () => mockHomeBloc.add(
-            const HomeEvent.subscriptionsRequested(),
+            const HomeEvent.walletsSubscriptionRequested(),
           ),
         ).called(1);
       },

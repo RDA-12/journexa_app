@@ -107,7 +107,7 @@ void main() {
     expect(bloc.state, HomeState());
   });
 
-  group('subscriptionsRequested', () {
+  group('walletsSubscriptionRequested', () {
     group('wallets', () {
       blocTest<HomeBloc, HomeState>(
         'emits [loading, loaded] '
@@ -115,7 +115,7 @@ void main() {
         'when all watch use cases return success',
         build: buildBloc,
         act: (bloc) => bloc.add(
-          const HomeEvent.subscriptionsRequested(),
+          const HomeEvent.walletsSubscriptionRequested(),
         ),
         expect: () => <HomeState>[
           HomeState(
@@ -155,7 +155,7 @@ void main() {
         },
         build: buildBloc,
         act: (bloc) => bloc.add(
-          const HomeEvent.subscriptionsRequested(),
+          const HomeEvent.walletsSubscriptionRequested(),
         ),
         expect: () => <HomeState>[
           HomeState(
@@ -193,7 +193,7 @@ void main() {
         },
         build: buildBloc,
         act: (bloc) => bloc.add(
-          const HomeEvent.subscriptionsRequested(),
+          const HomeEvent.walletsSubscriptionRequested(),
         ),
         expect: () => <HomeState>[
           HomeState(
@@ -232,7 +232,7 @@ void main() {
         },
         build: buildBloc,
         act: (bloc) => bloc.add(
-          const HomeEvent.subscriptionsRequested(),
+          const HomeEvent.walletsSubscriptionRequested(),
         ),
         expect: () => <HomeState>[
           HomeState(

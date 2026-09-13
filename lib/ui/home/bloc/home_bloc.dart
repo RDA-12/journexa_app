@@ -25,8 +25,8 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> with Loggable, GenerateUid {
     required this._watchAccountBalances,
     required this._watchTotalMTDIncome,
   }) : super(HomeState()) {
-    on<_SubscriptionsRequested>(
-      (event, emit) => _onSubscriptionRequested(emit: emit),
+    on<_WalletsSubscriptionRequested>(
+      (event, emit) => _onWalletsSubscriptionRequested(emit: emit),
     );
     on<_MTDSubscriptionRequested>(
       (event, emit) => _onMTDDataSubscriptionRequested(
@@ -43,7 +43,7 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> with Loggable, GenerateUid {
   @override
   String get logTag => 'HomeBloc';
 
-  Future<void> _onSubscriptionRequested({
+  Future<void> _onWalletsSubscriptionRequested({
     required Emitter<HomeState> emit,
   }) async {
     final traceId = generateUid();

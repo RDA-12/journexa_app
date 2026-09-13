@@ -555,4 +555,13 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get homeWalletsTotalBalanceLabel => 'Total Balance';
+
+  @override
+  String get mtdCardExpenseLabel => 'Total Expense';
+
+  @override
+  String get mtdCardIncomeLabel => 'Total Income';
+
+  @override
+  String get mtdCardNetLabel => 'Net Balance';
 }

@@ -878,5 +878,17 @@
   "homeWalletsTotalBalanceLabel": "Total Balance",
   "@homeWalletsTotalBalanceLabel": {
     "description": "Label to shows total wallets balances in home page"
+  },
+  "mtdCardExpenseLabel": "Total Expense",
+  "@mtdCardExpenseLabel": {
+    "description": "Label for MTDCard type expense"
+  },
+  "mtdCardIncomeLabel": "Total Income",
+  "@mtdCardIncomeLabel": {
+    "description": "Label for MTDCard type income"
+  },
+  "mtdCardNetLabel": "Net Balance",
+  "@mtdCardNetLabel": {
+    "description": "Label for MTDCard type net"
   }
 }

@@ -563,4 +563,13 @@ class AppLocalizationsId extends AppLocalizations {
 
   @override
   String get homeWalletsTotalBalanceLabel => 'Total Saldo';
+
+  @override
+  String get mtdCardExpenseLabel => 'Total Pengeluaran';
+
+  @override
+  String get mtdCardIncomeLabel => 'Total Pendapatan';
+
+  @override
+  String get mtdCardNetLabel => 'Saldo Bersih';
 }

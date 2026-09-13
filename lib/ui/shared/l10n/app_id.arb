@@ -142,5 +142,8 @@
   "homeWalletsEmptyDescription": "Tidak ada data dompet yang ditemukan",
   "homeWalletsFailureTitle": "Gagal mendapatkan data dompet",
   "transactionsListTitle": "Daftar Transaksi",
-  "homeWalletsTotalBalanceLabel": "Total Saldo"
+  "homeWalletsTotalBalanceLabel": "Total Saldo",
+  "mtdCardExpenseLabel": "Total Pengeluaran",
+  "mtdCardIncomeLabel": "Total Pendapatan",
+  "mtdCardNetLabel": "Saldo Bersih"
 }

@@ -982,6 +982,24 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Total Balance'**
   String get homeWalletsTotalBalanceLabel;
+
+  /// Label for MTDCard type expense
+  ///
+  /// In en, this message translates to:
+  /// **'Total Expense'**
+  String get mtdCardExpenseLabel;
+
+  /// Label for MTDCard type income
+  ///
+  /// In en, this message translates to:
+  /// **'Total Income'**
+  String get mtdCardIncomeLabel;
+
+  /// Label for MTDCard type net
+  ///
+  /// In en, this message translates to:
+  /// **'Net Balance'**
+  String get mtdCardNetLabel;
 }
 
 class _AppLocalizationsDelegate

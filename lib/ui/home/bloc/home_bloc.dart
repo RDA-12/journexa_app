@@ -4,6 +4,7 @@ import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:injectable/injectable.dart';
 import 'package:journexa_app/domain/entities/wallet.dart';
 import 'package:journexa_app/domain/use_cases/journal/watch_current_balance.dart';
+import 'package:journexa_app/domain/use_cases/journal/watch_total_mtd_expense.dart';
 import 'package:journexa_app/domain/use_cases/journal/watch_total_mtd_income.dart';
 import 'package:journexa_app/domain/use_cases/wallet/watch_wallets.dart';
 import 'package:journexa_app/shared/app_exception.dart';
@@ -24,6 +25,7 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> with Loggable, GenerateUid {
     required this._watchWallets,
     required this._watchAccountBalances,
     required this._watchTotalMTDIncome,
+    required this._watchTotalMTDExpense,
   }) : super(HomeState()) {
     on<_WalletsSubscriptionRequested>(
       (event, emit) => _onWalletsSubscriptionRequested(emit: emit),
@@ -39,6 +41,7 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> with Loggable, GenerateUid {
   final WatchWalletsUseCase _watchWallets;
   final WatchCurrentBalanceUseCase _watchAccountBalances;
   final WatchTotalMTDIncomeUseCase _watchTotalMTDIncome;
+  final WatchTotalMTDExpenseUseCase _watchTotalMTDExpense;
 
   @override
   String get logTag => 'HomeBloc';
@@ -127,7 +130,7 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> with Loggable, GenerateUid {
   }) async {
     final traceId = generateUid();
     logInfo(
-      'Starts subscribe to total mtd for income. '
+      'Starts subscribe to total mtd for income and expense. '
       'Emits loading state',
       traceId: traceId,
     );
@@ -139,20 +142,45 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> with Loggable, GenerateUid {
       ),
     );
 
-    final incomeStream = _watchTotalMTDIncome.execute(
-      WatchTotalMTDIncomeParams(targetDate: targetDate),
-      traceId: traceId,
+    final mtdStream = CombineLatestStream.combine2(
+      _watchTotalMTDIncome.execute(
+        WatchTotalMTDIncomeParams(targetDate: targetDate),
+        traceId: traceId,
+      ),
+      _watchTotalMTDExpense.execute(
+        WatchTotalMTDExpenseParams(targetDate: targetDate),
+        traceId: traceId,
+      ),
+      (incomeRes, expenseRes) {
+        logInfo('New MTD data received', traceId: traceId);
+        final incomeExc = incomeRes.errorOrNull;
+        if (incomeExc != null) {
+          logInfo('Income stream emits failure', traceId: traceId);
+          return AppResult<(Decimal, Decimal)>.failure(incomeExc);
+        }
+
+        final expenseExc = expenseRes.errorOrNull;
+        if (expenseExc != null) {
+          logInfo('Expense stream emits failure', traceId: traceId);
+          return AppResult<(Decimal, Decimal)>.failure(expenseExc);
+        }
+
+        final income = incomeRes.valueOrNull!;
+        final expense = expenseRes.valueOrNull!;
+        return AppResult<(Decimal, Decimal)>.success((income, expense));
+      },
     );
 
     await emit.forEach(
-      incomeStream,
+      mtdStream,
       onData: (result) {
         return result.when(
-          success: (income) {
+          success: (data) {
             return state.copyWith(
               mtdData: state.mtdData.copyWith(
                 status: HomeUIStatus.loaded,
-                totalIncome: income,
+                totalIncome: data.$1,
+                totalExpense: data.$2,
               ),
             );
           },

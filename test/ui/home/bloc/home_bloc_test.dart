@@ -4,6 +4,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:journexa_app/domain/entities/account.dart';
 import 'package:journexa_app/domain/entities/wallet.dart';
 import 'package:journexa_app/domain/use_cases/journal/watch_current_balance.dart';
+import 'package:journexa_app/domain/use_cases/journal/watch_total_mtd_expense.dart';
 import 'package:journexa_app/domain/use_cases/journal/watch_total_mtd_income.dart';
 import 'package:journexa_app/domain/use_cases/wallet/watch_wallets.dart';
 import 'package:journexa_app/shared/app_exception.dart';
@@ -21,6 +22,9 @@ class MockUidGenerator extends Mock implements UidGenerator {}
 
 class MockWatchTotalMTDIncomeUseCase extends Mock
     implements WatchTotalMTDIncomeUseCase {}
+
+class MockWatchTotalMTDExpenseUseCase extends Mock
+    implements WatchTotalMTDExpenseUseCase {}
 
 void main() {
   const traceId = 'traceId';
@@ -50,18 +54,24 @@ void main() {
   final watchMTDIncomeParams = WatchTotalMTDIncomeParams(
     targetDate: mtdTargetDate,
   );
+  final watchMTDExpenseParams = WatchTotalMTDExpenseParams(
+    targetDate: mtdTargetDate,
+  );
   final totalMTDIncome = Decimal.fromInt(1000);
+  final totalMTDExpense = Decimal.fromInt(500);
 
   late WatchWalletsUseCase mockWatchWallets;
   late WatchCurrentBalanceUseCase mockWatchCurrentBalance;
   late UidGenerator mockUidGenerator;
   late WatchTotalMTDIncomeUseCase mockWatchTotalMTDIncome;
+  late WatchTotalMTDExpenseUseCase mockWatchTotalMTDExpense;
 
   setUpAll(() {
     registerFallbackValue(
       const WatchWalletsParams(),
     );
     registerFallbackValue(watchMTDIncomeParams);
+    registerFallbackValue(watchMTDExpenseParams);
   });
 
   setUp(() {
@@ -92,6 +102,14 @@ void main() {
         traceId: traceId,
       ),
     ).thenAnswer((_) => Stream.value(AppResult.success(totalMTDIncome)));
+
+    mockWatchTotalMTDExpense = MockWatchTotalMTDExpenseUseCase();
+    when(
+      () => mockWatchTotalMTDExpense.execute(
+        watchMTDExpenseParams,
+        traceId: traceId,
+      ),
+    ).thenAnswer((_) => Stream.value(AppResult.success(totalMTDExpense)));
   });
 
   HomeBloc buildBloc() {
@@ -99,6 +117,7 @@ void main() {
       watchWallets: mockWatchWallets,
       watchAccountBalances: mockWatchCurrentBalance,
       watchTotalMTDIncome: mockWatchTotalMTDIncome,
+      watchTotalMTDExpense: mockWatchTotalMTDExpense,
     )..customGenerator = mockUidGenerator;
   }
 
@@ -259,7 +278,7 @@ void main() {
   group('mtdSubscriptionRequested', () {
     blocTest<HomeBloc, HomeState>(
       'emits [loading, loaded] '
-      'with correct total income '
+      'with correct total income and expense '
       'when all watch mtd data success',
       build: buildBloc,
       act: (bloc) => bloc.add(
@@ -279,7 +298,7 @@ void main() {
           mtdData: HomeMTDDataUIModel(
             status: HomeUIStatus.loaded,
             totalIncome: totalMTDIncome,
-            totalExpense: Decimal.zero,
+            totalExpense: totalMTDExpense,
           ),
         ),
       ],
@@ -287,6 +306,12 @@ void main() {
         verify(
           () => mockWatchTotalMTDIncome.execute(
             watchMTDIncomeParams,
+            traceId: traceId,
+          ),
+        ).called(1);
+        verify(
+          () => mockWatchTotalMTDExpense.execute(
+            watchMTDExpenseParams,
             traceId: traceId,
           ),
         ).called(1);
@@ -335,6 +360,66 @@ void main() {
         verify(
           () => mockWatchTotalMTDIncome.execute(
             watchMTDIncomeParams,
+            traceId: traceId,
+          ),
+        ).called(1);
+        verify(
+          () => mockWatchTotalMTDExpense.execute(
+            watchMTDExpenseParams,
+            traceId: traceId,
+          ),
+        ).called(1);
+      },
+    );
+
+    blocTest<HomeBloc, HomeState>(
+      'emits [loading, failure] '
+      'when watchTotalMTDExpense emits failure',
+      setUp: () {
+        when(
+          () => mockWatchTotalMTDExpense.execute(
+            watchMTDExpenseParams,
+            traceId: traceId,
+          ),
+        ).thenAnswer(
+          (_) => Stream.value(
+            AppResult<Decimal>.failure(AppException.test()),
+          ),
+        );
+      },
+      build: buildBloc,
+      act: (bloc) => bloc.add(
+        HomeEvent.mtdSubscriptionRequested(
+          targetDate: mtdTargetDate,
+        ),
+      ),
+      expect: () => <HomeState>[
+        HomeState(
+          mtdData: HomeMTDDataUIModel(
+            status: HomeUIStatus.loading,
+            totalIncome: Decimal.zero,
+            totalExpense: Decimal.zero,
+          ),
+        ),
+        HomeState(
+          mtdData: HomeMTDDataUIModel(
+            status: HomeUIStatus.failure,
+            totalIncome: Decimal.zero,
+            totalExpense: Decimal.zero,
+            exception: AppException.test(),
+          ),
+        ),
+      ],
+      verify: (_) {
+        verify(
+          () => mockWatchTotalMTDIncome.execute(
+            watchMTDIncomeParams,
+            traceId: traceId,
+          ),
+        ).called(1);
+        verify(
+          () => mockWatchTotalMTDExpense.execute(
+            watchMTDExpenseParams,
             traceId: traceId,
           ),
         ).called(1);

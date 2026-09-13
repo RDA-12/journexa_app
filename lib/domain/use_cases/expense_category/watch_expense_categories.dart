@@ -38,12 +38,12 @@ class WatchExpenseCategoriesUseCase
   Stream<AppResult<List<ExpenseCategory>>> execute(
     WatchExpenseCategoriesParams params, {
     required String traceId,
-  }) async* {
+  }) {
     logInfo(
       'Starts getting expense categories',
       traceId: traceId,
     );
-    yield* _expenseCategoryRepository.watch(
+    return _expenseCategoryRepository.watch(
       query: params.query,
       traceId: traceId,
       isDeleted: false,

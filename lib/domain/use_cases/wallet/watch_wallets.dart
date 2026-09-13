@@ -37,9 +37,9 @@ class WatchWalletsUseCase
   Stream<AppResult<List<Wallet>>> execute(
     WatchWalletsParams params, {
     required String traceId,
-  }) async* {
+  }) {
     logInfo('Starts watching wallets', traceId: traceId);
-    yield* _walletRepository.watch(
+    return _walletRepository.watch(
       query: params.query,
       traceId: traceId,
       isDeleted: false,

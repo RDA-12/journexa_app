@@ -38,12 +38,12 @@ class WatchIncomeCategoriesUseCase
   Stream<AppResult<List<IncomeCategory>>> execute(
     WatchIncomeCategoriesParams params, {
     required String traceId,
-  }) async* {
+  }) {
     logInfo(
       'Starts getting income categories',
       traceId: traceId,
     );
-    yield* _incomeCategoryRepository.watch(
+    return _incomeCategoryRepository.watch(
       query: params.query,
       traceId: traceId,
       isDeleted: false,

@@ -23,12 +23,12 @@ class WatchCurrentBalanceUseCase
   @override
   Stream<AppResult<Map<String, Decimal>>> execute({
     required String traceId,
-  }) async* {
+  }) {
     logInfo(
       'Starts watching current balance',
       traceId: traceId,
     );
-    yield* _journalRepository.watchAccountBalances(
+    return _journalRepository.watchAccountBalances(
       traceId: traceId,
     );
   }

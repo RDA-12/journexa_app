@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:journexa_app/di.dart';
 import 'package:journexa_app/shared/app_clock.dart';
 import 'package:journexa_app/ui/home/bloc/home_bloc.dart';
+import 'package:journexa_app/ui/home/widgets/mtd_section.dart';
 import 'package:journexa_app/ui/home/widgets/wallets_home_carousel.dart';
 
 /// Page that show when user is logged in
@@ -39,8 +40,10 @@ class _HomeView extends StatelessWidget {
     return const Scaffold(
       body: SingleChildScrollView(
         child: Column(
+          spacing: 24,
           children: [
             WalletsHomeCarousel(),
+            MTDSection(),
           ],
         ),
       ),

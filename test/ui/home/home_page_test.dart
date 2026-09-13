@@ -5,6 +5,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:journexa_app/ui/home/bloc/home_bloc.dart';
 import 'package:journexa_app/ui/home/home_page.dart';
+import 'package:journexa_app/ui/home/widgets/mtd_section.dart';
 import 'package:journexa_app/ui/home/widgets/wallets_home_carousel.dart';
 import 'package:mocktail/mocktail.dart';
 
@@ -91,6 +92,15 @@ void main() {
         await pumpWidget(tester);
 
         expect(find.byType(WalletsHomeCarousel), findsOneWidget);
+      },
+    );
+
+    testWidgets(
+      'has MTDSection',
+      (tester) async {
+        await pumpWidget(tester);
+
+        expect(find.byType(MTDSection), findsOneWidget);
       },
     );
   });

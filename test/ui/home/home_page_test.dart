@@ -1,8 +1,10 @@
 import 'package:bloc_test/bloc_test.dart';
 import 'package:clock/clock.dart';
+import 'package:decimal/decimal.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:journexa_app/domain/entities/wallet.dart';
 import 'package:journexa_app/ui/home/bloc/home_bloc.dart';
 import 'package:journexa_app/ui/home/home_page.dart';
 import 'package:journexa_app/ui/home/widgets/mtd_section.dart';
@@ -101,6 +103,63 @@ void main() {
         await pumpWidget(tester);
 
         expect(find.byType(MTDSection), findsOneWidget);
+      },
+    );
+  });
+
+  group('Interactions', () {
+    testWidgets(
+      'add HomeBloc.mtdSubscriptionRequested '
+      'when wallet changed on WalletsHomeCarouse',
+      (tester) async {
+        final now = DateTime.now();
+        final wallet = Wallet.test();
+        whenListen(
+          mockHomeBloc,
+          const Stream<HomeState>.empty(),
+          initialState: HomeState(
+            wallets: HomeWalletsUIModel(
+              status: HomeUIStatus.loaded,
+              wallets: [
+                HomeWalletUIModel(
+                  wallet: wallet,
+                  balance: Decimal.zero,
+                ),
+                HomeWalletUIModel(
+                  wallet: wallet.copyWith(id: '1'),
+                  balance: Decimal.zero,
+                ),
+                HomeWalletUIModel(
+                  wallet: wallet.copyWith(id: '2'),
+                  balance: Decimal.zero,
+                ),
+              ],
+            ),
+            mtdData: HomeMTDDataUIModel(
+              totalIncome: Decimal.zero,
+              totalExpense: Decimal.zero,
+              status: HomeUIStatus.loaded,
+            ),
+          ),
+        );
+
+        await withClock(Clock.fixed(now), () async {
+          await pumpWidget(tester);
+
+          final carouselFinder = find.byType(WalletsHomeCarousel);
+          expect(carouselFinder, findsOneWidget);
+          await tester.fling(carouselFinder, const Offset(-300, 0), 1000);
+          await tester.pumpAndSettle();
+
+          verify(
+            () => mockHomeBloc.add(
+              HomeEvent.mtdSubscriptionRequested(
+                targetDate: now,
+                wallet: wallet,
+              ),
+            ),
+          ).called(1);
+        });
       },
     );
   });

@@ -32,18 +32,27 @@ class HomePage extends StatelessWidget with AppClockMixin {
   }
 }
 
-class _HomeView extends StatelessWidget {
+class _HomeView extends StatelessWidget with AppClockMixin {
   const _HomeView();
 
   @override
   Widget build(BuildContext context) {
-    return const Scaffold(
+    return Scaffold(
       body: SingleChildScrollView(
         child: Column(
           spacing: 24,
           children: [
-            WalletsHomeCarousel(),
-            MTDSection(),
+            WalletsHomeCarousel(
+              onChanged: (index, wallet) {
+                context.read<HomeBloc>().add(
+                  HomeEvent.mtdSubscriptionRequested(
+                    targetDate: getCurrentDateTime(),
+                    wallet: wallet,
+                  ),
+                );
+              },
+            ),
+            const MTDSection(),
           ],
         ),
       ),

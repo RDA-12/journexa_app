@@ -104,7 +104,32 @@ void main() {
     );
 
     testWidgets(
-      'shows CarouselView with total balance at index 0 and wallets thereafter',
+      'shows single WalletHomeCard when wallets = 1',
+      (tester) async {
+        whenListen(
+          mockHomeBloc,
+          const Stream<HomeState>.empty(),
+          initialState: HomeState(
+            wallets: HomeWalletsUIModel(
+              status: HomeUIStatus.loaded,
+              wallets: [walletsData.first],
+            ),
+          ),
+        );
+
+        await pumpWidget(tester);
+
+        final finder = find.byType(WalletHomeCard);
+        expect(finder, findsOneWidget);
+        final widget = tester.widget<WalletHomeCard>(finder);
+        expect(widget.name, walletsData.first.wallet.name);
+        expect(widget.balance, walletsData.first.balance);
+      },
+    );
+
+    testWidgets(
+      'shows CarouselView with total balance at index 0 and wallets thereafter '
+      'when wallets > 1',
       (tester) async {
         whenListen(
           mockHomeBloc,
@@ -139,7 +164,7 @@ void main() {
       testWidgets(
         'shows total balance card '
         'with correct localized label and formatted balance '
-        'for ${locale.languageCode}',
+        'for ${locale.languageCode} when wallets > 1',
         (tester) async {
           whenListen(
             mockHomeBloc,

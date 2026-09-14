@@ -66,6 +66,13 @@ class WalletsHomeCarousel extends StatelessWidget {
               ),
             );
           }
+          if (wallets.length == 1) {
+            final walletData = wallets.first;
+            return WalletHomeCard(
+              name: walletData.wallet.name,
+              balance: walletData.balance,
+            );
+          }
 
           final totalBalance = wallets
               .map((it) => it.balance)

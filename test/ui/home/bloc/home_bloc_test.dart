@@ -11,6 +11,7 @@ import 'package:journexa_app/shared/app_exception.dart';
 import 'package:journexa_app/shared/app_result.dart';
 import 'package:journexa_app/shared/uid_generator.dart';
 import 'package:journexa_app/ui/home/bloc/home_bloc.dart';
+import 'package:journexa_app/ui/shared/event_transform/event_transform.dart';
 import 'package:mocktail/mocktail.dart';
 
 class MockWatchWalletsUseCase extends Mock implements WatchWalletsUseCase {}
@@ -98,7 +99,7 @@ void main() {
     mockWatchTotalMTDIncome = MockWatchTotalMTDIncomeUseCase();
     when(
       () => mockWatchTotalMTDIncome.execute(
-        watchMTDIncomeParams,
+        any<WatchTotalMTDIncomeParams>(),
         traceId: traceId,
       ),
     ).thenAnswer((_) => Stream.value(AppResult.success(totalMTDIncome)));
@@ -106,7 +107,7 @@ void main() {
     mockWatchTotalMTDExpense = MockWatchTotalMTDExpenseUseCase();
     when(
       () => mockWatchTotalMTDExpense.execute(
-        watchMTDExpenseParams,
+        any<WatchTotalMTDExpenseParams>(),
         traceId: traceId,
       ),
     ).thenAnswer((_) => Stream.value(AppResult.success(totalMTDExpense)));
@@ -286,6 +287,7 @@ void main() {
           targetDate: mtdTargetDate,
         ),
       ),
+      wait: kDefaultDebounceDuration,
       expect: () => <HomeState>[
         HomeState(
           mtdData: HomeMTDDataUIModel(
@@ -319,6 +321,96 @@ void main() {
     );
 
     blocTest<HomeBloc, HomeState>(
+      'calls correct WatchTotalMTDIncome and WatchTotalMTDExpense '
+      'when wallet filter provided',
+      build: buildBloc,
+      act: (bloc) => bloc.add(
+        HomeEvent.mtdSubscriptionRequested(
+          targetDate: mtdTargetDate,
+          wallet: wallets.first,
+        ),
+      ),
+      wait: kDefaultDebounceDuration,
+      expect: () => <HomeState>[
+        HomeState(
+          mtdData: HomeMTDDataUIModel(
+            status: HomeUIStatus.loading,
+            totalIncome: Decimal.zero,
+            totalExpense: Decimal.zero,
+          ),
+        ),
+        HomeState(
+          mtdData: HomeMTDDataUIModel(
+            status: HomeUIStatus.loaded,
+            totalIncome: totalMTDIncome,
+            totalExpense: totalMTDExpense,
+          ),
+        ),
+      ],
+      verify: (_) {
+        verify(
+          () => mockWatchTotalMTDIncome.execute(
+            watchMTDIncomeParams.copyWith(wallet: wallets.first),
+            traceId: traceId,
+          ),
+        ).called(1);
+        verify(
+          () => mockWatchTotalMTDExpense.execute(
+            watchMTDExpenseParams.copyWith(wallet: wallets.first),
+            traceId: traceId,
+          ),
+        ).called(1);
+      },
+    );
+
+    blocTest<HomeBloc, HomeState>(
+      'uses debounce event transformer',
+      build: buildBloc,
+      act: (bloc) async {
+        for (final wallet in wallets) {
+          bloc.add(
+            HomeEvent.mtdSubscriptionRequested(
+              targetDate: mtdTargetDate,
+              wallet: wallet,
+            ),
+          );
+          await Future<void>.delayed(const Duration(milliseconds: 10));
+        }
+      },
+      wait: kDefaultDebounceDuration,
+      expect: () => <HomeState>[
+        HomeState(
+          mtdData: HomeMTDDataUIModel(
+            status: HomeUIStatus.loading,
+            totalIncome: Decimal.zero,
+            totalExpense: Decimal.zero,
+          ),
+        ),
+        HomeState(
+          mtdData: HomeMTDDataUIModel(
+            status: HomeUIStatus.loaded,
+            totalIncome: totalMTDIncome,
+            totalExpense: totalMTDExpense,
+          ),
+        ),
+      ],
+      verify: (_) {
+        verify(
+          () => mockWatchTotalMTDIncome.execute(
+            watchMTDIncomeParams.copyWith(wallet: wallets.last),
+            traceId: traceId,
+          ),
+        ).called(1);
+        verify(
+          () => mockWatchTotalMTDExpense.execute(
+            watchMTDExpenseParams.copyWith(wallet: wallets.last),
+            traceId: traceId,
+          ),
+        ).called(1);
+      },
+    );
+
+    blocTest<HomeBloc, HomeState>(
       'emits [loading, failure] '
       'when watchTotalMTDIncome emits failure',
       setUp: () {
@@ -339,6 +431,7 @@ void main() {
           targetDate: mtdTargetDate,
         ),
       ),
+      wait: kDefaultDebounceDuration,
       expect: () => <HomeState>[
         HomeState(
           mtdData: HomeMTDDataUIModel(
@@ -393,6 +486,7 @@ void main() {
           targetDate: mtdTargetDate,
         ),
       ),
+      wait: kDefaultDebounceDuration,
       expect: () => <HomeState>[
         HomeState(
           mtdData: HomeMTDDataUIModel(

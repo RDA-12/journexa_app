@@ -10,5 +10,6 @@ class HomeEvent with _$HomeEvent {
   /// Event to trigger to subscribe to mtd data
   const factory HomeEvent.mtdSubscriptionRequested({
     required DateTime targetDate,
+    Wallet? wallet,
   }) = _MTDSubscriptionRequested;
 }

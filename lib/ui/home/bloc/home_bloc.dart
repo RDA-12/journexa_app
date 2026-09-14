@@ -11,6 +11,7 @@ import 'package:journexa_app/shared/app_exception.dart';
 import 'package:journexa_app/shared/app_logger.dart';
 import 'package:journexa_app/shared/app_result.dart';
 import 'package:journexa_app/shared/uid_generator.dart';
+import 'package:journexa_app/ui/shared/event_transform/event_transform.dart';
 import 'package:rxdart/rxdart.dart';
 
 part 'home_event.dart';
@@ -33,8 +34,10 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> with Loggable, GenerateUid {
     on<_MTDSubscriptionRequested>(
       (event, emit) => _onMTDDataSubscriptionRequested(
         targetDate: event.targetDate,
+        wallet: event.wallet,
         emit: emit,
       ),
+      transformer: debounce(),
     );
   }
 
@@ -127,6 +130,7 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> with Loggable, GenerateUid {
   Future<void> _onMTDDataSubscriptionRequested({
     required DateTime targetDate,
     required Emitter<HomeState> emit,
+    Wallet? wallet,
   }) async {
     final traceId = generateUid();
     logInfo(
@@ -144,11 +148,17 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> with Loggable, GenerateUid {
 
     final mtdStream = CombineLatestStream.combine2(
       _watchTotalMTDIncome.execute(
-        WatchTotalMTDIncomeParams(targetDate: targetDate),
+        WatchTotalMTDIncomeParams(
+          targetDate: targetDate,
+          wallet: wallet,
+        ),
         traceId: traceId,
       ),
       _watchTotalMTDExpense.execute(
-        WatchTotalMTDExpenseParams(targetDate: targetDate),
+        WatchTotalMTDExpenseParams(
+          targetDate: targetDate,
+          wallet: wallet,
+        ),
         traceId: traceId,
       ),
       (incomeRes, expenseRes) {

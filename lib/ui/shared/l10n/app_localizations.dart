@@ -1006,6 +1006,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Loading net balance this month'**
   String get mtdSectionLoadingSemantics;
+
+  /// Title for MTD data in home page
+  ///
+  /// In en, this message translates to:
+  /// **'This month balance'**
+  String get homeMTDTitle;
 }
 
 class _AppLocalizationsDelegate

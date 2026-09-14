@@ -894,5 +894,9 @@
   "mtdSectionLoadingSemantics": "Loading net balance this month",
   "@mtdSectionLoadingSemantics": {
     "description": "Semantics label for loading indicator in mtd section"
+  },
+  "homeMTDTitle": "This month balance",
+  "@homeMTDTitle": {
+    "description": "Title for MTD data in home page"
   }
 }

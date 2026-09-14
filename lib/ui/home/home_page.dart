@@ -5,6 +5,8 @@ import 'package:journexa_app/shared/app_clock.dart';
 import 'package:journexa_app/ui/home/bloc/home_bloc.dart';
 import 'package:journexa_app/ui/home/widgets/mtd_section.dart';
 import 'package:journexa_app/ui/home/widgets/wallets_home_carousel.dart';
+import 'package:journexa_app/ui/shared/l10n/l10n.dart';
+import 'package:journexa_app/ui/shared/theme.dart';
 
 /// Page that show when user is logged in
 class HomePage extends StatelessWidget with AppClockMixin {
@@ -52,7 +54,16 @@ class _HomeView extends StatelessWidget with AppClockMixin {
                 );
               },
             ),
-            const MTDSection(),
+            Column(
+              spacing: 16,
+              children: [
+                Text(
+                  context.l10n.homeMTDTitle,
+                  style: context.text.titleMedium,
+                ),
+                const MTDSection(),
+              ],
+            ),
           ],
         ),
       ),

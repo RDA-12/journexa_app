@@ -146,5 +146,6 @@
   "mtdCardExpenseLabel": "Total Pengeluaran",
   "mtdCardIncomeLabel": "Total Pendapatan",
   "mtdCardNetLabel": "Saldo Bersih",
-  "mtdSectionLoadingSemantics": "Memuat data saldo bersih bulan ini"
+  "mtdSectionLoadingSemantics": "Memuat data saldo bersih bulan ini",
+  "homeMTDTitle": "Saldo bulan ini"
 }

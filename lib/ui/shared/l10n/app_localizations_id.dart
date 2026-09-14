@@ -575,4 +575,7 @@ class AppLocalizationsId extends AppLocalizations {
 
   @override
   String get mtdSectionLoadingSemantics => 'Memuat data saldo bersih bulan ini';
+
+  @override
+  String get homeMTDTitle => 'Saldo bulan ini';
 }

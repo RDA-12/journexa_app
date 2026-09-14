@@ -567,4 +567,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get mtdSectionLoadingSemantics => 'Loading net balance this month';
+
+  @override
+  String get homeMTDTitle => 'This month balance';
 }

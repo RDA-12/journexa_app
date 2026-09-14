@@ -9,11 +9,21 @@ import 'package:journexa_app/ui/home/bloc/home_bloc.dart';
 import 'package:journexa_app/ui/home/home_page.dart';
 import 'package:journexa_app/ui/home/widgets/mtd_section.dart';
 import 'package:journexa_app/ui/home/widgets/wallets_home_carousel.dart';
+import 'package:journexa_app/ui/shared/l10n/app_localizations.dart';
 import 'package:mocktail/mocktail.dart';
 
 import '../util.dart';
 
 class MockHomeBloc extends Mock implements HomeBloc {}
+
+final expectedTranslations = {
+  'en': {
+    'mtdTitle': 'This month balance',
+  },
+  'id': {
+    'mtdTitle': 'Saldo bulan ini',
+  },
+};
 
 void main() {
   late HomeBloc mockHomeBloc;
@@ -105,6 +115,20 @@ void main() {
         expect(find.byType(MTDSection), findsOneWidget);
       },
     );
+
+    for (final locale in AppLocalizations.supportedLocales) {
+      final translations = expectedTranslations[locale.languageCode]!;
+
+      final mtdTitle = translations['mtdTitle']!;
+      testWidgets(
+        'shows $mtdTitle for ${locale.languageCode}',
+        (tester) async {
+          await pumpWidget(tester, locale: locale);
+
+          expect(find.text(mtdTitle), findsOneWidget);
+        },
+      );
+    }
   });
 
   group('Interactions', () {
@@ -162,5 +186,21 @@ void main() {
         });
       },
     );
+  });
+
+  group('a11y', () {
+    for (final locale in AppLocalizations.supportedLocales) {
+      final translations = expectedTranslations[locale.languageCode]!;
+
+      final mtdTitle = translations['mtdTitle']!;
+      testWidgets(
+        'has correct title for MTDSection for ${locale.languageCode}',
+        (tester) async {
+          await pumpWidget(tester, locale: locale);
+
+          expect(find.bySemanticsLabel(mtdTitle), findsOneWidget);
+        },
+      );
+    }
   });
 }

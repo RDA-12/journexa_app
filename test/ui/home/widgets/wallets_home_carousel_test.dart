@@ -69,13 +69,16 @@ void main() {
   Future<void> pumpWidget(
     WidgetTester tester, {
     Locale locale = const Locale('en'),
+    void Function(int, Wallet?)? onChanged,
   }) {
     return pumpForWidgetTest(
       tester,
       locale: locale,
       widget: BlocProvider<HomeBloc>.value(
         value: mockHomeBloc,
-        child: const WalletsHomeCarousel(),
+        child: WalletsHomeCarousel(
+          onChanged: onChanged,
+        ),
       ),
     );
   }
@@ -214,6 +217,39 @@ void main() {
         },
       );
     }
+  });
+
+  group('Interactions', () {
+    testWidgets('calls onChanged when wallets slided', (tester) async {
+      whenListen(
+        mockHomeBloc,
+        const Stream<HomeState>.empty(),
+        initialState: HomeState(
+          wallets: HomeWalletsUIModel(
+            status: HomeUIStatus.loaded,
+            wallets: walletsData,
+          ),
+        ),
+      );
+      var index = 0;
+      Wallet? wallet;
+
+      await pumpWidget(
+        tester,
+        onChanged: (idx, w) {
+          index = idx;
+          wallet = w;
+        },
+      );
+
+      final carouselFinder = find.byType(WalletsHomeCarousel);
+      expect(carouselFinder, findsOneWidget);
+      await tester.fling(carouselFinder, const Offset(-300, 0), 100);
+      await tester.pumpAndSettle();
+
+      expect(index, 1);
+      expect(wallet, walletsData.first.wallet);
+    });
   });
 
   group('a11y', () {

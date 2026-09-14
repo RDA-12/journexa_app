@@ -2,6 +2,7 @@ import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:journexa_app/domain/entities/wallet.dart';
 import 'package:journexa_app/shared/app_exception.dart';
 import 'package:journexa_app/ui/home/bloc/home_bloc.dart';
 import 'package:journexa_app/ui/home/widgets/wallet_home_card.dart';
@@ -16,7 +17,13 @@ class WalletsHomeCarousel extends StatelessWidget {
   /// It reacts to [HomeBloc]'s wallet state changes.
   /// So, make sure to provide that within the
   /// widget tree.
-  const WalletsHomeCarousel({super.key});
+  const WalletsHomeCarousel({super.key, this.onChanged});
+
+  /// A Callback invoked when wallet changed. It has index and Wallet.
+  ///
+  /// The Wallet is only null index is 0. That means,
+  /// it currently shows total balance
+  final void Function(int, Wallet?)? onChanged;
 
   @override
   Widget build(BuildContext context) {
@@ -66,6 +73,13 @@ class WalletsHomeCarousel extends StatelessWidget {
           return CarouselView.weightedBuilder(
             itemCount: wallets.length + 1,
             flexWeights: const [1, 5, 1],
+            onIndexChanged: (index) {
+              if (index == 0) {
+                onChanged?.call(index, null);
+              } else {
+                onChanged?.call(index, wallets[index - 1].wallet);
+              }
+            },
             itemBuilder: (context, index) {
               if (index == 0) {
                 return WalletHomeCard(

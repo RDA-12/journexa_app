@@ -36,10 +36,12 @@ class WalletHomeCard extends StatelessWidget {
               Text(
                 name,
                 style: context.text.labelMedium,
+                maxLines: 1,
               ),
               Text(
                 balance.idrCurrency(context.languageCode),
                 style: context.text.headlineMedium,
+                maxLines: 1,
               ),
             ],
           ),

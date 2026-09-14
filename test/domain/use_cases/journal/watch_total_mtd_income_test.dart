@@ -1,6 +1,7 @@
 import 'package:decimal/decimal.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:journexa_app/domain/entities/account.dart';
+import 'package:journexa_app/domain/entities/wallet.dart';
 import 'package:journexa_app/domain/repositories/i_journal_repository.dart';
 import 'package:journexa_app/domain/use_cases/journal/watch_total_mtd_income.dart';
 import 'package:journexa_app/shared/app_exception.dart';
@@ -30,6 +31,7 @@ void main() {
     when(
       () => mockJournalRepository.watchAccountBalance(
         account: any<Account>(named: 'account'),
+        counterpartAccount: any<Account>(named: 'counterpartAccount'),
         from: any<DateTime>(named: 'from'),
         to: any<DateTime>(named: 'to'),
         traceId: traceId,
@@ -53,6 +55,18 @@ void main() {
       verify(
         () => mockJournalRepository.watchAccountBalance(
           account: expectedAccount,
+          from: expectedFromDate,
+          to: expectedToDate,
+          traceId: traceId,
+        ),
+      ).called(1);
+
+      final wallet = Wallet.test();
+      useCase.execute(params.copyWith(wallet: wallet), traceId: traceId);
+      verify(
+        () => mockJournalRepository.watchAccountBalance(
+          account: expectedAccount,
+          counterpartAccount: wallet.account,
           from: expectedFromDate,
           to: expectedToDate,
           traceId: traceId,

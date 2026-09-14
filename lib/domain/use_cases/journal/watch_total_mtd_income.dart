@@ -2,6 +2,7 @@ import 'package:decimal/decimal.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:injectable/injectable.dart';
 import 'package:journexa_app/domain/entities/account.dart';
+import 'package:journexa_app/domain/entities/wallet.dart';
 import 'package:journexa_app/domain/repositories/i_journal_repository.dart';
 import 'package:journexa_app/domain/use_cases/base_use_case.dart';
 import 'package:journexa_app/shared/app_logger.dart';
@@ -14,6 +15,7 @@ part 'watch_total_mtd_income.freezed.dart';
 sealed class WatchTotalMTDIncomeParams with _$WatchTotalMTDIncomeParams {
   const factory WatchTotalMTDIncomeParams({
     required DateTime targetDate,
+    Wallet? wallet,
   }) = _WatchTotalMTDIncomeParams;
 }
 
@@ -51,6 +53,7 @@ class WatchTotalMTDIncomeUseCase
     logInfo('Starts watch total income balance', traceId: traceId);
     return _journalRepository.watchAccountBalance(
       account: SystemDefinedAccount.incomeParent,
+      counterpartAccount: params.wallet?.account,
       from: startDate,
       to: toDate,
       traceId: traceId,

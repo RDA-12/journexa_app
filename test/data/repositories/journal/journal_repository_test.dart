@@ -357,6 +357,52 @@ void main() {
     );
 
     test(
+      'emits filtered balance when counterpartAccount filter is provided',
+      () async {
+        final wallet2 = Account.sub(
+          name: 'asset 2',
+          parent: walletParent,
+          currentChildrenCount: 1,
+        );
+        await db.into(db.accountDB).insert(wallet2.toDB());
+
+        final entry2 = JournalEntry(
+          id: 'entry-2',
+          transactionDate: DateTime(2026, 9, 8),
+          lines: [
+            JournalEntryLine.fromAccount(
+              account: wallet2,
+              amount: Decimal.fromInt(5000),
+            ),
+            JournalEntryLine.fromAccount(
+              account: creditAccount,
+              amount: Decimal.fromInt(5000),
+            ),
+          ],
+        );
+        await db.into(db.journalEntryDB).insert(entry2.toDB());
+        for (var i = 0; i < entry2.lines.length; i++) {
+          await db
+              .into(db.journalEntryLineDB)
+              .insert(
+                entry2.lines[i].toDB(id: 'line-e2-$i', journalId: entry2.id),
+              );
+        }
+
+        final stream = repository.watchAccountBalance(
+          account: incomeParent,
+          counterpartAccount: wallet2,
+          traceId: traceId,
+        );
+
+        expect(
+          stream,
+          emits(AppResult.success(Decimal.fromInt(5000))),
+        );
+      },
+    );
+
+    test(
       'emits failure with internalException code '
       'when db emits DriftWrappedException',
       () async {

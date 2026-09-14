@@ -168,6 +168,7 @@ class DriftJournalRepository with Loggable implements IJournalRepository {
   Stream<AppResult<Decimal>> watchAccountBalance({
     required Account account,
     required String traceId,
+    Account? counterpartAccount,
     DateTime? from,
     DateTime? to,
   }) {
@@ -190,6 +191,22 @@ class DriftJournalRepository with Loggable implements IJournalRepository {
           _db.journalEntryLineDB.accountCode.equals(targetCode) |
               _db.journalEntryLineDB.accountCode.like('$targetCode.%'),
         );
+
+    if (counterpartAccount != null) {
+      final counterpartCode = counterpartAccount.code.value;
+      final counterpartJournalsStatement =
+          _db.selectOnly(_db.journalEntryLineDB)
+            ..addColumns([_db.journalEntryLineDB.journalId])
+            ..where(
+              _db.journalEntryLineDB.accountCode.equals(counterpartCode) |
+                  _db.journalEntryLineDB.accountCode.like('$counterpartCode.%'),
+            );
+      statement.where(
+        _db.journalEntryLineDB.journalId.isInQuery(
+          counterpartJournalsStatement,
+        ),
+      );
+    }
     if (from != null) {
       statement.where(
         _db.journalEntryDB.transactionDate.isBiggerOrEqualValue(

@@ -28,7 +28,8 @@ class HomePage extends StatelessWidget with AppClockMixin {
         ..add(const HomeEvent.walletsSubscriptionRequested())
         ..add(
           HomeEvent.mtdSubscriptionRequested(targetDate: getCurrentDateTime()),
-        ),
+        )
+        ..add(const HomeEvent.transactionsSubscriptionRequested()),
       child: const _HomeView(),
     );
   }

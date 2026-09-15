@@ -86,6 +86,23 @@ void main() {
         });
       },
     );
+
+    testWidgets(
+      'add HomeEvent.transactionsSubscriptionRequested event on start '
+      'with current date',
+      (tester) async {
+        final now = DateTime.now();
+        await withClock(Clock.fixed(now), () async {
+          await pumpWidget(tester);
+
+          verify(
+            () => mockHomeBloc.add(
+              HomeEvent.transactionsSubscriptionRequested(),
+            ),
+          ).called(1);
+        });
+      },
+    );
   });
 
   group('Render', () {

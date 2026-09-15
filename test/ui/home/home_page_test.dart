@@ -151,6 +151,7 @@ void main() {
   group('Interactions', () {
     testWidgets(
       'add HomeBloc.mtdSubscriptionRequested '
+      'and HomeBloc.transactionsSubscriptionRequested '
       'when wallet changed on WalletsHomeCarouse',
       (tester) async {
         final now = DateTime.now();
@@ -196,6 +197,13 @@ void main() {
             () => mockHomeBloc.add(
               HomeEvent.mtdSubscriptionRequested(
                 targetDate: now,
+                wallet: wallet,
+              ),
+            ),
+          ).called(1);
+          verify(
+            () => mockHomeBloc.add(
+              HomeEvent.transactionsSubscriptionRequested(
                 wallet: wallet,
               ),
             ),

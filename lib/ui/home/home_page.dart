@@ -53,6 +53,11 @@ class _HomeView extends StatelessWidget with AppClockMixin {
                     wallet: wallet,
                   ),
                 );
+                context.read<HomeBloc>().add(
+                  HomeEvent.transactionsSubscriptionRequested(
+                    wallet: wallet,
+                  ),
+                );
               },
             ),
             Column(

@@ -91,6 +91,7 @@ class DriftTransactionRepository
         ]),
       );
     }
+    statement.orderBy([(tbl) => OrderingTerm.desc(tbl.date)]);
     logInfo(
       'Starts watching transactions',
       traceId: traceId,

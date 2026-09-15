@@ -1,3 +1,4 @@
+import 'package:collection/collection.dart';
 import 'package:decimal/decimal.dart';
 import 'package:drift/drift.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -247,11 +248,13 @@ void main() {
         expect(
           result,
           emits(
-            AppResult.success([
-              ...initialTransactions,
-              wallet2Transaction,
-              transferTransaction,
-            ]),
+            AppResult.success(
+              [
+                ...initialTransactions,
+                wallet2Transaction,
+                transferTransaction,
+              ].sorted((a, b) => b.date.compareTo(a.date)),
+            ),
           ),
         );
       },
@@ -266,20 +269,24 @@ void main() {
         expect(
           result1,
           emits(
-            AppResult.success([
-              ...initialTransactions,
-              transferTransaction,
-            ]),
+            AppResult.success(
+              [
+                ...initialTransactions,
+                transferTransaction,
+              ].sorted((a, b) => b.date.compareTo(a.date)),
+            ),
           ),
         );
 
         expect(
           result2,
           emits(
-            AppResult.success([
-              wallet2Transaction,
-              transferTransaction,
-            ]),
+            AppResult.success(
+              [
+                wallet2Transaction,
+                transferTransaction,
+              ].sorted((a, b) => b.date.compareTo(a.date)),
+            ),
           ),
         );
       },

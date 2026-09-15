@@ -7,6 +7,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:journexa_app/domain/entities/wallet.dart';
 import 'package:journexa_app/ui/home/bloc/home_bloc.dart';
 import 'package:journexa_app/ui/home/home_page.dart';
+import 'package:journexa_app/ui/home/widgets/home_transactions_list.dart';
 import 'package:journexa_app/ui/home/widgets/mtd_section.dart';
 import 'package:journexa_app/ui/home/widgets/wallets_home_carousel.dart';
 import 'package:journexa_app/ui/shared/l10n/app_localizations.dart';
@@ -19,9 +20,11 @@ class MockHomeBloc extends Mock implements HomeBloc {}
 final expectedTranslations = {
   'en': {
     'mtdTitle': 'This month balance',
+    'transactionsListTitle': 'Latest transactions this month',
   },
   'id': {
     'mtdTitle': 'Saldo bulan ini',
+    'transactionsListTitle': 'Transaksi terbaru bulan ini',
   },
 };
 
@@ -133,6 +136,15 @@ void main() {
       },
     );
 
+    testWidgets(
+      'has HomeTransactionsList',
+      (tester) async {
+        await pumpWidget(tester);
+
+        expect(find.byType(HomeTransactionsList), findsOneWidget);
+      },
+    );
+
     for (final locale in AppLocalizations.supportedLocales) {
       final translations = expectedTranslations[locale.languageCode]!;
 
@@ -143,6 +155,16 @@ void main() {
           await pumpWidget(tester, locale: locale);
 
           expect(find.text(mtdTitle), findsOneWidget);
+        },
+      );
+
+      final transactionsListTitle = translations['transactionsListTitle']!;
+      testWidgets(
+        'shows $transactionsListTitle for ${locale.languageCode}',
+        (tester) async {
+          await pumpWidget(tester, locale: locale);
+
+          expect(find.text(transactionsListTitle), findsOneWidget);
         },
       );
     }
@@ -180,6 +202,9 @@ void main() {
             mtdData: HomeMTDDataUIModel(
               totalIncome: Decimal.zero,
               totalExpense: Decimal.zero,
+              status: HomeUIStatus.loaded,
+            ),
+            transactionsData: const HomeTransactionsUIModel(
               status: HomeUIStatus.loaded,
             ),
           ),

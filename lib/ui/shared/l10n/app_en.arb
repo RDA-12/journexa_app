@@ -898,5 +898,9 @@
   "homeMTDTitle": "This month balance",
   "@homeMTDTitle": {
     "description": "Title for MTD data in home page"
+  },
+  "homeTransactionsListTitle": "Latest transactions this month",
+  "@homeTransactionsListTitle": {
+    "description": "Title for transactions list section in home page"
   }
 }

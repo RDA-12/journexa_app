@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:journexa_app/di.dart';
 import 'package:journexa_app/shared/app_clock.dart';
 import 'package:journexa_app/ui/home/bloc/home_bloc.dart';
+import 'package:journexa_app/ui/home/widgets/home_transactions_list.dart';
 import 'package:journexa_app/ui/home/widgets/mtd_section.dart';
 import 'package:journexa_app/ui/home/widgets/wallets_home_carousel.dart';
 import 'package:journexa_app/ui/shared/l10n/l10n.dart';
@@ -68,6 +69,16 @@ class _HomeView extends StatelessWidget with AppClockMixin {
                   style: context.text.titleMedium,
                 ),
                 const MTDSection(),
+              ],
+            ),
+            Column(
+              spacing: 16,
+              children: [
+                Text(
+                  context.l10n.homeTransactionsListTitle,
+                  style: context.text.titleMedium,
+                ),
+                const HomeTransactionsList(),
               ],
             ),
           ],

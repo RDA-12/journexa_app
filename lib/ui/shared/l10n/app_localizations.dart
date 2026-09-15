@@ -1012,6 +1012,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'This month balance'**
   String get homeMTDTitle;
+
+  /// Title for transactions list section in home page
+  ///
+  /// In en, this message translates to:
+  /// **'Latest transactions this month'**
+  String get homeTransactionsListTitle;
 }
 
 class _AppLocalizationsDelegate

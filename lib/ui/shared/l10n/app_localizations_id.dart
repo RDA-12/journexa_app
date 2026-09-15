@@ -578,4 +578,7 @@ class AppLocalizationsId extends AppLocalizations {
 
   @override
   String get homeMTDTitle => 'Saldo bulan ini';
+
+  @override
+  String get homeTransactionsListTitle => 'Transaksi terbaru bulan ini';
 }

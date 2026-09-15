@@ -20,11 +20,11 @@ class MockHomeBloc extends Mock implements HomeBloc;
 final expectedTranslations = {
   'en': {
     'mtdTitle': 'This month balance',
-    'transactionsListTitle': 'Latest transactions this month',
+    'transactionsListTitle': 'Latest transactions',
   },
   'id': {
     'mtdTitle': 'Saldo bulan ini',
-    'transactionsListTitle': 'Transaksi terbaru bulan ini',
+    'transactionsListTitle': 'Transaksi terbaru',
   },
 };
 

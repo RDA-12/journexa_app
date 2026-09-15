@@ -1,9 +1,11 @@
+import 'package:drift/drift.dart';
 import 'package:injectable/injectable.dart';
 import 'package:journexa_app/data/database.dart';
 import 'package:journexa_app/data/repositories/journal/journal.dart';
 import 'package:journexa_app/data/repositories/transaction/transaction.dart';
 import 'package:journexa_app/domain/entities/journal.dart';
 import 'package:journexa_app/domain/entities/transaction.dart';
+import 'package:journexa_app/domain/entities/wallet.dart';
 import 'package:journexa_app/domain/repositories/i_transaction_repository.dart';
 import 'package:journexa_app/shared/app_exception.dart';
 import 'package:journexa_app/shared/app_logger.dart';
@@ -73,12 +75,26 @@ class DriftTransactionRepository
   @override
   Stream<AppResult<List<Transaction>>> watch({
     required String traceId,
+    Wallet? wallet,
   }) {
+    final statement = _db.select(_db.transactionDB);
+    if (wallet != null) {
+      logInfo(
+        'wallet filter provided. Filter stream by wallet',
+        traceId: traceId,
+      );
+      statement.where(
+        (tbl) => Expression.or([
+          tbl.walletId.equals(wallet.id),
+          tbl.sourceWalletId.equals(wallet.id),
+          tbl.destinationWalletId.equals(wallet.id),
+        ]),
+      );
+    }
     logInfo(
       'Starts watching transactions',
       traceId: traceId,
     );
-    final statement = _db.select(_db.transactionDB);
     final stream = statement.watch();
     return stream
         .map(

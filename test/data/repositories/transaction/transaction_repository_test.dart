@@ -34,6 +34,17 @@ void main() {
     account: walletAccount,
   );
 
+  final wallet2Account = Account.sub(
+    name: 'Wallet 2',
+    parent: walletParent,
+    currentChildrenCount: 1,
+  );
+  final wallet2 = Wallet(
+    id: 'wallet-2',
+    name: 'Wallet 2',
+    account: wallet2Account,
+  );
+
   final incomeCategoryAccount = Account.sub(
     name: 'Income Cat 1',
     parent: incomeParent,
@@ -56,6 +67,23 @@ void main() {
     );
   });
 
+  final wallet2Transaction = Transaction.income(
+    id: 'wallet2-tx',
+    walletId: wallet2.id,
+    incomeCategoryId: incomeCategory.id,
+    amount: Decimal.fromInt(500),
+    date: DateTime(2026, 9, 7, 11),
+  );
+
+  final transferTransaction = Transaction.transfer(
+    id: 'transfer-tx',
+    sourceWalletId: wallet.id,
+    destinationWalletId: wallet2.id,
+    amount: Decimal.fromInt(50),
+    fee: Decimal.zero,
+    date: DateTime(2026, 9, 7, 11, 30),
+  );
+
   late AppLocalDatabase db;
   late ITransactionRepository repository;
 
@@ -69,10 +97,17 @@ void main() {
     await db.into(db.accountDB).insert(walletAccount.toDB());
     await db.into(db.walletDB).insert(wallet.toDB());
 
+    await db.into(db.accountDB).insert(wallet2Account.toDB());
+    await db.into(db.walletDB).insert(wallet2.toDB());
+
     await db.into(db.accountDB).insert(incomeCategoryAccount.toDB());
     await db.into(db.incomeCategoryDB).insert(incomeCategory.toDB());
 
-    for (final tr in initialTransactions) {
+    for (final tr in [
+      ...initialTransactions,
+      wallet2Transaction,
+      transferTransaction,
+    ]) {
       await db.into(db.transactionDB).insert(tr.toDB());
     }
 
@@ -204,11 +239,51 @@ void main() {
   });
 
   group('watch', () {
-    test('emits success with correct transactions list', () async {
-      final result = repository.watch(traceId: traceId);
+    test(
+      'emits success with all transactions when no wallet filter is provided',
+      () async {
+        final result = repository.watch(traceId: traceId);
 
-      expect(result, emits(AppResult.success(initialTransactions)));
-    });
+        expect(
+          result,
+          emits(
+            AppResult.success([
+              ...initialTransactions,
+              wallet2Transaction,
+              transferTransaction,
+            ]),
+          ),
+        );
+      },
+    );
+
+    test(
+      'emits success with filtered transactions when wallet filter is provided',
+      () async {
+        final result1 = repository.watch(traceId: traceId, wallet: wallet);
+        final result2 = repository.watch(traceId: traceId, wallet: wallet2);
+
+        expect(
+          result1,
+          emits(
+            AppResult.success([
+              ...initialTransactions,
+              transferTransaction,
+            ]),
+          ),
+        );
+
+        expect(
+          result2,
+          emits(
+            AppResult.success([
+              wallet2Transaction,
+              transferTransaction,
+            ]),
+          ),
+        );
+      },
+    );
 
     test(
       'emits failure with internalException code '

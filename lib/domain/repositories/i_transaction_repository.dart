@@ -1,5 +1,6 @@
 import 'package:journexa_app/domain/entities/journal.dart';
 import 'package:journexa_app/domain/entities/transaction.dart';
+import 'package:journexa_app/domain/entities/wallet.dart';
 import 'package:journexa_app/shared/app_result.dart';
 
 /// Repository to handles all [Transaction] operations
@@ -14,5 +15,6 @@ abstract interface class ITransactionRepository {
   /// Watch all [Transaction]'s in database
   Stream<AppResult<List<Transaction>>> watch({
     required String traceId,
+    Wallet? wallet,
   });
 }

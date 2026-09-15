@@ -293,6 +293,26 @@ void main() {
     );
 
     test(
+      'emits success with limited transactions when limit filter is provided',
+      () async {
+        final result = repository.watch(traceId: traceId, limit: 2);
+
+        expect(
+          result,
+          emits(
+            AppResult.success(
+              [
+                ...initialTransactions,
+                wallet2Transaction,
+                transferTransaction,
+              ].sorted((a, b) => b.date.compareTo(a.date)).sublist(0, 2),
+            ),
+          ),
+        );
+      },
+    );
+
+    test(
       'emits failure with internalException code '
       'when db emits DriftWrappedException',
       () async {

@@ -16,5 +16,6 @@ abstract interface class ITransactionRepository {
   Stream<AppResult<List<Transaction>>> watch({
     required String traceId,
     Wallet? wallet,
+    int? limit,
   });
 }

@@ -76,6 +76,7 @@ class DriftTransactionRepository
   Stream<AppResult<List<Transaction>>> watch({
     required String traceId,
     Wallet? wallet,
+    int? limit,
   }) {
     final statement = _db.select(_db.transactionDB);
     if (wallet != null) {
@@ -92,6 +93,14 @@ class DriftTransactionRepository
       );
     }
     statement.orderBy([(tbl) => OrderingTerm.desc(tbl.date)]);
+    if (limit != null) {
+      logInfo(
+        'limit provided. Filter stream by limit',
+        traceId: traceId,
+        extras: {'limit': limit},
+      );
+      statement.limit(limit);
+    }
     logInfo(
       'Starts watching transactions',
       traceId: traceId,

@@ -71,8 +71,10 @@ class HomeTransactionsList extends StatelessWidget {
             minHeight: 128,
             maxHeight: 256,
           ),
-          child: LoadingIndicator(
-            semanticsLabel: context.l10n.transactionsListLoadingSemantics,
+          child: Center(
+            child: LoadingIndicator(
+              semanticsLabel: context.l10n.transactionsListLoadingSemantics,
+            ),
           ),
         );
       },

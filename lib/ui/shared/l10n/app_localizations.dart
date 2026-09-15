@@ -1016,7 +1016,7 @@ abstract class AppLocalizations {
   /// Title for transactions list section in home page
   ///
   /// In en, this message translates to:
-  /// **'Latest transactions this month'**
+  /// **'Latest transactions'**
   String get homeTransactionsListTitle;
 }
 

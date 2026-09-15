@@ -572,5 +572,5 @@ class AppLocalizationsEn extends AppLocalizations {
   String get homeMTDTitle => 'This month balance';
 
   @override
-  String get homeTransactionsListTitle => 'Latest transactions this month';
+  String get homeTransactionsListTitle => 'Latest transactions';
 }

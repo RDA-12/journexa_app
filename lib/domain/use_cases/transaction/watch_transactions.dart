@@ -14,6 +14,7 @@ part 'watch_transactions.freezed.dart';
 sealed class WatchTransactionsParams with _$WatchTransactionsParams {
   const factory WatchTransactionsParams({
     Wallet? wallet,
+    int? limit,
   }) = _WatchTransactionsParams;
 }
 
@@ -44,6 +45,7 @@ class WatchTransactionsUseCase
     return _transactionRepository.watch(
       traceId: traceId,
       wallet: params.wallet,
+      limit: params.limit,
     );
   }
 }

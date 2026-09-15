@@ -32,6 +32,7 @@ void main() {
       () => mockTransactionRepository.watch(
         traceId: traceId,
         wallet: any(named: 'wallet'),
+        limit: any(named: 'limit'),
       ),
     ).thenAnswer((_) => Stream.value(AppResult.success(transactions)));
 
@@ -54,16 +55,30 @@ void main() {
       ).called(1);
 
       final wallet = Wallet.test();
-      final filteredResult = useCase.execute(
+      final filteredWalletResult = useCase.execute(
         params.copyWith(wallet: wallet),
         traceId: traceId,
       );
-      await filteredResult.first;
+      await filteredWalletResult.first;
 
       verify(
         () => mockTransactionRepository.watch(
           traceId: traceId,
           wallet: wallet,
+        ),
+      ).called(1);
+
+      const limit = 10;
+      final filteredLimitResult = useCase.execute(
+        params.copyWith(limit: limit),
+        traceId: traceId,
+      );
+      await filteredLimitResult.first;
+
+      verify(
+        () => mockTransactionRepository.watch(
+          traceId: traceId,
+          limit: limit,
         ),
       ).called(1);
     },
@@ -86,6 +101,7 @@ void main() {
         () => mockTransactionRepository.watch(
           traceId: traceId,
           wallet: any(named: 'wallet'),
+          limit: any(named: 'limit'),
         ),
       ).thenAnswer((_) => Stream.value(AppResult.failure(AppException.test())));
 

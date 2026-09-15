@@ -14,8 +14,7 @@ import 'package:mocktail/mocktail.dart';
 
 class MockJournalRepository extends Mock implements IJournalRepository;
 
-class MockTransactionRepository extends Mock
-    implements ITransactionRepository;
+class MockTransactionRepository extends Mock implements ITransactionRepository;
 
 class MockUidGenerator extends Mock implements UidGenerator;
 
@@ -68,8 +67,7 @@ void main() {
         traceId: traceId,
       ),
     ).thenAnswer(
-      (_) async =>
-          AppResult.success(amount + fee + Decimal.fromInt(100000)),
+      (_) async => AppResult.success(amount + fee + Decimal.fromInt(100000)),
     );
 
     mockTransactionRepository = MockTransactionRepository();
@@ -169,8 +167,7 @@ void main() {
           traceId: traceId,
         ),
       ).thenAnswer(
-        (_) async =>
-            AppResult.success(amount + fee - Decimal.fromInt(1)),
+        (_) async => AppResult.success(amount + fee - Decimal.fromInt(1)),
       );
 
       final result = await useCase.execute(params, traceId: traceId);

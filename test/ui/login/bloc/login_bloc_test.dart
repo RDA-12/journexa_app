@@ -7,8 +7,7 @@ import 'package:journexa_app/shared/uid_generator.dart';
 import 'package:journexa_app/ui/login/bloc/login_bloc.dart';
 import 'package:mocktail/mocktail.dart';
 
-class MockLoginWithGoogleUseCase extends Mock
-    implements LoginWithGoogleUseCase;
+class MockLoginWithGoogleUseCase extends Mock implements LoginWithGoogleUseCase;
 
 class MockUidGenerator extends Mock implements UidGenerator;
 

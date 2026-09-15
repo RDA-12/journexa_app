@@ -53,8 +53,7 @@ void main() {
       ],
       verify: (_) {
         verify(
-          () =>
-              mockCheckAuthUseCase.execute(traceId: traceId),
+          () => mockCheckAuthUseCase.execute(traceId: traceId),
         ).called(1);
         verify(mockUidGenerator.generateUid).called(1);
       },
@@ -78,8 +77,7 @@ void main() {
       ],
       verify: (_) {
         verify(
-          () =>
-              mockCheckAuthUseCase.execute(traceId: traceId),
+          () => mockCheckAuthUseCase.execute(traceId: traceId),
         ).called(1);
         verify(mockUidGenerator.generateUid).called(1);
       },

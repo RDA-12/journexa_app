@@ -8,14 +8,13 @@ import 'package:journexa_app/ui/shared/widgets/widgets.dart';
 import 'package:journexa_app/ui/wallets/widgets/wallet_selector.dart';
 
 /// Type for callback to handle expense action
-typedef OnAddExpensePressed =
-    void Function({
-      required Wallet wallet,
-      required ExpenseCategory category,
-      required Decimal amount,
-      required DateTime date,
-      String? notes,
-    });
+typedef OnAddExpensePressed = void Function({
+  required Wallet wallet,
+  required ExpenseCategory category,
+  required Decimal amount,
+  required DateTime date,
+  String? notes,
+});
 
 /// Form to add new expense transaction
 class ExpenseForm extends StatefulWidget {

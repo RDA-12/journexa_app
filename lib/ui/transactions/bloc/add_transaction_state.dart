@@ -35,8 +35,7 @@ class AddTransactionState with _$AddTransactionState {
   const factory loading() = _Loading;
 
   /// State when transaction is added successfully
-  const factory added(TransactionAddedNotice notice) =
-      _Added;
+  const factory added(TransactionAddedNotice notice) = _Added;
 
   /// State when transaction is added with error
   const factory failure(AppException error) = _Failure;

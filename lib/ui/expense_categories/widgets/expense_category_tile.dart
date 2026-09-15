@@ -14,11 +14,10 @@ enum _Action {
 }
 
 /// Typedef for callback when update expense category pressed
-typedef OnUpdatePressed =
-    void Function({
-      required String name,
-      required String icon,
-    });
+typedef OnUpdatePressed = void Function({
+  required String name,
+  required String icon,
+});
 
 /// Creates [ListTile] to shows [category]
 class ExpenseCategoryTile extends StatelessWidget {
@@ -125,8 +124,8 @@ class ExpenseCategoryTile extends StatelessWidget {
                         title: context.l10n.deleteExpenseCategoryDialogTitle(
                           category.name,
                         ),
-                        content:
-                            context.l10n.deleteExpenseCategoryDialogContent(
+                        content: context.l10n
+                            .deleteExpenseCategoryDialogContent(
                               category.name,
                             ),
                         confirmLabel: context

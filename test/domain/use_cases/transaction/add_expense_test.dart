@@ -15,8 +15,7 @@ import 'package:mocktail/mocktail.dart';
 
 class MockJournalRepository extends Mock implements IJournalRepository;
 
-class MockTransactionRepository extends Mock
-    implements ITransactionRepository;
+class MockTransactionRepository extends Mock implements ITransactionRepository;
 
 class MockUidGenerator extends Mock implements UidGenerator;
 

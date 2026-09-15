@@ -4,6 +4,5 @@ part of 'transactions_bloc.dart';
 @freezed
 sealed class TransactionsEvent with _$TransactionsEvent {
   /// Request to subscribe to [Transaction] stream
-  const factory subscriptionRequested() =
-      _SubscriptionRequested;
+  const factory subscriptionRequested() = _SubscriptionRequested;
 }

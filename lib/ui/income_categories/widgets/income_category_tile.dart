@@ -14,11 +14,10 @@ enum _Action {
 }
 
 /// Typedef for callback when update income category pressed
-typedef OnUpdatePressed =
-    void Function({
-      required String name,
-      required String icon,
-    });
+typedef OnUpdatePressed = void Function({
+  required String name,
+  required String icon,
+});
 
 /// Creates [ListTile] to shows [category]
 class IncomeCategoryTile extends StatelessWidget {

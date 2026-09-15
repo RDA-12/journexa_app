@@ -4,12 +4,10 @@ part of 'expense_categories_bloc.dart';
 @freezed
 class ExpenseCategoriesEvent with _$ExpenseCategoriesEvent {
   /// Request to start listen to [ExpenseCategory] streams
-  const factory subscriptionRequested({String? query}) =
-      _SubscriptionRequested;
+  const factory subscriptionRequested({String? query}) = _SubscriptionRequested;
 
   /// Event to delete an expense category
-  const factory delete(ExpenseCategory category) =
-      _Delete;
+  const factory delete(ExpenseCategory category) = _Delete;
 
   /// Event to update an expense category based on provided arguments
   const factory update(

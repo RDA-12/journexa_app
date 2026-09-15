@@ -1,6 +1,7 @@
 import 'package:flutter/widgets.dart';
 import 'package:journexa_app/shared/app_exception.dart';
 import 'package:journexa_app/ui/shared/l10n/app_localizations.dart';
+
 export 'app_localizations.dart';
 
 /// Extension to access AppLocalizations

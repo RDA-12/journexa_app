@@ -11,8 +11,7 @@ import 'package:journexa_app/shared/app_result.dart';
 import 'package:journexa_app/shared/uid_generator.dart';
 import 'package:mocktail/mocktail.dart';
 
-class MockTransactionRepository extends Mock
-    implements ITransactionRepository;
+class MockTransactionRepository extends Mock implements ITransactionRepository;
 
 class MockUidGenerator extends Mock implements UidGenerator;
 

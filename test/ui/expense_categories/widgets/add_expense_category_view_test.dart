@@ -13,8 +13,7 @@ import 'package:mocktail/mocktail.dart';
 
 import '../../util.dart';
 
-class MockAddExpenseCategoryBloc extends Mock
-    implements AddExpenseCategoryBloc;
+class MockAddExpenseCategoryBloc extends Mock implements AddExpenseCategoryBloc;
 
 final expectedTranslations = {
   'id': {

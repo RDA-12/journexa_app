@@ -6,15 +6,14 @@ import 'package:journexa_app/ui/shared/widgets/widgets.dart';
 import 'package:journexa_app/ui/wallets/widgets/wallet_selector.dart';
 
 /// Type for callback to handle transfer action
-typedef OnTransferPressed =
-    void Function({
-      required Wallet source,
-      required Wallet destination,
-      required Decimal amount,
-      required Decimal fee,
-      required DateTime date,
-      String? notes,
-    });
+typedef OnTransferPressed = void Function({
+  required Wallet source,
+  required Wallet destination,
+  required Decimal amount,
+  required Decimal fee,
+  required DateTime date,
+  String? notes,
+});
 
 /// Form to add new transfer transaction
 class TransferMoneyForm extends StatefulWidget {

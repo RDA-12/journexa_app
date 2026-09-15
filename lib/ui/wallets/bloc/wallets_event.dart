@@ -4,8 +4,7 @@ part of 'wallets_bloc.dart';
 @freezed
 sealed class WalletsEvent with _$WalletsEvent {
   /// Request to start listen to [Wallet] and its balance stream
-  const factory subscriptionRequested({String? query}) =
-      _SubscriptionRequested;
+  const factory subscriptionRequested({String? query}) = _SubscriptionRequested;
 
   /// Event to delete [wallet]
   const factory delete(Wallet wallet) = _Delete;

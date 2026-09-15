@@ -8,14 +8,13 @@ import 'package:journexa_app/ui/shared/widgets/widgets.dart';
 import 'package:journexa_app/ui/wallets/widgets/wallet_selector.dart';
 
 /// Type for callback to handle income action
-typedef OnAddIncomePressed =
-    void Function({
-      required Wallet wallet,
-      required IncomeCategory category,
-      required Decimal amount,
-      required DateTime date,
-      String? notes,
-    });
+typedef OnAddIncomePressed = void Function({
+  required Wallet wallet,
+  required IncomeCategory category,
+  required Decimal amount,
+  required DateTime date,
+  String? notes,
+});
 
 /// Form to add new income transaction
 class IncomeForm extends StatefulWidget {

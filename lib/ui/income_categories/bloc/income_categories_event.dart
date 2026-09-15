@@ -4,8 +4,7 @@ part of 'income_categories_bloc.dart';
 @freezed
 class IncomeCategoriesEvent with _$IncomeCategoriesEvent {
   /// Request to start listen to [IncomeCategory] streams
-  const factory subscriptionRequested({String? query}) =
-      _SubscriptionRequested;
+  const factory subscriptionRequested({String? query}) = _SubscriptionRequested;
 
   /// Event to delete an income category
   const factory delete(IncomeCategory category) = _Delete;

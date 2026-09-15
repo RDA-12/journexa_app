@@ -23,11 +23,10 @@ class InitializePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (context) =>
-          (initializeBloc ?? getIt<InitializeBloc>())
-            ..add(
-              const InitializeEvent.initialize(),
-            ),
+      create: (context) => (initializeBloc ?? getIt<InitializeBloc>())
+        ..add(
+          const InitializeEvent.initialize(),
+        ),
       child: const Scaffold(
         body: _InitializeView(),
       ),

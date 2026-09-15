@@ -758,7 +758,6 @@ void main() {
       },
     );
 
-
     blocTest<HomeBloc, HomeState>(
       'uses debounce event transformer',
       build: buildBloc,

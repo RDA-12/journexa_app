@@ -681,7 +681,7 @@ void main() {
       verify: (_) {
         verify(
           () => mockWatchTransactions.execute(
-            const WatchTransactionsParams(),
+            const WatchTransactionsParams(limit: 10),
             traceId: traceId,
           ),
         ).called(1);
@@ -732,6 +732,7 @@ void main() {
           () => mockWatchTransactions.execute(
             WatchTransactionsParams(
               wallet: wallets.first,
+              limit: 10,
             ),
             traceId: traceId,
           ),
@@ -756,6 +757,7 @@ void main() {
         ).called(1);
       },
     );
+
 
     blocTest<HomeBloc, HomeState>(
       'uses debounce event transformer',
@@ -785,7 +787,7 @@ void main() {
       verify: (_) {
         verify(
           () => mockWatchTransactions.execute(
-            const WatchTransactionsParams(),
+            const WatchTransactionsParams(limit: 10),
             traceId: traceId,
           ),
         ).called(1);
@@ -861,7 +863,7 @@ void main() {
 
         when(
           () => mockWatchTransactions.execute(
-            const WatchTransactionsParams(),
+            const WatchTransactionsParams(limit: 10),
             traceId: traceId,
           ),
         ).thenAnswer(
@@ -1009,7 +1011,7 @@ void main() {
       setUp: () {
         when(
           () => mockWatchTransactions.execute(
-            const WatchTransactionsParams(),
+            const WatchTransactionsParams(limit: 10),
             traceId: traceId,
           ),
         ).thenAnswer(

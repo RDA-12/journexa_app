@@ -248,6 +248,7 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> with Loggable, GenerateUid {
       _watchTransactions.execute(
         WatchTransactionsParams(
           wallet: wallet,
+          limit: 10,
         ),
         traceId: traceId,
       ),

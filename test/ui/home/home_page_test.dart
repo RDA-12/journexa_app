@@ -97,7 +97,7 @@ void main() {
 
           verify(
             () => mockHomeBloc.add(
-              HomeEvent.transactionsSubscriptionRequested(),
+              const HomeEvent.transactionsSubscriptionRequested(),
             ),
           ).called(1);
         });

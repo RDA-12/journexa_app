@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:journexa_app/shared/formatter/formatter.dart';
 import 'package:journexa_app/ui/shared/l10n/l10n.dart';
+import 'package:journexa_app/ui/shared/models/transaction_ui_model.dart';
 import 'package:journexa_app/ui/shared/theme.dart';
 import 'package:journexa_app/ui/shared/widgets/widgets.dart';
-import 'package:journexa_app/ui/transactions/bloc/transactions_bloc.dart';
 
 /// Creates new [AppCard] to shows [data]
 class TransactionCard extends StatelessWidget {

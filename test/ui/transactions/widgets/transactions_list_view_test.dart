@@ -8,6 +8,7 @@ import 'package:journexa_app/domain/entities/income_category.dart';
 import 'package:journexa_app/domain/entities/wallet.dart';
 import 'package:journexa_app/shared/app_exception.dart';
 import 'package:journexa_app/ui/shared/l10n/l10n.dart';
+import 'package:journexa_app/ui/shared/models/transaction_ui_model.dart';
 import 'package:journexa_app/ui/shared/widgets/widgets.dart';
 import 'package:journexa_app/ui/transactions/bloc/transactions_bloc.dart';
 import 'package:journexa_app/ui/transactions/widgets/transactions_list_view.dart';

@@ -1,12 +1,8 @@
 import 'package:bloc/bloc.dart';
 import 'package:collection/collection.dart';
-import 'package:decimal/decimal.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:injectable/injectable.dart';
-import 'package:journexa_app/domain/entities/expense_category.dart';
-import 'package:journexa_app/domain/entities/income_category.dart';
 import 'package:journexa_app/domain/entities/transaction.dart';
-import 'package:journexa_app/domain/entities/wallet.dart';
 import 'package:journexa_app/domain/use_cases/expense_category/watch_expense_categories.dart';
 import 'package:journexa_app/domain/use_cases/income_category/watch_income_categories.dart';
 import 'package:journexa_app/domain/use_cases/transaction/watch_transactions.dart';
@@ -16,6 +12,7 @@ import 'package:journexa_app/shared/app_logger.dart';
 import 'package:journexa_app/shared/app_result.dart';
 import 'package:journexa_app/shared/uid_generator.dart';
 import 'package:journexa_app/ui/shared/event_transform/debounce.dart';
+import 'package:journexa_app/ui/shared/models/transaction_ui_model.dart';
 import 'package:rxdart/rxdart.dart';
 
 part 'transactions_event.dart';

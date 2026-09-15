@@ -14,6 +14,7 @@ import 'package:journexa_app/shared/app_exception.dart';
 import 'package:journexa_app/shared/app_result.dart';
 import 'package:journexa_app/shared/uid_generator.dart';
 import 'package:journexa_app/ui/shared/event_transform/event_transform.dart';
+import 'package:journexa_app/ui/shared/models/transaction_ui_model.dart';
 import 'package:journexa_app/ui/transactions/bloc/transactions_bloc.dart';
 import 'package:mocktail/mocktail.dart';
 

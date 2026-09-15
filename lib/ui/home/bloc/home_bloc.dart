@@ -3,8 +3,6 @@ import 'package:collection/collection.dart';
 import 'package:decimal/decimal.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:injectable/injectable.dart';
-import 'package:journexa_app/domain/entities/expense_category.dart';
-import 'package:journexa_app/domain/entities/income_category.dart';
 import 'package:journexa_app/domain/entities/transaction.dart';
 import 'package:journexa_app/domain/entities/wallet.dart';
 import 'package:journexa_app/domain/use_cases/expense_category/watch_expense_categories.dart';
@@ -19,6 +17,7 @@ import 'package:journexa_app/shared/app_logger.dart';
 import 'package:journexa_app/shared/app_result.dart';
 import 'package:journexa_app/shared/uid_generator.dart';
 import 'package:journexa_app/ui/shared/event_transform/event_transform.dart';
+import 'package:journexa_app/ui/shared/models/transaction_ui_model.dart';
 import 'package:rxdart/rxdart.dart';
 
 part 'home_event.dart';
@@ -260,7 +259,7 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> with Loggable, GenerateUid {
             'Wallets stream emits failure. Emit failure state',
             traceId: traceId,
           );
-          return AppResult<List<HomeTransactionUIModel>>.failure(walletsExc);
+          return AppResult<List<TransactionUIModel>>.failure(walletsExc);
         }
         final wallets = walletsRes.valueOrNull!;
 
@@ -270,7 +269,7 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> with Loggable, GenerateUid {
             'Income categories stream emits failure. Emit failure state',
             traceId: traceId,
           );
-          return AppResult<List<HomeTransactionUIModel>>.failure(incCatExc);
+          return AppResult<List<TransactionUIModel>>.failure(incCatExc);
         }
         final incCats = incomeCategoriesRes.valueOrNull!;
 
@@ -280,7 +279,7 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> with Loggable, GenerateUid {
             'Expense categories stream emits failure. Emit failure state',
             traceId: traceId,
           );
-          return AppResult<List<HomeTransactionUIModel>>.failure(expCatExc);
+          return AppResult<List<TransactionUIModel>>.failure(expCatExc);
         }
         final expCats = expenseCategoriesRes.valueOrNull!;
 
@@ -290,12 +289,12 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> with Loggable, GenerateUid {
             'Transactions stream emits failure. Emit failure state',
             traceId: traceId,
           );
-          return AppResult<List<HomeTransactionUIModel>>.failure(
+          return AppResult<List<TransactionUIModel>>.failure(
             transactionsExc,
           );
         }
 
-        final result = <HomeTransactionUIModel>[];
+        final result = <TransactionUIModel>[];
         final transactions = transactionsRes.valueOrNull!;
         for (final tr in transactions) {
           tr.when(
@@ -314,7 +313,7 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> with Loggable, GenerateUid {
                 return;
               }
               result.add(
-                HomeTransactionUIModel.income(
+                TransactionUIModel.income(
                   id: id,
                   wallet: wallet,
                   category: category,
@@ -339,7 +338,7 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> with Loggable, GenerateUid {
                 return;
               }
               result.add(
-                HomeTransactionUIModel.expense(
+                TransactionUIModel.expense(
                   id: id,
                   wallet: wallet,
                   category: category,
@@ -373,7 +372,7 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> with Loggable, GenerateUid {
                     return;
                   }
                   result.add(
-                    HomeTransactionUIModel.transfer(
+                    TransactionUIModel.transfer(
                       id: id,
                       sourceWallet: sourceWallet,
                       destinationWallet: destinationWallet,
@@ -391,7 +390,7 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> with Loggable, GenerateUid {
           'All transaction streams fine. Emit loaded state',
           traceId: traceId,
         );
-        return AppResult<List<HomeTransactionUIModel>>.success(result);
+        return AppResult<List<TransactionUIModel>>.success(result);
       },
     );
 

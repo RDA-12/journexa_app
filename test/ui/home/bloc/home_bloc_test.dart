@@ -18,6 +18,7 @@ import 'package:journexa_app/shared/app_result.dart';
 import 'package:journexa_app/shared/uid_generator.dart';
 import 'package:journexa_app/ui/home/bloc/home_bloc.dart';
 import 'package:journexa_app/ui/shared/event_transform/event_transform.dart';
+import 'package:journexa_app/ui/shared/models/transaction_ui_model.dart';
 import 'package:mocktail/mocktail.dart';
 
 class MockWatchWalletsUseCase extends Mock implements WatchWalletsUseCase {}
@@ -133,8 +134,8 @@ void main() {
     transferTransaction,
   ];
 
-  final expectedTransactionsUI = <HomeTransactionUIModel>[
-    HomeTransactionUIModel.income(
+  final expectedTransactionsUI = <TransactionUIModel>[
+    TransactionUIModel.income(
       id: incomeTransaction.id,
       wallet: wallets[0],
       category: incomeCategory,
@@ -142,7 +143,7 @@ void main() {
       date: incomeTransaction.date,
       notes: incomeTransaction.notes,
     ),
-    HomeTransactionUIModel.expense(
+    TransactionUIModel.expense(
       id: expenseTransaction.id,
       wallet: wallets[0],
       category: expenseCategory,
@@ -150,7 +151,7 @@ void main() {
       date: expenseTransaction.date,
       notes: expenseTransaction.notes,
     ),
-    HomeTransactionUIModel.transfer(
+    TransactionUIModel.transfer(
       id: transferTransaction.id,
       sourceWallet: wallets[0],
       destinationWallet: wallets[1],

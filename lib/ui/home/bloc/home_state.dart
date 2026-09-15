@@ -63,85 +63,12 @@ sealed class HomeMTDDataUIModel with _$HomeMTDDataUIModel {
   const HomeMTDDataUIModel._();
 }
 
-/// UI model for a single transaction in home
-@freezed
-sealed class HomeTransactionUIModel with _$HomeTransactionUIModel {
-  /// Creates new income [HomeTransactionUIModel]
-  factory HomeTransactionUIModel.income({
-    /// Unique ID of this transaction
-    required String id,
-
-    /// [Wallet] the [amount] will be added to it
-    required Wallet wallet,
-
-    /// [IncomeCategory] this transaction belongs to
-    required IncomeCategory category,
-
-    /// Amount of money the wallet gets
-    required Decimal amount,
-
-    /// Date when the transaction happened
-    required DateTime date,
-
-    /// Notes or description
-    String? notes,
-  }) = _IncomeHomeTransactionUIModel;
-
-  /// Creates new expense [HomeTransactionUIModel]
-  factory HomeTransactionUIModel.expense({
-    /// Unique ID of this transaction
-    required String id,
-
-    /// [Wallet] the [amount] will be deducted from it
-    required Wallet wallet,
-
-    /// [ExpenseCategory] this transaction belongs to
-    required ExpenseCategory category,
-
-    /// Amount of money the wallet needs to spend
-    required Decimal amount,
-
-    /// Date when the transaction happened
-    required DateTime date,
-
-    /// Notes or description
-    String? notes,
-  }) = _ExpenseHomeTransactionUIModel;
-
-  /// Creates new transfer [HomeTransactionUIModel]
-  factory HomeTransactionUIModel.transfer({
-    /// Unique ID of this transaction
-    required String id,
-
-    /// [Wallet] the [amount] will be deducted from it
-    required Wallet sourceWallet,
-
-    /// [Wallet] the [amount] will be added to it
-    required Wallet destinationWallet,
-
-    /// Amount of money that will be transfered
-    /// from source to destination wallet
-    required Decimal amount,
-
-    /// Transfer fee
-    ///
-    /// Fee that will be deducted from source wallet.
-    required Decimal fee,
-
-    /// Date when the transaction happened
-    required DateTime date,
-
-    /// Notes or description
-    String? notes,
-  }) = _TransferHomeTransactionUIModel;
-}
-
 /// UI model for transactions data
 @freezed
 sealed class HomeTransactionsUIModel with _$HomeTransactionsUIModel {
   const factory HomeTransactionsUIModel({
     /// List loaded transactions data
-    @Default([]) List<HomeTransactionUIModel> transactions,
+    @Default([]) List<TransactionUIModel> transactions,
 
     /// Status of transactions data
     @Default(HomeUIStatus.initial) HomeUIStatus status,

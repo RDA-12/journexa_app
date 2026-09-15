@@ -14,6 +14,7 @@ class HomeEvent with _$HomeEvent {
   }) = _MTDSubscriptionRequested;
 
   /// Event to trigger subscriptions to transactions data
-  const factory HomeEvent.transactionsSubscriptionRequested() =
-      _TransactionsSubscriptionRequested;
+  const factory HomeEvent.transactionsSubscriptionRequested({
+    Wallet? wallet,
+  }) = _TransactionsSubscriptionRequested;
 }

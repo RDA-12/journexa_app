@@ -49,7 +49,10 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> with Loggable, GenerateUid {
       transformer: debounce(),
     );
     on<_TransactionsSubscriptionRequested>(
-      (event, emit) => _onTransactionsSubscriptionRequested(emit: emit),
+      (event, emit) => _onTransactionsSubscriptionRequested(
+        wallet: event.wallet,
+        emit: emit,
+      ),
       transformer: debounce(),
     );
   }
@@ -225,6 +228,7 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> with Loggable, GenerateUid {
 
   Future<void> _onTransactionsSubscriptionRequested({
     required Emitter<HomeState> emit,
+    Wallet? wallet,
   }) async {
     final traceId = generateUid();
     logInfo(
@@ -242,7 +246,9 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> with Loggable, GenerateUid {
 
     final combinedStream = CombineLatestStream.combine4(
       _watchTransactions.execute(
-        const WatchTransactionsParams(),
+        WatchTransactionsParams(
+          wallet: wallet,
+        ),
         traceId: traceId,
       ),
       _watchWallets.execute(const WatchWalletsParams(), traceId: traceId),

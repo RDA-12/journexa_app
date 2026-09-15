@@ -707,6 +707,57 @@ void main() {
     );
 
     blocTest<HomeBloc, HomeState>(
+      'calls correct TransactionRepository.watch '
+      'when wallet filter is provided',
+      build: buildBloc,
+      act: (bloc) => bloc.add(
+        HomeEvent.transactionsSubscriptionRequested(wallet: wallets.first),
+      ),
+      wait: kDefaultDebounceDuration,
+      expect: () => <HomeState>[
+        HomeState(
+          transactionsData: const HomeTransactionsUIModel(
+            status: HomeUIStatus.loading,
+          ),
+        ),
+        HomeState(
+          transactionsData: HomeTransactionsUIModel(
+            status: HomeUIStatus.loaded,
+            transactions: expectedTransactionsUI,
+          ),
+        ),
+      ],
+      verify: (_) {
+        verify(
+          () => mockWatchTransactions.execute(
+            WatchTransactionsParams(
+              wallet: wallets.first,
+            ),
+            traceId: traceId,
+          ),
+        ).called(1);
+        verify(
+          () => mockWatchWallets.execute(
+            const WatchWalletsParams(),
+            traceId: traceId,
+          ),
+        ).called(1);
+        verify(
+          () => mockWatchIncomeCategories.execute(
+            const WatchIncomeCategoriesParams(),
+            traceId: traceId,
+          ),
+        ).called(1);
+        verify(
+          () => mockWatchExpenseCategories.execute(
+            const WatchExpenseCategoriesParams(),
+            traceId: traceId,
+          ),
+        ).called(1);
+      },
+    );
+
+    blocTest<HomeBloc, HomeState>(
       'uses debounce event transformer',
       build: buildBloc,
       act: (bloc) async {

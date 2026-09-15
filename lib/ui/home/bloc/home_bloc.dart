@@ -241,7 +241,10 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> with Loggable, GenerateUid {
     );
 
     final combinedStream = CombineLatestStream.combine4(
-      _watchTransactions.execute(traceId: traceId),
+      _watchTransactions.execute(
+        const WatchTransactionsParams(),
+        traceId: traceId,
+      ),
       _watchWallets.execute(const WatchWalletsParams(), traceId: traceId),
       _watchIncomeCategories.execute(
         const WatchIncomeCategoriesParams(),

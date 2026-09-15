@@ -55,7 +55,10 @@ class TransactionsBloc extends Bloc<TransactionsEvent, TransactionsState>
     emit(const TransactionsState.loading());
 
     final combinedStream = CombineLatestStream.combine4(
-      _watchTransactions.execute(traceId: traceId),
+      _watchTransactions.execute(
+        const WatchTransactionsParams(),
+        traceId: traceId,
+      ),
       _watchWallets.execute(const WatchWalletsParams(), traceId: traceId),
       _watchIncomeCategories.execute(
         const WatchIncomeCategoriesParams(),

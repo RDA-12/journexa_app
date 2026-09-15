@@ -179,6 +179,7 @@ void main() {
     registerFallbackValue(watchMTDExpenseParams);
     registerFallbackValue(const WatchIncomeCategoriesParams());
     registerFallbackValue(const WatchExpenseCategoriesParams());
+    registerFallbackValue(const WatchTransactionsParams());
   });
 
   setUp(() {
@@ -220,7 +221,10 @@ void main() {
 
     mockWatchTransactions = MockWatchTransactionsUseCase();
     when(
-      () => mockWatchTransactions.execute(traceId: traceId),
+      () => mockWatchTransactions.execute(
+        any(),
+        traceId: traceId,
+      ),
     ).thenAnswer((_) => Stream.value(AppResult.success(transactions)));
 
     mockWatchIncomeCategories = MockWatchIncomeCategoriesUseCase();
@@ -676,7 +680,10 @@ void main() {
       ],
       verify: (_) {
         verify(
-          () => mockWatchTransactions.execute(traceId: traceId),
+          () => mockWatchTransactions.execute(
+            const WatchTransactionsParams(),
+            traceId: traceId,
+          ),
         ).called(1);
         verify(
           () => mockWatchWallets.execute(
@@ -726,7 +733,10 @@ void main() {
       ],
       verify: (_) {
         verify(
-          () => mockWatchTransactions.execute(traceId: traceId),
+          () => mockWatchTransactions.execute(
+            const WatchTransactionsParams(),
+            traceId: traceId,
+          ),
         ).called(1);
         verify(
           () => mockWatchWallets.execute(
@@ -799,7 +809,10 @@ void main() {
         );
 
         when(
-          () => mockWatchTransactions.execute(traceId: traceId),
+          () => mockWatchTransactions.execute(
+            const WatchTransactionsParams(),
+            traceId: traceId,
+          ),
         ).thenAnswer(
           (_) => Stream.value(
             AppResult.success([
@@ -944,7 +957,10 @@ void main() {
       'when watchTransactions emits failure',
       setUp: () {
         when(
-          () => mockWatchTransactions.execute(traceId: traceId),
+          () => mockWatchTransactions.execute(
+            const WatchTransactionsParams(),
+            traceId: traceId,
+          ),
         ).thenAnswer(
           (_) => Stream.value(
             AppResult<List<Transaction>>.failure(AppException.test()),

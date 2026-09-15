@@ -5,197 +5,119 @@ import 'package:journexa_app/ui/shared/models/transaction_ui_model.dart';
 import 'package:journexa_app/ui/shared/theme.dart';
 import 'package:journexa_app/ui/shared/widgets/widgets.dart';
 
-/// Creates new [AppCard] to shows [data]
+/// Creates new [AppCard] to shows Transaction data
 class TransactionCard extends StatelessWidget {
-  /// Creates new [TransactionCard] to shows [data]
-  const TransactionCard({required this.data, super.key});
+  /// Creates new [TransactionCard]
+  const TransactionCard({
+    required this.data,
+    super.key,
+  });
 
-  /// data that will be showed
+  /// Data to be shown to UI
   final TransactionUIModel data;
 
   @override
   Widget build(BuildContext context) {
-    return data.map(
+    final date = data.date;
+    final amountString = data.amount.idrCurrency(context.languageCode);
+    final dateString = date.dateOnlyFormat;
+
+    late final String semanticsLabel;
+    late final Icon icon;
+    late final String title;
+    late final String subtitle;
+    data.map(
       income: (income) {
-        return AppCard(
-          leading: CircleAvatar(
-            backgroundColor: context.color.primaryContainer,
-            foregroundColor: context.color.onPrimaryContainer,
-            radius: 24,
-            child: const Icon(Icons.call_received_rounded),
-          ),
-          child: Semantics(
-            container: true,
-            excludeSemantics: true,
-            label: context.l10n.transactionCardIncomeSemantics(
-              income.wallet.name,
-              income.category.name,
-              income.amount.idrCurrency(context.languageCode),
-              income.date.textedDateFormat(context.languageCode),
-            ),
-            child: Row(
-              spacing: 16,
-              children: [
-                Expanded(
-                  child: Column(
-                    spacing: 4,
-                    children: [
-                      Text(
-                        income.category.name,
-                        style: context.text.bodyMedium,
-                      ),
-                      Text(
-                        context.l10n.transactionCardIncomeSubtitle(
-                          income.wallet.name,
-                        ),
-                        style: context.text.labelSmall?.copyWith(
-                          color: context.color.outlineVariant,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-                Column(
-                  spacing: 4,
-                  crossAxisAlignment: CrossAxisAlignment.end,
-                  children: [
-                    Text(
-                      income.amount.idrCurrency(context.languageCode),
-                      style: context.text.bodyMedium,
-                    ),
-                    Text(
-                      income.date.dateOnlyFormat,
-                      style: context.text.labelSmall?.copyWith(
-                        color: context.color.outlineVariant,
-                      ),
-                    ),
-                  ],
-                ),
-              ],
-            ),
-          ),
+        semanticsLabel = context.l10n.transactionCardIncomeSemantics(
+          income.wallet.name,
+          income.category.name,
+          amountString,
+          date.textedDateFormat(context.languageCode),
+        );
+        icon = const Icon(Icons.call_received_rounded);
+        title = income.category.name;
+        subtitle = context.l10n.transactionCardIncomeSubtitle(
+          income.wallet.name,
         );
       },
       expense: (expense) {
-        return AppCard(
-          leading: CircleAvatar(
-            backgroundColor: context.color.primaryContainer,
-            foregroundColor: context.color.onPrimaryContainer,
-            radius: 24,
-            child: const Icon(Icons.call_made_rounded),
-          ),
-          child: Semantics(
-            container: true,
-            excludeSemantics: true,
-            label: context.l10n.transactionCardExpenseSemantics(
-              expense.wallet.name,
-              expense.category.name,
-              expense.amount.idrCurrency(context.languageCode),
-              expense.date.textedDateFormat(context.languageCode),
-            ),
-            child: Row(
-              spacing: 16,
-              children: [
-                Expanded(
-                  child: Column(
-                    spacing: 4,
-                    children: [
-                      Text(
-                        expense.category.name,
-                        style: context.text.bodyMedium,
-                      ),
-                      Text(
-                        context.l10n.transactionCardExpenseSubtitle(
-                          expense.wallet.name,
-                        ),
-                        style: context.text.labelSmall?.copyWith(
-                          color: context.color.outlineVariant,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-                Column(
-                  spacing: 4,
-                  crossAxisAlignment: CrossAxisAlignment.end,
-                  children: [
-                    Text(
-                      expense.amount.idrCurrency(context.languageCode),
-                      style: context.text.bodyMedium,
-                    ),
-                    Text(
-                      expense.date.dateOnlyFormat,
-                      style: context.text.labelSmall?.copyWith(
-                        color: context.color.outlineVariant,
-                      ),
-                    ),
-                  ],
-                ),
-              ],
-            ),
-          ),
+        semanticsLabel = context.l10n.transactionCardExpenseSemantics(
+          expense.wallet.name,
+          expense.category.name,
+          amountString,
+          date.textedDateFormat(context.languageCode),
+        );
+        icon = const Icon(Icons.call_made_rounded);
+        title = expense.category.name;
+        subtitle = context.l10n.transactionCardExpenseSubtitle(
+          expense.wallet.name,
         );
       },
       transfer: (transfer) {
-        return AppCard(
-          leading: CircleAvatar(
-            backgroundColor: context.color.primaryContainer,
-            foregroundColor: context.color.onPrimaryContainer,
-            radius: 24,
-            child: const Icon(Icons.swap_vert_rounded),
-          ),
-          child: Semantics(
-            container: true,
-            excludeSemantics: true,
-            label: context.l10n.transactionCardTransferSemantics(
-              transfer.destinationWallet.name,
-              transfer.sourceWallet.name,
-              transfer.amount.idrCurrency(context.languageCode),
-              transfer.date.textedDateFormat(context.languageCode),
-            ),
-            child: Row(
-              spacing: 16,
-              children: [
-                Expanded(
-                  child: Column(
-                    spacing: 4,
-                    children: [
-                      Text(
-                        transfer.destinationWallet.name,
-                        style: context.text.bodyMedium,
-                      ),
-                      Text(
-                        context.l10n.transactionCardTransferSubtitle(
-                          transfer.sourceWallet.name,
-                        ),
-                        style: context.text.labelSmall?.copyWith(
-                          color: context.color.outlineVariant,
-                        ),
-                      ),
-                    ],
+        semanticsLabel = context.l10n.transactionCardTransferSemantics(
+          transfer.destinationWallet.name,
+          transfer.sourceWallet.name,
+          amountString,
+          date.textedDateFormat(context.languageCode),
+        );
+        icon = const Icon(Icons.swap_vert_rounded);
+        title = transfer.destinationWallet.name;
+        subtitle = context.l10n.transactionCardTransferSubtitle(
+          transfer.sourceWallet.name,
+        );
+      },
+    );
+
+    return AppCard(
+      leading: CircleAvatar(
+        backgroundColor: context.color.primaryContainer,
+        foregroundColor: context.color.onPrimaryContainer,
+        radius: 24,
+        child: icon,
+      ),
+      child: Semantics(
+        container: true,
+        excludeSemantics: true,
+        label: semanticsLabel,
+        child: Row(
+          spacing: 16,
+          children: [
+            Expanded(
+              child: Column(
+                spacing: 4,
+                children: [
+                  Text(
+                    title,
+                    style: context.text.bodyMedium,
                   ),
+                  Text(
+                    subtitle,
+                    style: context.text.labelSmall?.copyWith(
+                      color: context.color.outlineVariant,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            Column(
+              spacing: 4,
+              crossAxisAlignment: CrossAxisAlignment.end,
+              children: [
+                Text(
+                  amountString,
+                  style: context.text.bodyMedium,
                 ),
-                Column(
-                  spacing: 4,
-                  crossAxisAlignment: CrossAxisAlignment.end,
-                  children: [
-                    Text(
-                      transfer.amount.idrCurrency(context.languageCode),
-                      style: context.text.bodyMedium,
-                    ),
-                    Text(
-                      transfer.date.dateOnlyFormat,
-                      style: context.text.labelSmall?.copyWith(
-                        color: context.color.outlineVariant,
-                      ),
-                    ),
-                  ],
+                Text(
+                  dateString,
+                  style: context.text.labelSmall?.copyWith(
+                    color: context.color.outlineVariant,
+                  ),
                 ),
               ],
             ),
-          ),
-        );
-      },
+          ],
+        ),
+      ),
     );
   }
 }

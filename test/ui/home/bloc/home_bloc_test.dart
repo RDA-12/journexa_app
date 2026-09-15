@@ -251,7 +251,6 @@ void main() {
     )..customGenerator = mockUidGenerator;
   }
 
-
   test('has initial state of HomeState()', () {
     final bloc = buildBloc();
     expect(bloc.state, HomeState());
@@ -972,4 +971,3 @@ void main() {
     );
   });
 }
-

@@ -63,7 +63,6 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> with Loggable, GenerateUid {
   final WatchIncomeCategoriesUseCase _watchIncomeCategories;
   final WatchExpenseCategoriesUseCase _watchExpenseCategories;
 
-
   @override
   String get logTag => 'HomeBloc';
 
@@ -421,4 +420,3 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> with Loggable, GenerateUid {
     );
   }
 }
-

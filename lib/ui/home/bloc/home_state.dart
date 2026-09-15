@@ -177,4 +177,3 @@ sealed class HomeState with _$HomeState {
   @override
   final HomeMTDDataUIModel mtdData;
 }
-

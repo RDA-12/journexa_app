@@ -4,7 +4,7 @@ import 'package:journexa_app/ui/shared/theme.dart';
 /// Creates new [Column] with [title] on top of [description]
 class AppEmptyBox extends StatelessWidget {
   /// Creates new [AppEmptyBox]
-  const AppEmptyBox({
+  const new({
     this.title,
     this.description,
     super.key,

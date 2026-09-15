@@ -17,7 +17,7 @@ import 'package:rxdart/rxdart.dart';
 @LazySingleton(as: IWalletRepository)
 class DriftWalletRepository with Loggable implements IWalletRepository {
   /// Creates new [DriftWalletRepository]
-  DriftWalletRepository({required this._db});
+  new({required this._db});
 
   final AppLocalDatabase _db;
 

@@ -19,7 +19,7 @@ typedef OnTransferPressed =
 /// Form to add new transfer transaction
 class TransferMoneyForm extends StatefulWidget {
   /// Creates new [TransferMoneyForm]
-  const TransferMoneyForm({
+  const new({
     required this.isProcessing,
     this.onTransferPressed,
     super.key,

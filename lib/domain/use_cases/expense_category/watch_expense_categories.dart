@@ -11,7 +11,7 @@ part 'watch_expense_categories.freezed.dart';
 /// Params for [WatchExpenseCategoriesUseCase]
 @freezed
 sealed class WatchExpenseCategoriesParams with _$WatchExpenseCategoriesParams {
-  const factory WatchExpenseCategoriesParams({
+  const factory({
     String? query,
   }) = _WatchExpenseCategoriesParams;
 }
@@ -24,7 +24,7 @@ class WatchExpenseCategoriesUseCase
     implements
         StreamBaseUseCase<WatchExpenseCategoriesParams, List<ExpenseCategory>> {
   /// Creates new [WatchExpenseCategoriesUseCase]
-  WatchExpenseCategoriesUseCase({
+  new({
     required this._expenseCategoryRepository,
   });
 

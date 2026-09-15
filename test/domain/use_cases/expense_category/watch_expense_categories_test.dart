@@ -8,7 +8,7 @@ import 'package:journexa_app/shared/app_result.dart';
 import 'package:mocktail/mocktail.dart';
 
 class MockExpenseCategoryRepository extends Mock
-    implements IExpenseCategoryRepository {}
+    implements IExpenseCategoryRepository;
 
 void main() {
   const traceId = 'traceId';

@@ -7,7 +7,7 @@ import 'package:journexa_app/ui/shared/widgets/widgets.dart';
 import '../../util.dart';
 
 class TestClass {
-  const TestClass({required this.id, required this.name});
+  const new({required this.id, required this.name});
 
   final int id;
   final String name;

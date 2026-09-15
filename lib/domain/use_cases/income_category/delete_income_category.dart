@@ -12,7 +12,7 @@ part 'delete_income_category.freezed.dart';
 @freezed
 sealed class DeleteIncomeCategoryParams with _$DeleteIncomeCategoryParams {
   /// Creates new [DeleteIncomeCategoryParams]
-  const factory DeleteIncomeCategoryParams({
+  const factory({
     /// [IncomeCategory] that will be deleted
     required IncomeCategory category,
   }) = _DeleteIncomeCategorysParams;
@@ -24,7 +24,7 @@ class DeleteIncomeCategoryUseCase
     with Loggable
     implements FutureBaseUseCase<DeleteIncomeCategoryParams, Null> {
   /// Creates new [DeleteIncomeCategoryUseCase]
-  DeleteIncomeCategoryUseCase({
+  new({
     required this._incomeCategoryRepository,
   });
 

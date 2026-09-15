@@ -4,21 +4,21 @@ part of 'add_transaction_bloc.dart';
 @freezed
 sealed class TransactionAddedNotice with _$TransactionAddedNotice {
   /// Creates [TransactionAddedNotice] for transfer transaction.
-  const factory TransactionAddedNotice.transferAdded({
+  const factory transferAdded({
     required Wallet source,
     required Wallet destination,
     required Decimal amount,
   }) = _TransferAddedNotice;
 
   /// Creates [TransactionAddedNotice] for income transaction.
-  const factory TransactionAddedNotice.incomeAdded({
+  const factory incomeAdded({
     required Wallet wallet,
     required IncomeCategory category,
     required Decimal amount,
   }) = _IncomeAddedNotice;
 
   /// Creates [TransactionAddedNotice] for expense transaction.
-  const factory TransactionAddedNotice.expenseAdded({
+  const factory expenseAdded({
     required Wallet wallet,
     required ExpenseCategory category,
     required Decimal amount,
@@ -29,15 +29,15 @@ sealed class TransactionAddedNotice with _$TransactionAddedNotice {
 @freezed
 class AddTransactionState with _$AddTransactionState {
   /// Intiial state
-  const factory AddTransactionState.initial() = _Initial;
+  const factory initial() = _Initial;
 
   /// State when transaction is being added
-  const factory AddTransactionState.loading() = _Loading;
+  const factory loading() = _Loading;
 
   /// State when transaction is added successfully
-  const factory AddTransactionState.added(TransactionAddedNotice notice) =
+  const factory added(TransactionAddedNotice notice) =
       _Added;
 
   /// State when transaction is added with error
-  const factory AddTransactionState.failure(AppException error) = _Failure;
+  const factory failure(AppException error) = _Failure;
 }

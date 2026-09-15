@@ -13,7 +13,7 @@ import 'package:mocktail/mocktail.dart';
 
 import '../../util.dart';
 
-class MockAddIncomeCategoryBloc extends Mock implements AddIncomeCategoryBloc {}
+class MockAddIncomeCategoryBloc extends Mock implements AddIncomeCategoryBloc;
 
 final expectedTranslations = {
   'id': {

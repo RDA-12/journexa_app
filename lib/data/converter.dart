@@ -4,7 +4,7 @@ import 'package:drift/drift.dart';
 /// Drift [TypeConverter] for [Decimal]
 class DriftDecimalConverter extends TypeConverter<Decimal, String> {
   /// Creates new [DriftDecimalConverter]
-  const DriftDecimalConverter();
+  const new();
 
   @override
   Decimal fromSql(String fromDb) => Decimal.parse(fromDb);
@@ -16,7 +16,7 @@ class DriftDecimalConverter extends TypeConverter<Decimal, String> {
 /// Drift [TypeConverter] for [DateTime]
 class DriftDateTimeConverter extends TypeConverter<DateTime, String> {
   /// Creates new [DriftDateTimeConverter]
-  const DriftDateTimeConverter();
+  const new();
 
   @override
   DateTime fromSql(String fromDb) => DateTime.parse(fromDb).toLocal();

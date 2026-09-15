@@ -16,7 +16,7 @@ part 'add_wallet_bloc.freezed.dart';
 class AddWalletBloc extends Bloc<AddWalletEvent, AddWalletState>
     with Loggable, GenerateUid {
   /// Creates new [AddWalletBloc]
-  AddWalletBloc({
+  new({
     required this._addWallet,
   }) : super(const AddWalletState.initial()) {
     on<AddWalletEvent>((event, emit) async {

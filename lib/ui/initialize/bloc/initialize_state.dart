@@ -4,14 +4,14 @@ part of 'initialize_bloc.dart';
 @freezed
 class InitializeState with _$InitializeState {
   /// Initial state
-  const factory InitializeState.initial() = _Initial;
+  const factory initial() = _Initial;
 
   /// Loading state
-  const factory InitializeState.loading() = _Loading;
+  const factory loading() = _Loading;
 
   /// Failure state
-  const factory InitializeState.failure(AppException exception) = _Failure;
+  const factory failure(AppException exception) = _Failure;
 
   /// Success state
-  const factory InitializeState.initialized() = _Initialized;
+  const factory initialized() = _Initialized;
 }

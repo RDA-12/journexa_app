@@ -8,7 +8,7 @@ import 'package:journexa_app/shared/app_exception.dart';
 import 'package:journexa_app/shared/app_result.dart';
 import 'package:mocktail/mocktail.dart';
 
-class MockJournalRepository extends Mock implements IJournalRepository {}
+class MockJournalRepository extends Mock implements IJournalRepository;
 
 void main() {
   const traceId = 'traceId';

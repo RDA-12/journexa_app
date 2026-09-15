@@ -139,7 +139,7 @@ enum ButtonType {
 /// If [icon] provided, use [FilledButton.icon] or [OutlinedButton.icon].
 class AppButton extends StatelessWidget {
   /// Creates new [AppButton]
-  const AppButton({
+  const new({
     required this.onPressed,
     required this.label,
     this.type = ButtonType.outlined,

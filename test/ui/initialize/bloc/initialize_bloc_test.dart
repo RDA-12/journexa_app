@@ -8,9 +8,9 @@ import 'package:journexa_app/ui/initialize/bloc/initialize_bloc.dart';
 import 'package:mocktail/mocktail.dart';
 
 class MockInitializeAccountsUseCase extends Mock
-    implements InitializeAccountsUseCase {}
+    implements InitializeAccountsUseCase;
 
-class MockUidGenerator extends Mock implements UidGenerator {}
+class MockUidGenerator extends Mock implements UidGenerator;
 
 void main() {
   const traceId = 'traceId';

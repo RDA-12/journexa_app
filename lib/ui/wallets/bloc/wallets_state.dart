@@ -35,13 +35,13 @@ enum WalletUIStatus {
 @freezed
 sealed class WalletUINotice with _$WalletUINotice {
   /// Creates new [WalletUINotice] as deleted notice
-  const factory WalletUINotice.recentlyDeleted({
+  const factory recentlyDeleted({
     /// The [Wallet] that was recently deleted
     required Wallet wallet,
   }) = _WalletUINoticeRecentlyDeleted;
 
   /// Creates new [WalletUINotice] as updated notice
-  const factory WalletUINotice.recentlyUpdated({
+  const factory recentlyUpdated({
     /// Old [Wallet]
     required Wallet from,
 
@@ -50,7 +50,7 @@ sealed class WalletUINotice with _$WalletUINotice {
   }) = _WalletUINoticeRecentlyUpdated;
 
   /// Creates new [WalletUINotice] as delete failed notice
-  const factory WalletUINotice.deleteFailed({
+  const factory deleteFailed({
     /// [Wallet] that meant to be deleted
     required Wallet wallet,
 
@@ -59,7 +59,7 @@ sealed class WalletUINotice with _$WalletUINotice {
   }) = _WalletUINoticeDeleteFailed;
 
   /// Creates new [WalletUINotice] as update failed notice
-  const factory WalletUINotice.updateFailed({
+  const factory updateFailed({
     /// [Wallet] that meant to be updated
     required Wallet wallet,
 
@@ -71,7 +71,7 @@ sealed class WalletUINotice with _$WalletUINotice {
 /// Extends [Wallet] to includes balance and state for UI
 @freezed
 sealed class WalletUIModel with _$WalletUIModel {
-  const factory WalletUIModel({
+  const factory({
     /// The [Wallet]
     required Wallet wallet,
 
@@ -87,7 +87,7 @@ sealed class WalletUIModel with _$WalletUIModel {
 @freezed
 sealed class WalletsState with _$WalletsState {
   /// Creates new [WalletsState]
-  const factory WalletsState({
+  const factory({
     /// Status of the state
     @Default(WalletsUIStatus.initial) WalletsUIStatus status,
 
@@ -101,5 +101,5 @@ sealed class WalletsState with _$WalletsState {
     WalletUINotice? notice,
   }) = _WalletsState;
 
-  const WalletsState._();
+  const new _();
 }

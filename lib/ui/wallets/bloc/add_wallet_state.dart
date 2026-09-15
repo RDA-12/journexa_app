@@ -4,16 +4,16 @@ part of 'add_wallet_bloc.dart';
 @freezed
 class AddWalletState with _$AddWalletState {
   /// Initial state
-  const factory AddWalletState.initial() = _Initial;
+  const factory initial() = _Initial;
 
   /// State when the new account is being added
-  const factory AddWalletState.loading() = _Loading;
+  const factory loading() = _Loading;
 
   /// State when new account is successfully added
-  const factory AddWalletState.added() = _Added;
+  const factory added() = _Added;
 
   /// State when fails to add new wallet
-  const factory AddWalletState.failure(
+  const factory failure(
     AppException exc, {
     String? name,
   }) = _Failure;

@@ -12,7 +12,7 @@ import 'package:mocktail/mocktail.dart';
 
 import '../../util.dart';
 
-class MockInitializeBloc extends Mock implements InitializeBloc {}
+class MockInitializeBloc extends Mock implements InitializeBloc;
 
 final expectedTranslations = {
   'id': {

@@ -20,7 +20,7 @@ enum MTDCardType {
 /// Creates new [AppCard] to shows [data]
 class MTDCard extends StatelessWidget {
   /// Creates new [MTDCard]
-  const MTDCard({
+  const new({
     required this.type,
     required this.data,
     super.key,

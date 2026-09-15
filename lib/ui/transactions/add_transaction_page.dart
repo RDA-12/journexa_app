@@ -12,7 +12,7 @@ import 'package:journexa_app/ui/wallets/bloc/wallets_bloc.dart';
 /// Page to add new transaction
 class AddTransactionPage extends StatelessWidget {
   /// Creates new [AddTransactionPage]
-  const AddTransactionPage({
+  const new({
     required this.type,
     this.walletsBloc,
     this.incomeCategoriesBloc,

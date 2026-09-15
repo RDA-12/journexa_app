@@ -5,7 +5,7 @@ import 'package:journexa_app/ui/shared/l10n/l10n.dart';
 /// Creates new [SvgPicture] to shows app logo.
 class AppLogo extends StatelessWidget {
   /// Creates new [AppLogo]
-  const AppLogo({
+  const new({
     this.size,
     this.addSemanticsLabel = false,
     this.semanticsLabel,

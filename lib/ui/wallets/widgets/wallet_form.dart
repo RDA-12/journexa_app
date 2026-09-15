@@ -7,7 +7,7 @@ import 'package:journexa_app/ui/shared/widgets/widgets.dart';
 /// to add new wallet
 class WalletForm extends StatefulWidget {
   /// Creates new [WalletForm]
-  const WalletForm({
+  const new({
     super.key,
     this.initialWallet,
     this.onSavePressed,

@@ -6,7 +6,7 @@ class AppCard extends StatelessWidget {
   /// Creates new [AppCard]
   ///
   /// [leading] will be placed before [child]
-  const AppCard({
+  const new({
     required this.child,
     this.leading,
     this.bottom,

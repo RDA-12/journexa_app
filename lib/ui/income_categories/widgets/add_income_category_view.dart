@@ -14,7 +14,7 @@ class AddIncomeCategoryView extends StatelessWidget {
   ///
   /// It reacts to [AddIncomeCategoryBloc]'s state changes.
   /// So, make sure to provide that within the widget tree.
-  const AddIncomeCategoryView({super.key});
+  const new({super.key});
 
   @override
   Widget build(BuildContext context) {

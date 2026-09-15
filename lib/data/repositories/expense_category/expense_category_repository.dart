@@ -19,7 +19,7 @@ class DriftExpenseCategoryRepository
     with Loggable
     implements IExpenseCategoryRepository {
   /// Creates new [DriftExpenseCategoryRepository]
-  DriftExpenseCategoryRepository({required this._db});
+  new({required this._db});
 
   final AppLocalDatabase _db;
 

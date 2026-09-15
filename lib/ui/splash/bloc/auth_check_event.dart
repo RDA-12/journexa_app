@@ -4,5 +4,5 @@ part of 'auth_check_bloc.dart';
 @freezed
 class AuthCheckEvent with _$AuthCheckEvent {
   /// Event to start checking auth state
-  const factory AuthCheckEvent.started() = _Started;
+  const factory started() = _Started;
 }

@@ -32,7 +32,7 @@ part 'database.g.dart';
 class AppLocalDatabase extends _$AppLocalDatabase {
   /// Creates new [AppLocalDatabase]
   @factoryMethod
-  factory AppLocalDatabase() {
+  factory() {
     final executor = driftDatabase(
       name: 'journexa_db',
       native: const DriftNativeOptions(
@@ -44,7 +44,7 @@ class AppLocalDatabase extends _$AppLocalDatabase {
 
   /// Creates new [AppLocalDatabase] for testing
   @visibleForTesting
-  factory AppLocalDatabase.test() {
+  factory test() {
     final executor = DatabaseConnection(
       NativeDatabase.memory(),
       closeStreamsSynchronously: true,
@@ -53,7 +53,7 @@ class AppLocalDatabase extends _$AppLocalDatabase {
   }
 
   /// Creates new [AppLocalDatabase]
-  AppLocalDatabase._(super.e);
+  new _(super.e);
 
   @override
   int get schemaVersion => 1;

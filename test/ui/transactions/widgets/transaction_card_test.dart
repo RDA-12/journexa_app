@@ -119,7 +119,7 @@ void main() {
     WidgetTester tester, {
     required TransactionUIModel data,
     Locale locale = const Locale('en'),
-  }) async {
+  }) {
     return pumpForWidgetTest(
       tester,
       locale: locale,

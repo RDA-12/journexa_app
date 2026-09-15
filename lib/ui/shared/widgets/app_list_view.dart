@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 /// animation
 class AppListView<T> extends StatelessWidget {
   /// Creates new [AppListView]
-  const AppListView({
+  const new({
     required this.items,
     required this.itemBuilder,
     this.isScrollable = true,

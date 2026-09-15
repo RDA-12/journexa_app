@@ -11,7 +11,7 @@ class CheckAuthUseCase
     with Loggable
     implements FutureBaseUseCaseNoParams<bool> {
   /// Creates new [CheckAuthUseCase]
-  CheckAuthUseCase({required this._authRepository});
+  new({required this._authRepository});
 
   @override
   String get logTag => 'CheckAuthUseCase';
@@ -25,7 +25,7 @@ class CheckAuthUseCase
     logInfo('Start checks auth state', traceId: traceId);
     final result = await _authRepository.getCurrentUserId(traceId: traceId);
     logInfo('Finished checks auth state', traceId: traceId);
-    return result.when(
+    return await result.when(
       success: (_) => const AppResult.success(true),
       failure: (exc) {
         if (exc.code == AppExceptionCode.unauthenticated) {

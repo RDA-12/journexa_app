@@ -9,7 +9,7 @@ import 'package:journexa_app/ui/wallets/widgets/add_wallet_view.dart';
 /// Page to add new wallet
 class AddWalletPage extends StatelessWidget {
   /// Creates new [AddWalletPage]
-  const AddWalletPage({super.key, this.addWalletBloc});
+  const new({super.key, this.addWalletBloc});
 
   /// [AddWalletBloc] to be provided in widget tree.
   ///

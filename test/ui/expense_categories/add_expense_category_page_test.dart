@@ -13,16 +13,11 @@ import 'package:mocktail/mocktail.dart';
 
 import '../util.dart';
 
-class MockAddExpenseCategoryBloc extends Mock
-    implements AddExpenseCategoryBloc {}
+class MockAddExpenseCategoryBloc extends Mock implements AddExpenseCategoryBloc;
 
 const expectedTranslations = {
-  'id': {
-    'title': 'Tambah Kategori Pengeluaran',
-  },
-  'en': {
-    'title': 'Add Expense Category',
-  },
+  'id': {'title': 'Tambah Kategori Pengeluaran'},
+  'en': {'title': 'Add Expense Category'},
 };
 
 void main() {
@@ -57,38 +52,28 @@ void main() {
   }
 
   group('Render', () {
-    testWidgets(
-      'provides AddExpenseCategoryBloc',
-      (tester) async {
-        await pumpWidget(tester);
+    testWidgets('provides AddExpenseCategoryBloc', (tester) async {
+      await pumpWidget(tester);
 
-        expect(
-          find.byType(BlocProvider<AddExpenseCategoryBloc>),
-          findsOneWidget,
-        );
-      },
-    );
+      expect(find.byType(BlocProvider<AddExpenseCategoryBloc>), findsOneWidget);
+    });
 
-    testWidgets(
-      'has AddExpenseCategoryView',
-      (tester) async {
-        await pumpWidget(tester);
+    testWidgets('has AddExpenseCategoryView', (tester) async {
+      await pumpWidget(tester);
 
-        expect(find.byType(AddExpenseCategoryView), findsOneWidget);
-      },
-    );
+      expect(find.byType(AddExpenseCategoryView), findsOneWidget);
+    });
 
     for (final locale in AppLocalizations.supportedLocales) {
       final expectedTitle =
           expectedTranslations[locale.languageCode]!['title']!;
-      testWidgets(
-        'shows $expectedTitle title for ${locale.languageCode}',
-        (tester) async {
-          await pumpWidget(tester, locale: locale);
+      testWidgets('shows $expectedTitle title for ${locale.languageCode}', (
+        tester,
+      ) async {
+        await pumpWidget(tester, locale: locale);
 
-          expect(find.text(expectedTitle), findsOneWidget);
-        },
-      );
+        expect(find.text(expectedTitle), findsOneWidget);
+      });
     }
   });
 }

@@ -8,7 +8,7 @@ part 'income_category.freezed.dart';
 @freezed
 sealed class IncomeCategory with _$IncomeCategory {
   /// Creates new income category
-  factory IncomeCategory({
+  factory({
     /// Unique identifier
     required String id,
 
@@ -23,7 +23,7 @@ sealed class IncomeCategory with _$IncomeCategory {
   }) = _IncomeIncomeCategory;
 
   /// Creates new [IncomeCategory] for testing
-  factory IncomeCategory.test() => IncomeCategory(
+  factory test() => IncomeCategory(
     id: 'id',
     name: 'name',
     icon: 'icon',
@@ -32,7 +32,7 @@ sealed class IncomeCategory with _$IncomeCategory {
     ),
   );
 
-  IncomeCategory._() {
+  new _() {
     if (account.type != AccountType.revenue) {
       throw AppException(
         'IncomeCategory must have revenue typed Account. Got: ${account.type}',

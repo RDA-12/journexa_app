@@ -3,7 +3,7 @@ import 'package:json_annotation/json_annotation.dart';
 /// Converter class to converts [DateTime] to [String]
 class DateTimeConverter implements JsonConverter<DateTime, String> {
   /// Creates new [DateTimeConverter]
-  const DateTimeConverter();
+  const new();
 
   @override
   DateTime fromJson(String json) => DateTime.parse(json).toLocal();

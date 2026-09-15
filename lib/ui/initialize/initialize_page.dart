@@ -10,7 +10,7 @@ import 'package:journexa_app/ui/initialize/widgets/initializing_box.dart';
 /// The process include seeding default system accounts
 class InitializePage extends StatelessWidget {
   /// Creates new [InitializePage]
-  const InitializePage({
+  const new({
     this.initializeBloc,
     super.key,
   });
@@ -36,7 +36,7 @@ class InitializePage extends StatelessWidget {
 }
 
 class _InitializeView extends StatelessWidget {
-  const _InitializeView();
+  const new();
 
   @override
   Widget build(BuildContext context) {

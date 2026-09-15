@@ -1,7 +1,7 @@
 import 'package:bloc/bloc.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 
-sealed class CounterEvent {}
+sealed class CounterEvent;
 
 @immutable
 class Increment extends CounterEvent {
@@ -27,7 +27,7 @@ Future<void> tick() => Future.delayed(Duration.zero);
 /// Counter bloc for testing
 class CounterBloc extends Bloc<CounterEvent, int> {
   /// Creates [CounterBloc] with [transformer]
-  CounterBloc(EventTransformer<Increment> transformer) : super(0) {
+  new(EventTransformer<Increment> transformer) : super(0) {
     on<Increment>(
       (event, emit) {
         onCalls.add(event);

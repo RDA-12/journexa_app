@@ -4,17 +4,17 @@ part of 'home_bloc.dart';
 @freezed
 class HomeEvent with _$HomeEvent {
   /// Event to trigger subscriptions to wallets data
-  const factory HomeEvent.walletsSubscriptionRequested() =
+  const factory walletsSubscriptionRequested() =
       _WalletsSubscriptionRequested;
 
   /// Event to trigger to subscribe to mtd data
-  const factory HomeEvent.mtdSubscriptionRequested({
+  const factory mtdSubscriptionRequested({
     required DateTime targetDate,
     Wallet? wallet,
   }) = _MTDSubscriptionRequested;
 
   /// Event to trigger subscriptions to transactions data
-  const factory HomeEvent.transactionsSubscriptionRequested({
+  const factory transactionsSubscriptionRequested({
     Wallet? wallet,
   }) = _TransactionsSubscriptionRequested;
 }

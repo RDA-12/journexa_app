@@ -12,7 +12,7 @@ part 'delete_wallet.freezed.dart';
 @freezed
 sealed class DeleteWalletParams with _$DeleteWalletParams {
   /// Creates new [DeleteWalletParams]
-  const factory DeleteWalletParams({
+  const factory({
     /// [Wallet] that will be deleted
     required Wallet wallet,
   }) = _DeleteWalletsParams;
@@ -24,7 +24,7 @@ class DeleteWalletUseCase
     with Loggable
     implements FutureBaseUseCase<DeleteWalletParams, Null> {
   /// Creates new [DeleteWalletUseCase]
-  DeleteWalletUseCase({
+  new({
     required this._walletRepository,
   });
 

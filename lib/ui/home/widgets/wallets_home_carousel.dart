@@ -17,7 +17,7 @@ class WalletsHomeCarousel extends StatelessWidget {
   /// It reacts to [HomeBloc]'s wallet state changes.
   /// So, make sure to provide that within the
   /// widget tree.
-  const WalletsHomeCarousel({super.key, this.onChanged});
+  const new({super.key, this.onChanged});
 
   /// A Callback invoked when wallet changed. It has index and Wallet.
   ///

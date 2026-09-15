@@ -7,9 +7,9 @@ import 'package:journexa_app/shared/uid_generator.dart';
 import 'package:journexa_app/ui/splash/bloc/auth_check_bloc.dart';
 import 'package:mocktail/mocktail.dart';
 
-class MockCheckAuthUseCase extends Mock implements CheckAuthUseCase {}
+class MockCheckAuthUseCase extends Mock implements CheckAuthUseCase;
 
-class MockUidGenerator extends Mock implements UidGenerator {}
+class MockUidGenerator extends Mock implements UidGenerator;
 
 void main() {
   const traceId = 'trace';

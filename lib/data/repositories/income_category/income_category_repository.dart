@@ -19,7 +19,7 @@ class DriftIncomeCategoryRepository
     with Loggable
     implements IIncomeCategoryRepository {
   /// Creates new [DriftIncomeCategoryRepository]
-  DriftIncomeCategoryRepository({required this._db});
+  new({required this._db});
 
   final AppLocalDatabase _db;
 

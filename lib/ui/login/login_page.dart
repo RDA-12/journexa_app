@@ -8,7 +8,7 @@ import 'package:journexa_app/ui/login/widgets/widgets.dart';
 /// Page for login functionality.
 class LoginPage extends StatelessWidget {
   /// Creates new [LoginPage]
-  const LoginPage({super.key, this.loginBloc});
+  const new({super.key, this.loginBloc});
 
   /// [LoginBloc] that will be provided to the widget.
   ///
@@ -27,7 +27,7 @@ class LoginPage extends StatelessWidget {
 }
 
 class _LoginView extends StatelessWidget {
-  const _LoginView();
+  const new();
 
   @override
   Widget build(BuildContext context) {

@@ -16,7 +16,7 @@ part 'login_bloc.freezed.dart';
 class LoginBloc extends Bloc<LoginEvent, LoginState>
     with Loggable, GenerateUid {
   /// Creates new [LoginBloc]
-  LoginBloc({
+  new({
     required this._loginWithGoogleUseCase,
   }) : super(const LoginState.initial()) {
     on<LoginEvent>((event, emit) async {

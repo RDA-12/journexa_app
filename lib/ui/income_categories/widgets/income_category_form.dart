@@ -7,7 +7,7 @@ import 'package:journexa_app/ui/shared/widgets/widgets.dart';
 /// to add new income category
 class IncomeCategoryForm extends StatefulWidget {
   /// Creates new [IncomeCategoryForm]
-  const IncomeCategoryForm({
+  const new({
     super.key,
     this.initialCategory,
     this.onSavePressed,

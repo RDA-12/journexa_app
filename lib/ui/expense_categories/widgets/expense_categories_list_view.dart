@@ -18,7 +18,7 @@ class ExpenseCategoriesListView extends StatefulWidget {
   ///
   /// It reacts to [ExpenseCategoriesBloc]'s state changes.
   /// So, make sure to provide it with that bloc
-  const ExpenseCategoriesListView({
+  const new({
     this.onAddPressed,
     super.key,
   });

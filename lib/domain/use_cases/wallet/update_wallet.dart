@@ -11,7 +11,7 @@ part 'update_wallet.freezed.dart';
 /// Params for [UpdateWalletUseCase]
 @freezed
 sealed class UpdateWalletParams with _$UpdateWalletParams {
-  const factory UpdateWalletParams({
+  const factory({
     /// Wallet code that will be updated
     required Wallet wallet,
 
@@ -26,7 +26,7 @@ class UpdateWalletUseCase
     with Loggable
     implements FutureBaseUseCase<UpdateWalletParams, Wallet> {
   /// Creates new [UpdateWalletUseCase]
-  UpdateWalletUseCase({
+  new({
     required this._walletRepository,
   });
 

@@ -37,10 +37,10 @@ enum AppExceptionCode {
 @immutable
 final class AppException implements Exception {
   /// Creates a new [AppException]
-  const AppException(this.message, {required this.code});
+  const new(this.message, {required this.code});
 
   /// Creates new [AppException] to helps testing
-  factory AppException.test() => const AppException(
+  factory test() => const AppException(
     'test failure',
     code: AppExceptionCode.internalException,
   );

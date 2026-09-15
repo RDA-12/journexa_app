@@ -12,7 +12,7 @@ class MTDSection extends StatelessWidget {
   ///
   /// It reacts to [HomeBloc]'s state changes.
   /// Make sure to provide that bloc within the widget tree.
-  const MTDSection({super.key});
+  const new({super.key});
 
   @override
   Widget build(BuildContext context) {

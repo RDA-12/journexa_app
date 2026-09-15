@@ -7,7 +7,7 @@ class AppIconButton extends StatelessWidget {
   ///
   /// [semanticsLabel] will be set as tooltip.
   /// So, it serve as tooltip text and semantics accessibility label
-  const AppIconButton({
+  const new({
     required this.icon,
     required this.onPressed,
     required this.semanticsLabel,

@@ -20,7 +20,7 @@ typedef OnAddExpensePressed =
 /// Form to add new expense transaction
 class ExpenseForm extends StatefulWidget {
   /// Creates new [ExpenseForm]
-  const ExpenseForm({
+  const new({
     required this.isProcessing,
     this.onAddExpensePressed,
     super.key,

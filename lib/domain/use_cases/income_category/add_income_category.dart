@@ -14,11 +14,11 @@ part 'add_income_category.freezed.dart';
 /// Params for [AddIncomeCategoryUseCase]
 @freezed
 sealed class AddIncomeCategoryParams with _$AddIncomeCategoryParams {
-  const factory AddIncomeCategoryParams({
+  const factory({
     /// Name of the category
     required String name,
   }) = _AddIncomeCategoryParams;
-  const AddIncomeCategoryParams._();
+  const new _();
 
   /// Return extras of this params meant to be used in logger
   Map<String, String> get extras => {'name': name};
@@ -30,7 +30,7 @@ class AddIncomeCategoryUseCase
     with Loggable, GenerateUid
     implements FutureBaseUseCase<AddIncomeCategoryParams, Null> {
   /// Creates new [AddIncomeCategoryUseCase]
-  AddIncomeCategoryUseCase({
+  new({
     required this._accountRepository,
     required this._incomeCategoryRepository,
   });
@@ -95,7 +95,7 @@ class AddIncomeCategoryUseCase
       category: newCategory,
       traceId: traceId,
     );
-    return saveResult.when(
+    return await saveResult.when(
       success: (_) {
         logInfo(
           'new IncomeCategory saved successfully. Done.',

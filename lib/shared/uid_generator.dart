@@ -3,7 +3,7 @@ import 'package:uuid/uuid.dart';
 /// Utility class to generate UID
 class UidGenerator {
   /// Creates new [UidGenerator]
-  UidGenerator({required this._uuid});
+  new({required this._uuid});
 
   final Uuid _uuid;
 

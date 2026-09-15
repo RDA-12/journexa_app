@@ -20,7 +20,7 @@ typedef OnAddIncomePressed =
 /// Form to add new income transaction
 class IncomeForm extends StatefulWidget {
   /// Creates new [IncomeForm]
-  const IncomeForm({
+  const new({
     required this.isProcessing,
     this.onAddIncomePressed,
     super.key,

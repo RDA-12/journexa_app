@@ -8,7 +8,7 @@ import 'package:journexa_app/ui/shared/widgets/widgets.dart';
 /// Card to shows user wallet in home page
 class WalletHomeCard extends StatelessWidget {
   /// Creates new [WalletHomeCard]
-  const WalletHomeCard({required this.name, required this.balance, super.key});
+  const new({required this.name, required this.balance, super.key});
 
   /// Name of the wallet
   final String name;

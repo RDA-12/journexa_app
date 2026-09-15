@@ -18,7 +18,7 @@ part 'initialize_bloc.freezed.dart';
 class InitializeBloc extends Bloc<InitializeEvent, InitializeState>
     with Loggable, GenerateUid {
   /// Creates new [InitializeBloc]
-  InitializeBloc({
+  new({
     required this._initializeAccounts,
   }) : super(const InitializeState.initial()) {
     on<InitializeEvent>((event, emit) async {

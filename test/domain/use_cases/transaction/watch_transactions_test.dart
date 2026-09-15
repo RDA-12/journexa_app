@@ -9,7 +9,7 @@ import 'package:journexa_app/shared/app_result.dart';
 import 'package:mocktail/mocktail.dart';
 
 class MockTransactionRepository extends Mock
-    implements ITransactionRepository {}
+    implements ITransactionRepository;
 
 void main() {
   const traceId = 'traceId';

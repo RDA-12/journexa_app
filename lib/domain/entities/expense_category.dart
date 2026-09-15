@@ -8,7 +8,7 @@ part 'expense_category.freezed.dart';
 @freezed
 sealed class ExpenseCategory with _$ExpenseCategory {
   /// Creates new expense category
-  factory ExpenseCategory({
+  factory({
     /// Unique identifier
     required String id,
 
@@ -23,7 +23,7 @@ sealed class ExpenseCategory with _$ExpenseCategory {
   }) = _ExpenseCategory;
 
   /// Creates new [ExpenseCategory] for testing
-  factory ExpenseCategory.test() => ExpenseCategory(
+  factory test() => ExpenseCategory(
     id: 'id',
     name: 'name',
     icon: 'icon',
@@ -32,7 +32,7 @@ sealed class ExpenseCategory with _$ExpenseCategory {
     ),
   );
 
-  ExpenseCategory._() {
+  new _() {
     if (account.type != AccountType.expense) {
       throw AppException(
         'ExpenseCategory must have expense typed Account. Got: ${account.type}',

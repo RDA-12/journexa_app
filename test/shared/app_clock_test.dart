@@ -2,7 +2,7 @@ import 'package:clock/clock.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:journexa_app/shared/app_clock.dart';
 
-class TestClass with AppClockMixin {}
+class TestClass with AppClockMixin;
 
 void main() {
   group('AppClockMixin', () {

@@ -7,7 +7,7 @@ import 'package:journexa_app/ui/shared/widgets/widgets.dart';
 /// to add new expense category
 class ExpenseCategoryForm extends StatefulWidget {
   /// Creates new [ExpenseCategoryForm]
-  const ExpenseCategoryForm({
+  const new({
     super.key,
     this.initialCategory,
     this.onSavePressed,

@@ -8,7 +8,7 @@ part 'wallet.freezed.dart';
 @freezed
 sealed class Wallet with _$Wallet {
   /// Creates new [Wallet]
-  factory Wallet({
+  factory({
     /// Unique ID of this [Wallet]
     required String id,
 
@@ -20,13 +20,13 @@ sealed class Wallet with _$Wallet {
   }) = _Wallet;
 
   /// Creates new [Wallet] for testing purposes
-  factory Wallet.test() => Wallet(
+  factory test() => Wallet(
     id: 'id',
     name: 'test',
     account: Account.test().copyWith(parent: SystemDefinedAccount.walletParent),
   );
 
-  Wallet._() {
+  new _() {
     if (account.type != AccountType.asset) {
       throw AppException(
         'Wallet must have asset typed Account. Got: ${account.type}',

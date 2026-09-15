@@ -9,7 +9,7 @@ import 'package:journexa_app/ui/transactions/widgets/transactions_list_view.dart
 /// Page to shows list of [Transaction]
 class TransactionsListPage extends StatelessWidget {
   /// Creates new [TransactionsListPage]
-  const TransactionsListPage({
+  const new({
     this.transactionsBloc,
     super.key,
   });
@@ -31,7 +31,7 @@ class TransactionsListPage extends StatelessWidget {
 }
 
 class _TransactionsListView extends StatelessWidget {
-  const _TransactionsListView();
+  const new();
 
   @override
   Widget build(BuildContext context) {

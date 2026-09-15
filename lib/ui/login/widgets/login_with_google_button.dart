@@ -17,7 +17,7 @@ class LoginWithGoogleButton extends StatelessWidget {
   /// It also handles updating the UI based on [LoginState].
   /// So, usually the [onSuccess] callback is just for navigation
   /// or any other action that needs to be done after successful login.
-  const LoginWithGoogleButton({
+  const new({
     super.key,
     this.onSuccess,
   });

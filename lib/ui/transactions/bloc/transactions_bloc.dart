@@ -24,7 +24,7 @@ part 'transactions_bloc.freezed.dart';
 class TransactionsBloc extends Bloc<TransactionsEvent, TransactionsState>
     with Loggable, GenerateUid {
   /// Creates new [TransactionsBloc]
-  TransactionsBloc({
+  new({
     required this._watchTransactions,
     required this._watchWallets,
     required this._watchIncomeCategories,

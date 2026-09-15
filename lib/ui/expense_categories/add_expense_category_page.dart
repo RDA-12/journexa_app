@@ -9,7 +9,7 @@ import 'package:journexa_app/ui/shared/widgets/app_responsive.dart';
 /// Page to add new expense category
 class AddExpenseCategoryPage extends StatelessWidget {
   /// Creates new [AddExpenseCategoryPage]
-  const AddExpenseCategoryPage({super.key, this.addExpenseCategoryBloc});
+  const new({super.key, this.addExpenseCategoryBloc});
 
   /// [AddExpenseCategoryBloc] to be provided in widget tree.
   ///

@@ -35,13 +35,13 @@ enum ExpenseCategoryUIStatus {
 @freezed
 sealed class ExpenseCategoryUINotice with _$ExpenseCategoryUINotice {
   /// Creates new [ExpenseCategoryUINotice] as deleted notice
-  const factory ExpenseCategoryUINotice.recentlyDeleted({
+  const factory recentlyDeleted({
     /// The [ExpenseCategory] that was recently deleted
     required ExpenseCategory category,
   }) = _ExpenseCategoryUINoticeRecentlyDeleted;
 
   /// Creates new [ExpenseCategoryUINotice] as updated notice
-  const factory ExpenseCategoryUINotice.recentlyUpdated({
+  const factory recentlyUpdated({
     /// Old [ExpenseCategory]
     required ExpenseCategory from,
 
@@ -50,7 +50,7 @@ sealed class ExpenseCategoryUINotice with _$ExpenseCategoryUINotice {
   }) = _ExpenseCategoryUINoticeRecentlyUpdated;
 
   /// Creates new [ExpenseCategoryUINotice] as delete failed notice
-  const factory ExpenseCategoryUINotice.deleteFailed({
+  const factory deleteFailed({
     /// [ExpenseCategory] that meant to be deleted
     required ExpenseCategory category,
 
@@ -59,7 +59,7 @@ sealed class ExpenseCategoryUINotice with _$ExpenseCategoryUINotice {
   }) = _ExpenseCategoryUINoticeDeleteFailed;
 
   /// Creates new [ExpenseCategoryUINotice] as update failed notice
-  const factory ExpenseCategoryUINotice.updateFailed({
+  const factory updateFailed({
     /// [ExpenseCategory] that meant to be updated
     required ExpenseCategory category,
 
@@ -71,7 +71,7 @@ sealed class ExpenseCategoryUINotice with _$ExpenseCategoryUINotice {
 /// Extends [ExpenseCategory] to includes state for UI
 @freezed
 sealed class ExpenseCategoryUIModel with _$ExpenseCategoryUIModel {
-  const factory ExpenseCategoryUIModel({
+  const factory({
     /// The [ExpenseCategory]
     required ExpenseCategory category,
 
@@ -84,7 +84,7 @@ sealed class ExpenseCategoryUIModel with _$ExpenseCategoryUIModel {
 @freezed
 sealed class ExpenseCategoriesState with _$ExpenseCategoriesState {
   /// Creates new [ExpenseCategoriesState]
-  const factory ExpenseCategoriesState({
+  const factory({
     /// Status of the state
     @Default(ExpenseCategoriesUIStatus.initial)
     ExpenseCategoriesUIStatus status,
@@ -99,5 +99,5 @@ sealed class ExpenseCategoriesState with _$ExpenseCategoriesState {
     ExpenseCategoryUINotice? notice,
   }) = _ExpenseCategoriesState;
 
-  const ExpenseCategoriesState._();
+  const new _();
 }

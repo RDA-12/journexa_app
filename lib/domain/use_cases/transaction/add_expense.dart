@@ -19,7 +19,7 @@ part 'add_expense.freezed.dart';
 @freezed
 sealed class AddExpenseParams with _$AddExpenseParams {
   /// Creates new [AddExpenseParams]
-  const factory AddExpenseParams({
+  const factory({
     /// Wallet that will be decreased by [amount]
     required Wallet wallet,
 
@@ -43,7 +43,7 @@ class AddExpenseUseCase
     with GenerateUid, Loggable
     implements FutureBaseUseCase<AddExpenseParams, Transaction> {
   /// Creates new [AddExpenseUseCase]
-  AddExpenseUseCase({
+  new({
     required this._journalRepository,
     required this._transactionRepository,
   });

@@ -7,7 +7,7 @@ import 'package:journexa_app/shared/app_exception.dart';
 import 'package:journexa_app/shared/app_result.dart';
 import 'package:mocktail/mocktail.dart';
 
-class MockWalletRepository extends Mock implements IWalletRepository {}
+class MockWalletRepository extends Mock implements IWalletRepository;
 
 void main() {
   const traceId = 'traceId';

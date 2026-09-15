@@ -16,7 +16,7 @@ part 'auth_check_bloc.freezed.dart';
 class AuthCheckBloc extends Bloc<AuthCheckEvent, AuthCheckState>
     with Loggable, GenerateUid {
   /// Creates new [AuthCheckBloc]
-  AuthCheckBloc({
+  new({
     required this._checkAuth,
   }) : super(const AuthCheckState.initial()) {
     on<AuthCheckEvent>((event, emit) async {

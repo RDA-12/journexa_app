@@ -9,16 +9,8 @@ import 'package:journexa_app/ui/shared/widgets/loading_indicator.dart';
 import '../../util.dart';
 
 final expectedTranslations = {
-  'id': {
-    'label': 'Nama',
-    'button': 'Simpan',
-    'required': 'Wajib',
-  },
-  'en': {
-    'label': 'Name',
-    'button': 'Save',
-    'required': 'Required',
-  },
+  'id': {'label': 'Nama', 'button': 'Simpan', 'required': 'Wajib'},
+  'en': {'label': 'Name', 'button': 'Save', 'required': 'Required'},
 };
 
 void main() {
@@ -28,7 +20,7 @@ void main() {
     void Function(String name)? onSavePressed,
     bool isSaving = false,
     IncomeCategory? initialCategory,
-  }) async {
+  }) {
     return pumpForWidgetTest(
       tester,
       locale: locale,
@@ -40,95 +32,74 @@ void main() {
     );
   }
 
-  group(
-    'Render',
-    () {
-      for (final locale in AppLocalizations.supportedLocales) {
-        final expectedLocaleTranslated =
-            expectedTranslations[locale.languageCode]!;
-        final expectedLabel = expectedLocaleTranslated['label']!;
-        testWidgets(
-          'shows $expectedLabel * label for ${locale.languageCode} ',
-          (tester) async {
-            await pumpWidget(tester, locale: locale);
+  group('Render', () {
+    for (final locale in AppLocalizations.supportedLocales) {
+      final expectedLocaleTranslated =
+          expectedTranslations[locale.languageCode]!;
+      final expectedLabel = expectedLocaleTranslated['label']!;
+      testWidgets('shows $expectedLabel * label for ${locale.languageCode} ', (
+        tester,
+      ) async {
+        await pumpWidget(tester, locale: locale);
 
-            expect(find.text('$expectedLabel *'), findsOneWidget);
-          },
-        );
+        expect(find.text('$expectedLabel *'), findsOneWidget);
+      });
 
-        final expectedButton = expectedLocaleTranslated['button']!;
-        testWidgets(
-          'shows $expectedButton button for ${locale.languageCode}',
-          (tester) async {
-            await pumpWidget(tester, locale: locale);
+      final expectedButton = expectedLocaleTranslated['button']!;
+      testWidgets('shows $expectedButton button for ${locale.languageCode}', (
+        tester,
+      ) async {
+        await pumpWidget(tester, locale: locale);
 
-            final finder = find.text(expectedButton);
-            expect(finder, findsOneWidget);
-          },
-        );
-      }
+        final finder = find.text(expectedButton);
+        expect(finder, findsOneWidget);
+      });
+    }
 
-      testWidgets(
-        'has disabled button and shows LoadingIndicator '
-        'when isSaving is True',
-        (tester) async {
-          await pumpWidget(tester, isSaving: true);
+    testWidgets('has disabled button and shows LoadingIndicator '
+        'when isSaving is True', (tester) async {
+      await pumpWidget(tester, isSaving: true);
 
-          final buttonFinder = find.byType(FilledButton);
-          final buttonWidget = tester.widget<FilledButton>(buttonFinder);
-          expect(buttonWidget.enabled, isFalse);
+      final buttonFinder = find.byType(FilledButton);
+      final buttonWidget = tester.widget<FilledButton>(buttonFinder);
+      expect(buttonWidget.enabled, isFalse);
 
-          expect(find.byType(LoadingIndicator), findsOneWidget);
-        },
-      );
+      expect(find.byType(LoadingIndicator), findsOneWidget);
+    });
 
-      testWidgets(
-        'shows initial account name when provided',
-        (tester) async {
-          final initial = IncomeCategory.test();
-          await pumpWidget(
-            tester,
-            initialCategory: initial,
-          );
+    testWidgets('shows initial account name when provided', (tester) async {
+      final initial = IncomeCategory.test();
+      await pumpWidget(tester, initialCategory: initial);
 
-          expect(find.text(initial.name), findsOneWidget);
-        },
-      );
-    },
-  );
+      expect(find.text(initial.name), findsOneWidget);
+    });
+  });
 
-  group(
-    'Interaction',
-    () {
-      testWidgets(
-        'allows input name',
-        (tester) async {
-          await pumpWidget(tester);
+  group('Interaction', () {
+    testWidgets('allows input name', (tester) async {
+      await pumpWidget(tester);
 
-          final formFieldFinder = find.byType(TextFormField);
-          await tester.enterText(formFieldFinder, 'Test');
+      final formFieldFinder = find.byType(TextFormField);
+      await tester.enterText(formFieldFinder, 'Test');
 
-          expect(find.text('Test'), findsOneWidget);
-        },
-      );
+      expect(find.text('Test'), findsOneWidget);
+    });
 
-      testWidgets(
-        'invokes onSavePressed when clicks save button',
-        (tester) async {
-          String? name;
-          const expectedName = 'Test';
+    testWidgets('invokes onSavePressed when clicks save button', (
+      tester,
+    ) async {
+      String? name;
+      const expectedName = 'Test';
 
-          await pumpWidget(tester, onSavePressed: (value) => name = value);
+      await pumpWidget(tester, onSavePressed: (value) => name = value);
 
-          final formFieldFinder = find.byType(TextFormField);
-          await tester.enterText(formFieldFinder, expectedName);
-          await tester.tap(find.byType(AppButton));
+      final formFieldFinder = find.byType(TextFormField);
+      await tester.enterText(formFieldFinder, expectedName);
+      await tester.tap(find.byType(AppButton));
 
-          expect(name, expectedName);
-        },
-      );
-    },
-  );
+      expect(name, expectedName);
+    });
+  });
 
   group('a11y', () {
     for (final locale in AppLocalizations.supportedLocales) {
@@ -136,18 +107,15 @@ void main() {
           expectedTranslations[locale.languageCode]!;
       final expectedLabel = expectedLocaleTranslated['label']!;
       final requiredLabel = expectedLocaleTranslated['required']!;
-      testWidgets(
-        'shows $expectedLabel, $requiredLabel label semantically for '
-        '${locale.languageCode}',
-        (tester) async {
-          await pumpWidget(tester, locale: locale);
+      testWidgets('shows $expectedLabel, $requiredLabel label semantically for '
+          '${locale.languageCode}', (tester) async {
+        await pumpWidget(tester, locale: locale);
 
-          expect(
-            find.bySemanticsLabel('$expectedLabel, $requiredLabel'),
-            findsOneWidget,
-          );
-        },
-      );
+        expect(
+          find.bySemanticsLabel('$expectedLabel, $requiredLabel'),
+          findsOneWidget,
+        );
+      });
 
       final expectedButton = expectedLocaleTranslated['button']!;
       testWidgets(

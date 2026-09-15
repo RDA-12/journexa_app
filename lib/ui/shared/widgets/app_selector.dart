@@ -18,7 +18,7 @@ enum SelectorStatus {
 /// Controller for [AppSelector]
 class AppSelectorController<T> extends ChangeNotifier {
   /// Creates new [AppSelector] with [initialValue]
-  AppSelectorController({
+  new({
     required this.displayAsString,
     T? initialValue,
     List<T> initialItems = const [],
@@ -112,7 +112,7 @@ class AppSelectorController<T> extends ChangeNotifier {
 /// Widget to allows users select value from list of items
 class AppSelector<T extends Object> extends StatelessWidget {
   /// Creates new [AppSelector]
-  const AppSelector({
+  const new({
     required this.controller,
     required this.isRequired,
     super.key,
@@ -235,7 +235,7 @@ class AppSelector<T extends Object> extends StatelessWidget {
 }
 
 class _AppSelectorSearchBox extends StatefulWidget {
-  const _AppSelectorSearchBox({required this.onSearch});
+  const new({required this.onSearch});
 
   final ValueChanged<String?> onSearch;
 

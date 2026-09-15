@@ -144,7 +144,7 @@ abstract class SystemDefinedAccount {
 @freezed
 sealed class AccountCode with _$AccountCode {
   /// Creates new [AccountCode]
-  factory AccountCode({
+  factory({
     /// Type code of the [Account]
     required String typeCode,
 
@@ -154,7 +154,7 @@ sealed class AccountCode with _$AccountCode {
     /// Sub code (e.g. [001, 002])
     required List<String> subCodes,
   }) = _AccountCode;
-  AccountCode._() {
+  new _() {
     if (!AccountType.values.any((e) => e.prefixCode == typeCode)) {
       throw AppException(
         'invalid account type code. Got $typeCode. '
@@ -195,7 +195,7 @@ sealed class AccountCode with _$AccountCode {
   }
 
   /// Creates new [AccountCode] for root account
-  factory AccountCode.root({
+  factory root({
     required AccountType type,
     required String systemCode,
   }) => AccountCode(
@@ -205,7 +205,7 @@ sealed class AccountCode with _$AccountCode {
   );
 
   /// Creates new [AccountCode] for sub account
-  factory AccountCode.sub({
+  factory sub({
     required Account parent,
     required String subCode,
   }) => AccountCode(
@@ -220,7 +220,7 @@ sealed class AccountCode with _$AccountCode {
   /// Parse [AccountCode] from [String]
   ///
   /// [code] must be in format `<typeCode>.<systemCode>.<subCodes>...`
-  factory AccountCode.fromString(String code) {
+  factory fromString(String code) {
     final codes = code.split('.');
     if (codes.length < 2) {
       throw AppException(
@@ -258,7 +258,7 @@ sealed class AccountCode with _$AccountCode {
 @freezed
 sealed class Account with _$Account {
   /// Creates new [Account]
-  factory Account({
+  factory({
     /// Unique code for an [Account]
     required AccountCode code,
 
@@ -276,7 +276,7 @@ sealed class Account with _$Account {
   }) = _Account;
 
   /// Creates new [Account] to helps testing
-  factory Account.test([AccountType type = AccountType.asset]) => Account(
+  factory test([AccountType type = AccountType.asset]) => Account(
     code: AccountCode.root(type: type, systemCode: '001'),
     name: 'test',
     type: type,
@@ -286,7 +286,7 @@ sealed class Account with _$Account {
   ///
   /// It will create code by appending `<currentChildrenCount + 1>` to
   /// parent's [AccountCode].
-  factory Account.sub({
+  factory sub({
     required Account parent,
     required String name,
     required int currentChildrenCount,
@@ -304,7 +304,7 @@ sealed class Account with _$Account {
   }
 
   /// Creates new [Account] for root accounts
-  factory Account.root({
+  factory root({
     required String name,
     required AccountType type,
     required String systemCode,
@@ -315,7 +315,7 @@ sealed class Account with _$Account {
     isSystemAccount: true,
   );
 
-  Account._();
+  new _();
 
   /// Return normal balance of this [Account].
   ///

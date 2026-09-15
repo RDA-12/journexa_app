@@ -14,11 +14,11 @@ part 'add_expense_category.freezed.dart';
 /// Params for [AddExpenseCategoryUseCase]
 @freezed
 sealed class AddExpenseCategoryParams with _$AddExpenseCategoryParams {
-  const factory AddExpenseCategoryParams({
+  const factory({
     /// Name of the category
     required String name,
   }) = _AddExpenseCategoryParams;
-  const AddExpenseCategoryParams._();
+  const new _();
 
   /// Return extras of this params meant to be used in logger
   Map<String, String> get extras => {'name': name};
@@ -30,7 +30,7 @@ class AddExpenseCategoryUseCase
     with Loggable, GenerateUid
     implements FutureBaseUseCase<AddExpenseCategoryParams, Null> {
   /// Creates new [AddExpenseCategoryUseCase]
-  AddExpenseCategoryUseCase({
+  new({
     required this._accountRepository,
     required this._expenseCategoryRepository,
   });
@@ -95,7 +95,7 @@ class AddExpenseCategoryUseCase
       category: newCategory,
       traceId: traceId,
     );
-    return saveResult.when(
+    return await saveResult.when(
       success: (_) {
         logInfo(
           'new ExpenseCategory saved successfully. Done.',

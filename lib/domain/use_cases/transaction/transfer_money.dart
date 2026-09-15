@@ -19,7 +19,7 @@ part 'transfer_money.freezed.dart';
 @freezed
 sealed class TransferMoneyParams with _$TransferMoneyParams {
   /// Creates new [TransferMoneyParams]
-  const factory TransferMoneyParams({
+  const factory({
     /// Source wallet of this transfer
     required Wallet source,
 
@@ -46,7 +46,7 @@ class TransferMoneyUseCase
     with GenerateUid, Loggable
     implements FutureBaseUseCase<TransferMoneyParams, Transaction> {
   /// Creates new [TransferMoneyUseCase]
-  TransferMoneyUseCase({
+  new({
     required this._journalRepository,
     required this._transactionRepository,
   });

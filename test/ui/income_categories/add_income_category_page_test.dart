@@ -13,15 +13,11 @@ import 'package:mocktail/mocktail.dart';
 
 import '../util.dart';
 
-class MockAddIncomeCategoryBloc extends Mock implements AddIncomeCategoryBloc {}
+class MockAddIncomeCategoryBloc extends Mock implements AddIncomeCategoryBloc;
 
 const expectedTranslations = {
-  'id': {
-    'title': 'Tambah Kategori Pendapatan',
-  },
-  'en': {
-    'title': 'Add Income Category',
-  },
+  'id': {'title': 'Tambah Kategori Pendapatan'},
+  'en': {'title': 'Add Income Category'},
 };
 
 void main() {
@@ -56,38 +52,28 @@ void main() {
   }
 
   group('Render', () {
-    testWidgets(
-      'provides AddIncomeCategoryBloc',
-      (tester) async {
-        await pumpWidget(tester);
+    testWidgets('provides AddIncomeCategoryBloc', (tester) async {
+      await pumpWidget(tester);
 
-        expect(
-          find.byType(BlocProvider<AddIncomeCategoryBloc>),
-          findsOneWidget,
-        );
-      },
-    );
+      expect(find.byType(BlocProvider<AddIncomeCategoryBloc>), findsOneWidget);
+    });
 
-    testWidgets(
-      'has AddIncomeCategoryView',
-      (tester) async {
-        await pumpWidget(tester);
+    testWidgets('has AddIncomeCategoryView', (tester) async {
+      await pumpWidget(tester);
 
-        expect(find.byType(AddIncomeCategoryView), findsOneWidget);
-      },
-    );
+      expect(find.byType(AddIncomeCategoryView), findsOneWidget);
+    });
 
     for (final locale in AppLocalizations.supportedLocales) {
       final expectedTitle =
           expectedTranslations[locale.languageCode]!['title']!;
-      testWidgets(
-        'shows $expectedTitle title for ${locale.languageCode}',
-        (tester) async {
-          await pumpWidget(tester, locale: locale);
+      testWidgets('shows $expectedTitle title for ${locale.languageCode}', (
+        tester,
+      ) async {
+        await pumpWidget(tester, locale: locale);
 
-          expect(find.text(expectedTitle), findsOneWidget);
-        },
-      );
+        expect(find.text(expectedTitle), findsOneWidget);
+      });
     }
   });
 }

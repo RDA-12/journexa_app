@@ -4,7 +4,7 @@ part of 'add_transaction_bloc.dart';
 @freezed
 sealed class AddTransactionEvent with _$AddTransactionEvent {
   /// Event to add a transfer transaction
-  const factory AddTransactionEvent.transfer({
+  const factory transfer({
     required Wallet source,
     required Wallet destination,
     required Decimal amount,
@@ -14,7 +14,7 @@ sealed class AddTransactionEvent with _$AddTransactionEvent {
   }) = _Transfer;
 
   /// Event to add an income transaction
-  const factory AddTransactionEvent.income({
+  const factory income({
     required Wallet wallet,
     required IncomeCategory category,
     required Decimal amount,
@@ -23,7 +23,7 @@ sealed class AddTransactionEvent with _$AddTransactionEvent {
   }) = _Income;
 
   /// Event to add an expense transaction
-  const factory AddTransactionEvent.expense({
+  const factory expense({
     required Wallet wallet,
     required ExpenseCategory category,
     required Decimal amount,

@@ -29,7 +29,7 @@ void main() {
   }) async {
     final formKey = GlobalKey<FormState>();
 
-    return pumpForWidgetTest(
+    return await pumpForWidgetTest(
       tester,
       locale: locale ?? const Locale('en'),
       widget: Form(
@@ -243,7 +243,7 @@ void main() {
     }) async {
       final formKey = GlobalKey<FormState>();
 
-      return pumpForWidgetTest(
+      return await pumpForWidgetTest(
         tester,
         locale: locale ?? const Locale('en'),
         widget: Form(
@@ -407,7 +407,7 @@ void main() {
     }) async {
       final formKey = GlobalKey<FormState>();
 
-      return pumpForWidgetTest(
+      return await pumpForWidgetTest(
         tester,
         locale: locale ?? const Locale('en'),
         widget: Form(

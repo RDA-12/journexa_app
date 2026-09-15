@@ -4,14 +4,14 @@ part of 'login_bloc.dart';
 @freezed
 class LoginState with _$LoginState {
   /// Initial state
-  const factory LoginState.initial() = _Initial;
+  const factory initial() = _Initial;
 
   /// Loading state
-  const factory LoginState.loading() = _Loading;
+  const factory loading() = _Loading;
 
   /// Success state
-  const factory LoginState.success() = _Success;
+  const factory success() = _Success;
 
   /// Failure state
-  const factory LoginState.failure(AppException error) = _Failure;
+  const factory failure(AppException error) = _Failure;
 }

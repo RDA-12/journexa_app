@@ -13,15 +13,11 @@ import 'package:mocktail/mocktail.dart';
 
 import '../util.dart';
 
-class MockAddWalletBloc extends Mock implements AddWalletBloc {}
+class MockAddWalletBloc extends Mock implements AddWalletBloc;
 
 const expectedTranslations = {
-  'id': {
-    'title': 'Tambah Dompet Baru',
-  },
-  'en': {
-    'title': 'Add New Wallet',
-  },
+  'id': {'title': 'Tambah Dompet Baru'},
+  'en': {'title': 'Add New Wallet'},
 };
 
 void main() {
@@ -46,9 +42,7 @@ void main() {
       tester,
       initialLocation: '/add-wallet-account',
       routes: {
-        '/add-wallet-account': AddWalletPage(
-          addWalletBloc: mockAddWalletBloc,
-        ),
+        '/add-wallet-account': AddWalletPage(addWalletBloc: mockAddWalletBloc),
         ...nextRoutes,
       },
       locale: locale,
@@ -56,35 +50,28 @@ void main() {
   }
 
   group('Render', () {
-    testWidgets(
-      'provides AddWalletBloc',
-      (tester) async {
-        await pumpWidget(tester);
+    testWidgets('provides AddWalletBloc', (tester) async {
+      await pumpWidget(tester);
 
-        expect(find.byType(BlocProvider<AddWalletBloc>), findsOneWidget);
-      },
-    );
+      expect(find.byType(BlocProvider<AddWalletBloc>), findsOneWidget);
+    });
 
-    testWidgets(
-      'has AddWalletView',
-      (tester) async {
-        await pumpWidget(tester);
+    testWidgets('has AddWalletView', (tester) async {
+      await pumpWidget(tester);
 
-        expect(find.byType(AddWalletView), findsOneWidget);
-      },
-    );
+      expect(find.byType(AddWalletView), findsOneWidget);
+    });
 
     for (final locale in AppLocalizations.supportedLocales) {
       final expectedTitle =
           expectedTranslations[locale.languageCode]!['title']!;
-      testWidgets(
-        'shows $expectedTitle title for ${locale.languageCode}',
-        (tester) async {
-          await pumpWidget(tester, locale: locale);
+      testWidgets('shows $expectedTitle title for ${locale.languageCode}', (
+        tester,
+      ) async {
+        await pumpWidget(tester, locale: locale);
 
-          expect(find.text(expectedTitle), findsOneWidget);
-        },
-      );
+        expect(find.text(expectedTitle), findsOneWidget);
+      });
     }
   });
 }

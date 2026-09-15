@@ -15,7 +15,7 @@ import 'package:rxdart/rxdart.dart';
 @LazySingleton(as: IJournalRepository)
 class DriftJournalRepository with Loggable implements IJournalRepository {
   /// Creates new [DriftJournalRepository]
-  DriftJournalRepository({required this._db});
+  new({required this._db});
 
   final AppLocalDatabase _db;
 

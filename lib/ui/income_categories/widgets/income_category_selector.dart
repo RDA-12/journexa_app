@@ -10,7 +10,7 @@ class IncomeCategorySelector extends StatefulWidget {
   ///
   /// It uses [IncomeCategoriesBloc] to search and fetch income categories.
   /// So, make sure to provide it with that bloc.
-  const IncomeCategorySelector({
+  const new({
     required this.isRequired,
     this.label,
     this.initialItems = const [],

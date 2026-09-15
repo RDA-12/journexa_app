@@ -12,7 +12,7 @@ import 'package:mocktail/mocktail.dart';
 
 import '../../util.dart';
 
-class MockWalletsBloc extends Mock implements WalletsBloc {}
+class MockWalletsBloc extends Mock implements WalletsBloc;
 
 void main() {
   late WalletsBloc mockWalletsBloc;

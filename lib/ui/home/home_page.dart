@@ -12,7 +12,7 @@ import 'package:journexa_app/ui/shared/theme.dart';
 /// Page that show when user is logged in
 class HomePage extends StatelessWidget with AppClockMixin {
   /// Creates new [HomePage]
-  const HomePage({
+  const new({
     this.homeBloc,
     super.key,
   });
@@ -37,7 +37,7 @@ class HomePage extends StatelessWidget with AppClockMixin {
 }
 
 class _HomeView extends StatelessWidget with AppClockMixin {
-  const _HomeView();
+  const new();
 
   @override
   Widget build(BuildContext context) {

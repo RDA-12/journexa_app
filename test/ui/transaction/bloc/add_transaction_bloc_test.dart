@@ -14,13 +14,13 @@ import 'package:journexa_app/shared/uid_generator.dart';
 import 'package:journexa_app/ui/transactions/bloc/add_transaction_bloc.dart';
 import 'package:mocktail/mocktail.dart';
 
-class MockUidGenerator extends Mock implements UidGenerator {}
+class MockUidGenerator extends Mock implements UidGenerator;
 
-class MockTransferMoneyUseCase extends Mock implements TransferMoneyUseCase {}
+class MockTransferMoneyUseCase extends Mock implements TransferMoneyUseCase;
 
-class MockAddIncomeUseCase extends Mock implements AddIncomeUseCase {}
+class MockAddIncomeUseCase extends Mock implements AddIncomeUseCase;
 
-class MockAddExpenseUseCase extends Mock implements AddExpenseUseCase {}
+class MockAddExpenseUseCase extends Mock implements AddExpenseUseCase;
 
 void main() {
   const traceId = 'traceId';

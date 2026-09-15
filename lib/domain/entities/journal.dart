@@ -9,7 +9,7 @@ part 'journal.freezed.dart';
 @freezed
 sealed class JournalEntry with _$JournalEntry {
   /// Creates new [JournalEntry]
-  factory JournalEntry({
+  factory({
     /// ID of the entry
     required String id,
 
@@ -22,7 +22,7 @@ sealed class JournalEntry with _$JournalEntry {
     /// Description of this entry
     String? description,
   }) = _JournalEntry;
-  JournalEntry._() {
+  new _() {
     final debit = lines.fold(Decimal.zero, (sum, line) => sum + line.debit);
     final credit = lines.fold(Decimal.zero, (sum, line) => sum + line.credit);
 
@@ -35,7 +35,7 @@ sealed class JournalEntry with _$JournalEntry {
   }
 
   /// Creates new [JournalEntry] for test purposes
-  factory JournalEntry.test({
+  factory test({
     required DateTime transactionDate,
     List<JournalEntryLine> lines = const [],
     String? description,
@@ -53,7 +53,7 @@ sealed class JournalEntry with _$JournalEntry {
 @freezed
 sealed class JournalEntryLine with _$JournalEntryLine {
   /// Creates new [JournalEntryLine]
-  const factory JournalEntryLine({
+  const factory({
     /// Account of this line
     required Account account,
 
@@ -63,9 +63,9 @@ sealed class JournalEntryLine with _$JournalEntryLine {
     /// Credit amount
     required Decimal credit,
   }) = _JournalEntryLine;
-  const JournalEntryLine._();
+  const new _();
 
-  factory JournalEntryLine.fromAccount({
+  factory fromAccount({
     required Account account,
     required Decimal amount,
   }) {
@@ -101,7 +101,7 @@ sealed class JournalEntryLine with _$JournalEntryLine {
     }
   }
 
-  factory JournalEntryLine.test() {
+  factory test() {
     return JournalEntryLine(
       account: Account.test(),
       debit: Decimal.zero,

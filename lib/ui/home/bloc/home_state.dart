@@ -19,7 +19,7 @@ enum HomeUIStatus {
 @freezed
 sealed class HomeWalletUIModel with _$HomeWalletUIModel {
   /// Creates new [HomeWalletUIModel]
-  const factory HomeWalletUIModel({
+  const factory({
     /// Wallet to be showed
     required Wallet wallet,
 
@@ -32,7 +32,7 @@ sealed class HomeWalletUIModel with _$HomeWalletUIModel {
 @freezed
 sealed class HomeWalletsUIModel with _$HomeWalletsUIModel {
   /// Creates new [HomeWalletsUIModel]
-  const factory HomeWalletsUIModel({
+  const factory({
     /// List of [HomeWalletUIModel]
     @Default([]) List<HomeWalletUIModel> wallets,
 
@@ -47,7 +47,7 @@ sealed class HomeWalletsUIModel with _$HomeWalletsUIModel {
 /// UI model for total MTD income, expense, and net cash flow
 @freezed
 sealed class HomeMTDDataUIModel with _$HomeMTDDataUIModel {
-  const factory HomeMTDDataUIModel({
+  const factory({
     /// Total income this month till this day
     required Decimal totalIncome,
 
@@ -60,13 +60,13 @@ sealed class HomeMTDDataUIModel with _$HomeMTDDataUIModel {
     /// Exception that happened during loading mtd data
     AppException? exception,
   }) = _HomeMTDDataUIModel;
-  const HomeMTDDataUIModel._();
+  const new _();
 }
 
 /// UI model for transactions data
 @freezed
 sealed class HomeTransactionsUIModel with _$HomeTransactionsUIModel {
-  const factory HomeTransactionsUIModel({
+  const factory({
     /// List loaded transactions data
     @Default([]) List<TransactionUIModel> transactions,
 
@@ -82,7 +82,7 @@ sealed class HomeTransactionsUIModel with _$HomeTransactionsUIModel {
 @freezed
 sealed class HomeState with _$HomeState {
   /// Creates new [HomeState]
-  factory HomeState({
+  factory({
     /// UI model for wallets
     @Default(HomeWalletsUIModel()) HomeWalletsUIModel wallets,
 
@@ -93,7 +93,7 @@ sealed class HomeState with _$HomeState {
     @Default(HomeTransactionsUIModel())
     HomeTransactionsUIModel transactionsData,
   }) = _HomeState;
-  HomeState._({HomeMTDDataUIModel? mtdData})
+  new _({HomeMTDDataUIModel? mtdData})
     : mtdData =
           mtdData ??
           HomeMTDDataUIModel(
@@ -101,6 +101,6 @@ sealed class HomeState with _$HomeState {
             totalExpense: Decimal.zero,
           );
 
-  @override
+  /// UI model for MTD data
   final HomeMTDDataUIModel mtdData;
 }

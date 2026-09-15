@@ -11,7 +11,7 @@ import 'package:journexa_app/ui/wallets/widgets/update_wallet_button.dart';
 /// Creates new [Card] to shows [WalletUIModel] data
 class WalletCard extends StatelessWidget {
   /// Creates new [WalletCard]
-  const WalletCard({
+  const new({
     required this.onDeletePressed,
     required this.data,
     required this.onUpdatePressed,

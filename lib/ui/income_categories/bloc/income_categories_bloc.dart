@@ -21,14 +21,14 @@ class IncomeCategoriesBloc
     extends Bloc<IncomeCategoriesEvent, IncomeCategoriesState>
     with Loggable, GenerateUid {
   /// Creates new [IncomeCategoriesBloc]
-  IncomeCategoriesBloc({
+  new({
     required this._watchIncomeCategories,
     required this._deleteIncomeCategory,
     required this._updateIncomeCategory,
   }) : super(const IncomeCategoriesState()) {
     on<_SubscriptionRequested>(
       (event, emit) async {
-        return _onSubscriptionRequested(
+        return await _onSubscriptionRequested(
           emit: emit,
           params: WatchIncomeCategoriesParams(query: event.query),
         );
@@ -37,12 +37,12 @@ class IncomeCategoriesBloc
     );
     on<_Delete>(
       (event, emit) async {
-        return _onDelete(category: event.category, emit: emit);
+        return await _onDelete(category: event.category, emit: emit);
       },
     );
     on<_Update>(
       (event, emit) async {
-        return _onUpdate(
+        return await _onUpdate(
           category: event.category,
           emit: emit,
           name: event.name,

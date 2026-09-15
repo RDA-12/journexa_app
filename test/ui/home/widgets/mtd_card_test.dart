@@ -33,14 +33,11 @@ void main() {
     WidgetTester tester, {
     Locale locale = const Locale('en'),
     MTDCardType? type,
-  }) async {
+  }) {
     return pumpForWidgetTest(
       tester,
       locale: locale,
-      widget: MTDCard(
-        type: type ?? MTDCardType.net,
-        data: balance,
-      ),
+      widget: MTDCard(type: type ?? MTDCardType.net, data: balance),
     );
   }
 
@@ -57,15 +54,12 @@ void main() {
 
       for (final type in MTDCardType.values) {
         final expectedLabel = translations['${type.name}Label']!;
-        testWidgets(
-          'shows $expectedLabel label for ${type.name} type '
-          'on ${locale.languageCode}',
-          (tester) async {
-            await pumpWidget(tester, locale: locale, type: type);
+        testWidgets('shows $expectedLabel label for ${type.name} type '
+            'on ${locale.languageCode}', (tester) async {
+          await pumpWidget(tester, locale: locale, type: type);
 
-            expect(find.text(expectedLabel), findsOneWidget);
-          },
-        );
+          expect(find.text(expectedLabel), findsOneWidget);
+        });
       }
     }
 
@@ -89,18 +83,15 @@ void main() {
       for (final type in MTDCardType.values) {
         final expectedBalance = translations['balance']!;
         final expectedLabel = translations['${type.name}Label']!;
-        testWidgets(
-          'has correct semantics for ${type.name} type '
-          'on ${locale.languageCode}',
-          (tester) async {
-            await pumpWidget(tester, locale: locale, type: type);
+        testWidgets('has correct semantics for ${type.name} type '
+            'on ${locale.languageCode}', (tester) async {
+          await pumpWidget(tester, locale: locale, type: type);
 
-            expect(
-              find.bySemanticsLabel('$expectedLabel\n$expectedBalance'),
-              findsOneWidget,
-            );
-          },
-        );
+          expect(
+            find.bySemanticsLabel('$expectedLabel\n$expectedBalance'),
+            findsOneWidget,
+          );
+        });
       }
     }
   });

@@ -13,7 +13,7 @@ class WalletsListView extends StatefulWidget {
   ///
   /// It reacts to [WalletsBloc]'s states changes.
   /// So, make sure to provide that bloc in the widget tree.
-  const WalletsListView({
+  const new({
     this.onAddPressed,
     super.key,
   });

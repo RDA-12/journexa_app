@@ -8,9 +8,9 @@ import 'package:journexa_app/ui/expense_categories/bloc/add_expense_category_blo
 import 'package:mocktail/mocktail.dart';
 
 class MockAddExpenseCategoryUseCase extends Mock
-    implements AddExpenseCategoryUseCase {}
+    implements AddExpenseCategoryUseCase;
 
-class MockUidGenerator extends Mock implements UidGenerator {}
+class MockUidGenerator extends Mock implements UidGenerator;
 
 void main() {
   const traceId = 'trace';

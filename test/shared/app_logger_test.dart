@@ -6,7 +6,7 @@ import 'package:journexa_app/shared/app_logger.dart';
 import 'package:logging/logging.dart';
 import 'package:mocktail/mocktail.dart';
 
-class MockLogger extends Mock implements Logger {}
+class MockLogger extends Mock implements Logger;
 
 void main() {
   late MockLogger mockLogger;

@@ -9,7 +9,7 @@ import 'package:mocktail/mocktail.dart';
 
 import '../util.dart';
 
-class MockAuthCheckBloc extends Mock implements AuthCheckBloc {}
+class MockAuthCheckBloc extends Mock implements AuthCheckBloc;
 
 void main() {
   late AuthCheckBloc mockAuthCheckBloc;
@@ -39,86 +39,61 @@ void main() {
   }
 
   group('Init', () {
-    testWidgets(
-      'add AuthCheckEvent.started on start',
-      (tester) async {
-        await pumpWidget(tester);
+    testWidgets('add AuthCheckEvent.started on start', (tester) async {
+      await pumpWidget(tester);
 
-        verify(
-          () => mockAuthCheckBloc.add(
-            const AuthCheckEvent.started(),
-          ),
-        ).called(1);
-      },
-    );
+      verify(() => mockAuthCheckBloc.add(const AuthCheckEvent.started()))
+          .called(1);
+    });
   });
 
   group('Render', () {
-    testWidgets(
-      'shows SplashBox',
-      (tester) async {
-        await pumpWidget(tester);
+    testWidgets('shows SplashBox', (tester) async {
+      await pumpWidget(tester);
 
-        expect(find.byType(SplashBox), findsOneWidget);
-      },
-    );
+      expect(find.byType(SplashBox), findsOneWidget);
+    });
 
-    testWidgets(
-      'provides AuthCheckBloc',
-      (tester) async {
-        await pumpWidget(tester);
+    testWidgets('provides AuthCheckBloc', (tester) async {
+      await pumpWidget(tester);
 
-        expect(find.byType(BlocProvider<AuthCheckBloc>), findsOneWidget);
-      },
-    );
+      expect(find.byType(BlocProvider<AuthCheckBloc>), findsOneWidget);
+    });
   });
 
-  group(
-    'Side Effect',
-    () {
-      testWidgets(
-        'go to initalize page when authenticated',
-        (tester) async {
-          whenListen(
-            mockAuthCheckBloc,
-            Stream.fromIterable([
-              const AuthCheckState.loading(),
-              const AuthCheckState.authenticated(),
-            ]),
-          );
-
-          const expectedPage = Scaffold(
-            key: ValueKey('initialize'),
-          );
-          await pumpWidget(tester, nextRoutes: {'/initialize': expectedPage});
-          await tester.pumpAndSettle();
-
-          expect(find.byKey(const ValueKey('initialize')), findsOneWidget);
-          expect(find.byType(SplashPage), findsNothing);
-        },
+  group('Side Effect', () {
+    testWidgets('go to initalize page when authenticated', (tester) async {
+      whenListen(
+        mockAuthCheckBloc,
+        Stream.fromIterable([
+          const AuthCheckState.loading(),
+          const AuthCheckState.authenticated(),
+        ]),
       );
 
-      testWidgets(
-        'go to login page when unauthenticated',
-        (tester) async {
-          whenListen(
-            mockAuthCheckBloc,
-            Stream.fromIterable([
-              const AuthCheckState.loading(),
-              const AuthCheckState.unauthenticated(),
-            ]),
-          );
+      const expectedPage = Scaffold(key: ValueKey('initialize'));
+      await pumpWidget(tester, nextRoutes: {'/initialize': expectedPage});
+      await tester.pumpAndSettle();
 
-          const expectedPage = Scaffold(
-            key: ValueKey('login'),
-          );
-          await pumpWidget(tester, nextRoutes: {'/login': expectedPage});
-          await tester.pumpAndSettle();
+      expect(find.byKey(const ValueKey('initialize')), findsOneWidget);
+      expect(find.byType(SplashPage), findsNothing);
+    });
 
-          expect(find.byKey(const ValueKey('login')), findsOneWidget);
-          expect(find.byType(SplashPage), findsNothing);
-        },
+    testWidgets('go to login page when unauthenticated', (tester) async {
+      whenListen(
+        mockAuthCheckBloc,
+        Stream.fromIterable([
+          const AuthCheckState.loading(),
+          const AuthCheckState.unauthenticated(),
+        ]),
       );
-    },
-  );
+
+      const expectedPage = Scaffold(key: ValueKey('login'));
+      await pumpWidget(tester, nextRoutes: {'/login': expectedPage});
+      await tester.pumpAndSettle();
+
+      expect(find.byKey(const ValueKey('login')), findsOneWidget);
+      expect(find.byType(SplashPage), findsNothing);
+    });
+  });
 }

@@ -12,7 +12,7 @@ part 'watch_transactions.freezed.dart';
 /// Params for [WatchTransactionsUseCase]
 @freezed
 sealed class WatchTransactionsParams with _$WatchTransactionsParams {
-  const factory WatchTransactionsParams({
+  const factory({
     Wallet? wallet,
     int? limit,
   }) = _WatchTransactionsParams;
@@ -24,7 +24,7 @@ class WatchTransactionsUseCase
     with Loggable
     implements StreamBaseUseCase<WatchTransactionsParams, List<Transaction>> {
   /// Creates new [WatchTransactionsUseCase]
-  WatchTransactionsUseCase({
+  new({
     required this._transactionRepository,
   });
 

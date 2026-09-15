@@ -9,7 +9,7 @@ class LoadingIndicator extends StatelessWidget {
   ///
   /// [semanticsLabel] is advised to be provided when the [LoadingIndicator]
   /// is stand alone (not wrapped in a widget that provides [semanticsLabel]).
-  const LoadingIndicator({
+  const new({
     this.size = 24,
     this.semanticsLabel,
     super.key,

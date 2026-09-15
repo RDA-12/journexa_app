@@ -14,16 +14,16 @@ import 'package:journexa_app/ui/shared/event_transform/event_transform.dart';
 import 'package:journexa_app/ui/wallets/bloc/wallets_bloc.dart';
 import 'package:mocktail/mocktail.dart';
 
-class MockWatchWalletsUseCase extends Mock implements WatchWalletsUseCase {}
+class MockWatchWalletsUseCase extends Mock implements WatchWalletsUseCase;
 
 class MockWatchCurrentBalanceUseCase extends Mock
-    implements WatchCurrentBalanceUseCase {}
+    implements WatchCurrentBalanceUseCase;
 
-class MockDeleteWalletUseCase extends Mock implements DeleteWalletUseCase {}
+class MockDeleteWalletUseCase extends Mock implements DeleteWalletUseCase;
 
-class MockUpdateWalletUseCase extends Mock implements UpdateWalletUseCase {}
+class MockUpdateWalletUseCase extends Mock implements UpdateWalletUseCase;
 
-class MockUidGenerator extends Mock implements UidGenerator {}
+class MockUidGenerator extends Mock implements UidGenerator;
 
 void main() {
   const traceId = 'traceId';

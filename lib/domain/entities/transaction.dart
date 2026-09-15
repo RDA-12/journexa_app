@@ -20,7 +20,7 @@ enum TransactionType {
 @freezed
 sealed class Transaction with _$Transaction {
   /// Creates new [IncomeTransaction]
-  factory Transaction.income({
+  factory income({
     /// Unique ID of this transaction
     required String id,
 
@@ -41,7 +41,7 @@ sealed class Transaction with _$Transaction {
   }) = IncomeTransaction;
 
   /// Creates new [ExpenseTransaction]
-  factory Transaction.expense({
+  factory expense({
     /// Unique ID of this transaction
     required String id,
 
@@ -62,7 +62,7 @@ sealed class Transaction with _$Transaction {
   }) = ExpenseTransaction;
 
   /// Creates new [TransferTransaction]
-  factory Transaction.transfer({
+  factory transfer({
     /// Unique ID of this transaction
     required String id,
 
@@ -88,7 +88,7 @@ sealed class Transaction with _$Transaction {
     String? notes,
   }) = TransferTransaction;
 
-  Transaction._() {
+  new _() {
     if (amount <= Decimal.zero) {
       throw AppException(
         'amount must be positive. Got: $amount',
@@ -116,7 +116,7 @@ sealed class Transaction with _$Transaction {
   }
 
   /// Creates new [IncomeTransaction] for test purposes
-  factory Transaction.testIncome({
+  factory testIncome({
     required Decimal amount,
     required DateTime date,
   }) {
@@ -131,7 +131,7 @@ sealed class Transaction with _$Transaction {
   }
 
   /// Creates new [ExpenseTransaction] for test purposes
-  factory Transaction.testExpense({
+  factory testExpense({
     required Decimal amount,
     required DateTime date,
   }) {
@@ -146,7 +146,7 @@ sealed class Transaction with _$Transaction {
   }
 
   /// Creates new [TransferTransaction] for test purposes
-  factory Transaction.testTransfer({
+  factory testTransfer({
     required Decimal amount,
     required DateTime date,
     required Decimal fee,

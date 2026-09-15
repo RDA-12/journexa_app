@@ -11,7 +11,7 @@ class WatchCurrentBalanceUseCase
     with Loggable
     implements StreamBaseUseCaseNoParams<Map<String, Decimal>> {
   /// Creates new [WatchCurrentBalanceUseCase]
-  WatchCurrentBalanceUseCase({
+  new({
     required this._journalRepository,
   });
 

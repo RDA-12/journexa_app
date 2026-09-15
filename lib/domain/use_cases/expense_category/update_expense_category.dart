@@ -11,7 +11,7 @@ part 'update_expense_category.freezed.dart';
 /// Params for [UpdateExpenseCategoryUseCase]
 @freezed
 sealed class UpdateExpenseCategoryParams with _$UpdateExpenseCategoryParams {
-  const factory UpdateExpenseCategoryParams({
+  const factory({
     /// ExpenseCategory that will be updated
     required ExpenseCategory category,
 
@@ -26,7 +26,7 @@ class UpdateExpenseCategoryUseCase
     with Loggable
     implements FutureBaseUseCase<UpdateExpenseCategoryParams, ExpenseCategory> {
   /// Creates new [UpdateExpenseCategoryUseCase]
-  UpdateExpenseCategoryUseCase({
+  new({
     required this._expenseCategoryRepository,
   });
 

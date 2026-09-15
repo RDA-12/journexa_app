@@ -10,7 +10,7 @@ class LoginWithGoogleUseCase
     with Loggable
     implements FutureBaseUseCaseNoParams<void> {
   /// Creates new [LoginWithGoogleUseCase]
-  LoginWithGoogleUseCase(this._authRepository);
+  new(this._authRepository);
 
   @override
   String get logTag => 'LoginWithGoogleUseCase';

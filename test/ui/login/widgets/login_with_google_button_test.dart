@@ -13,7 +13,7 @@ import 'package:mocktail/mocktail.dart';
 
 import '../../util.dart';
 
-class MockLoginBloc extends Mock implements LoginBloc {}
+class MockLoginBloc extends Mock implements LoginBloc;
 
 const expectedTranslations = {
   'en': {
@@ -53,14 +53,12 @@ void main() {
     required WidgetTester tester,
     required Locale locale,
     VoidCallback? onSuccess,
-  }) async {
+  }) {
     return pumpForWidgetTest(
       tester,
       widget: BlocProvider.value(
         value: mockLoginBloc,
-        child: LoginWithGoogleButton(
-          onSuccess: onSuccess,
-        ),
+        child: LoginWithGoogleButton(onSuccess: onSuccess),
       ),
       locale: locale,
     );
@@ -88,50 +86,71 @@ void main() {
       when(() => mockLoginBloc.state).thenReturn(const LoginState.loading());
       await pumpWidget(tester: tester, locale: const Locale('en'));
 
-      final button = tester.widget<OutlinedButton>(
-        find.byType(OutlinedButton),
-      );
+      final button = tester.widget<OutlinedButton>(find.byType(OutlinedButton));
       expect(button.enabled, false);
     });
 
-    testWidgets(
-      'shows Google icon when state is not loading',
-      (tester) async {
-        await pumpWidget(tester: tester, locale: const Locale('en'));
+    testWidgets('shows Google icon when state is not loading', (tester) async {
+      await pumpWidget(tester: tester, locale: const Locale('en'));
 
-        final icon = tester.widget<SvgPicture>(find.byType(SvgPicture));
-        expect(
-          icon.bytesLoader,
-          isA<SvgAssetLoader>().having(
-            (e) => e.assetName,
-            'assetName',
-            'assets/icons/google.svg',
-          ),
-        );
-      },
-    );
+      final icon = tester.widget<SvgPicture>(find.byType(SvgPicture));
+      expect(
+        icon.bytesLoader,
+        isA<SvgAssetLoader>().having(
+          (e) => e.assetName,
+          'assetName',
+          'assets/icons/google.svg',
+        ),
+      );
+    });
   });
 
   group('Interaction', () {
-    testWidgets(
-      'adding LoginEvent.loginWithGoogle() when pressed',
-      (tester) async {
-        when(() => mockLoginBloc.state).thenReturn(const LoginState.initial());
-        await pumpWidget(tester: tester, locale: const Locale('en'));
+    testWidgets('adding LoginEvent.loginWithGoogle() when pressed', (
+      tester,
+    ) async {
+      when(() => mockLoginBloc.state).thenReturn(const LoginState.initial());
+      await pumpWidget(tester: tester, locale: const Locale('en'));
 
-        await tester.tap(find.byType(LoginWithGoogleButton));
+      await tester.tap(find.byType(LoginWithGoogleButton));
 
-        verify(
-          () => mockLoginBloc.add(const LoginEvent.loginWithGoogle()),
-        ).called(1);
-      },
-    );
+      verify(() => mockLoginBloc.add(const LoginEvent.loginWithGoogle()))
+          .called(1);
+    });
   });
 
   group('Side Effects', () {
-    testWidgets(
-      'calls onSuccess when login with Google is suceeded',
-      (tester) async {
+    testWidgets('calls onSuccess when login with Google is suceeded', (
+      tester,
+    ) async {
+      whenListen(
+        mockLoginBloc,
+        Stream.fromIterable([
+          const LoginState.loading(),
+          const LoginState.success(),
+        ]),
+      );
+
+      var isSucceeded = false;
+      await pumpWidget(
+        tester: tester,
+        locale: const Locale('en'),
+        onSuccess: () => isSucceeded = true,
+      );
+
+      await tester.pumpAndSettle();
+
+      expect(isSucceeded, true);
+
+      await tester.pumpAndSettle(kToastDuration);
+    });
+
+    for (final locale in AppLocalizations.supportedLocales) {
+      final translations = expectedTranslations[locale.languageCode]!;
+      final expectedSuccessTitle = translations['loginSuccessTitle']!;
+      final expectedSuccessMessage = translations['loginSuccessMessage']!;
+      testWidgets('shows correct toast when state is success '
+          'for locale $locale', (tester) async {
         whenListen(
           mockLoginBloc,
           Stream.fromIterable([
@@ -140,70 +159,35 @@ void main() {
           ]),
         );
 
-        var isSucceeded = false;
-        await pumpWidget(
-          tester: tester,
-          locale: const Locale('en'),
-          onSuccess: () => isSucceeded = true,
-        );
-
+        await pumpWidget(tester: tester, locale: locale);
         await tester.pumpAndSettle();
 
-        expect(isSucceeded, true);
+        expect(find.text(expectedSuccessTitle), findsOneWidget);
+        expect(find.text(expectedSuccessMessage), findsOneWidget);
 
         await tester.pumpAndSettle(kToastDuration);
-      },
-    );
-
-    for (final locale in AppLocalizations.supportedLocales) {
-      final translations = expectedTranslations[locale.languageCode]!;
-      final expectedSuccessTitle = translations['loginSuccessTitle']!;
-      final expectedSuccessMessage = translations['loginSuccessMessage']!;
-      testWidgets(
-        'shows correct toast when state is success '
-        'for locale $locale',
-        (tester) async {
-          whenListen(
-            mockLoginBloc,
-            Stream.fromIterable([
-              const LoginState.loading(),
-              const LoginState.success(),
-            ]),
-          );
-
-          await pumpWidget(tester: tester, locale: locale);
-          await tester.pumpAndSettle();
-
-          expect(find.text(expectedSuccessTitle), findsOneWidget);
-          expect(find.text(expectedSuccessMessage), findsOneWidget);
-
-          await tester.pumpAndSettle(kToastDuration);
-        },
-      );
+      });
 
       final expectedFailureTitle = translations['loginFailedTitle']!;
       final expectedFailureMessage = translations['errorInternalException']!;
-      testWidgets(
-        'shows correct toast when state is failure '
-        'for locale $locale',
-        (tester) async {
-          whenListen(
-            mockLoginBloc,
-            Stream.fromIterable([
-              const LoginState.loading(),
-              LoginState.failure(AppException.test()),
-            ]),
-          );
+      testWidgets('shows correct toast when state is failure '
+          'for locale $locale', (tester) async {
+        whenListen(
+          mockLoginBloc,
+          Stream.fromIterable([
+            const LoginState.loading(),
+            LoginState.failure(AppException.test()),
+          ]),
+        );
 
-          await pumpWidget(tester: tester, locale: locale);
-          await tester.pumpAndSettle();
+        await pumpWidget(tester: tester, locale: locale);
+        await tester.pumpAndSettle();
 
-          expect(find.text(expectedFailureTitle), findsOneWidget);
-          expect(find.text(expectedFailureMessage), findsOneWidget);
+        expect(find.text(expectedFailureTitle), findsOneWidget);
+        expect(find.text(expectedFailureMessage), findsOneWidget);
 
-          await tester.pumpAndSettle(kToastDuration);
-        },
-      );
+        await tester.pumpAndSettle(kToastDuration);
+      });
     }
   });
 
@@ -223,74 +207,67 @@ void main() {
     for (final locale in AppLocalizations.supportedLocales) {
       final expectedLabel =
           expectedTranslations[locale.languageCode]!['label']!;
-      testWidgets(
-        'has semantic label "$expectedLabel" for $locale',
-        (tester) async {
-          final handle = tester.ensureSemantics();
-          await pumpWidget(tester: tester, locale: locale);
+      testWidgets('has semantic label "$expectedLabel" for $locale', (
+        tester,
+      ) async {
+        final handle = tester.ensureSemantics();
+        await pumpWidget(tester: tester, locale: locale);
 
-          expect(find.bySemanticsLabel(expectedLabel), findsOneWidget);
+        expect(find.bySemanticsLabel(expectedLabel), findsOneWidget);
 
-          handle.dispose();
-        },
-      );
+        handle.dispose();
+      });
 
       final translations = expectedTranslations[locale.languageCode]!;
       final expectedSuccessTitle = translations['loginSuccessTitle']!;
       final expectedSuccessMessage = translations['loginSuccessMessage']!;
-      testWidgets(
-        'has correct semantics on toast when state is success '
-        'for locale $locale',
-        (tester) async {
-          whenListen(
-            mockLoginBloc,
-            Stream.fromIterable([
-              const LoginState.loading(),
-              const LoginState.success(),
-            ]),
-          );
+      testWidgets('has correct semantics on toast when state is success '
+          'for locale $locale', (tester) async {
+        whenListen(
+          mockLoginBloc,
+          Stream.fromIterable([
+            const LoginState.loading(),
+            const LoginState.success(),
+          ]),
+        );
 
-          await pumpWidget(tester: tester, locale: locale);
-          await tester.pumpAndSettle();
+        await pumpWidget(tester: tester, locale: locale);
+        await tester.pumpAndSettle();
 
-          expect(
-            find.bySemanticsLabel(
-              '$expectedSuccessTitle\n$expectedSuccessMessage',
-            ),
-            findsOneWidget,
-          );
+        expect(
+          find.bySemanticsLabel(
+            '$expectedSuccessTitle\n$expectedSuccessMessage',
+          ),
+          findsOneWidget,
+        );
 
-          await tester.pumpAndSettle(kToastDuration);
-        },
-      );
+        await tester.pumpAndSettle(kToastDuration);
+      });
 
       final expectedFailureTitle = translations['loginFailedTitle']!;
       final expectedFailureMessage = translations['errorInternalException']!;
-      testWidgets(
-        'has correct semantics on toast when state is failure '
-        'for locale $locale',
-        (tester) async {
-          whenListen(
-            mockLoginBloc,
-            Stream.fromIterable([
-              const LoginState.loading(),
-              LoginState.failure(AppException.test()),
-            ]),
-          );
+      testWidgets('has correct semantics on toast when state is failure '
+          'for locale $locale', (tester) async {
+        whenListen(
+          mockLoginBloc,
+          Stream.fromIterable([
+            const LoginState.loading(),
+            LoginState.failure(AppException.test()),
+          ]),
+        );
 
-          await pumpWidget(tester: tester, locale: locale);
-          await tester.pumpAndSettle();
+        await pumpWidget(tester: tester, locale: locale);
+        await tester.pumpAndSettle();
 
-          expect(
-            find.bySemanticsLabel(
-              '$expectedFailureTitle\n$expectedFailureMessage',
-            ),
-            findsOneWidget,
-          );
+        expect(
+          find.bySemanticsLabel(
+            '$expectedFailureTitle\n$expectedFailureMessage',
+          ),
+          findsOneWidget,
+        );
 
-          await tester.pumpAndSettle(kToastDuration);
-        },
-      );
+        await tester.pumpAndSettle(kToastDuration);
+      });
     }
   });
 }

@@ -8,7 +8,7 @@ import 'package:journexa_app/ui/wallets/widgets/wallet_form.dart';
 /// Creates new [AppButton] that will shows [WalletForm]
 class UpdateWalletButton extends StatelessWidget {
   /// Creates new [UpdateWalletButton]
-  const UpdateWalletButton({
+  const new({
     required this.wallet,
     required this.isUpdating,
     required this.onUpdatePressed,

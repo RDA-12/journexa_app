@@ -29,7 +29,7 @@ void main() {
     void Function(String name)? onSavePressed,
     bool isSaving = false,
     Wallet? initialWallet,
-  }) async {
+  }) {
     return pumpForWidgetTest(
       tester,
       locale: locale,

@@ -9,7 +9,7 @@ import 'package:journexa_app/ui/shared/theme.dart';
 /// Typically used to shows actions or buttons.
 class AppExceptionBox extends StatelessWidget {
   /// Creates new [AppExceptionBox]
-  const AppExceptionBox({
+  const new({
     this.title,
     this.description,
     this.bottom,

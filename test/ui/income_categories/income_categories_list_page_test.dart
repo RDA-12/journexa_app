@@ -11,15 +11,11 @@ import 'package:mocktail/mocktail.dart';
 
 import '../util.dart';
 
-class MockIncomeCategoriesBloc extends Mock implements IncomeCategoriesBloc {}
+class MockIncomeCategoriesBloc extends Mock implements IncomeCategoriesBloc;
 
 final expectedTranslations = {
-  'id': {
-    'title': 'Daftar Kategori Pendapatan',
-  },
-  'en': {
-    'title': 'Income Categories List',
-  },
+  'id': {'title': 'Daftar Kategori Pendapatan'},
+  'en': {'title': 'Income Categories List'},
 };
 
 void main() {
@@ -69,56 +65,46 @@ void main() {
   });
 
   group('Render', () {
-    testWidgets(
-      'provides IncomeCategoriesBloc',
-      (tester) async {
-        await pumpWidget(tester);
+    testWidgets('provides IncomeCategoriesBloc', (tester) async {
+      await pumpWidget(tester);
 
-        expect(find.byType(BlocProvider<IncomeCategoriesBloc>), findsOneWidget);
-      },
-    );
+      expect(find.byType(BlocProvider<IncomeCategoriesBloc>), findsOneWidget);
+    });
 
     for (final locale in AppLocalizations.supportedLocales) {
       final expectedTitle =
           expectedTranslations[locale.languageCode]!['title']!;
-      testWidgets(
-        'shows $expectedTitle title for ${locale.languageCode}',
-        (tester) async {
-          await pumpWidget(tester, locale: locale);
+      testWidgets('shows $expectedTitle title for ${locale.languageCode}', (
+        tester,
+      ) async {
+        await pumpWidget(tester, locale: locale);
 
-          expect(find.text(expectedTitle), findsOneWidget);
-        },
-      );
+        expect(find.text(expectedTitle), findsOneWidget);
+      });
     }
 
-    testWidgets(
-      'has IncomeCategoriesListView',
-      (tester) async {
-        await pumpWidget(tester);
+    testWidgets('has IncomeCategoriesListView', (tester) async {
+      await pumpWidget(tester);
 
-        expect(find.byType(IncomeCategoriesListView), findsOneWidget);
-      },
-    );
+      expect(find.byType(IncomeCategoriesListView), findsOneWidget);
+    });
   });
 
   group('Interactions', () {
-    testWidgets(
-      'navigates to /add-income-category when add button pressed',
-      (tester) async {
-        await pumpWidget(
-          tester,
-          nextRoutes: {
-            '/add-income-category': const Placeholder(),
-          },
-        );
+    testWidgets('navigates to /add-income-category when add button pressed', (
+      tester,
+    ) async {
+      await pumpWidget(
+        tester,
+        nextRoutes: {'/add-income-category': const Placeholder()},
+      );
 
-        final finder = find.byType(AppIconButton);
-        await tester.tap(finder);
-        await tester.pumpAndSettle();
+      final finder = find.byType(AppIconButton);
+      await tester.tap(finder);
+      await tester.pumpAndSettle();
 
-        expect(find.byType(Placeholder), findsOneWidget);
-      },
-    );
+      expect(find.byType(Placeholder), findsOneWidget);
+    });
   });
 
   group('a11y', () {
@@ -137,43 +123,40 @@ void main() {
   });
 
   group('Side Effects', () {
-    testWidgets(
-      'add IncomeCategoriesBlocEvent.subscriptionRequested '
-      'after going back from add income category page',
-      (tester) async {
-        await pumpWidget(
-          tester,
-          nextRoutes: {
-            '/add-income-category': Scaffold(
-              key: const ValueKey('add-income-category-page'),
-              appBar: AppBar(),
-            ),
-          },
-        );
-
-        final finder = find.byType(AppIconButton);
-        await tester.tap(finder);
-        await tester.pumpAndSettle();
-
-        expect(
-          find.byKey(const ValueKey('add-income-category-page')),
-          findsOneWidget,
-        );
-
-        await tester.tap(find.backButton());
-        await tester.pumpAndSettle();
-
-        expect(
-          find.byKey(const ValueKey('add-income-category-page')),
-          findsNothing,
-        );
-
-        verify(
-          () => mockIncomeCategoriesBloc.add(
-            const IncomeCategoriesEvent.subscriptionRequested(),
+    testWidgets('add IncomeCategoriesBlocEvent.subscriptionRequested '
+        'after going back from add income category page', (tester) async {
+      await pumpWidget(
+        tester,
+        nextRoutes: {
+          '/add-income-category': Scaffold(
+            key: const ValueKey('add-income-category-page'),
+            appBar: AppBar(),
           ),
-        ).called(2);
-      },
-    );
+        },
+      );
+
+      final finder = find.byType(AppIconButton);
+      await tester.tap(finder);
+      await tester.pumpAndSettle();
+
+      expect(
+        find.byKey(const ValueKey('add-income-category-page')),
+        findsOneWidget,
+      );
+
+      await tester.tap(find.backButton());
+      await tester.pumpAndSettle();
+
+      expect(
+        find.byKey(const ValueKey('add-income-category-page')),
+        findsNothing,
+      );
+
+      verify(
+        () => mockIncomeCategoriesBloc.add(
+          const IncomeCategoriesEvent.subscriptionRequested(),
+        ),
+      ).called(2);
+    });
   });
 }

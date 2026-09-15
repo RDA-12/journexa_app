@@ -5,7 +5,7 @@ import 'package:journexa_app/ui/shared/theme.dart';
 /// Creates [Column] contains app name on top of app tagline
 class LoginHeader extends StatelessWidget {
   /// Creates new [LoginHeader]
-  const LoginHeader({super.key});
+  const new({super.key});
 
   @override
   Widget build(BuildContext context) {

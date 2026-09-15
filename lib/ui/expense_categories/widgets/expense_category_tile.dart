@@ -23,7 +23,7 @@ typedef OnUpdatePressed =
 /// Creates [ListTile] to shows [category]
 class ExpenseCategoryTile extends StatelessWidget {
   /// Creates new [ExpenseCategoryTile]
-  const ExpenseCategoryTile({
+  const new({
     required this.isDeleting,
     required this.isUpdating,
     required this.category,

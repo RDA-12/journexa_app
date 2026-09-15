@@ -11,7 +11,7 @@ part 'transaction_ui_model.freezed.dart';
 @freezed
 sealed class TransactionUIModel with _$TransactionUIModel {
   /// Creates new [IncomeTransaction]
-  factory TransactionUIModel.income({
+  factory income({
     /// Unique ID of this transaction
     required String id,
 
@@ -32,7 +32,7 @@ sealed class TransactionUIModel with _$TransactionUIModel {
   }) = _IncomeTransactionUIModel;
 
   /// Creates new [ExpenseTransaction]
-  factory TransactionUIModel.expense({
+  factory expense({
     /// Unique ID of this transaction
     required String id,
 
@@ -53,7 +53,7 @@ sealed class TransactionUIModel with _$TransactionUIModel {
   }) = _ExpenseTransactionUIModel;
 
   /// Creates new [TransferTransaction]
-  factory TransactionUIModel.transfer({
+  factory transfer({
     /// Unique ID of this transaction
     required String id,
 

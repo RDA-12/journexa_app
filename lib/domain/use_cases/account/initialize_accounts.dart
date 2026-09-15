@@ -14,7 +14,7 @@ class InitializeAccountsUseCase
     with Loggable
     implements FutureBaseUseCaseNoParams<void> {
   /// Creates new [InitializeAccountsUseCase]
-  InitializeAccountsUseCase({
+  new({
     required this._accountRepository,
   });
 

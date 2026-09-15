@@ -4,5 +4,5 @@ part of 'login_bloc.dart';
 @freezed
 class LoginEvent with _$LoginEvent {
   /// Event for logging in with google account
-  const factory LoginEvent.loginWithGoogle() = _LoginWithGoogle;
+  const factory loginWithGoogle() = _LoginWithGoogle;
 }

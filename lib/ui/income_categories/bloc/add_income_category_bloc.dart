@@ -17,7 +17,7 @@ class AddIncomeCategoryBloc
     extends Bloc<AddIncomeCategoryEvent, AddIncomeCategoryState>
     with Loggable, GenerateUid {
   /// Creates new [AddIncomeCategoryBloc]
-  AddIncomeCategoryBloc({
+  new({
     required this._addIncomeCategory,
   }) : super(const AddIncomeCategoryState.initial()) {
     on<_Submit>((event, emit) {

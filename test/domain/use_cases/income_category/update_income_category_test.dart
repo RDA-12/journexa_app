@@ -8,7 +8,7 @@ import 'package:journexa_app/shared/app_result.dart';
 import 'package:mocktail/mocktail.dart';
 
 class MockIncomeCategoryRepository extends Mock
-    implements IIncomeCategoryRepository {}
+    implements IIncomeCategoryRepository;
 
 void main() {
   const traceId = 'traceId';

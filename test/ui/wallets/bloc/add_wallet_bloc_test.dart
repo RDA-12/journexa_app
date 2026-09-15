@@ -7,9 +7,9 @@ import 'package:journexa_app/shared/uid_generator.dart';
 import 'package:journexa_app/ui/wallets/bloc/add_wallet_bloc.dart';
 import 'package:mocktail/mocktail.dart';
 
-class MockAddWalletUseCase extends Mock implements AddWalletUseCase {}
+class MockAddWalletUseCase extends Mock implements AddWalletUseCase;
 
-class MockUidGenerator extends Mock implements UidGenerator {}
+class MockUidGenerator extends Mock implements UidGenerator;
 
 void main() {
   const traceId = 'trace';

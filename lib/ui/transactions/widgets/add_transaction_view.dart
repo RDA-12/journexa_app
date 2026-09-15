@@ -15,7 +15,7 @@ class AddTransactionView extends StatelessWidget {
   ///
   /// It will interacts with [AddTransactionBloc].
   /// So, make sure it provided with that bloc.
-  const AddTransactionView({required this.type, super.key});
+  const new({required this.type, super.key});
 
   /// Type of [Transaction] that will be added
   final TransactionType type;

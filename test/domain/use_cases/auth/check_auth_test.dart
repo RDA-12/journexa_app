@@ -5,7 +5,7 @@ import 'package:journexa_app/shared/app_exception.dart';
 import 'package:journexa_app/shared/app_result.dart';
 import 'package:mocktail/mocktail.dart';
 
-class MockAuthRepository extends Mock implements IAuthRepository {}
+class MockAuthRepository extends Mock implements IAuthRepository;
 
 void main() {
   const traceId = 'trace';

@@ -14,7 +14,7 @@ class AppLogger {
   /// Creates new [AppLogger] with optional [logger]
   ///
   /// [name] will be ignored when [logger] provided
-  AppLogger(String name, {Logger? logger}) : _logger = logger ?? Logger(name);
+  new(String name, {Logger? logger}) : _logger = logger ?? Logger(name);
 
   final Logger _logger;
 
@@ -28,7 +28,7 @@ class AppLogger {
       if (data is LogMessage) {
         debugPrint(
           '[${data.traceId}] '
-          '${data.timestamp?.dateTimeFormat} [${data.level.name}] '
+          '${data.timestamp.dateTimeFormat} [${data.level.name}] '
           '${data.name}: ${data.message}',
         );
         if (data.extras != null) {
@@ -128,7 +128,7 @@ class AppLogger {
 @freezed
 sealed class LogMessage with _$LogMessage {
   /// Creates new [LogMessage]
-  factory LogMessage({
+  factory({
     /// Logger name
     required String name,
 
@@ -148,14 +148,13 @@ sealed class LogMessage with _$LogMessage {
     /// Log timestamp
     DateTime? timestamp,
   }) = _LogMessage;
-  LogMessage._({DateTime? timestamp}) : timestamp = timestamp ?? clock.now();
+  new _({DateTime? timestamp}) : timestamp = timestamp ?? clock.now();
 
   /// Creates [LogMessage] from [json]
-  factory LogMessage.fromJson(Map<String, dynamic> json) =>
-      _$LogMessageFromJson(json);
+  factory fromJson(Map<String, dynamic> json) => _$LogMessageFromJson(json);
 
-  @override
-  final DateTime? timestamp;
+  /// Log timestamp
+  final DateTime timestamp;
 }
 
 /// Converts [level] to [String]

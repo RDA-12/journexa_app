@@ -7,35 +7,24 @@ import 'package:journexa_app/ui/splash/widgets/splash_box.dart';
 import '../../util.dart';
 
 const expectedTranslations = {
-  'id': {
-    'label': 'Membuka aplidompeti Journexa',
-  },
-  'en': {
-    'label': 'Opening Journexa app',
-  },
+  'id': {'label': 'Membuka aplidompeti Journexa'},
+  'en': {'label': 'Opening Journexa app'},
 };
 
 void main() {
   Future<void> pumpWidget(
     WidgetTester tester, {
     Locale locale = const Locale('id'),
-  }) async {
-    return pumpForWidgetTest(
-      tester,
-      locale: locale,
-      widget: const SplashBox(),
-    );
+  }) {
+    return pumpForWidgetTest(tester, locale: locale, widget: const SplashBox());
   }
 
   group('Render', () {
-    testWidgets(
-      'shows AppLogo',
-      (tester) async {
-        await pumpWidget(tester);
+    testWidgets('shows AppLogo', (tester) async {
+      await pumpWidget(tester);
 
-        expect(find.byType(AppLogo), findsOneWidget);
-      },
-    );
+      expect(find.byType(AppLogo), findsOneWidget);
+    });
   });
 
   group('a11y', () {

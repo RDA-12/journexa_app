@@ -8,9 +8,9 @@ import 'package:journexa_app/ui/income_categories/bloc/add_income_category_bloc.
 import 'package:mocktail/mocktail.dart';
 
 class MockAddIncomeCategoryUseCase extends Mock
-    implements AddIncomeCategoryUseCase {}
+    implements AddIncomeCategoryUseCase;
 
-class MockUidGenerator extends Mock implements UidGenerator {}
+class MockUidGenerator extends Mock implements UidGenerator;
 
 void main() {
   const traceId = 'trace';

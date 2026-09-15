@@ -12,9 +12,9 @@ import 'package:journexa_app/shared/uid_generator.dart';
 import 'package:mocktail/mocktail.dart';
 
 class MockTransactionRepository extends Mock
-    implements ITransactionRepository {}
+    implements ITransactionRepository;
 
-class MockUidGenerator extends Mock implements UidGenerator {}
+class MockUidGenerator extends Mock implements UidGenerator;
 
 void main() {
   const traceId = 'traceId';

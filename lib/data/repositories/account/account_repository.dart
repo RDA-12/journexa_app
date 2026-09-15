@@ -13,7 +13,7 @@ import 'package:mock_exceptions/mock_exceptions.dart';
 @LazySingleton(as: IAccountRepository)
 class DriftAccountRepository with Loggable implements IAccountRepository {
   /// Creates new [DriftAccountRepository]
-  DriftAccountRepository({required this._db});
+  new({required this._db});
 
   @override
   String get logTag => 'DriftAccountRepository';

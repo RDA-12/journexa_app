@@ -13,7 +13,7 @@ import 'package:mocktail/mocktail.dart';
 
 import '../../util.dart';
 
-class MockAddWalletBloc extends Mock implements AddWalletBloc {}
+class MockAddWalletBloc extends Mock implements AddWalletBloc;
 
 final expectedTranslations = {
   'id': {

@@ -10,7 +10,7 @@ import 'package:journexa_app/ui/shared/widgets/app_responsive.dart';
 /// Page to shows list of expense categories saved by current user
 class ExpenseCategoriesListPage extends StatelessWidget {
   /// Creates new [ExpenseCategoriesListPage]
-  const ExpenseCategoriesListPage({
+  const new({
     this.expenseCategoriesBloc,
     super.key,
   });
@@ -32,7 +32,7 @@ class ExpenseCategoriesListPage extends StatelessWidget {
 }
 
 class _ExpenseCategoriesListView extends StatelessWidget {
-  const _ExpenseCategoriesListView();
+  const new();
 
   @override
   Widget build(BuildContext context) {

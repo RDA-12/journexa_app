@@ -14,7 +14,7 @@ class InitializingBox extends StatelessWidget {
   ///
   /// It reacts to [InitializeBloc] states.
   /// Make sure to provide [InitializeBloc] in the tree.
-  const InitializingBox({super.key});
+  const new({super.key});
 
   @override
   Widget build(BuildContext context) {

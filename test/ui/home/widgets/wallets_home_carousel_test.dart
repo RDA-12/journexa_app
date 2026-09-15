@@ -15,7 +15,7 @@ import 'package:mocktail/mocktail.dart';
 
 import '../../util.dart';
 
-class MockHomeBloc extends Mock implements HomeBloc {}
+class MockHomeBloc extends Mock implements HomeBloc;
 
 final expectedTranslations = {
   'id': {

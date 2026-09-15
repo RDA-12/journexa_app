@@ -11,7 +11,7 @@ part 'watch_income_categories.freezed.dart';
 /// Params for [WatchIncomeCategoriesUseCase]
 @freezed
 sealed class WatchIncomeCategoriesParams with _$WatchIncomeCategoriesParams {
-  const factory WatchIncomeCategoriesParams({
+  const factory({
     String? query,
   }) = _WatchIncomeCategoriesParams;
 }
@@ -24,7 +24,7 @@ class WatchIncomeCategoriesUseCase
     implements
         StreamBaseUseCase<WatchIncomeCategoriesParams, List<IncomeCategory>> {
   /// Creates new [WatchIncomeCategoriesUseCase]
-  WatchIncomeCategoriesUseCase({
+  new({
     required this._incomeCategoryRepository,
   });
 

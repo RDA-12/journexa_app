@@ -11,15 +11,11 @@ import 'package:mocktail/mocktail.dart';
 
 import '../util.dart';
 
-class MockWalletsBloc extends Mock implements WalletsBloc {}
+class MockWalletsBloc extends Mock implements WalletsBloc;
 
 final expectedTranslations = {
-  'id': {
-    'title': 'Daftar Dompet',
-  },
-  'en': {
-    'title': 'Wallet List',
-  },
+  'id': {'title': 'Daftar Dompet'},
+  'en': {'title': 'Wallet List'},
 };
 
 void main() {
@@ -44,9 +40,7 @@ void main() {
       tester,
       initialLocation: '/wallet-accounts',
       routes: {
-        '/wallet-accounts': WalletsListPage(
-          walletsBloc: mockWalletsBloc,
-        ),
+        '/wallet-accounts': WalletsListPage(walletsBloc: mockWalletsBloc),
         ...nextRoutes,
       },
       locale: locale,
@@ -54,71 +48,58 @@ void main() {
   }
 
   group('Init', () {
-    testWidgets(
-      'add WalletsEvent.subscriptionRequested event on start',
-      (tester) async {
-        await pumpWidget(tester);
+    testWidgets('add WalletsEvent.subscriptionRequested event on start', (
+      tester,
+    ) async {
+      await pumpWidget(tester);
 
-        verify(
-          () => mockWalletsBloc.add(
-            const WalletsEvent.subscriptionRequested(),
-          ),
-        ).called(1);
-      },
-    );
+      verify(
+        () => mockWalletsBloc.add(const WalletsEvent.subscriptionRequested()),
+      ).called(1);
+    });
   });
 
   group('Render', () {
-    testWidgets(
-      'provides WalletsBloc',
-      (tester) async {
-        await pumpWidget(tester);
+    testWidgets('provides WalletsBloc', (tester) async {
+      await pumpWidget(tester);
 
-        expect(find.byType(BlocProvider<WalletsBloc>), findsOneWidget);
-      },
-    );
+      expect(find.byType(BlocProvider<WalletsBloc>), findsOneWidget);
+    });
 
     for (final locale in AppLocalizations.supportedLocales) {
       final expectedTitle =
           expectedTranslations[locale.languageCode]!['title']!;
-      testWidgets(
-        'shows $expectedTitle title for ${locale.languageCode}',
-        (tester) async {
-          await pumpWidget(tester, locale: locale);
+      testWidgets('shows $expectedTitle title for ${locale.languageCode}', (
+        tester,
+      ) async {
+        await pumpWidget(tester, locale: locale);
 
-          expect(find.text(expectedTitle), findsOneWidget);
-        },
-      );
+        expect(find.text(expectedTitle), findsOneWidget);
+      });
     }
 
-    testWidgets(
-      'has WalletsListView',
-      (tester) async {
-        await pumpWidget(tester);
+    testWidgets('has WalletsListView', (tester) async {
+      await pumpWidget(tester);
 
-        expect(find.byType(WalletsListView), findsOneWidget);
-      },
-    );
+      expect(find.byType(WalletsListView), findsOneWidget);
+    });
   });
 
   group('Interactions', () {
-    testWidgets(
-      'navigates to /wallet-accounts when add button pressed',
-      (tester) async {
-        await pumpWidget(
-          tester,
-          nextRoutes: {
-            '/add-wallet-account': const Placeholder(),
-          },
-        );
+    testWidgets('navigates to /wallet-accounts when add button pressed', (
+      tester,
+    ) async {
+      await pumpWidget(
+        tester,
+        nextRoutes: {'/add-wallet-account': const Placeholder()},
+      );
 
-        final finder = find.byType(AppIconButton);
-        await tester.tap(finder);
-        await tester.pumpAndSettle();
+      final finder = find.byType(AppIconButton);
+      await tester.tap(finder);
+      await tester.pumpAndSettle();
 
-        expect(find.byType(Placeholder), findsOneWidget);
-      },
-    );
+      expect(find.byType(Placeholder), findsOneWidget);
+    });
   });
 
   group('a11y', () {
@@ -137,37 +118,32 @@ void main() {
   });
 
   group('Side Effects', () {
-    testWidgets(
-      'add WalletsBlocEvent.subscriptionRequested '
-      'after going back from add wallet page',
-      (tester) async {
-        await pumpWidget(
-          tester,
-          nextRoutes: {
-            '/add-wallet-account': Scaffold(
-              key: const ValueKey('add-wallet-page'),
-              appBar: AppBar(),
-            ),
-          },
-        );
-
-        final finder = find.byType(AppIconButton);
-        await tester.tap(finder);
-        await tester.pumpAndSettle();
-
-        expect(find.byKey(const ValueKey('add-wallet-page')), findsOneWidget);
-
-        await tester.tap(find.backButton());
-        await tester.pumpAndSettle();
-
-        expect(find.byKey(const ValueKey('add-wallet-page')), findsNothing);
-
-        verify(
-          () => mockWalletsBloc.add(
-            const WalletsEvent.subscriptionRequested(),
+    testWidgets('add WalletsBlocEvent.subscriptionRequested '
+        'after going back from add wallet page', (tester) async {
+      await pumpWidget(
+        tester,
+        nextRoutes: {
+          '/add-wallet-account': Scaffold(
+            key: const ValueKey('add-wallet-page'),
+            appBar: AppBar(),
           ),
-        ).called(2);
-      },
-    );
+        },
+      );
+
+      final finder = find.byType(AppIconButton);
+      await tester.tap(finder);
+      await tester.pumpAndSettle();
+
+      expect(find.byKey(const ValueKey('add-wallet-page')), findsOneWidget);
+
+      await tester.tap(find.backButton());
+      await tester.pumpAndSettle();
+
+      expect(find.byKey(const ValueKey('add-wallet-page')), findsNothing);
+
+      verify(
+        () => mockWalletsBloc.add(const WalletsEvent.subscriptionRequested()),
+      ).called(2);
+    });
   });
 }

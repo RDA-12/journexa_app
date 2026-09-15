@@ -10,7 +10,7 @@ class ExpenseCategorySelector extends StatefulWidget {
   ///
   /// It uses [ExpenseCategoriesBloc] to search and fetch expense categories.
   /// So, make sure to provide it with that bloc.
-  const ExpenseCategorySelector({
+  const new({
     required this.isRequired,
     this.label,
     this.initialItems = const [],

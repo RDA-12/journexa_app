@@ -11,7 +11,7 @@ import 'package:mocktail/mocktail.dart';
 
 import '../../util.dart';
 
-class MockIncomeCategoriesBloc extends Mock implements IncomeCategoriesBloc {}
+class MockIncomeCategoriesBloc extends Mock implements IncomeCategoriesBloc;
 
 void main() {
   late IncomeCategoriesBloc mockIncomeCategoriesBloc;

@@ -23,7 +23,7 @@ part 'wallets_state.dart';
 class WalletsBloc extends Bloc<WalletsEvent, WalletsState>
     with GenerateUid, Loggable {
   /// Creates new [WalletsBloc]
-  WalletsBloc({
+  new({
     required this._watchWallets,
     required this._watchAccountBalances,
     required this._deleteWallet,
@@ -31,7 +31,7 @@ class WalletsBloc extends Bloc<WalletsEvent, WalletsState>
   }) : super(const WalletsState()) {
     on<_SubscriptionRequested>(
       (event, emit) async {
-        return _onSubscriptionRequested(
+        return await _onSubscriptionRequested(
           emit: emit,
           params: WatchWalletsParams(query: event.query),
         );
@@ -40,12 +40,12 @@ class WalletsBloc extends Bloc<WalletsEvent, WalletsState>
     );
     on<_Delete>(
       (event, emit) async {
-        return _onDelete(wallet: event.wallet, emit: emit);
+        return await _onDelete(wallet: event.wallet, emit: emit);
       },
     );
     on<_Update>(
       (event, emit) async {
-        return _onUpdate(
+        return await _onUpdate(
           wallet: event.wallet,
           emit: emit,
           name: event.name,

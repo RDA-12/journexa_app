@@ -9,7 +9,7 @@ import 'package:journexa_app/ui/shared/widgets/app_responsive.dart';
 /// Page to add new income category
 class AddIncomeCategoryPage extends StatelessWidget {
   /// Creates new [AddIncomeCategoryPage]
-  const AddIncomeCategoryPage({super.key, this.addIncomeCategoryBloc});
+  const new({super.key, this.addIncomeCategoryBloc});
 
   /// [AddIncomeCategoryBloc] to be provided in widget tree.
   ///

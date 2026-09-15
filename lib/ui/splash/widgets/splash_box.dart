@@ -7,7 +7,7 @@ import 'package:journexa_app/ui/shared/widgets/app_logo.dart';
 /// It will set semantics label on the AppLogo
 class SplashBox extends StatelessWidget {
   /// Creates new [SplashBox]
-  const SplashBox({super.key});
+  const new({super.key});
 
   @override
   Widget build(BuildContext context) {

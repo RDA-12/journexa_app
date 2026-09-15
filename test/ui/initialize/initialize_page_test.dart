@@ -9,7 +9,7 @@ import 'package:mocktail/mocktail.dart';
 
 import '../util.dart';
 
-class MockInitializeBloc extends Mock implements InitializeBloc {}
+class MockInitializeBloc extends Mock implements InitializeBloc;
 
 void main() {
   late InitializeBloc mockInitializeBloc;
@@ -32,9 +32,7 @@ void main() {
       tester,
       initialLocation: '/initialize',
       routes: {
-        '/initialize': InitializePage(
-          initializeBloc: mockInitializeBloc,
-        ),
+        '/initialize': InitializePage(initializeBloc: mockInitializeBloc),
         ...nextRoutes,
       },
       locale: const Locale('en'),
@@ -42,62 +40,46 @@ void main() {
   }
 
   group('Init', () {
-    testWidgets(
-      'add InitializeEvent.initialize on start',
-      (tester) async {
-        await pumpWidget(tester);
+    testWidgets('add InitializeEvent.initialize on start', (tester) async {
+      await pumpWidget(tester);
 
-        verify(
-          () => mockInitializeBloc.add(const InitializeEvent.initialize()),
-        ).called(1);
-      },
-    );
+      verify(() => mockInitializeBloc.add(const InitializeEvent.initialize()))
+          .called(1);
+    });
   });
 
   group('Render', () {
-    testWidgets(
-      'provides InitializeBloc',
-      (tester) async {
-        await pumpWidget(tester);
+    testWidgets('provides InitializeBloc', (tester) async {
+      await pumpWidget(tester);
 
-        expect(find.byType(BlocProvider<InitializeBloc>), findsOneWidget);
-      },
-    );
+      expect(find.byType(BlocProvider<InitializeBloc>), findsOneWidget);
+    });
 
-    testWidgets(
-      'has InitializingBox',
-      (tester) async {
-        await pumpWidget(tester);
+    testWidgets('has InitializingBox', (tester) async {
+      await pumpWidget(tester);
 
-        expect(find.byType(InitializingBox), findsOneWidget);
-      },
-    );
+      expect(find.byType(InitializingBox), findsOneWidget);
+    });
   });
 
   group('Side Effects', () {
-    testWidgets(
-      'go to home page when initialization succeeded',
-      (tester) async {
-        whenListen(
-          mockInitializeBloc,
-          Stream.fromIterable([
-            const InitializeState.loading(),
-            const InitializeState.initialized(),
-          ]),
-        );
+    testWidgets('go to home page when initialization succeeded', (
+      tester,
+    ) async {
+      whenListen(
+        mockInitializeBloc,
+        Stream.fromIterable([
+          const InitializeState.loading(),
+          const InitializeState.initialized(),
+        ]),
+      );
 
-        const expectedPage = Scaffold(key: ValueKey('homepage'));
-        await pumpWidget(
-          tester,
-          nextRoutes: {
-            '/home': expectedPage,
-          },
-        );
-        await tester.pumpAndSettle();
+      const expectedPage = Scaffold(key: ValueKey('homepage'));
+      await pumpWidget(tester, nextRoutes: {'/home': expectedPage});
+      await tester.pumpAndSettle();
 
-        expect(find.byKey(const ValueKey('homepage')), findsOneWidget);
-        expect(find.byType(InitializePage), findsNothing);
-      },
-    );
+      expect(find.byKey(const ValueKey('homepage')), findsOneWidget);
+      expect(find.byType(InitializePage), findsNothing);
+    });
   });
 }

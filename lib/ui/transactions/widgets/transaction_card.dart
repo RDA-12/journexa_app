@@ -8,7 +8,7 @@ import 'package:journexa_app/ui/shared/widgets/widgets.dart';
 /// Creates new [AppCard] to shows Transaction data
 class TransactionCard extends StatelessWidget {
   /// Creates new [TransactionCard]
-  const TransactionCard({
+  const new({
     required this.data,
     super.key,
   });

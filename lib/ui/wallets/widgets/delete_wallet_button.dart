@@ -9,7 +9,7 @@ import 'package:journexa_app/ui/shared/widgets/app_dialog.dart';
 /// of deleting wallet
 class DeleteWalletButton extends StatelessWidget {
   /// Creates new [DeleteWalletButton]
-  const DeleteWalletButton({
+  const new({
     required this.wallet,
     this.onDeletePressed,
     this.isDeleting = false,

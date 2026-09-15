@@ -19,17 +19,17 @@ import 'package:journexa_app/ui/transactions/bloc/transactions_bloc.dart';
 import 'package:mocktail/mocktail.dart';
 
 class MockWatchTransactionsUseCase extends Mock
-    implements WatchTransactionsUseCase {}
+    implements WatchTransactionsUseCase;
 
-class MockWatchWalletsUseCase extends Mock implements WatchWalletsUseCase {}
+class MockWatchWalletsUseCase extends Mock implements WatchWalletsUseCase;
 
 class MockWatchIncomeCategoriesUseCase extends Mock
-    implements WatchIncomeCategoriesUseCase {}
+    implements WatchIncomeCategoriesUseCase;
 
 class MockWatchExpenseCategoriesUseCase extends Mock
-    implements WatchExpenseCategoriesUseCase {}
+    implements WatchExpenseCategoriesUseCase;
 
-class MockUidGenerator extends Mock implements UidGenerator {}
+class MockUidGenerator extends Mock implements UidGenerator;
 
 void main() {
   const traceId = 'traceId';

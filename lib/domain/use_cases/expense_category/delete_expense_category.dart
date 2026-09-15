@@ -12,7 +12,7 @@ part 'delete_expense_category.freezed.dart';
 @freezed
 sealed class DeleteExpenseCategoryParams with _$DeleteExpenseCategoryParams {
   /// Creates new [DeleteExpenseCategoryParams]
-  const factory DeleteExpenseCategoryParams({
+  const factory({
     /// [ExpenseCategory] that will be deleted
     required ExpenseCategory category,
   }) = _DeleteExpenseCategoryParams;
@@ -24,7 +24,7 @@ class DeleteExpenseCategoryUseCase
     with Loggable
     implements FutureBaseUseCase<DeleteExpenseCategoryParams, Null> {
   /// Creates new [DeleteExpenseCategoryUseCase]
-  DeleteExpenseCategoryUseCase({
+  new({
     required this._expenseCategoryRepository,
   });
 

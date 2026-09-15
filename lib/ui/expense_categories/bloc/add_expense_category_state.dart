@@ -4,16 +4,16 @@ part of 'add_expense_category_bloc.dart';
 @freezed
 class AddExpenseCategoryState with _$AddExpenseCategoryState {
   /// Initial state
-  const factory AddExpenseCategoryState.initial() = _Initial;
+  const factory initial() = _Initial;
 
   /// State when adding new expense category
-  const factory AddExpenseCategoryState.loading() = _Loading;
+  const factory loading() = _Loading;
 
   /// State when expense category has been added successfully
-  const factory AddExpenseCategoryState.added() = _Added;
+  const factory added() = _Added;
 
   /// State when adding new expense category has failed
-  const factory AddExpenseCategoryState.failure(
+  const factory failure(
     AppException exc, {
     String? name,
   }) = _Failure;

@@ -10,7 +10,7 @@ import 'package:journexa_app/shared/app_result.dart';
 @LazySingleton(as: IAuthRepository)
 class FirebaseAuthRepository with Loggable implements IAuthRepository {
   /// Creates new [FirebaseAuthRepository]
-  FirebaseAuthRepository({required this._auth, required this._googleSignIn});
+  new({required this._auth, required this._googleSignIn});
 
   @override
   String get logTag => 'FirebaseAuthRepository';

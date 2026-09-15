@@ -11,15 +11,11 @@ import 'package:mocktail/mocktail.dart';
 
 import '../util.dart';
 
-class MockExpenseCategoriesBloc extends Mock implements ExpenseCategoriesBloc {}
+class MockExpenseCategoriesBloc extends Mock implements ExpenseCategoriesBloc;
 
 final expectedTranslations = {
-  'id': {
-    'title': 'Daftar Kategori Pengeluaran',
-  },
-  'en': {
-    'title': 'Expense Categories List',
-  },
+  'id': {'title': 'Daftar Kategori Pengeluaran'},
+  'en': {'title': 'Expense Categories List'},
 };
 
 void main() {
@@ -69,59 +65,46 @@ void main() {
   });
 
   group('Render', () {
-    testWidgets(
-      'provides ExpenseCategoriesBloc',
-      (tester) async {
-        await pumpWidget(tester);
+    testWidgets('provides ExpenseCategoriesBloc', (tester) async {
+      await pumpWidget(tester);
 
-        expect(
-          find.byType(BlocProvider<ExpenseCategoriesBloc>),
-          findsOneWidget,
-        );
-      },
-    );
+      expect(find.byType(BlocProvider<ExpenseCategoriesBloc>), findsOneWidget);
+    });
 
     for (final locale in AppLocalizations.supportedLocales) {
       final expectedTitle =
           expectedTranslations[locale.languageCode]!['title']!;
-      testWidgets(
-        'shows $expectedTitle title for ${locale.languageCode}',
-        (tester) async {
-          await pumpWidget(tester, locale: locale);
+      testWidgets('shows $expectedTitle title for ${locale.languageCode}', (
+        tester,
+      ) async {
+        await pumpWidget(tester, locale: locale);
 
-          expect(find.text(expectedTitle), findsOneWidget);
-        },
-      );
+        expect(find.text(expectedTitle), findsOneWidget);
+      });
     }
 
-    testWidgets(
-      'has ExpenseCategoriesListView',
-      (tester) async {
-        await pumpWidget(tester);
+    testWidgets('has ExpenseCategoriesListView', (tester) async {
+      await pumpWidget(tester);
 
-        expect(find.byType(ExpenseCategoriesListView), findsOneWidget);
-      },
-    );
+      expect(find.byType(ExpenseCategoriesListView), findsOneWidget);
+    });
   });
 
   group('Interactions', () {
-    testWidgets(
-      'navigates to /add-expense-category when add button pressed',
-      (tester) async {
-        await pumpWidget(
-          tester,
-          nextRoutes: {
-            '/add-expense-category': const Placeholder(),
-          },
-        );
+    testWidgets('navigates to /add-expense-category when add button pressed', (
+      tester,
+    ) async {
+      await pumpWidget(
+        tester,
+        nextRoutes: {'/add-expense-category': const Placeholder()},
+      );
 
-        final finder = find.byType(AppIconButton);
-        await tester.tap(finder);
-        await tester.pumpAndSettle();
+      final finder = find.byType(AppIconButton);
+      await tester.tap(finder);
+      await tester.pumpAndSettle();
 
-        expect(find.byType(Placeholder), findsOneWidget);
-      },
-    );
+      expect(find.byType(Placeholder), findsOneWidget);
+    });
   });
 
   group('a11y', () {
@@ -140,43 +123,40 @@ void main() {
   });
 
   group('Side Effects', () {
-    testWidgets(
-      'add ExpenseCategoriesBlocEvent.load '
-      'after going back from add expense category page',
-      (tester) async {
-        await pumpWidget(
-          tester,
-          nextRoutes: {
-            '/add-expense-category': Scaffold(
-              key: const ValueKey('add-expense-category-page'),
-              appBar: AppBar(),
-            ),
-          },
-        );
-
-        final finder = find.byType(AppIconButton);
-        await tester.tap(finder);
-        await tester.pumpAndSettle();
-
-        expect(
-          find.byKey(const ValueKey('add-expense-category-page')),
-          findsOneWidget,
-        );
-
-        await tester.tap(find.backButton());
-        await tester.pumpAndSettle();
-
-        expect(
-          find.byKey(const ValueKey('add-expense-category-page')),
-          findsNothing,
-        );
-
-        verify(
-          () => mockExpenseCategoriesBloc.add(
-            const ExpenseCategoriesEvent.subscriptionRequested(),
+    testWidgets('add ExpenseCategoriesBlocEvent.load '
+        'after going back from add expense category page', (tester) async {
+      await pumpWidget(
+        tester,
+        nextRoutes: {
+          '/add-expense-category': Scaffold(
+            key: const ValueKey('add-expense-category-page'),
+            appBar: AppBar(),
           ),
-        ).called(2);
-      },
-    );
+        },
+      );
+
+      final finder = find.byType(AppIconButton);
+      await tester.tap(finder);
+      await tester.pumpAndSettle();
+
+      expect(
+        find.byKey(const ValueKey('add-expense-category-page')),
+        findsOneWidget,
+      );
+
+      await tester.tap(find.backButton());
+      await tester.pumpAndSettle();
+
+      expect(
+        find.byKey(const ValueKey('add-expense-category-page')),
+        findsNothing,
+      );
+
+      verify(
+        () => mockExpenseCategoriesBloc.add(
+          const ExpenseCategoriesEvent.subscriptionRequested(),
+        ),
+      ).called(2);
+    });
   });
 }

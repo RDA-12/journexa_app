@@ -17,7 +17,7 @@ class AddExpenseCategoryBloc
     extends Bloc<AddExpenseCategoryEvent, AddExpenseCategoryState>
     with Loggable, GenerateUid {
   /// Creates new [AddExpenseCategoryBloc]
-  AddExpenseCategoryBloc({
+  new({
     required this._addExpenseCategory,
   }) : super(const AddExpenseCategoryState.initial()) {
     on<_Submit>((event, emit) {

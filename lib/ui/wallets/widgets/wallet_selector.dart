@@ -10,7 +10,7 @@ class WalletSelector extends StatefulWidget {
   ///
   /// It uses [WalletsBloc] to search and fetch wallets.
   /// So, make sure to provide it with that bloc.
-  const WalletSelector({
+  const new({
     required this.isRequired,
     this.label,
     this.initialItems = const [],

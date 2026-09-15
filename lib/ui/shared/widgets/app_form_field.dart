@@ -9,7 +9,7 @@ import 'package:journexa_app/ui/shared/theme.dart';
 /// Creates new [TextFormField] to allows users input something
 class AppFormField extends StatelessWidget {
   /// Creates new [AppFormField]
-  const AppFormField({
+  const new({
     required this.isRequired,
     this.readOnly = false,
     this.icon,
@@ -117,7 +117,7 @@ class AppFormField extends StatelessWidget {
 /// Controller for [AppDecimalFormField]
 final class AppDecimalController extends ChangeNotifier {
   /// Creates new [AppDecimalController]
-  AppDecimalController({Decimal? initialValue})
+  new({Decimal? initialValue})
     : _value = initialValue,
       _textEditingController = TextEditingController(
         text: initialValue?.toLocalizedString('en'),
@@ -177,7 +177,7 @@ final class AppDecimalController extends ChangeNotifier {
 /// Creates new [TextFormField] for decimal input
 class AppDecimalFormField extends StatefulWidget {
   /// Creates new [AppDecimalFormField]
-  const AppDecimalFormField({
+  const new({
     required this.isRequired,
     this.readOnly = false,
     this.icon,
@@ -247,7 +247,7 @@ class _AppDecimalFormFieldState extends State<AppDecimalFormField> {
 /// Controller for [AppDateTimeFormField]
 final class AppDateTimeController extends ChangeNotifier {
   /// Creates new [AppDateTimeController]
-  AppDateTimeController({DateTime? initialValue})
+  new({DateTime? initialValue})
     : _textEditingController = TextEditingController(
         text: initialValue?.dateTimeFormat,
       ),
@@ -273,7 +273,7 @@ final class AppDateTimeController extends ChangeNotifier {
 /// Creates new [TextFormField] for date time input
 class AppDateTimeFormField extends StatefulWidget {
   /// Creates new [AppDateTimeFormField]
-  const AppDateTimeFormField({
+  const new({
     required this.isRequired,
     this.readOnly = false,
     this.icon,

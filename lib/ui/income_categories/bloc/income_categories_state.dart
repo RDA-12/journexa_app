@@ -35,13 +35,13 @@ enum IncomeCategoryUIStatus {
 @freezed
 sealed class IncomeCategoryUINotice with _$IncomeCategoryUINotice {
   /// Creates new [IncomeCategoryUINotice] as deleted notice
-  const factory IncomeCategoryUINotice.recentlyDeleted({
+  const factory recentlyDeleted({
     /// The [IncomeCategory] that was recently deleted
     required IncomeCategory category,
   }) = _IncomeCategoryUINoticeRecentlyDeleted;
 
   /// Creates new [IncomeCategoryUINotice] as updated notice
-  const factory IncomeCategoryUINotice.recentlyUpdated({
+  const factory recentlyUpdated({
     /// Old [IncomeCategory]
     required IncomeCategory from,
 
@@ -50,7 +50,7 @@ sealed class IncomeCategoryUINotice with _$IncomeCategoryUINotice {
   }) = _IncomeCategoryUINoticeRecentlyUpdated;
 
   /// Creates new [IncomeCategoryUINotice] as delete failed notice
-  const factory IncomeCategoryUINotice.deleteFailed({
+  const factory deleteFailed({
     /// [IncomeCategory] that meant to be deleted
     required IncomeCategory category,
 
@@ -59,7 +59,7 @@ sealed class IncomeCategoryUINotice with _$IncomeCategoryUINotice {
   }) = _IncomeCategoryUINoticeDeleteFailed;
 
   /// Creates new [IncomeCategoryUINotice] as update failed notice
-  const factory IncomeCategoryUINotice.updateFailed({
+  const factory updateFailed({
     /// [IncomeCategory] that meant to be updated
     required IncomeCategory category,
 
@@ -71,7 +71,7 @@ sealed class IncomeCategoryUINotice with _$IncomeCategoryUINotice {
 /// Extends [IncomeCategory] to includes state for UI
 @freezed
 sealed class IncomeCategoryUIModel with _$IncomeCategoryUIModel {
-  const factory IncomeCategoryUIModel({
+  const factory({
     /// The [IncomeCategory]
     required IncomeCategory category,
 
@@ -84,7 +84,7 @@ sealed class IncomeCategoryUIModel with _$IncomeCategoryUIModel {
 @freezed
 sealed class IncomeCategoriesState with _$IncomeCategoriesState {
   /// Creates new [IncomeCategoriesState]
-  const factory IncomeCategoriesState({
+  const factory({
     /// Status of the state
     @Default(IncomeCategoriesUIStatus.initial) IncomeCategoriesUIStatus status,
 
@@ -98,5 +98,5 @@ sealed class IncomeCategoriesState with _$IncomeCategoriesState {
     IncomeCategoryUINotice? notice,
   }) = _IncomeCategoriesState;
 
-  const IncomeCategoriesState._();
+  const new _();
 }

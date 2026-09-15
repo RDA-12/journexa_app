@@ -15,7 +15,7 @@ import 'package:mocktail/mocktail.dart';
 
 import '../util.dart';
 
-class MockHomeBloc extends Mock implements HomeBloc {}
+class MockHomeBloc extends Mock implements HomeBloc;
 
 final expectedTranslations = {
   'en': {
@@ -50,9 +50,7 @@ void main() {
       tester,
       initialLocation: '/home',
       routes: {
-        '/home': HomePage(
-          homeBloc: mockHomeBloc,
-        ),
+        '/home': HomePage(homeBloc: mockHomeBloc),
         ...nextRoutes,
       },
       locale: locale,
@@ -60,35 +58,29 @@ void main() {
   }
 
   group('Init', () {
-    testWidgets(
-      'add HomeEvent.subscriptionsRequested event on start',
-      (tester) async {
+    testWidgets('add HomeEvent.subscriptionsRequested event on start', (
+      tester,
+    ) async {
+      await pumpWidget(tester);
+
+      verify(
+        () => mockHomeBloc.add(const HomeEvent.walletsSubscriptionRequested()),
+      ).called(1);
+    });
+
+    testWidgets('add HomeEvent.mtdSubscriptionRequested event on start '
+        'with current date', (tester) async {
+      final now = DateTime.now();
+      await withClock(Clock.fixed(now), () async {
         await pumpWidget(tester);
 
         verify(
           () => mockHomeBloc.add(
-            const HomeEvent.walletsSubscriptionRequested(),
+            HomeEvent.mtdSubscriptionRequested(targetDate: now),
           ),
         ).called(1);
-      },
-    );
-
-    testWidgets(
-      'add HomeEvent.mtdSubscriptionRequested event on start '
-      'with current date',
-      (tester) async {
-        final now = DateTime.now();
-        await withClock(Clock.fixed(now), () async {
-          await pumpWidget(tester);
-
-          verify(
-            () => mockHomeBloc.add(
-              HomeEvent.mtdSubscriptionRequested(targetDate: now),
-            ),
-          ).called(1);
-        });
-      },
-    );
+      });
+    });
 
     testWidgets(
       'add HomeEvent.transactionsSubscriptionRequested event on start '
@@ -109,133 +101,106 @@ void main() {
   });
 
   group('Render', () {
-    testWidgets(
-      'provides HomeBloc',
-      (tester) async {
-        await pumpWidget(tester);
+    testWidgets('provides HomeBloc', (tester) async {
+      await pumpWidget(tester);
 
-        expect(find.byType(BlocProvider<HomeBloc>), findsOneWidget);
-      },
-    );
+      expect(find.byType(BlocProvider<HomeBloc>), findsOneWidget);
+    });
 
-    testWidgets(
-      'has WalletsHomeCarousel',
-      (tester) async {
-        await pumpWidget(tester);
+    testWidgets('has WalletsHomeCarousel', (tester) async {
+      await pumpWidget(tester);
 
-        expect(find.byType(WalletsHomeCarousel), findsOneWidget);
-      },
-    );
+      expect(find.byType(WalletsHomeCarousel), findsOneWidget);
+    });
 
-    testWidgets(
-      'has MTDSection',
-      (tester) async {
-        await pumpWidget(tester);
+    testWidgets('has MTDSection', (tester) async {
+      await pumpWidget(tester);
 
-        expect(find.byType(MTDSection), findsOneWidget);
-      },
-    );
+      expect(find.byType(MTDSection), findsOneWidget);
+    });
 
-    testWidgets(
-      'has HomeTransactionsList',
-      (tester) async {
-        await pumpWidget(tester);
+    testWidgets('has HomeTransactionsList', (tester) async {
+      await pumpWidget(tester);
 
-        expect(find.byType(HomeTransactionsList), findsOneWidget);
-      },
-    );
+      expect(find.byType(HomeTransactionsList), findsOneWidget);
+    });
 
     for (final locale in AppLocalizations.supportedLocales) {
       final translations = expectedTranslations[locale.languageCode]!;
 
       final mtdTitle = translations['mtdTitle']!;
-      testWidgets(
-        'shows $mtdTitle for ${locale.languageCode}',
-        (tester) async {
-          await pumpWidget(tester, locale: locale);
+      testWidgets('shows $mtdTitle for ${locale.languageCode}', (tester) async {
+        await pumpWidget(tester, locale: locale);
 
-          expect(find.text(mtdTitle), findsOneWidget);
-        },
-      );
+        expect(find.text(mtdTitle), findsOneWidget);
+      });
 
       final transactionsListTitle = translations['transactionsListTitle']!;
-      testWidgets(
-        'shows $transactionsListTitle for ${locale.languageCode}',
-        (tester) async {
-          await pumpWidget(tester, locale: locale);
+      testWidgets('shows $transactionsListTitle for ${locale.languageCode}', (
+        tester,
+      ) async {
+        await pumpWidget(tester, locale: locale);
 
-          expect(find.text(transactionsListTitle), findsOneWidget);
-        },
-      );
+        expect(find.text(transactionsListTitle), findsOneWidget);
+      });
     }
   });
 
   group('Interactions', () {
-    testWidgets(
-      'add HomeBloc.mtdSubscriptionRequested '
-      'and HomeBloc.transactionsSubscriptionRequested '
-      'when wallet changed on WalletsHomeCarouse',
-      (tester) async {
-        final now = DateTime.now();
-        final wallet = Wallet.test();
-        whenListen(
-          mockHomeBloc,
-          const Stream<HomeState>.empty(),
-          initialState: HomeState(
-            wallets: HomeWalletsUIModel(
-              status: HomeUIStatus.loaded,
-              wallets: [
-                HomeWalletUIModel(
-                  wallet: wallet,
-                  balance: Decimal.zero,
-                ),
-                HomeWalletUIModel(
-                  wallet: wallet.copyWith(id: '1'),
-                  balance: Decimal.zero,
-                ),
-                HomeWalletUIModel(
-                  wallet: wallet.copyWith(id: '2'),
-                  balance: Decimal.zero,
-                ),
-              ],
-            ),
-            mtdData: HomeMTDDataUIModel(
-              totalIncome: Decimal.zero,
-              totalExpense: Decimal.zero,
-              status: HomeUIStatus.loaded,
-            ),
-            transactionsData: const HomeTransactionsUIModel(
-              status: HomeUIStatus.loaded,
-            ),
+    testWidgets('add HomeBloc.mtdSubscriptionRequested '
+        'and HomeBloc.transactionsSubscriptionRequested '
+        'when wallet changed on WalletsHomeCarouse', (tester) async {
+      final now = DateTime.now();
+      final wallet = Wallet.test();
+      whenListen(
+        mockHomeBloc,
+        const Stream<HomeState>.empty(),
+        initialState: HomeState(
+          wallets: HomeWalletsUIModel(
+            status: HomeUIStatus.loaded,
+            wallets: [
+              HomeWalletUIModel(wallet: wallet, balance: Decimal.zero),
+              HomeWalletUIModel(
+                wallet: wallet.copyWith(id: '1'),
+                balance: Decimal.zero,
+              ),
+              HomeWalletUIModel(
+                wallet: wallet.copyWith(id: '2'),
+                balance: Decimal.zero,
+              ),
+            ],
           ),
-        );
+          mtdData: HomeMTDDataUIModel(
+            totalIncome: Decimal.zero,
+            totalExpense: Decimal.zero,
+            status: HomeUIStatus.loaded,
+          ),
+          transactionsData: const HomeTransactionsUIModel(
+            status: HomeUIStatus.loaded,
+          ),
+        ),
+      );
 
-        await withClock(Clock.fixed(now), () async {
-          await pumpWidget(tester);
+      await withClock(Clock.fixed(now), () async {
+        await pumpWidget(tester);
 
-          final carouselFinder = find.byType(WalletsHomeCarousel);
-          expect(carouselFinder, findsOneWidget);
-          await tester.fling(carouselFinder, const Offset(-300, 0), 1000);
-          await tester.pumpAndSettle();
+        final carouselFinder = find.byType(WalletsHomeCarousel);
+        expect(carouselFinder, findsOneWidget);
+        await tester.fling(carouselFinder, const Offset(-300, 0), 1000);
+        await tester.pumpAndSettle();
 
-          verify(
-            () => mockHomeBloc.add(
-              HomeEvent.mtdSubscriptionRequested(
-                targetDate: now,
-                wallet: wallet,
-              ),
-            ),
-          ).called(1);
-          verify(
-            () => mockHomeBloc.add(
-              HomeEvent.transactionsSubscriptionRequested(
-                wallet: wallet,
-              ),
-            ),
-          ).called(1);
-        });
-      },
-    );
+        verify(
+          () => mockHomeBloc.add(
+            HomeEvent.mtdSubscriptionRequested(targetDate: now, wallet: wallet),
+          ),
+        ).called(1);
+        verify(
+          () => mockHomeBloc.add(
+            HomeEvent.transactionsSubscriptionRequested(wallet: wallet),
+          ),
+        ).called(1);
+      });
+    });
   });
 
   group('a11y', () {

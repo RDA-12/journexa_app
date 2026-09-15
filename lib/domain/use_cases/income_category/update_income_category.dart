@@ -11,7 +11,7 @@ part 'update_income_category.freezed.dart';
 /// Params for [UpdateIncomeCategoryUseCase]
 @freezed
 sealed class UpdateIncomeCategoryParams with _$UpdateIncomeCategoryParams {
-  const factory UpdateIncomeCategoryParams({
+  const factory({
     /// IncomeCategory code that will be updated
     required IncomeCategory category,
 
@@ -26,7 +26,7 @@ class UpdateIncomeCategoryUseCase
     with Loggable
     implements FutureBaseUseCase<UpdateIncomeCategoryParams, IncomeCategory> {
   /// Creates new [UpdateIncomeCategoryUseCase]
-  UpdateIncomeCategoryUseCase({
+  new({
     required this._incomeCategoryRepository,
   });
 

@@ -4,5 +4,5 @@ part of 'initialize_bloc.dart';
 @freezed
 class InitializeEvent with _$InitializeEvent {
   /// Event to start initializing
-  const factory InitializeEvent.initialize() = _Initialize;
+  const factory initialize() = _Initialize;
 }

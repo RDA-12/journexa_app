@@ -10,7 +10,7 @@ import 'package:mocktail/mocktail.dart';
 
 import '../util.dart';
 
-class MockLoginBloc extends Mock implements LoginBloc {}
+class MockLoginBloc extends Mock implements LoginBloc;
 
 void main() {
   final LoginBloc mockLoginBloc = MockLoginBloc();
@@ -24,9 +24,7 @@ void main() {
       locale: const Locale('en'),
       initialLocation: '/login',
       routes: {
-        '/login': LoginPage(
-          loginBloc: mockLoginBloc,
-        ),
+        '/login': LoginPage(loginBloc: mockLoginBloc),
         ...nextRoutes,
       },
     );
@@ -46,58 +44,43 @@ void main() {
   });
 
   group('Render', () {
-    testWidgets(
-      'provides LoginBloc',
-      (tester) async {
-        await pumpPage(tester);
+    testWidgets('provides LoginBloc', (tester) async {
+      await pumpPage(tester);
 
-        expect(find.byType(BlocProvider<LoginBloc>), findsOneWidget);
-      },
-    );
+      expect(find.byType(BlocProvider<LoginBloc>), findsOneWidget);
+    });
 
-    testWidgets(
-      'has LoginWithGoogleButton',
-      (tester) async {
-        await pumpPage(tester);
+    testWidgets('has LoginWithGoogleButton', (tester) async {
+      await pumpPage(tester);
 
-        expect(find.byType(LoginWithGoogleButton), findsOneWidget);
-      },
-    );
+      expect(find.byType(LoginWithGoogleButton), findsOneWidget);
+    });
 
-    testWidgets(
-      'has LoginHeader',
-      (tester) async {
-        await pumpPage(tester);
+    testWidgets('has LoginHeader', (tester) async {
+      await pumpPage(tester);
 
-        expect(find.byType(LoginHeader), findsOneWidget);
-      },
-    );
+      expect(find.byType(LoginHeader), findsOneWidget);
+    });
   });
 
   group('Side Effects', () {
-    testWidgets(
-      'go to initialize page when user log in succeeded',
-      (tester) async {
-        whenListen(
-          mockLoginBloc,
-          Stream.fromIterable([
-            const LoginState.loading(),
-            const LoginState.success(),
-          ]),
-        );
+    testWidgets('go to initialize page when user log in succeeded', (
+      tester,
+    ) async {
+      whenListen(
+        mockLoginBloc,
+        Stream.fromIterable([
+          const LoginState.loading(),
+          const LoginState.success(),
+        ]),
+      );
 
-        const expectedPage = Scaffold(key: ValueKey('initialize'));
-        await pumpPage(
-          tester,
-          nextRoutes: {
-            '/initialize': expectedPage,
-          },
-        );
-        await tester.pumpAndSettle(kToastDuration);
+      const expectedPage = Scaffold(key: ValueKey('initialize'));
+      await pumpPage(tester, nextRoutes: {'/initialize': expectedPage});
+      await tester.pumpAndSettle(kToastDuration);
 
-        expect(find.byKey(const ValueKey('initialize')), findsOneWidget);
-        expect(find.byType(LoginPage), findsNothing);
-      },
-    );
+      expect(find.byKey(const ValueKey('initialize')), findsOneWidget);
+      expect(find.byType(LoginPage), findsNothing);
+    });
   });
 }

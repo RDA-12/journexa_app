@@ -4,5 +4,5 @@ part of 'add_wallet_bloc.dart';
 @freezed
 sealed class AddWalletEvent with _$AddWalletEvent {
   /// Submit to creates new wallet with [name]
-  const factory AddWalletEvent.submit({required String name}) = _Started;
+  const factory submit({required String name}) = _Started;
 }

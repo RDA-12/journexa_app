@@ -13,7 +13,7 @@ part 'watch_total_mtd_income.freezed.dart';
 /// Params for [WatchTotalMTDIncomeUseCase]
 @freezed
 sealed class WatchTotalMTDIncomeParams with _$WatchTotalMTDIncomeParams {
-  const factory WatchTotalMTDIncomeParams({
+  const factory({
     required DateTime targetDate,
     Wallet? wallet,
   }) = _WatchTotalMTDIncomeParams;
@@ -25,7 +25,7 @@ class WatchTotalMTDIncomeUseCase
     with Loggable
     implements StreamBaseUseCase<WatchTotalMTDIncomeParams, Decimal> {
   /// Creates new [WatchTotalMTDIncomeUseCase]
-  WatchTotalMTDIncomeUseCase({
+  new({
     required this._journalRepository,
   });
 

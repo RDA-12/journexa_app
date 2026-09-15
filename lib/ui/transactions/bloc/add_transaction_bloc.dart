@@ -23,7 +23,7 @@ part 'add_transaction_bloc.freezed.dart';
 class AddTransactionBloc extends Bloc<AddTransactionEvent, AddTransactionState>
     with Loggable, GenerateUid {
   /// Creates new [AddTransactionBloc]
-  AddTransactionBloc({
+  new({
     required this._transferMoney,
     required this._addIncome,
     required this._addExpense,

@@ -7,7 +7,7 @@ import 'package:google_fonts/google_fonts.dart';
 /// Uses medium contrast of theme colors.
 class JournexaTheme {
   /// Creates new [JournexaTheme]
-  const JournexaTheme(this.textTheme);
+  const new(this.textTheme);
 
   /// A set of text styles for the [ThemeData] that follows the typography.
   final TextTheme textTheme;

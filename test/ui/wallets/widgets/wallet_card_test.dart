@@ -45,7 +45,7 @@ void main() {
     VoidCallback? onDeletePressed,
     bool isUpdating = false,
     void Function(String)? onUpdatePressed,
-  }) async {
+  }) {
     return pumpForWidgetTest(
       tester,
       locale: locale,

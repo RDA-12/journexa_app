@@ -7,7 +7,7 @@ void main() {
     WidgetTester tester, {
     String? semanticsLabel,
     double? size,
-  }) async {
+  }) {
     return tester.pumpWidget(
       MaterialApp(
         home: Scaffold(

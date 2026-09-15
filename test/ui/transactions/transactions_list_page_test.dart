@@ -10,15 +10,11 @@ import 'package:mocktail/mocktail.dart';
 
 import '../util.dart';
 
-class MockTransactionsBloc extends Mock implements TransactionsBloc {}
+class MockTransactionsBloc extends Mock implements TransactionsBloc;
 
 final expectedTranslations = {
-  'id': {
-    'title': 'Daftar Transaksi',
-  },
-  'en': {
-    'title': 'Transactions List',
-  },
+  'id': {'title': 'Daftar Transaksi'},
+  'en': {'title': 'Transactions List'},
 };
 
 void main() {
@@ -53,51 +49,43 @@ void main() {
   }
 
   group('Init', () {
-    testWidgets(
-      'add TransactionsEvent.subscriptionRequested event on start',
-      (tester) async {
-        await pumpWidget(tester);
+    testWidgets('add TransactionsEvent.subscriptionRequested event on start', (
+      tester,
+    ) async {
+      await pumpWidget(tester);
 
-        verify(
-          () => mockTransactionsBloc.add(
-            const TransactionsEvent.subscriptionRequested(),
-          ),
-        ).called(1);
-      },
-    );
+      verify(
+        () => mockTransactionsBloc.add(
+          const TransactionsEvent.subscriptionRequested(),
+        ),
+      ).called(1);
+    });
   });
 
   group('Render', () {
-    testWidgets(
-      'provides TransactionsBloc',
-      (tester) async {
-        await pumpWidget(tester);
+    testWidgets('provides TransactionsBloc', (tester) async {
+      await pumpWidget(tester);
 
-        expect(find.byType(BlocProvider<TransactionsBloc>), findsOneWidget);
-      },
-    );
+      expect(find.byType(BlocProvider<TransactionsBloc>), findsOneWidget);
+    });
 
     for (final locale in AppLocalizations.supportedLocales) {
       final expectedTitle =
           expectedTranslations[locale.languageCode]!['title']!;
-      testWidgets(
-        'shows $expectedTitle title for ${locale.languageCode}',
-        (tester) async {
-          await pumpWidget(tester, locale: locale);
+      testWidgets('shows $expectedTitle title for ${locale.languageCode}', (
+        tester,
+      ) async {
+        await pumpWidget(tester, locale: locale);
 
-          expect(find.text(expectedTitle), findsOneWidget);
-        },
-      );
+        expect(find.text(expectedTitle), findsOneWidget);
+      });
     }
 
-    testWidgets(
-      'has TransactionsListView',
-      (tester) async {
-        await pumpWidget(tester);
+    testWidgets('has TransactionsListView', (tester) async {
+      await pumpWidget(tester);
 
-        expect(find.byType(TransactionsListView), findsOneWidget);
-      },
-    );
+      expect(find.byType(TransactionsListView), findsOneWidget);
+    });
   });
 
   group('a11y', () {

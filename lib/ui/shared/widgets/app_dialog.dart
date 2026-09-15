@@ -55,7 +55,7 @@ extension AppDialogX on BuildContext {
 /// Base dialog for the apps
 class AppDialog extends StatelessWidget {
   /// Creates new [AppDialog]
-  const AppDialog({
+  const new({
     this.title,
     this.content,
     this.actions,

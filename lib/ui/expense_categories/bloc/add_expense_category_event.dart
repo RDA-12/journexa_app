@@ -4,6 +4,6 @@ part of 'add_expense_category_bloc.dart';
 @freezed
 sealed class AddExpenseCategoryEvent with _$AddExpenseCategoryEvent {
   /// Submit to add new expense category
-  const factory AddExpenseCategoryEvent.submit({required String name}) =
+  const factory submit({required String name}) =
       _Submit;
 }

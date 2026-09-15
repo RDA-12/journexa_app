@@ -17,7 +17,7 @@ part 'add_income.freezed.dart';
 @freezed
 sealed class AddIncomeParams with _$AddIncomeParams {
   /// Creates new [AddIncomeParams]
-  const factory AddIncomeParams({
+  const factory({
     /// Wallet that will be increased by [amount]
     required Wallet wallet,
 
@@ -41,7 +41,7 @@ class AddIncomeUseCase
     with GenerateUid, Loggable
     implements FutureBaseUseCase<AddIncomeParams, Transaction> {
   /// Creates new [AddIncomeUseCase]
-  AddIncomeUseCase({
+  new({
     required this._transactionRepository,
   });
 

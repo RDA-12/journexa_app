@@ -10,7 +10,7 @@ import 'package:journexa_app/ui/splash/widgets/widgets.dart';
 /// It also checking current user authentication state
 class SplashPage extends StatelessWidget {
   /// Creates new [SplashPage]
-  const SplashPage({
+  const new({
     super.key,
     this.authCheckBloc,
   });
@@ -34,7 +34,7 @@ class SplashPage extends StatelessWidget {
 }
 
 class _SplashView extends StatelessWidget {
-  const _SplashView();
+  const new();
 
   @override
   Widget build(BuildContext context) {

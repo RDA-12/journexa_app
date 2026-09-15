@@ -13,15 +13,15 @@ import 'package:journexa_app/ui/shared/event_transform/event_transform.dart';
 import 'package:mocktail/mocktail.dart';
 
 class MockWatchIncomeCategories extends Mock
-    implements WatchIncomeCategoriesUseCase {}
+    implements WatchIncomeCategoriesUseCase;
 
-class MockUidGenerator extends Mock implements UidGenerator {}
+class MockUidGenerator extends Mock implements UidGenerator;
 
 class MockDeleteIncomeCategory extends Mock
-    implements DeleteIncomeCategoryUseCase {}
+    implements DeleteIncomeCategoryUseCase;
 
 class MockUpdateIncomeCategory extends Mock
-    implements UpdateIncomeCategoryUseCase {}
+    implements UpdateIncomeCategoryUseCase;
 
 void main() {
   const traceId = 'traceId';

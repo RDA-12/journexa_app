@@ -13,7 +13,7 @@ part 'watch_total_mtd_expense.freezed.dart';
 /// Params for [WatchTotalMTDExpenseUseCase]
 @freezed
 sealed class WatchTotalMTDExpenseParams with _$WatchTotalMTDExpenseParams {
-  const factory WatchTotalMTDExpenseParams({
+  const factory({
     required DateTime targetDate,
     Wallet? wallet,
   }) = _WatchTotalMTDExpenseParams;
@@ -25,7 +25,7 @@ class WatchTotalMTDExpenseUseCase
     with Loggable
     implements StreamBaseUseCase<WatchTotalMTDExpenseParams, Decimal> {
   /// Creates new [WatchTotalMTDExpenseUseCase]
-  WatchTotalMTDExpenseUseCase({
+  new({
     required this._journalRepository,
   });
 

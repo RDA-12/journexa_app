@@ -12,7 +12,7 @@ class TransactionsListView extends StatelessWidget {
   ///
   /// It reacts to [TransactionsBloc]'s state changes.
   /// So, make sure to provide that bloc within the widget tree.
-  const TransactionsListView({super.key});
+  const new({super.key});
 
   @override
   Widget build(BuildContext context) {

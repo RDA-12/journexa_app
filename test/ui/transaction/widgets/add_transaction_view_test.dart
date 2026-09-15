@@ -22,13 +22,13 @@ import 'package:mocktail/mocktail.dart';
 
 import '../../util.dart';
 
-class MockWalletsBloc extends Mock implements WalletsBloc {}
+class MockWalletsBloc extends Mock implements WalletsBloc;
 
-class MockIncomeCategoriesBloc extends Mock implements IncomeCategoriesBloc {}
+class MockIncomeCategoriesBloc extends Mock implements IncomeCategoriesBloc;
 
-class MockExpenseCategoriesBloc extends Mock implements ExpenseCategoriesBloc {}
+class MockExpenseCategoriesBloc extends Mock implements ExpenseCategoriesBloc;
 
-class MockAddTransactionBloc extends Mock implements AddTransactionBloc {}
+class MockAddTransactionBloc extends Mock implements AddTransactionBloc;
 
 final expectedTranslations = {
   'id': {

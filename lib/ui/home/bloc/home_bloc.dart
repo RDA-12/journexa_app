@@ -28,7 +28,7 @@ part 'home_bloc.freezed.dart';
 @injectable
 class HomeBloc extends Bloc<HomeEvent, HomeState> with Loggable, GenerateUid {
   /// Creates new [HomeBloc]
-  HomeBloc({
+  new({
     required this._watchWallets,
     required this._watchAccountBalances,
     required this._watchTotalMTDIncome,

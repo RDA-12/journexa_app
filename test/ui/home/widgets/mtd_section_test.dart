@@ -13,7 +13,7 @@ import 'package:mocktail/mocktail.dart';
 
 import '../../util.dart';
 
-class MockHomeBloc extends Mock implements HomeBloc {}
+class MockHomeBloc extends Mock implements HomeBloc;
 
 final expectedTranslations = {
   'en': {
@@ -45,7 +45,7 @@ void main() {
   Future<void> pumpWidget(
     WidgetTester tester, {
     Locale locale = const Locale('en'),
-  }) async {
+  }) {
     return pumpForWidgetTest(
       tester,
       locale: locale,
@@ -57,9 +57,30 @@ void main() {
   }
 
   group('Render', () {
-    testWidgets(
-      'shows LoadingIndicator when state is loading',
-      (tester) async {
+    testWidgets('shows LoadingIndicator when state is loading', (tester) async {
+      whenListen(
+        mockHomeBloc,
+        const Stream<HomeState>.empty(),
+        initialState: HomeState(
+          mtdData: HomeMTDDataUIModel(
+            totalIncome: Decimal.zero,
+            totalExpense: Decimal.zero,
+            status: HomeUIStatus.loading,
+          ),
+        ),
+      );
+
+      await pumpWidget(tester);
+
+      expect(find.byType(LoadingIndicator), findsOneWidget);
+    });
+
+    for (final locale in AppLocalizations.supportedLocales) {
+      final translations = expectedTranslations[locale.languageCode]!;
+
+      final expectedDescription = translations['exception']!;
+      testWidgets('shows AppExceptionBox when state is failure '
+          'for ${locale.languageCode}', (tester) async {
         whenListen(
           mockHomeBloc,
           const Stream<HomeState>.empty(),
@@ -67,132 +88,96 @@ void main() {
             mtdData: HomeMTDDataUIModel(
               totalIncome: Decimal.zero,
               totalExpense: Decimal.zero,
-              status: HomeUIStatus.loading,
+              status: HomeUIStatus.failure,
+              exception: AppException.test(),
             ),
           ),
         );
 
-        await pumpWidget(tester);
+        await pumpWidget(tester, locale: locale);
 
-        expect(find.byType(LoadingIndicator), findsOneWidget);
-      },
-    );
+        final finder = find.byType(AppExceptionBox);
+        expect(finder, findsOneWidget);
 
-    for (final locale in AppLocalizations.supportedLocales) {
-      final translations = expectedTranslations[locale.languageCode]!;
-
-      final expectedDescription = translations['exception']!;
-      testWidgets(
-        'shows AppExceptionBox when state is failure '
-        'for ${locale.languageCode}',
-        (tester) async {
-          whenListen(
-            mockHomeBloc,
-            const Stream<HomeState>.empty(),
-            initialState: HomeState(
-              mtdData: HomeMTDDataUIModel(
-                totalIncome: Decimal.zero,
-                totalExpense: Decimal.zero,
-                status: HomeUIStatus.failure,
-                exception: AppException.test(),
-              ),
-            ),
-          );
-
-          await pumpWidget(tester, locale: locale);
-
-          final finder = find.byType(AppExceptionBox);
-          expect(finder, findsOneWidget);
-
-          final widget = tester.widget<AppExceptionBox>(finder);
-          expect(widget.description, expectedDescription);
-        },
-      );
+        final widget = tester.widget<AppExceptionBox>(finder);
+        expect(widget.description, expectedDescription);
+      });
     }
 
-    testWidgets(
-      'shows MTDCard for income with correct data '
-      'when state is loaded',
-      (tester) async {
-        whenListen(
-          mockHomeBloc,
-          const Stream<HomeState>.empty(),
-          initialState: HomeState(
-            mtdData: HomeMTDDataUIModel(
-              totalIncome: totalIncome,
-              totalExpense: totalExpense,
-              status: HomeUIStatus.loaded,
-            ),
+    testWidgets('shows MTDCard for income with correct data '
+        'when state is loaded', (tester) async {
+      whenListen(
+        mockHomeBloc,
+        const Stream<HomeState>.empty(),
+        initialState: HomeState(
+          mtdData: HomeMTDDataUIModel(
+            totalIncome: totalIncome,
+            totalExpense: totalExpense,
+            status: HomeUIStatus.loaded,
           ),
-        );
+        ),
+      );
 
-        await pumpWidget(tester);
+      await pumpWidget(tester);
 
-        final finder = find.byWidgetPredicate(
-          (widget) => widget is MTDCard && widget.type == MTDCardType.income,
-        );
-        expect(finder, findsOneWidget);
+      final finder = find.byWidgetPredicate(
+        (widget) => widget is MTDCard && widget.type == MTDCardType.income,
+      );
+      expect(finder, findsOneWidget);
 
-        final widget = tester.widget<MTDCard>(finder);
-        expect(widget.data, totalIncome);
-      },
-    );
+      final widget = tester.widget<MTDCard>(finder);
+      expect(widget.data, totalIncome);
+    });
 
-    testWidgets(
-      'shows MTDCard for expense with correct data '
-      'when state is loaded',
-      (tester) async {
-        whenListen(
-          mockHomeBloc,
-          const Stream<HomeState>.empty(),
-          initialState: HomeState(
-            mtdData: HomeMTDDataUIModel(
-              totalIncome: totalIncome,
-              totalExpense: totalExpense,
-              status: HomeUIStatus.loaded,
-            ),
+    testWidgets('shows MTDCard for expense with correct data '
+        'when state is loaded', (tester) async {
+      whenListen(
+        mockHomeBloc,
+        const Stream<HomeState>.empty(),
+        initialState: HomeState(
+          mtdData: HomeMTDDataUIModel(
+            totalIncome: totalIncome,
+            totalExpense: totalExpense,
+            status: HomeUIStatus.loaded,
           ),
-        );
+        ),
+      );
 
-        await pumpWidget(tester);
+      await pumpWidget(tester);
 
-        final finder = find.byWidgetPredicate(
-          (widget) => widget is MTDCard && widget.type == MTDCardType.expense,
-        );
-        expect(finder, findsOneWidget);
+      final finder = find.byWidgetPredicate(
+        (widget) => widget is MTDCard && widget.type == MTDCardType.expense,
+      );
+      expect(finder, findsOneWidget);
 
-        final widget = tester.widget<MTDCard>(finder);
-        expect(widget.data, totalExpense);
-      },
-    );
+      final widget = tester.widget<MTDCard>(finder);
+      expect(widget.data, totalExpense);
+    });
 
-    testWidgets(
-      'shows MTDCard for net balance with correct data '
-      'when state is loaded',
-      (tester) async {
-        whenListen(
-          mockHomeBloc,
-          const Stream<HomeState>.empty(),
-          initialState: HomeState(
-            mtdData: HomeMTDDataUIModel(
-              totalIncome: totalIncome,
-              totalExpense: totalExpense,
-              status: HomeUIStatus.loaded,
-            ),
+    testWidgets('shows MTDCard for net balance with correct data '
+        'when state is loaded', (tester) async {
+      whenListen(
+        mockHomeBloc,
+        const Stream<HomeState>.empty(),
+        initialState: HomeState(
+          mtdData: HomeMTDDataUIModel(
+            totalIncome: totalIncome,
+            totalExpense: totalExpense,
+            status: HomeUIStatus.loaded,
           ),
-        );
+        ),
+      );
 
-        await pumpWidget(tester);
+      await pumpWidget(tester);
 
-        final finder = find.byWidgetPredicate(
-          (widget) => widget is MTDCard && widget.type == MTDCardType.net,
-        );
-        expect(finder, findsOneWidget);
+      final finder = find.byWidgetPredicate(
+        (widget) => widget is MTDCard && widget.type == MTDCardType.net,
+      );
+      expect(finder, findsOneWidget);
 
-        final widget = tester.widget<MTDCard>(finder);
-        expect(widget.data, netBalance);
-      },
-    );
+      final widget = tester.widget<MTDCard>(finder);
+      expect(widget.data, netBalance);
+    });
   });
 
   group('a11y', () {
@@ -200,27 +185,24 @@ void main() {
       final translations = expectedTranslations[locale.languageCode]!;
 
       final loadingSemantics = translations['loadingSemantics']!;
-      testWidgets(
-        'has correct semantics when state is loading '
-        'for ${locale.languageCode}',
-        (tester) async {
-          whenListen(
-            mockHomeBloc,
-            const Stream<HomeState>.empty(),
-            initialState: HomeState(
-              mtdData: HomeMTDDataUIModel(
-                totalIncome: totalIncome,
-                totalExpense: totalExpense,
-                status: HomeUIStatus.loading,
-              ),
+      testWidgets('has correct semantics when state is loading '
+          'for ${locale.languageCode}', (tester) async {
+        whenListen(
+          mockHomeBloc,
+          const Stream<HomeState>.empty(),
+          initialState: HomeState(
+            mtdData: HomeMTDDataUIModel(
+              totalIncome: totalIncome,
+              totalExpense: totalExpense,
+              status: HomeUIStatus.loading,
             ),
-          );
+          ),
+        );
 
-          await pumpWidget(tester, locale: locale);
+        await pumpWidget(tester, locale: locale);
 
-          expect(find.bySemanticsLabel(loadingSemantics), findsOneWidget);
-        },
-      );
+        expect(find.bySemanticsLabel(loadingSemantics), findsOneWidget);
+      });
     }
   });
 }

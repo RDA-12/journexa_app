@@ -14,21 +14,17 @@ import 'package:mocktail/mocktail.dart';
 
 import '../util.dart';
 
-class MockWalletsBloc extends Mock implements WalletsBloc {}
+class MockWalletsBloc extends Mock implements WalletsBloc;
 
-class MockIncomeCategoriesBloc extends Mock implements IncomeCategoriesBloc {}
+class MockIncomeCategoriesBloc extends Mock implements IncomeCategoriesBloc;
 
-class MockExpenseCategoriesBloc extends Mock implements ExpenseCategoriesBloc {}
+class MockExpenseCategoriesBloc extends Mock implements ExpenseCategoriesBloc;
 
-class MockAddTransactionBloc extends Mock implements AddTransactionBloc {}
+class MockAddTransactionBloc extends Mock implements AddTransactionBloc;
 
 final expectedTranslations = {
-  'id': {
-    'title': 'Catat transaksi baru',
-  },
-  'en': {
-    'title': 'Record new transaction',
-  },
+  'id': {'title': 'Catat transaksi baru'},
+  'en': {'title': 'Record new transaction'},
 };
 
 void main() {
@@ -76,7 +72,7 @@ void main() {
     required TransactionType type,
     Locale locale = const Locale('en'),
   }) async {
-    return pumpForPageTest(
+    return await pumpForPageTest(
       tester,
       routes: {
         '/': AddTransactionPage(
@@ -92,79 +88,53 @@ void main() {
   }
 
   group('Render', () {
-    testWidgets(
-      'provides WalletsBloc',
-      (tester) async {
-        await pumpWidget(tester, type: TransactionType.income);
+    testWidgets('provides WalletsBloc', (tester) async {
+      await pumpWidget(tester, type: TransactionType.income);
 
-        expect(find.byType(BlocProvider<WalletsBloc>), findsOneWidget);
-      },
-    );
+      expect(find.byType(BlocProvider<WalletsBloc>), findsOneWidget);
+    });
 
-    testWidgets(
-      'provides IncomeCategoriesBloc',
-      (tester) async {
-        await pumpWidget(tester, type: TransactionType.income);
+    testWidgets('provides IncomeCategoriesBloc', (tester) async {
+      await pumpWidget(tester, type: TransactionType.income);
 
-        expect(
-          find.byType(BlocProvider<IncomeCategoriesBloc>),
-          findsOneWidget,
-        );
-      },
-    );
+      expect(find.byType(BlocProvider<IncomeCategoriesBloc>), findsOneWidget);
+    });
 
-    testWidgets(
-      'provides ExpenseCategoriesBloc',
-      (tester) async {
-        await pumpWidget(tester, type: TransactionType.income);
+    testWidgets('provides ExpenseCategoriesBloc', (tester) async {
+      await pumpWidget(tester, type: TransactionType.income);
 
-        expect(
-          find.byType(BlocProvider<ExpenseCategoriesBloc>),
-          findsOneWidget,
-        );
-      },
-    );
+      expect(find.byType(BlocProvider<ExpenseCategoriesBloc>), findsOneWidget);
+    });
 
-    testWidgets(
-      'provides AddTransactionBloc',
-      (tester) async {
-        await pumpWidget(tester, type: TransactionType.income);
+    testWidgets('provides AddTransactionBloc', (tester) async {
+      await pumpWidget(tester, type: TransactionType.income);
 
-        expect(find.byType(BlocProvider<AddTransactionBloc>), findsOneWidget);
-      },
-    );
+      expect(find.byType(BlocProvider<AddTransactionBloc>), findsOneWidget);
+    });
 
     for (final type in TransactionType.values) {
-      testWidgets(
-        'has correct AddTransactionView for $type',
-        (tester) async {
-          await pumpWidget(tester, type: type);
+      testWidgets('has correct AddTransactionView for $type', (tester) async {
+        await pumpWidget(tester, type: type);
 
-          final finder = find.byType(AddTransactionView);
-          expect(finder, findsOneWidget);
+        final finder = find.byType(AddTransactionView);
+        expect(finder, findsOneWidget);
 
-          final widget = tester.widget<AddTransactionView>(finder);
-          expect(widget.type, type);
-        },
-      );
+        final widget = tester.widget<AddTransactionView>(finder);
+        expect(widget.type, type);
+      });
     }
 
     for (final locale in AppLocalizations.supportedLocales) {
       final translations = expectedTranslations[locale.languageCode]!;
 
       final title = translations['title']!;
-      testWidgets(
-        'shows $title title for ${locale.languageCode}',
-        (tester) async {
-          await pumpWidget(
-            tester,
-            type: TransactionType.income,
-            locale: locale,
-          );
+      testWidgets('shows $title title for ${locale.languageCode}', (
+        tester,
+      ) async {
+        await pumpWidget(tester, type: TransactionType.income, locale: locale);
 
-          expect(find.text(title), findsOneWidget);
-        },
-      );
+        expect(find.text(title), findsOneWidget);
+      });
     }
   });
 }

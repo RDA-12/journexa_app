@@ -10,7 +10,7 @@ import 'package:journexa_app/ui/wallets/widgets/wallets_list_view.dart';
 /// Page to shows list of wallets saved by current user
 class WalletsListPage extends StatelessWidget {
   /// Creates new [WalletsListPage]
-  const WalletsListPage({
+  const new({
     this.walletsBloc,
     super.key,
   });
@@ -32,7 +32,7 @@ class WalletsListPage extends StatelessWidget {
 }
 
 class _WalletListView extends StatelessWidget {
-  const _WalletListView();
+  const new();
 
   @override
   Widget build(BuildContext context) {

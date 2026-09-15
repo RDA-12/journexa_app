@@ -14,11 +14,11 @@ part 'add_wallet.freezed.dart';
 /// Params for [AddWalletUseCase]
 @freezed
 sealed class AddWalletParams with _$AddWalletParams {
-  const factory AddWalletParams({
+  const factory({
     /// Name for new [Account]
     required String name,
   }) = _AddWalletParams;
-  const AddWalletParams._();
+  const new _();
 
   /// Returns extra data for logging
   Map<String, Object?> get extras {
@@ -34,7 +34,7 @@ class AddWalletUseCase
     with Loggable, GenerateUid
     implements FutureBaseUseCase<AddWalletParams, Null> {
   /// Creates new [AddWalletUseCase]
-  AddWalletUseCase({
+  new({
     required this._accountRepository,
     required this._walletRepository,
   });
@@ -104,7 +104,7 @@ class AddWalletUseCase
       wallet: wallet,
       traceId: traceId,
     );
-    return saveResult.when(
+    return await saveResult.when(
       success: (_) {
         logInfo('new Wallet saved successfully. Done.', traceId: traceId);
         return const AppResult<Null>.success(null);

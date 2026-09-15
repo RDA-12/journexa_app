@@ -4,17 +4,17 @@ part of 'auth_check_bloc.dart';
 @freezed
 class AuthCheckState with _$AuthCheckState {
   /// Intial state
-  const factory AuthCheckState.initial() = _Initial;
+  const factory initial() = _Initial;
 
   /// Loading state
-  const factory AuthCheckState.loading() = _Loading;
+  const factory loading() = _Loading;
 
   /// State when user already logged in
-  const factory AuthCheckState.authenticated() = _Authenticated;
+  const factory authenticated() = _Authenticated;
 
   /// State when user not logged in yet
-  const factory AuthCheckState.unauthenticated() = _Unauthenticated;
+  const factory unauthenticated() = _Unauthenticated;
 
   /// Failure state
-  const factory AuthCheckState.failure(AppException exc) = _Failure;
+  const factory failure(AppException exc) = _Failure;
 }

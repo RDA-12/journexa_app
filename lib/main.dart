@@ -22,7 +22,7 @@ Future<void> main() async {
 /// Main entry widget
 class JournexaApp extends StatelessWidget {
   /// Creates new [JournexaApp]
-  const JournexaApp({super.key});
+  const new({super.key});
 
   @override
   Widget build(BuildContext context) {

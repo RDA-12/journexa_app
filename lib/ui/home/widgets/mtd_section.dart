@@ -31,25 +31,15 @@ class MTDSection extends StatelessWidget {
         }
         if (status == HomeUIStatus.loaded) {
           return Column(
-            spacing: 8,
             mainAxisSize: MainAxisSize.min,
             children: [
-              Row(
-                spacing: 8,
-                children: [
-                  Expanded(
-                    child: MTDCard(
-                      type: MTDCardType.income,
-                      data: mtdData.totalIncome,
-                    ),
-                  ),
-                  Expanded(
-                    child: MTDCard(
-                      type: MTDCardType.expense,
-                      data: mtdData.totalExpense,
-                    ),
-                  ),
-                ],
+              MTDCard(
+                type: MTDCardType.income,
+                data: mtdData.totalIncome,
+              ),
+              MTDCard(
+                type: MTDCardType.expense,
+                data: mtdData.totalExpense,
               ),
               MTDCard(
                 type: MTDCardType.net,

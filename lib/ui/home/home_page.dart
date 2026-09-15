@@ -8,6 +8,7 @@ import 'package:journexa_app/ui/home/widgets/mtd_section.dart';
 import 'package:journexa_app/ui/home/widgets/wallets_home_carousel.dart';
 import 'package:journexa_app/ui/shared/l10n/l10n.dart';
 import 'package:journexa_app/ui/shared/theme.dart';
+import 'package:journexa_app/ui/shared/widgets/widgets.dart';
 
 /// Page that show when user is logged in
 class HomePage extends StatelessWidget with AppClockMixin {
@@ -43,45 +44,52 @@ class _HomeView extends StatelessWidget with AppClockMixin {
   Widget build(BuildContext context) {
     return Scaffold(
       body: SingleChildScrollView(
-        child: Column(
-          spacing: 24,
-          children: [
-            WalletsHomeCarousel(
-              onChanged: (index, wallet) {
-                context.read<HomeBloc>().add(
-                  HomeEvent.mtdSubscriptionRequested(
-                    targetDate: getCurrentDateTime(),
-                    wallet: wallet,
+        child: Padding(
+          padding: context.pagePadding,
+          child: Column(
+            spacing: 24,
+            children: [
+              WalletsHomeCarousel(
+                onChanged: (index, wallet) {
+                  context.read<HomeBloc>().add(
+                    HomeEvent.mtdSubscriptionRequested(
+                      targetDate: getCurrentDateTime(),
+                      wallet: wallet,
+                    ),
+                  );
+                  context.read<HomeBloc>().add(
+                    HomeEvent.transactionsSubscriptionRequested(
+                      wallet: wallet,
+                    ),
+                  );
+                },
+              ),
+              Column(
+                spacing: 16,
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  Text(
+                    context.l10n.homeMTDTitle,
+                    style: context.text.titleMedium,
                   ),
-                );
-                context.read<HomeBloc>().add(
-                  HomeEvent.transactionsSubscriptionRequested(
-                    wallet: wallet,
+                  const MTDSection(),
+                ],
+              ),
+              Column(
+                spacing: 16,
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  Text(
+                    context.l10n.homeTransactionsListTitle,
+                    style: context.text.titleMedium,
                   ),
-                );
-              },
-            ),
-            Column(
-              spacing: 16,
-              children: [
-                Text(
-                  context.l10n.homeMTDTitle,
-                  style: context.text.titleMedium,
-                ),
-                const MTDSection(),
-              ],
-            ),
-            Column(
-              spacing: 16,
-              children: [
-                Text(
-                  context.l10n.homeTransactionsListTitle,
-                  style: context.text.titleMedium,
-                ),
-                const HomeTransactionsList(),
-              ],
-            ),
-          ],
+                  const HomeTransactionsList(),
+                ],
+              ),
+            ],
+          ),
         ),
       ),
     );

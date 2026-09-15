@@ -27,7 +27,7 @@ class HomeTransactionsList extends StatelessWidget {
           return ConstrainedBox(
             constraints: const BoxConstraints(
               minHeight: 128,
-              maxHeight: 512,
+              maxHeight: 256,
             ),
             child: Center(
               child: AppExceptionBox(
@@ -45,7 +45,7 @@ class HomeTransactionsList extends StatelessWidget {
             return ConstrainedBox(
               constraints: const BoxConstraints(
                 minHeight: 128,
-                maxHeight: 512,
+                maxHeight: 256,
               ),
               child: Center(
                 child: AppEmptyBox(
@@ -69,7 +69,7 @@ class HomeTransactionsList extends StatelessWidget {
         return ConstrainedBox(
           constraints: const BoxConstraints(
             minHeight: 128,
-            maxHeight: 512,
+            maxHeight: 256,
           ),
           child: LoadingIndicator(
             semanticsLabel: context.l10n.transactionsListLoadingSemantics,

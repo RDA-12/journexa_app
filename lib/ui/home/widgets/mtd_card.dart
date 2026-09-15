@@ -69,6 +69,8 @@ class MTDCard extends StatelessWidget {
         child: leadingIcon,
       ),
       child: Column(
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
             label,

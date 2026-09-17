@@ -5,7 +5,7 @@ part 'user.freezed.dart';
 /// Represent single user
 @freezed
 sealed class User with _$User {
-  factory({
+  const factory({
     /// User' unique ID
     required String id,
 

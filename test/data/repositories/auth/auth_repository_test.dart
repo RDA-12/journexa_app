@@ -197,7 +197,7 @@ void main() {
         stream,
         emitsInOrder(<AppResult<User?>>[
           const AppResult.success(null),
-          AppResult.success(
+          const AppResult.success(
             User(
               id: 'uid',
               name: 'displayName',

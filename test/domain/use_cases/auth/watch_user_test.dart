@@ -10,7 +10,7 @@ class MockAuthRepository extends Mock implements IAuthRepository;
 
 void main() {
   const traceId = 'traceId';
-  final user = User(
+  const user = User(
     id: 'user-123',
     name: 'Test User',
     email: 'test@example.com',
@@ -24,7 +24,7 @@ void main() {
     mockAuthRepository = MockAuthRepository();
     when(
       () => mockAuthRepository.watchUser(traceId: traceId),
-    ).thenAnswer((_) => Stream.value(AppResult.success(user)));
+    ).thenAnswer((_) => Stream.value(const AppResult.success(user)));
 
     useCase = WatchUserUseCase(
       authRepository: mockAuthRepository,
@@ -48,7 +48,7 @@ void main() {
     () async {
       final result = useCase.execute(traceId: traceId);
 
-      expect(result, emits(AppResult<User?>.success(user)));
+      expect(result, emits(const AppResult<User?>.success(user)));
     },
   );
 

@@ -14,7 +14,7 @@ class MockUidGenerator extends Mock implements UidGenerator;
 
 void main() {
   const traceId = 'trace';
-  final user = User(
+  const user = User(
     id: 'user-123',
     name: 'Test User',
     email: 'test@example.com',
@@ -29,7 +29,7 @@ void main() {
     mockWatchUser = MockWatchUserUseCase();
     when(
       () => mockWatchUser.execute(traceId: traceId),
-    ).thenAnswer((_) => Stream.value(AppResult.success(user)));
+    ).thenAnswer((_) => Stream.value(const AppResult.success(user)));
   });
 
   AuthBloc buildBloc() {
@@ -53,8 +53,8 @@ void main() {
       'when watch user succeeds with a valid user',
       build: buildBloc,
       act: (bloc) => bloc.add(const AuthEvent.subscriptionRequested()),
-      expect: () => <AuthState>[
-        const AuthState.loading(),
+      expect: () => const <AuthState>[
+        AuthState.loading(),
         AuthState.authenticated(user),
       ],
       verify: (_) {

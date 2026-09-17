@@ -1,6 +1,6 @@
 import 'package:flutter/widgets.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:journexa_app/ui/login/widgets/login_header.dart';
+import 'package:journexa_app/ui/auth/widgets/login_header.dart';
 import 'package:journexa_app/ui/shared/l10n/l10n.dart';
 
 import '../../util.dart';

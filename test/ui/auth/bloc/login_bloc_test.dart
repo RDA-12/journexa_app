@@ -4,7 +4,7 @@ import 'package:journexa_app/domain/use_cases/auth/login_with_google.dart';
 import 'package:journexa_app/shared/app_exception.dart';
 import 'package:journexa_app/shared/app_result.dart';
 import 'package:journexa_app/shared/uid_generator.dart';
-import 'package:journexa_app/ui/login/bloc/login_bloc.dart';
+import 'package:journexa_app/ui/auth/bloc/login_bloc.dart';
 import 'package:mocktail/mocktail.dart';
 
 class MockLoginWithGoogleUseCase extends Mock implements LoginWithGoogleUseCase;

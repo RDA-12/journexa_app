@@ -1,11 +1,11 @@
 import 'package:go_router/go_router.dart';
+import 'package:journexa_app/ui/auth/login_page.dart';
 import 'package:journexa_app/ui/expense_categories/add_expense_category_page.dart';
 import 'package:journexa_app/ui/expense_categories/expense_categories_list_page.dart';
 import 'package:journexa_app/ui/home/home_page.dart';
 import 'package:journexa_app/ui/income_categories/add_income_categories_list_page.dart';
 import 'package:journexa_app/ui/income_categories/add_income_category_page.dart';
 import 'package:journexa_app/ui/initialize/initialize_page.dart';
-import 'package:journexa_app/ui/login/login_page.dart';
 import 'package:journexa_app/ui/splash/splash_page.dart';
 import 'package:journexa_app/ui/transactions/transactions_list_page.dart';
 import 'package:journexa_app/ui/wallets/add_wallet_page.dart';

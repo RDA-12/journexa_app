@@ -1,10 +1,12 @@
-import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_auth/firebase_auth.dart' hide User;
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:injectable/injectable.dart';
+import 'package:journexa_app/domain/entities/user.dart';
 import 'package:journexa_app/domain/repositories/i_auth_repository.dart';
 import 'package:journexa_app/shared/app_exception.dart';
 import 'package:journexa_app/shared/app_logger.dart';
 import 'package:journexa_app/shared/app_result.dart';
+import 'package:rxdart/rxdart.dart';
 
 /// Firebase implementation of [IAuthRepository]
 @LazySingleton(as: IAuthRepository)
@@ -117,5 +119,31 @@ class FirebaseAuthRepository with Loggable implements IAuthRepository {
       traceId: traceId,
     );
     return AppResult.success(userId);
+  }
+
+  @override
+  Stream<AppResult<User?>> watchUser({required String traceId}) {
+    logInfo('Starts watching user changes', traceId: traceId);
+    return _auth
+        .userChanges()
+        .map<AppResult<User?>>((firebaseUser) {
+          if (firebaseUser == null) {
+            return const AppResult.success(null);
+          }
+          return AppResult.success(
+            User(
+              id: firebaseUser.uid,
+              name: firebaseUser.displayName ?? 'User-${firebaseUser.uid}',
+              email: firebaseUser.email,
+              photoUrl: firebaseUser.photoURL,
+            ),
+          );
+        })
+        .onErrorReturnWith((error, st) {
+          logError('$error', traceId: traceId, error: error, stackTrace: st);
+          return AppResult.failure(
+            AppException('$error', code: AppExceptionCode.internalException),
+          );
+        });
   }
 }

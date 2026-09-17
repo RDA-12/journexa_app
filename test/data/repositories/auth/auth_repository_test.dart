@@ -1,9 +1,10 @@
-import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_auth/firebase_auth.dart' hide User;
 import 'package:firebase_auth_mocks/firebase_auth_mocks.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:google_sign_in_mocks/google_sign_in_mocks.dart';
 import 'package:journexa_app/data/repositories/auth/auth_repository.dart';
+import 'package:journexa_app/domain/entities/user.dart';
 import 'package:journexa_app/shared/app_exception.dart';
 import 'package:journexa_app/shared/app_result.dart';
 import 'package:mock_exceptions/mock_exceptions.dart';
@@ -176,5 +177,38 @@ void main() {
         );
       },
     );
+  });
+
+  group('watchUser', () {
+    test('emits correct user', () async {
+      final mockUser = MockUser(
+        uid: 'uid',
+        displayName: 'displayName',
+        email: 'email',
+        photoURL: 'photoUrl',
+      );
+      mockAuth.mockUser = mockUser;
+
+      final stream = repository.watchUser(traceId: traceId);
+
+      await repository.loginWithGoogle(traceId: traceId);
+
+      expect(
+        stream,
+        emitsInOrder(<AppResult<User?>>[
+          const AppResult.success(null),
+          AppResult.success(
+            User(
+              id: 'uid',
+              name: 'displayName',
+              email: 'email',
+              photoUrl: 'photoUrl',
+            ),
+          ),
+        ]),
+      );
+    });
+
+    // TODO(RDA-12): find a way to simulate failure state
   });
 }

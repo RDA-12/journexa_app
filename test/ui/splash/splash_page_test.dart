@@ -2,26 +2,28 @@ import 'package:bloc_test/bloc_test.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:journexa_app/ui/splash/bloc/auth_check_bloc.dart';
+import 'package:journexa_app/domain/entities/user.dart';
+import 'package:journexa_app/ui/auth/bloc/auth_bloc.dart';
 import 'package:journexa_app/ui/splash/splash_page.dart';
 import 'package:journexa_app/ui/splash/widgets/widgets.dart';
 import 'package:mocktail/mocktail.dart';
 
 import '../util.dart';
 
-class MockAuthCheckBloc extends Mock implements AuthCheckBloc;
+class MockAuthBloc extends Mock implements AuthBloc;
 
 void main() {
-  late AuthCheckBloc mockAuthCheckBloc;
+  const user = User(id: 'id', name: 'name');
+
+  late AuthBloc mockAuthBloc;
 
   setUp(() {
-    mockAuthCheckBloc = MockAuthCheckBloc();
+    mockAuthBloc = MockAuthBloc();
     whenListen(
-      mockAuthCheckBloc,
-      const Stream<AuthCheckState>.empty(),
-      initialState: const AuthCheckState.initial(),
+      mockAuthBloc,
+      const Stream<AuthState>.empty(),
+      initialState: const AuthState.initial(),
     );
-    when(mockAuthCheckBloc.close).thenAnswer((_) async {});
   });
 
   Future<void> pumpWidget(
@@ -32,20 +34,14 @@ void main() {
       tester,
       locale: const Locale('en'),
       routes: {
-        '/': SplashPage(authCheckBloc: mockAuthCheckBloc),
+        '/': BlocProvider.value(
+          value: mockAuthBloc,
+          child: const SplashPage(),
+        ),
         ...nextRoutes,
       },
     );
   }
-
-  group('Init', () {
-    testWidgets('add AuthCheckEvent.started on start', (tester) async {
-      await pumpWidget(tester);
-
-      verify(() => mockAuthCheckBloc.add(const AuthCheckEvent.started()))
-          .called(1);
-    });
-  });
 
   group('Render', () {
     testWidgets('shows SplashBox', (tester) async {
@@ -54,20 +50,20 @@ void main() {
       expect(find.byType(SplashBox), findsOneWidget);
     });
 
-    testWidgets('provides AuthCheckBloc', (tester) async {
+    testWidgets('provides AuthBloc', (tester) async {
       await pumpWidget(tester);
 
-      expect(find.byType(BlocProvider<AuthCheckBloc>), findsOneWidget);
+      expect(find.byType(BlocProvider<AuthBloc>), findsOneWidget);
     });
   });
 
   group('Side Effect', () {
     testWidgets('go to initalize page when authenticated', (tester) async {
       whenListen(
-        mockAuthCheckBloc,
+        mockAuthBloc,
         Stream.fromIterable([
-          const AuthCheckState.loading(),
-          const AuthCheckState.authenticated(),
+          const AuthState.loading(),
+          const AuthState.authenticated(user),
         ]),
       );
 
@@ -81,10 +77,10 @@ void main() {
 
     testWidgets('go to login page when unauthenticated', (tester) async {
       whenListen(
-        mockAuthCheckBloc,
+        mockAuthBloc,
         Stream.fromIterable([
-          const AuthCheckState.loading(),
-          const AuthCheckState.unauthenticated(),
+          const AuthState.loading(),
+          const AuthState.unauthenticated(),
         ]),
       );
 

@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
-import 'package:journexa_app/di.dart';
-import 'package:journexa_app/ui/splash/bloc/auth_check_bloc.dart';
+import 'package:journexa_app/ui/auth/bloc/auth_bloc.dart';
 import 'package:journexa_app/ui/splash/widgets/widgets.dart';
 
 /// Page for shows splash screen.
@@ -10,25 +9,15 @@ import 'package:journexa_app/ui/splash/widgets/widgets.dart';
 /// It also checking current user authentication state
 class SplashPage extends StatelessWidget {
   /// Creates new [SplashPage]
-  const new({
-    super.key,
-    this.authCheckBloc,
-  });
-
-  /// [AuthCheckBloc] that will be provided to child
   ///
-  /// It will creates new [AuthCheckBloc] when null
-  final AuthCheckBloc? authCheckBloc;
+  /// It reacts to [AuthBloc]'s state changes.
+  /// So, make sure to provide it within the widget tree.
+  const new({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return BlocProvider(
-      create: (context) =>
-          (authCheckBloc ?? getIt<AuthCheckBloc>())
-            ..add(const AuthCheckEvent.started()),
-      child: const Scaffold(
-        body: _SplashView(),
-      ),
+    return const Scaffold(
+      body: _SplashView(),
     );
   }
 }
@@ -38,10 +27,10 @@ class _SplashView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return BlocListener<AuthCheckBloc, AuthCheckState>(
+    return BlocListener<AuthBloc, AuthState>(
       listener: (context, state) {
         state.whenOrNull(
-          authenticated: () {
+          authenticated: (_) {
             context.go('/initialize');
           },
           unauthenticated: () {

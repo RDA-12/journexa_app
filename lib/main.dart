@@ -6,7 +6,7 @@ import 'package:journexa_app/firebase_options.dart';
 import 'package:journexa_app/shared/app_env.dart';
 import 'package:journexa_app/shared/app_logger.dart';
 import 'package:journexa_app/ui/auth/bloc/auth_bloc.dart';
-import 'package:journexa_app/ui/shared/app_router.dart';
+import 'package:journexa_app/ui/router/router.dart';
 import 'package:journexa_app/ui/shared/l10n/l10n.dart';
 import 'package:journexa_app/ui/shared/theme.dart';
 import 'package:toastification/toastification.dart';

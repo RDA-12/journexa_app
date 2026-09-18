@@ -12,6 +12,7 @@ import 'package:journexa_app/ui/home/home_page.dart';
 import 'package:journexa_app/ui/income_categories/add_income_categories_list_page.dart';
 import 'package:journexa_app/ui/income_categories/add_income_category_page.dart';
 import 'package:journexa_app/ui/initialize/initialize_page.dart';
+import 'package:journexa_app/ui/router/app_route_notifier.dart';
 import 'package:journexa_app/ui/splash/splash_page.dart';
 import 'package:journexa_app/ui/transactions/add_transaction_page.dart';
 import 'package:journexa_app/ui/transactions/transactions_list_page.dart';
@@ -24,15 +25,15 @@ part 'app_router.g.dart';
 /// [AppRouter] is holds the [GoRouter] instance.
 class AppRouter {
   /// Creates new [AppRouter]
-  new({required this.authBloc});
+  new({required this._routeNotifier});
 
-  /// Used to trigger redirect when this bloc state changes
-  final AuthBloc authBloc;
+  /// Used to trigger redirect when this notifier emits new value
+  final AppRouteNotifier _routeNotifier;
 
   /// Return [GoRouter] instance for the app.
   late final GoRouter config = GoRouter(
     initialLocation: '/',
-    refreshListenable: _AuthBlocListenable(authBloc),
+    refreshListenable: _routeNotifier,
     // TODO(RDA-12): test redirection
     redirect: (context, state) {
       final authState = context.read<AuthBloc>().state;
@@ -43,19 +44,4 @@ class AppRouter {
     },
     routes: $appRoutes,
   );
-}
-
-class _AuthBlocListenable extends ChangeNotifier {
-  new(AuthBloc authBloc) {
-    notifyListeners();
-    _subscription = authBloc.stream.listen((_) => notifyListeners());
-  }
-
-  late final StreamSubscription<AuthState> _subscription;
-
-  @override
-  Future<void> dispose() async {
-    await _subscription.cancel();
-    super.dispose();
-  }
 }

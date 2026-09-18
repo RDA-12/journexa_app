@@ -2,6 +2,7 @@ import 'package:bloc_test/bloc_test.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:go_router/go_router.dart';
 import 'package:journexa_app/ui/shared/l10n/l10n.dart';
 import 'package:journexa_app/ui/shared/widgets/app_icon_button.dart';
 import 'package:journexa_app/ui/wallets/bloc/wallets_bloc.dart';
@@ -34,15 +35,20 @@ void main() {
   Future<void> pumpWidget(
     WidgetTester tester, {
     Locale locale = const Locale('en'),
-    Map<String, Widget> nextRoutes = const {},
+    List<RouteBase> nextRoutes = const [],
   }) {
     return pumpForPageTest(
       tester,
       initialLocation: '/wallet-accounts',
-      routes: {
-        '/wallet-accounts': WalletsListPage(walletsBloc: mockWalletsBloc),
+      routes: [
+        GoRoute(
+          path: '/wallet-accounts',
+          builder: (context, state) => WalletsListPage(
+            walletsBloc: mockWalletsBloc,
+          ),
+        ),
         ...nextRoutes,
-      },
+      ],
       locale: locale,
     );
   }
@@ -91,7 +97,12 @@ void main() {
     ) async {
       await pumpWidget(
         tester,
-        nextRoutes: {'/add-wallet-account': const Placeholder()},
+        nextRoutes: [
+          GoRoute(
+            path: '/add-wallet-account',
+            builder: (context, state) => const Placeholder(),
+          ),
+        ],
       );
 
       final finder = find.byType(AppIconButton);
@@ -122,12 +133,15 @@ void main() {
         'after going back from add wallet page', (tester) async {
       await pumpWidget(
         tester,
-        nextRoutes: {
-          '/add-wallet-account': Scaffold(
-            key: const ValueKey('add-wallet-page'),
-            appBar: AppBar(),
+        nextRoutes: [
+          GoRoute(
+            path: '/add-wallet-account',
+            builder: (context, state) => Scaffold(
+              key: const ValueKey('add-wallet-page'),
+              appBar: AppBar(),
+            ),
           ),
-        },
+        ],
       );
 
       final finder = find.byType(AppIconButton);

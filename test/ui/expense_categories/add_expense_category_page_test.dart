@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:go_router/go_router.dart';
 import 'package:journexa_app/ui/expense_categories/add_expense_category_page.dart';
 import 'package:journexa_app/ui/expense_categories/bloc/add_expense_category_bloc.dart';
 import 'package:journexa_app/ui/expense_categories/widgets/add_expense_category_view.dart';
@@ -36,17 +37,20 @@ void main() {
   Future<void> pumpWidget(
     WidgetTester tester, {
     Locale locale = const Locale('en'),
-    Map<String, Widget> nextRoutes = const {},
+    List<RouteBase> nextRoutes = const [],
   }) {
     return pumpForPageTest(
       tester,
       initialLocation: '/add-expense-category',
-      routes: {
-        '/add-expense-category': AddExpenseCategoryPage(
-          addExpenseCategoryBloc: mockAddExpenseCategoryBloc,
+      routes: [
+        GoRoute(
+          path: '/add-expense-category',
+          builder: (context, state) => AddExpenseCategoryPage(
+            addExpenseCategoryBloc: mockAddExpenseCategoryBloc,
+          ),
         ),
         ...nextRoutes,
-      },
+      ],
       locale: locale,
     );
   }

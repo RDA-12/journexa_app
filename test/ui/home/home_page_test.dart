@@ -4,6 +4,7 @@ import 'package:decimal/decimal.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:go_router/go_router.dart';
 import 'package:journexa_app/domain/entities/wallet.dart';
 import 'package:journexa_app/ui/home/bloc/home_bloc.dart';
 import 'package:journexa_app/ui/home/home_page.dart';
@@ -44,15 +45,18 @@ void main() {
   Future<void> pumpWidget(
     WidgetTester tester, {
     Locale locale = const Locale('en'),
-    Map<String, Widget> nextRoutes = const {},
+    List<RouteBase> nextRoutes = const [],
   }) {
     return pumpForPageTest(
       tester,
       initialLocation: '/home',
-      routes: {
-        '/home': HomePage(homeBloc: mockHomeBloc),
+      routes: [
+        GoRoute(
+          path: '/home',
+          builder: (context, state) => HomePage(homeBloc: mockHomeBloc),
+        ),
         ...nextRoutes,
-      },
+      ],
       locale: locale,
     );
   }

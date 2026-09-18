@@ -2,6 +2,7 @@ import 'package:bloc_test/bloc_test.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:go_router/go_router.dart';
 import 'package:journexa_app/ui/shared/l10n/l10n.dart';
 import 'package:journexa_app/ui/transactions/bloc/transactions_bloc.dart';
 import 'package:journexa_app/ui/transactions/transactions_list_page.dart';
@@ -33,17 +34,20 @@ void main() {
   Future<void> pumpWidget(
     WidgetTester tester, {
     Locale locale = const Locale('en'),
-    Map<String, Widget> nextRoutes = const {},
+    List<RouteBase> nextRoutes = const [],
   }) {
     return pumpForPageTest(
       tester,
       initialLocation: '/transactions',
-      routes: {
-        '/transactions': TransactionsListPage(
-          transactionsBloc: mockTransactionsBloc,
+      routes: [
+        GoRoute(
+          path: '/transactions',
+          builder: (context, state) => TransactionsListPage(
+            transactionsBloc: mockTransactionsBloc,
+          ),
         ),
         ...nextRoutes,
-      },
+      ],
       locale: locale,
     );
   }

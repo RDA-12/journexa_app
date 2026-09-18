@@ -2,6 +2,7 @@ import 'package:bloc_test/bloc_test.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:go_router/go_router.dart';
 import 'package:journexa_app/ui/income_categories/add_income_categories_list_page.dart';
 import 'package:journexa_app/ui/income_categories/bloc/income_categories_bloc.dart';
 import 'package:journexa_app/ui/income_categories/widgets/income_categories_list_view.dart';
@@ -34,17 +35,20 @@ void main() {
   Future<void> pumpWidget(
     WidgetTester tester, {
     Locale locale = const Locale('en'),
-    Map<String, Widget> nextRoutes = const {},
+    List<RouteBase> nextRoutes = const [],
   }) {
     return pumpForPageTest(
       tester,
       initialLocation: '/income-categories',
-      routes: {
-        '/income-categories': IncomeCategoriesListPage(
-          incomeCategoriesBloc: mockIncomeCategoriesBloc,
+      routes: [
+        GoRoute(
+          path: '/income-categories',
+          builder: (context, state) => IncomeCategoriesListPage(
+            incomeCategoriesBloc: mockIncomeCategoriesBloc,
+          ),
         ),
         ...nextRoutes,
-      },
+      ],
       locale: locale,
     );
   }
@@ -96,7 +100,12 @@ void main() {
     ) async {
       await pumpWidget(
         tester,
-        nextRoutes: {'/add-income-category': const Placeholder()},
+        nextRoutes: [
+          GoRoute(
+            path: '/add-income-category',
+            builder: (context, state) => const Placeholder(),
+          ),
+        ],
       );
 
       final finder = find.byType(AppIconButton);
@@ -127,12 +136,15 @@ void main() {
         'after going back from add income category page', (tester) async {
       await pumpWidget(
         tester,
-        nextRoutes: {
-          '/add-income-category': Scaffold(
-            key: const ValueKey('add-income-category-page'),
-            appBar: AppBar(),
+        nextRoutes: [
+          GoRoute(
+            path: '/add-income-category',
+            builder: (context, state) => Scaffold(
+              key: const ValueKey('add-income-category-page'),
+              appBar: AppBar(),
+            ),
           ),
-        },
+        ],
       );
 
       final finder = find.byType(AppIconButton);

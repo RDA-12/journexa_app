@@ -2,6 +2,7 @@ import 'package:bloc_test/bloc_test.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:go_router/go_router.dart';
 import 'package:journexa_app/ui/initialize/bloc/initialize_bloc.dart';
 import 'package:journexa_app/ui/initialize/initialize_page.dart';
 import 'package:journexa_app/ui/initialize/widgets/initializing_box.dart';
@@ -26,15 +27,20 @@ void main() {
 
   Future<void> pumpWidget(
     WidgetTester tester, {
-    Map<String, Widget> nextRoutes = const {},
+    List<RouteBase> nextRoutes = const [],
   }) {
     return pumpForPageTest(
       tester,
       initialLocation: '/initialize',
-      routes: {
-        '/initialize': InitializePage(initializeBloc: mockInitializeBloc),
+      routes: [
+        GoRoute(
+          path: '/initialize',
+          builder: (context, state) => InitializePage(
+            initializeBloc: mockInitializeBloc,
+          ),
+        ),
         ...nextRoutes,
-      },
+      ],
       locale: const Locale('en'),
     );
   }
@@ -75,7 +81,15 @@ void main() {
       );
 
       const expectedPage = Scaffold(key: ValueKey('homepage'));
-      await pumpWidget(tester, nextRoutes: {'/home': expectedPage});
+      await pumpWidget(
+        tester,
+        nextRoutes: [
+          GoRoute(
+            path: '/home',
+            builder: (context, state) => expectedPage,
+          ),
+        ],
+      );
       await tester.pumpAndSettle();
 
       expect(find.byKey(const ValueKey('homepage')), findsOneWidget);

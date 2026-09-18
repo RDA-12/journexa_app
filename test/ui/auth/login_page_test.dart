@@ -2,6 +2,7 @@ import 'package:bloc_test/bloc_test.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:go_router/go_router.dart';
 import 'package:journexa_app/ui/auth/bloc/login_bloc.dart';
 import 'package:journexa_app/ui/auth/login_page.dart';
 import 'package:journexa_app/ui/auth/widgets/widgets.dart';
@@ -17,16 +18,21 @@ void main() {
 
   Future<void> pumpPage(
     WidgetTester tester, {
-    Map<String, Widget> nextRoutes = const {},
+    List<RouteBase> nextRoutes = const [],
   }) {
     return pumpForPageTest(
       tester,
       locale: const Locale('en'),
       initialLocation: '/login',
-      routes: {
-        '/login': LoginPage(loginBloc: mockLoginBloc),
+      routes: [
+        GoRoute(
+          path: '/login',
+          builder: (context, state) => LoginPage(
+            loginBloc: mockLoginBloc,
+          ),
+        ),
         ...nextRoutes,
-      },
+      ],
     );
   }
 
@@ -76,7 +82,15 @@ void main() {
       );
 
       const expectedPage = Scaffold(key: ValueKey('initialize'));
-      await pumpPage(tester, nextRoutes: {'/initialize': expectedPage});
+      await pumpPage(
+        tester,
+        nextRoutes: [
+          GoRoute(
+            path: '/initialize',
+            builder: (context, state) => expectedPage,
+          ),
+        ],
+      );
       await tester.pumpAndSettle(kToastDuration);
 
       expect(find.byKey(const ValueKey('initialize')), findsOneWidget);

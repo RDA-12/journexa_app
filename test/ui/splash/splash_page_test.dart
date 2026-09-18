@@ -2,6 +2,7 @@ import 'package:bloc_test/bloc_test.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:go_router/go_router.dart';
 import 'package:journexa_app/domain/entities/user.dart';
 import 'package:journexa_app/ui/auth/bloc/auth_bloc.dart';
 import 'package:journexa_app/ui/splash/splash_page.dart';
@@ -28,18 +29,21 @@ void main() {
 
   Future<void> pumpWidget(
     WidgetTester tester, {
-    Map<String, Widget> nextRoutes = const {},
+    List<RouteBase> nextRoutes = const [],
   }) {
     return pumpForPageTest(
       tester,
       locale: const Locale('en'),
-      routes: {
-        '/': BlocProvider.value(
-          value: mockAuthBloc,
-          child: const SplashPage(),
+      routes: [
+        GoRoute(
+          path: '/',
+          builder: (context, state) => BlocProvider.value(
+            value: mockAuthBloc,
+            child: const SplashPage(),
+          ),
         ),
         ...nextRoutes,
-      },
+      ],
     );
   }
 
@@ -68,7 +72,15 @@ void main() {
       );
 
       const expectedPage = Scaffold(key: ValueKey('initialize'));
-      await pumpWidget(tester, nextRoutes: {'/initialize': expectedPage});
+      await pumpWidget(
+        tester,
+        nextRoutes: [
+          GoRoute(
+            path: '/initialize',
+            builder: (context, state) => expectedPage,
+          ),
+        ],
+      );
       await tester.pumpAndSettle();
 
       expect(find.byKey(const ValueKey('initialize')), findsOneWidget);
@@ -85,7 +97,15 @@ void main() {
       );
 
       const expectedPage = Scaffold(key: ValueKey('login'));
-      await pumpWidget(tester, nextRoutes: {'/login': expectedPage});
+      await pumpWidget(
+        tester,
+        nextRoutes: [
+          GoRoute(
+            path: '/login',
+            builder: (context, state) => expectedPage,
+          ),
+        ],
+      );
       await tester.pumpAndSettle();
 
       expect(find.byKey(const ValueKey('login')), findsOneWidget);

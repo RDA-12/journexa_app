@@ -2,6 +2,7 @@ import 'package:bloc_test/bloc_test.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:go_router/go_router.dart';
 import 'package:journexa_app/ui/expense_categories/bloc/expense_categories_bloc.dart';
 import 'package:journexa_app/ui/expense_categories/expense_categories_list_page.dart';
 import 'package:journexa_app/ui/expense_categories/widgets/expense_categories_list_view.dart';
@@ -34,17 +35,20 @@ void main() {
   Future<void> pumpWidget(
     WidgetTester tester, {
     Locale locale = const Locale('en'),
-    Map<String, Widget> nextRoutes = const {},
+    List<RouteBase> nextRoutes = const [],
   }) {
     return pumpForPageTest(
       tester,
       initialLocation: '/expense-categories',
-      routes: {
-        '/expense-categories': ExpenseCategoriesListPage(
-          expenseCategoriesBloc: mockExpenseCategoriesBloc,
+      routes: [
+        GoRoute(
+          path: '/expense-categories',
+          builder: (context, state) => ExpenseCategoriesListPage(
+            expenseCategoriesBloc: mockExpenseCategoriesBloc,
+          ),
         ),
         ...nextRoutes,
-      },
+      ],
       locale: locale,
     );
   }
@@ -96,7 +100,12 @@ void main() {
     ) async {
       await pumpWidget(
         tester,
-        nextRoutes: {'/add-expense-category': const Placeholder()},
+        nextRoutes: [
+          GoRoute(
+            path: '/add-expense-category',
+            builder: (context, state) => const Placeholder(),
+          ),
+        ],
       );
 
       final finder = find.byType(AppIconButton);
@@ -127,12 +136,15 @@ void main() {
         'after going back from add expense category page', (tester) async {
       await pumpWidget(
         tester,
-        nextRoutes: {
-          '/add-expense-category': Scaffold(
-            key: const ValueKey('add-expense-category-page'),
-            appBar: AppBar(),
+        nextRoutes: [
+          GoRoute(
+            path: '/add-expense-category',
+            builder: (context, state) => Scaffold(
+              key: const ValueKey('add-expense-category-page'),
+              appBar: AppBar(),
+            ),
           ),
-        },
+        ],
       );
 
       final finder = find.byType(AppIconButton);

@@ -39,7 +39,7 @@ Future<void> pumpForWidgetTest(
 /// Useful to test navigation between pages.
 Future<void> pumpForPageTest(
   WidgetTester tester, {
-  required Map<String, Widget> routes,
+  required List<RouteBase> routes,
   required Locale locale,
   String initialLocation = '/',
 }) async {
@@ -57,14 +57,7 @@ Future<void> pumpForPageTest(
         locale: locale,
         routerConfig: GoRouter(
           initialLocation: initialLocation,
-          routes: [
-            ...routes.entries.map(
-              (e) => GoRoute(
-                path: e.key,
-                builder: (context, state) => e.value,
-              ),
-            ),
-          ],
+          routes: routes,
         ),
       ),
     ),

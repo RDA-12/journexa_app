@@ -2,6 +2,7 @@ import 'package:bloc_test/bloc_test.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:go_router/go_router.dart';
 import 'package:journexa_app/domain/entities/transaction.dart';
 import 'package:journexa_app/ui/expense_categories/bloc/expense_categories_bloc.dart';
 import 'package:journexa_app/ui/income_categories/bloc/income_categories_bloc.dart';
@@ -71,18 +72,21 @@ void main() {
     WidgetTester tester, {
     required TransactionType type,
     Locale locale = const Locale('en'),
-  }) async {
-    return await pumpForPageTest(
+  }) {
+    return pumpForPageTest(
       tester,
-      routes: {
-        '/': AddTransactionPage(
-          type: type,
-          walletsBloc: mockWalletsBloc,
-          incomeCategoriesBloc: mockIncomeCategoriesBloc,
-          expenseCategoriesBloc: mockExpenseCategoriesBloc,
-          addTransactionBloc: mockAddTransactionBloc,
+      routes: [
+        GoRoute(
+          path: '/',
+          builder: (context, state) => AddTransactionPage(
+            type: type,
+            walletsBloc: mockWalletsBloc,
+            incomeCategoriesBloc: mockIncomeCategoriesBloc,
+            expenseCategoriesBloc: mockExpenseCategoriesBloc,
+            addTransactionBloc: mockAddTransactionBloc,
+          ),
         ),
-      },
+      ],
       locale: locale,
     );
   }

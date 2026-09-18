@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:go_router/go_router.dart';
 import 'package:journexa_app/ui/shared/l10n/l10n.dart';
 import 'package:journexa_app/ui/wallets/add_wallet_page.dart';
 import 'package:journexa_app/ui/wallets/bloc/add_wallet_bloc.dart';
@@ -36,15 +37,20 @@ void main() {
   Future<void> pumpWidget(
     WidgetTester tester, {
     Locale locale = const Locale('en'),
-    Map<String, Widget> nextRoutes = const {},
+    List<RouteBase> nextRoutes = const [],
   }) {
     return pumpForPageTest(
       tester,
       initialLocation: '/add-wallet-account',
-      routes: {
-        '/add-wallet-account': AddWalletPage(addWalletBloc: mockAddWalletBloc),
+      routes: [
+        GoRoute(
+          path: '/add-wallet-account',
+          builder: (context, state) => AddWalletPage(
+            addWalletBloc: mockAddWalletBloc,
+          ),
+        ),
         ...nextRoutes,
-      },
+      ],
       locale: locale,
     );
   }

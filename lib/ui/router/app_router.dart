@@ -36,6 +36,7 @@ class AppRouter {
 
   /// Return [GoRouter] instance for the app.
   late final GoRouter config = GoRouter(
+    navigatorKey: rootNavigatorKey,
     initialLocation: '/',
     refreshListenable: _routeNotifier,
     redirect: (context, state) {

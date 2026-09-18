@@ -95,9 +95,6 @@ class IncomeCategoriesListRoute extends GoRouteData
   /// Creates new [IncomeCategoriesListRoute]
   const new();
 
-  /// parent nav key of this route
-  static final GlobalKey<NavigatorState> $parentNavigatorKey = rootNavigatorKey;
-
   @override
   Widget build(BuildContext context, GoRouterState state) =>
       const IncomeCategoriesListPage();
@@ -107,9 +104,6 @@ class IncomeCategoriesListRoute extends GoRouteData
 class AddIncomeCategoryRoute extends GoRouteData with $AddIncomeCategoryRoute {
   /// Creates new [AddIncomeCategoryRoute]
   const new();
-
-  /// parent nav key of this route
-  static final GlobalKey<NavigatorState> $parentNavigatorKey = rootNavigatorKey;
 
   @override
   Widget build(BuildContext context, GoRouterState state) =>

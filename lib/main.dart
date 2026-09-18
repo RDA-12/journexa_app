@@ -36,9 +36,6 @@ class JournexaApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final textTheme = createTextTheme(context, 'Roboto', 'Roboto Slab');
-    final theme = JournexaTheme(textTheme);
-
     return BlocProvider(
       create: (context) =>
           (authBloc ?? getIt<AuthBloc>())
@@ -50,15 +47,37 @@ class JournexaApp extends StatelessWidget {
           maxTitleLines: 1,
           maxToastLimit: 5,
         ),
-        child: MaterialApp.router(
-          routerConfig: AppRouter.router,
-          themeMode: ThemeMode.light,
-          theme: theme.light(),
-          darkTheme: theme.dark(),
-          localizationsDelegates: AppLocalizations.localizationsDelegates,
-          supportedLocales: AppLocalizations.supportedLocales,
+        child: Builder(
+          builder: (context) {
+            final router = AppRouter(authBloc: context.read<AuthBloc>());
+
+            return _JournexaView(
+              router: router,
+            );
+          },
         ),
       ),
+    );
+  }
+}
+
+class _JournexaView extends StatelessWidget {
+  const new({required this.router});
+
+  final AppRouter router;
+
+  @override
+  Widget build(BuildContext context) {
+    final textTheme = createTextTheme(context, 'Roboto', 'Roboto Slab');
+    final theme = JournexaTheme(textTheme);
+
+    return MaterialApp.router(
+      routerConfig: router.config,
+      themeMode: ThemeMode.light,
+      theme: theme.light(),
+      darkTheme: theme.dark(),
+      localizationsDelegates: AppLocalizations.localizationsDelegates,
+      supportedLocales: AppLocalizations.supportedLocales,
     );
   }
 }

@@ -574,4 +574,19 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get homeTransactionsListTitle => 'Latest transactions';
+
+  @override
+  String get settingsTitle => 'Settings';
+
+  @override
+  String get settingsIncomeCategoriesLabel => 'Income category';
+
+  @override
+  String get settingsIncomeCategoriesSemantics => 'See all income categories';
+
+  @override
+  String get settingsExpenseCategoriesLabel => 'Expense category';
+
+  @override
+  String get settingsExpenseCategoriesSemantics => 'See all expense categories';
 }

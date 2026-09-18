@@ -148,5 +148,10 @@
   "mtdCardNetLabel": "Saldo Bersih",
   "mtdSectionLoadingSemantics": "Memuat data saldo bersih bulan ini",
   "homeMTDTitle": "Saldo bulan ini",
-  "homeTransactionsListTitle": "Transaksi terbaru"
+  "homeTransactionsListTitle": "Transaksi terbaru",
+  "settingsTitle": "Settings",
+  "settingsIncomeCategoriesLabel": "Kategori pendapatan",
+  "settingsIncomeCategoriesSemantics": "Lihat semua kategori pendapatan",
+  "settingsExpenseCategoriesLabel": "Kategori pengeluaran",
+  "settingsExpenseCategoriesSemantics": "Lihat semua kategori pengeluaran"
 }

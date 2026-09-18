@@ -148,3 +148,14 @@ class AddTransactionRoute extends RelativeGoRouteData
   Widget build(BuildContext context, GoRouterState state) =>
       AddTransactionPage(type: type);
 }
+
+/// Route for settings page
+@TypedGoRoute<SettingsRoute>(path: '/settings')
+class SettingsRoute extends GoRouteData with $SettingsRoute {
+  /// Creates new [SettingsRoute]
+  const new();
+
+  @override
+  Widget build(BuildContext context, GoRouterState state) =>
+      const SettingsPage();
+}

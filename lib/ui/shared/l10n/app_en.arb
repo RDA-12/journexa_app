@@ -902,5 +902,25 @@
   "homeTransactionsListTitle": "Latest transactions",
   "@homeTransactionsListTitle": {
     "description": "Title for transactions list section in home page"
+  },
+  "settingsTitle": "Settings",
+  "@settingsTitle": {
+    "description": "Title to be showed on settings page"
+  },
+  "settingsIncomeCategoriesLabel": "Income category",
+  "@settingsIncomeCategoriesLabel": {
+    "description": "Label for income category tile in settings page"
+  },
+  "settingsIncomeCategoriesSemantics": "See all income categories",
+  "@settingsIncomeCategoriesSemantics": {
+    "description": "Semantics label for income category tile in settings page"
+  },
+  "settingsExpenseCategoriesLabel": "Expense category",
+  "@settingsExpenseCategoriesLabel": {
+    "description": "Label for expense category tile in settings page"
+  },
+  "settingsExpenseCategoriesSemantics": "See all expense categories",
+  "@settingsExpenseCategoriesSemantics": {
+    "description": "Semantics label for expense category tile in settings page"
   }
 }

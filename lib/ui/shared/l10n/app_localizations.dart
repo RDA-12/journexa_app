@@ -1018,6 +1018,36 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Latest transactions'**
   String get homeTransactionsListTitle;
+
+  /// Title to be showed on settings page
+  ///
+  /// In en, this message translates to:
+  /// **'Settings'**
+  String get settingsTitle;
+
+  /// Label for income category tile in settings page
+  ///
+  /// In en, this message translates to:
+  /// **'Income category'**
+  String get settingsIncomeCategoriesLabel;
+
+  /// Semantics label for income category tile in settings page
+  ///
+  /// In en, this message translates to:
+  /// **'See all income categories'**
+  String get settingsIncomeCategoriesSemantics;
+
+  /// Label for expense category tile in settings page
+  ///
+  /// In en, this message translates to:
+  /// **'Expense category'**
+  String get settingsExpenseCategoriesLabel;
+
+  /// Semantics label for expense category tile in settings page
+  ///
+  /// In en, this message translates to:
+  /// **'See all expense categories'**
+  String get settingsExpenseCategoriesSemantics;
 }
 
 class _AppLocalizationsDelegate

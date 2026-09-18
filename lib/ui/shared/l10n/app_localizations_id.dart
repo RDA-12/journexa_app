@@ -582,4 +582,21 @@ class AppLocalizationsId extends AppLocalizations {
 
   @override
   String get homeTransactionsListTitle => 'Transaksi terbaru';
+
+  @override
+  String get settingsTitle => 'Settings';
+
+  @override
+  String get settingsIncomeCategoriesLabel => 'Kategori pendapatan';
+
+  @override
+  String get settingsIncomeCategoriesSemantics =>
+      'Lihat semua kategori pendapatan';
+
+  @override
+  String get settingsExpenseCategoriesLabel => 'Kategori pengeluaran';
+
+  @override
+  String get settingsExpenseCategoriesSemantics =>
+      'Lihat semua kategori pengeluaran';
 }

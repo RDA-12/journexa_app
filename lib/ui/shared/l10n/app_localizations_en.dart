@@ -589,4 +589,16 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get settingsExpenseCategoriesSemantics => 'See all expense categories';
+
+  @override
+  String get mainShellHomeLabel => 'Home';
+
+  @override
+  String get mainShellWalletsLabel => 'Wallets';
+
+  @override
+  String get mainShellTransactionsLabel => 'Transactions';
+
+  @override
+  String get mainShellSettingsLabel => 'Settings';
 }

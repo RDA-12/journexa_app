@@ -153,5 +153,9 @@
   "settingsIncomeCategoriesLabel": "Kategori pendapatan",
   "settingsIncomeCategoriesSemantics": "Lihat semua kategori pendapatan",
   "settingsExpenseCategoriesLabel": "Kategori pengeluaran",
-  "settingsExpenseCategoriesSemantics": "Lihat semua kategori pengeluaran"
+  "settingsExpenseCategoriesSemantics": "Lihat semua kategori pengeluaran",
+  "mainShellHomeLabel": "Home",
+  "mainShellWalletsLabel": "Dompet",
+  "mainShellTransactionsLabel": "Transaksi",
+  "mainShellSettingsLabel": "Settings"
 }

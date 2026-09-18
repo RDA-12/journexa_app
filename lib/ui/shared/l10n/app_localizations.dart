@@ -1048,6 +1048,30 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'See all expense categories'**
   String get settingsExpenseCategoriesSemantics;
+
+  /// Label for home page in main shell
+  ///
+  /// In en, this message translates to:
+  /// **'Home'**
+  String get mainShellHomeLabel;
+
+  /// Label for wallets page in main shell
+  ///
+  /// In en, this message translates to:
+  /// **'Wallets'**
+  String get mainShellWalletsLabel;
+
+  /// Label for transactions page in main shell
+  ///
+  /// In en, this message translates to:
+  /// **'Transactions'**
+  String get mainShellTransactionsLabel;
+
+  /// Label for settings page in main shell
+  ///
+  /// In en, this message translates to:
+  /// **'Settings'**
+  String get mainShellSettingsLabel;
 }
 
 class _AppLocalizationsDelegate

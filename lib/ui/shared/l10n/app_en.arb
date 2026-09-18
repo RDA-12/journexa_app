@@ -922,5 +922,21 @@
   "settingsExpenseCategoriesSemantics": "See all expense categories",
   "@settingsExpenseCategoriesSemantics": {
     "description": "Semantics label for expense category tile in settings page"
+  },
+  "mainShellHomeLabel": "Home",
+  "@mainShellHomeLabel": {
+    "description": "Label for home page in main shell"
+  },
+  "mainShellWalletsLabel": "Wallets",
+  "@mainShellWalletsLabel": {
+    "description": "Label for wallets page in main shell"
+  },
+  "mainShellTransactionsLabel": "Transactions",
+  "@mainShellTransactionsLabel": {
+    "description": "Label for transactions page in main shell"
+  },
+  "mainShellSettingsLabel": "Settings",
+  "@mainShellSettingsLabel": {
+    "description": "Label for settings page in main shell"
   }
 }

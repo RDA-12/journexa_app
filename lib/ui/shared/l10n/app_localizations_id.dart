@@ -599,4 +599,16 @@ class AppLocalizationsId extends AppLocalizations {
   @override
   String get settingsExpenseCategoriesSemantics =>
       'Lihat semua kategori pengeluaran';
+
+  @override
+  String get mainShellHomeLabel => 'Home';
+
+  @override
+  String get mainShellWalletsLabel => 'Dompet';
+
+  @override
+  String get mainShellTransactionsLabel => 'Transaksi';
+
+  @override
+  String get mainShellSettingsLabel => 'Settings';
 }

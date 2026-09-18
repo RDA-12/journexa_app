@@ -1,5 +1,11 @@
 part of 'app_router.dart';
 
+/// Root navigator key
+final rootNavigatorKey = GlobalKey<NavigatorState>();
+
+/// Navigator key for wallets shell within main shell
+final walletsShellNavigatorKey = GlobalKey<NavigatorState>();
+
 /// Route for splash page
 @TypedGoRoute<SplashRoute>(path: '/')
 class SplashRoute extends GoRouteData with $SplashRoute {
@@ -31,8 +37,13 @@ class InitializeRoute extends GoRouteData with $InitializeRoute {
       const InitializePage();
 }
 
+/// Shell for transactions routes
+class HomeShell extends StatefulShellBranchData {
+  /// Creates new [HomeShell]
+  const new();
+}
+
 /// Route for home page
-@TypedGoRoute<HomeRoute>(path: '/home')
 class HomeRoute extends GoRouteData with $HomeRoute {
   /// Creates new [HomeRoute]
   const new();
@@ -41,13 +52,17 @@ class HomeRoute extends GoRouteData with $HomeRoute {
   Widget build(BuildContext context, GoRouterState state) => const HomePage();
 }
 
+/// Shell for wallets routes
+class WalletsShell extends StatefulShellBranchData {
+  /// Creates new [WalletsShell]
+  const new();
+
+  /// Nav key for this shell
+  static final GlobalKey<NavigatorState> $navigatorKey =
+      walletsShellNavigatorKey;
+}
+
 /// Route for wallets list page
-@TypedGoRoute<WalletsListRoute>(
-  path: '/wallets',
-  routes: [
-    TypedGoRoute<AddWalletRoute>(path: 'add'),
-  ],
-)
 class WalletsListRoute extends GoRouteData with $WalletsListRoute {
   /// Creates new [WalletsListRoute]
   const new();
@@ -61,6 +76,9 @@ class WalletsListRoute extends GoRouteData with $WalletsListRoute {
 class AddWalletRoute extends GoRouteData with $AddWalletRoute {
   /// Creates new [AddWalletRoute]
   const new();
+
+  /// parent nav key of this route
+  static final GlobalKey<NavigatorState> $parentNavigatorKey = rootNavigatorKey;
 
   @override
   Widget build(BuildContext context, GoRouterState state) =>
@@ -77,6 +95,9 @@ class IncomeCategoriesListRoute extends GoRouteData
   /// Creates new [IncomeCategoriesListRoute]
   const new();
 
+  /// parent nav key of this route
+  static final GlobalKey<NavigatorState> $parentNavigatorKey = rootNavigatorKey;
+
   @override
   Widget build(BuildContext context, GoRouterState state) =>
       const IncomeCategoriesListPage();
@@ -86,6 +107,9 @@ class IncomeCategoriesListRoute extends GoRouteData
 class AddIncomeCategoryRoute extends GoRouteData with $AddIncomeCategoryRoute {
   /// Creates new [AddIncomeCategoryRoute]
   const new();
+
+  /// parent nav key of this route
+  static final GlobalKey<NavigatorState> $parentNavigatorKey = rootNavigatorKey;
 
   @override
   Widget build(BuildContext context, GoRouterState state) =>
@@ -118,13 +142,13 @@ class AddExpenseCategoryRoute extends GoRouteData
       const AddExpenseCategoryPage();
 }
 
+/// Shell for transactions routes
+class TransactionsShell extends StatefulShellBranchData {
+  /// Creates new [TransactionsShell]
+  const new();
+}
+
 /// Route for transactions list page
-@TypedGoRoute<TransactionsListRoute>(
-  path: '/transactions',
-  routes: [
-    TypedRelativeGoRoute<AddTransactionRoute>(path: 'add/:type'),
-  ],
-)
 class TransactionsListRoute extends GoRouteData with $TransactionsListRoute {
   /// Creates new [TransactionsListRoute]
   const new();
@@ -149,8 +173,13 @@ class AddTransactionRoute extends RelativeGoRouteData
       AddTransactionPage(type: type);
 }
 
+/// Shell for transactions routes
+class SettingsShell extends StatefulShellBranchData {
+  /// Creates new [SettingsShell]
+  const new();
+}
+
 /// Route for settings page
-@TypedGoRoute<SettingsRoute>(path: '/settings')
 class SettingsRoute extends GoRouteData with $SettingsRoute {
   /// Creates new [SettingsRoute]
   const new();
@@ -158,4 +187,52 @@ class SettingsRoute extends GoRouteData with $SettingsRoute {
   @override
   Widget build(BuildContext context, GoRouterState state) =>
       const SettingsPage();
+}
+
+/// Shell route for main page
+@TypedStatefulShellRoute<MainShellRoute>(
+  branches: [
+    TypedStatefulShellBranch<HomeShell>(
+      routes: [
+        TypedGoRoute<HomeRoute>(path: '/home'),
+      ],
+    ),
+    TypedStatefulShellBranch<WalletsShell>(
+      routes: [
+        TypedGoRoute<WalletsListRoute>(
+          path: '/wallets',
+          routes: [
+            TypedGoRoute<AddWalletRoute>(path: 'add'),
+          ],
+        ),
+      ],
+    ),
+    TypedStatefulShellBranch<TransactionsShell>(
+      routes: [
+        TypedGoRoute<TransactionsListRoute>(path: '/transactions'),
+      ],
+    ),
+    TypedStatefulShellBranch<SettingsShell>(
+      routes: [
+        TypedGoRoute<SettingsRoute>(path: '/settings'),
+      ],
+    ),
+  ],
+)
+class MainShellRoute extends StatefulShellRouteData {
+  /// Creates new [MainShellRoute]
+  const new();
+
+  @override
+  Widget builder(
+    BuildContext context,
+    GoRouterState state,
+    StatefulNavigationShell navigationShell,
+  ) {
+    return MainShellPage(
+      currentIndex: navigationShell.currentIndex,
+      onDestinationChanged: navigationShell.goBranch,
+      child: navigationShell,
+    );
+  }
 }

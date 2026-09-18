@@ -13,6 +13,7 @@ import 'package:journexa_app/ui/initialize/initialize_page.dart';
 import 'package:journexa_app/ui/router/app_route_notifier.dart';
 import 'package:journexa_app/ui/router/app_route_redirector.dart';
 import 'package:journexa_app/ui/settings/settings_page.dart';
+import 'package:journexa_app/ui/shell/main_shell_page.dart';
 import 'package:journexa_app/ui/splash/splash_page.dart';
 import 'package:journexa_app/ui/transactions/add_transaction_page.dart';
 import 'package:journexa_app/ui/transactions/transactions_list_page.dart';

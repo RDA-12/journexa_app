@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:go_router/go_router.dart';
 import 'package:journexa_app/di.dart';
 import 'package:journexa_app/ui/income_categories/bloc/income_categories_bloc.dart';
 import 'package:journexa_app/ui/income_categories/widgets/income_categories_list_view.dart';
+import 'package:journexa_app/ui/router/router.dart';
 import 'package:journexa_app/ui/shared/l10n/l10n.dart';
 import 'package:journexa_app/ui/shared/widgets/app_responsive.dart';
 
@@ -44,7 +44,7 @@ class _IncomeCategoriesListView extends StatelessWidget {
         padding: context.pagePadding,
         child: IncomeCategoriesListView(
           onAddPressed: () async {
-            await context.push('/add-income-category');
+            await const AddIncomeCategoryRoute().push<void>(context);
             if (!context.mounted) return;
             context.read<IncomeCategoriesBloc>().add(
               const IncomeCategoriesEvent.subscriptionRequested(),

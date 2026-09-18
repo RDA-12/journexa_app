@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:go_router/go_router.dart';
 import 'package:journexa_app/di.dart';
 import 'package:journexa_app/ui/expense_categories/bloc/expense_categories_bloc.dart';
 import 'package:journexa_app/ui/expense_categories/widgets/expense_categories_list_view.dart';
+import 'package:journexa_app/ui/router/router.dart';
 import 'package:journexa_app/ui/shared/l10n/l10n.dart';
 import 'package:journexa_app/ui/shared/widgets/app_responsive.dart';
 
@@ -44,7 +44,7 @@ class _ExpenseCategoriesListView extends StatelessWidget {
         padding: context.pagePadding,
         child: ExpenseCategoriesListView(
           onAddPressed: () async {
-            await context.push('/add-expense-category');
+            await const AddExpenseCategoryRoute().push<void>(context);
             if (!context.mounted) return;
             context.read<ExpenseCategoriesBloc>().add(
               const ExpenseCategoriesEvent.subscriptionRequested(),

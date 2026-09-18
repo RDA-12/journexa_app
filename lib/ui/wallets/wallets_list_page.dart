@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:go_router/go_router.dart';
 import 'package:journexa_app/di.dart';
+import 'package:journexa_app/ui/router/router.dart';
 import 'package:journexa_app/ui/shared/l10n/l10n.dart';
 import 'package:journexa_app/ui/shared/widgets/app_responsive.dart';
 import 'package:journexa_app/ui/wallets/bloc/wallets_bloc.dart';
@@ -44,7 +44,7 @@ class _WalletListView extends StatelessWidget {
         padding: context.pagePadding,
         child: WalletsListView(
           onAddPressed: () async {
-            await context.push('/add-wallet-account');
+            await const AddWalletRoute().push<void>(context);
             if (!context.mounted) return;
             context.read<WalletsBloc>().add(
               const WalletsEvent.subscriptionRequested(),

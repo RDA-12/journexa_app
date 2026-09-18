@@ -36,6 +36,7 @@ void main() {
     WidgetTester tester, {
     Locale locale = const Locale('en'),
     List<RouteBase> nextRoutes = const [],
+    List<RouteBase> childRoutes = const [],
   }) {
     return pumpForPageTest(
       tester,
@@ -43,6 +44,7 @@ void main() {
       routes: [
         GoRoute(
           path: '/expense-categories',
+          routes: childRoutes,
           builder: (context, state) => ExpenseCategoriesListPage(
             expenseCategoriesBloc: mockExpenseCategoriesBloc,
           ),
@@ -95,25 +97,27 @@ void main() {
   });
 
   group('Interactions', () {
-    testWidgets('navigates to /add-expense-category when add button pressed', (
-      tester,
-    ) async {
-      await pumpWidget(
-        tester,
-        nextRoutes: [
-          GoRoute(
-            path: '/add-expense-category',
-            builder: (context, state) => const Placeholder(),
-          ),
-        ],
-      );
+    testWidgets(
+      'navigates to /expense-categories/add '
+      'when add button pressed',
+      (tester) async {
+        await pumpWidget(
+          tester,
+          childRoutes: [
+            GoRoute(
+              path: 'add',
+              builder: (context, state) => const Placeholder(),
+            ),
+          ],
+        );
 
-      final finder = find.byType(AppIconButton);
-      await tester.tap(finder);
-      await tester.pumpAndSettle();
+        final finder = find.byType(AppIconButton);
+        await tester.tap(finder);
+        await tester.pumpAndSettle();
 
-      expect(find.byType(Placeholder), findsOneWidget);
-    });
+        expect(find.byType(Placeholder), findsOneWidget);
+      },
+    );
   });
 
   group('a11y', () {
@@ -136,9 +140,9 @@ void main() {
         'after going back from add expense category page', (tester) async {
       await pumpWidget(
         tester,
-        nextRoutes: [
+        childRoutes: [
           GoRoute(
-            path: '/add-expense-category',
+            path: 'add',
             builder: (context, state) => Scaffold(
               key: const ValueKey('add-expense-category-page'),
               appBar: AppBar(),

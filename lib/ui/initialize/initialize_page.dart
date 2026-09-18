@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:go_router/go_router.dart';
 import 'package:journexa_app/di.dart';
 import 'package:journexa_app/ui/initialize/bloc/initialize_bloc.dart';
 import 'package:journexa_app/ui/initialize/widgets/initializing_box.dart';
+import 'package:journexa_app/ui/router/router.dart';
 
 /// Page for initializing app.
 ///
@@ -43,7 +43,7 @@ class _InitializeView extends StatelessWidget {
       listener: (context, state) {
         state.whenOrNull(
           initialized: () {
-            context.go('/home');
+            const HomeRoute().go(context);
           },
         );
       },

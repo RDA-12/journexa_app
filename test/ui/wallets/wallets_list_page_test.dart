@@ -35,19 +35,19 @@ void main() {
   Future<void> pumpWidget(
     WidgetTester tester, {
     Locale locale = const Locale('en'),
-    List<RouteBase> nextRoutes = const [],
+    List<RouteBase> childRoutes = const [],
   }) {
     return pumpForPageTest(
       tester,
-      initialLocation: '/wallet-accounts',
+      initialLocation: '/wallets',
       routes: [
         GoRoute(
-          path: '/wallet-accounts',
+          path: '/wallets',
           builder: (context, state) => WalletsListPage(
             walletsBloc: mockWalletsBloc,
           ),
+          routes: childRoutes,
         ),
-        ...nextRoutes,
       ],
       locale: locale,
     );
@@ -92,14 +92,13 @@ void main() {
   });
 
   group('Interactions', () {
-    testWidgets('navigates to /wallet-accounts when add button pressed', (
-      tester,
-    ) async {
+    testWidgets('navigates to /wallets/add '
+        'when add button pressed', (tester) async {
       await pumpWidget(
         tester,
-        nextRoutes: [
+        childRoutes: [
           GoRoute(
-            path: '/add-wallet-account',
+            path: 'add',
             builder: (context, state) => const Placeholder(),
           ),
         ],
@@ -133,9 +132,9 @@ void main() {
         'after going back from add wallet page', (tester) async {
       await pumpWidget(
         tester,
-        nextRoutes: [
+        childRoutes: [
           GoRoute(
-            path: '/add-wallet-account',
+            path: 'add',
             builder: (context, state) => Scaffold(
               key: const ValueKey('add-wallet-page'),
               appBar: AppBar(),

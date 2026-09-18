@@ -50,6 +50,7 @@ dev_dependencies:
   flutter_test:
     sdk: flutter
   freezed: ^4.0.1
+  go_router_builder: ^4.5.0
   google_sign_in_mocks:
     git:
       url: https://github.com/RDA-12/google_sign_in_mocks.git

@@ -35,7 +35,7 @@ void main() {
   Future<void> pumpWidget(
     WidgetTester tester, {
     Locale locale = const Locale('en'),
-    List<RouteBase> nextRoutes = const [],
+    List<RouteBase> childRoutes = const [],
   }) {
     return pumpForPageTest(
       tester,
@@ -46,8 +46,8 @@ void main() {
           builder: (context, state) => IncomeCategoriesListPage(
             incomeCategoriesBloc: mockIncomeCategoriesBloc,
           ),
+          routes: childRoutes,
         ),
-        ...nextRoutes,
       ],
       locale: locale,
     );
@@ -95,14 +95,13 @@ void main() {
   });
 
   group('Interactions', () {
-    testWidgets('navigates to /add-income-category when add button pressed', (
-      tester,
-    ) async {
+    testWidgets('navigates to /income-categories/add '
+        'when add button pressed', (tester) async {
       await pumpWidget(
         tester,
-        nextRoutes: [
+        childRoutes: [
           GoRoute(
-            path: '/add-income-category',
+            path: 'add',
             builder: (context, state) => const Placeholder(),
           ),
         ],
@@ -136,9 +135,9 @@ void main() {
         'after going back from add income category page', (tester) async {
       await pumpWidget(
         tester,
-        nextRoutes: [
+        childRoutes: [
           GoRoute(
-            path: '/add-income-category',
+            path: 'add',
             builder: (context, state) => Scaffold(
               key: const ValueKey('add-income-category-page'),
               appBar: AppBar(),

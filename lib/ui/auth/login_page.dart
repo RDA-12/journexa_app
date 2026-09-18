@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:go_router/go_router.dart';
 import 'package:journexa_app/di.dart';
 import 'package:journexa_app/ui/auth/bloc/login_bloc.dart';
 import 'package:journexa_app/ui/auth/widgets/widgets.dart';
+import 'package:journexa_app/ui/router/router.dart';
 
 /// Page for login functionality.
 class LoginPage extends StatelessWidget {
@@ -39,7 +39,7 @@ class _LoginView extends StatelessWidget {
           const LoginHeader(),
           LoginWithGoogleButton(
             onSuccess: () {
-              context.go('/initialize');
+              const InitializeRoute().go(context);
             },
           ),
         ],

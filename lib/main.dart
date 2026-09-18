@@ -52,7 +52,12 @@ class JournexaApp extends StatelessWidget {
             final appRouteNotifier = AppRouteNotifier(
               authBloc: context.read<AuthBloc>(),
             );
-            final router = AppRouter(routeNotifier: appRouteNotifier);
+            final router = AppRouter(
+              routeNotifier: appRouteNotifier,
+              redirectors: [
+                const AppAuthRouteRedirector(),
+              ],
+            );
 
             return _JournexaView(
               router: router,

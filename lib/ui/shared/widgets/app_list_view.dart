@@ -31,6 +31,7 @@ class AppListView<T> extends StatelessWidget {
       itemCount: items.length,
       separatorBuilder: (_, _) => const SizedBox(height: 8),
       itemBuilder: itemBuilder,
+      padding: EdgeInsets.zero,
     );
   }
 }

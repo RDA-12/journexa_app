@@ -81,7 +81,7 @@ class _ExpenseCategoriesListViewState extends State<ExpenseCategoriesListView> {
         Expanded(
           child: BlocBuilder<ExpenseCategoriesBloc, ExpenseCategoriesState>(
             buildWhen: (p, c) =>
-                p.status == ExpenseCategoriesUIStatus.loaded ||
+                p.status == ExpenseCategoriesUIStatus.loading ||
                 c.status == ExpenseCategoriesUIStatus.loading,
             builder: (context, loadState) {
               if (loadState.status == ExpenseCategoriesUIStatus.loading) {

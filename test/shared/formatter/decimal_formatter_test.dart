@@ -60,6 +60,22 @@ void main() {
           expect(result, expected);
         },
       );
+
+      final nonProperInputs = {
+        'id': '1.0.000.00,95',
+        'en': '1,0,000,00.95',
+      };
+      test(
+        'returns correct formatted decimal for ${locale.languageCode} '
+        'when input is not proper',
+        () {
+          final result = nonProperInputs[locale.languageCode]!.tryToDecimal(
+            locale.languageCode,
+          );
+
+          expect(result, expected);
+        },
+      );
     }
 
     test('returns null for invalid string', () {

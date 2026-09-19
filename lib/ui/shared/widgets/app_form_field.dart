@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:decimal/decimal.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:journexa_app/shared/formatter/formatter.dart';
 import 'package:journexa_app/ui/shared/l10n/l10n.dart';
 import 'package:journexa_app/ui/shared/theme.dart';
@@ -16,6 +17,7 @@ class AppFormField extends StatelessWidget {
     this.label,
     this.controller,
     this.onPressed,
+    this.inputFormatters,
     super.key,
   });
 
@@ -39,6 +41,9 @@ class AppFormField extends StatelessWidget {
   /// Callback that will be invoked when the form is pressed
   final VoidCallback? onPressed;
 
+  /// Input formatters
+  final List<TextInputFormatter>? inputFormatters;
+
   @override
   Widget build(BuildContext context) {
     var effectiveSemanticsLabel = label;
@@ -51,6 +56,7 @@ class AppFormField extends StatelessWidget {
       validator: (value) => _validator(context, value),
       readOnly: readOnly,
       onTap: onPressed,
+      inputFormatters: inputFormatters,
       decoration: InputDecoration(
         fillColor: WidgetStateColor.resolveWith(
           (states) {
@@ -154,13 +160,9 @@ final class AppDecimalController extends ChangeNotifier {
     final textValue = _textEditingController.text.trim();
     final decimal = textValue.tryToDecimal(_languageCode);
     if (decimal == null) {
-      _textEditingController.text = '0';
       _value = Decimal.zero;
     } else {
       _value = decimal;
-      _textEditingController.text = decimal.toLocalizedString(
-        _languageCode,
-      );
     }
     notifyListeners();
   }
@@ -171,6 +173,37 @@ final class AppDecimalController extends ChangeNotifier {
       ..removeListener(_onTextChanged)
       ..dispose();
     super.dispose();
+  }
+}
+
+/// Formatter for decimal input
+final class _DecimalInputFormatter extends TextInputFormatter {
+  new(this._languageCode);
+
+  final String _languageCode;
+
+  @override
+  TextEditingValue formatEditUpdate(
+    TextEditingValue oldValue,
+    TextEditingValue newValue,
+  ) {
+    final text = newValue.text.trim();
+
+    // If text is being deleted, let it happen naturally
+    if (newValue.selection.baseOffset < oldValue.selection.baseOffset) {
+      return newValue;
+    }
+
+    final parsed = text.tryToDecimal(_languageCode);
+    if (parsed == null) {
+      return newValue;
+    }
+
+    final formattedText = parsed.toLocalizedString(_languageCode);
+    return newValue.copyWith(
+      text: formattedText,
+      selection: TextSelection.collapsed(offset: formattedText.length),
+    );
   }
 }
 
@@ -240,6 +273,9 @@ class _AppDecimalFormFieldState extends State<AppDecimalFormField> {
       label: widget.label,
       controller: _controller.textEditingController,
       onPressed: widget.onPressed,
+      inputFormatters: [
+        _DecimalInputFormatter(context.languageCode),
+      ],
     );
   }
 }

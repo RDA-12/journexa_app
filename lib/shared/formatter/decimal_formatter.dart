@@ -42,7 +42,9 @@ extension DecimalX on Decimal {
 extension DecimalParseX on String {
   /// Parses [String] from given [languageCode] to [Decimal]
   Decimal? tryToDecimal(String languageCode) {
+    final thousandDelim = languageCode == 'id' ? '.' : ',';
+    final sanitized = replaceAll(thousandDelim, '');
     final formatter = _localizedFormatter(languageCode);
-    return formatter.tryParse(this);
+    return formatter.tryParse(sanitized);
   }
 }

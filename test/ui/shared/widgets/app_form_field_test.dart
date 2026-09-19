@@ -1,5 +1,6 @@
 import 'package:decimal/decimal.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:journexa_app/shared/formatter/formatter.dart';
 import 'package:journexa_app/ui/shared/l10n/l10n.dart';
@@ -26,6 +27,7 @@ void main() {
     bool? isRequired,
     bool? readOnly,
     VoidCallback? onPressed,
+    List<TextInputFormatter>? inputFormatters,
   }) async {
     final formKey = GlobalKey<FormState>();
 
@@ -43,6 +45,7 @@ void main() {
               icon: icon,
               readOnly: readOnly ?? false,
               onPressed: onPressed,
+              inputFormatters: inputFormatters,
             ),
             FilledButton(
               key: const ValueKey('validator-button'),
@@ -118,6 +121,27 @@ void main() {
         },
       );
     }
+
+    testWidgets('uses inputFormatters when provided', (tester) async {
+      await pumpWidget(
+        tester,
+        inputFormatters: [
+          TextInputFormatter.withFunction(
+            (oldValue, newValue) {
+              return newValue.copyWith(
+                text: 'test',
+                selection: const TextSelection.collapsed(offset: 'test'.length),
+              );
+            },
+          ),
+        ],
+      );
+
+      await tester.enterText(find.byType(TextFormField), 'text');
+
+      expect(find.text('text'), findsNothing);
+      expect(find.text('test'), findsOneWidget);
+    });
   });
 
   group('Interaction', () {
@@ -298,18 +322,26 @@ void main() {
         expect(widget.onPressed, null);
       });
 
+      final inputs = {
+        'id': '1234,56',
+        'en': '1234.56',
+      };
       for (final locale in AppLocalizations.supportedLocales) {
         testWidgets(
           'shows correct formatted decimal for ${locale.languageCode}',
           (tester) async {
             final decimal = Decimal.parse('1234.56');
-            final controller = AppDecimalController(initialValue: decimal)
+            final controller = AppDecimalController()
               ..languageCode = locale.languageCode;
 
             await pumpDecimalFormField(
               tester,
               locale: locale,
               controller: controller,
+            );
+            await tester.enterText(
+              find.byType(TextFormField),
+              inputs[locale.languageCode]!,
             );
 
             expect(

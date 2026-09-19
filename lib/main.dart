@@ -1,7 +1,6 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_native_splash/flutter_native_splash.dart';
 import 'package:journexa_app/di.dart';
 import 'package:journexa_app/firebase_options.dart';
 import 'package:journexa_app/shared/app_env.dart';
@@ -13,8 +12,7 @@ import 'package:journexa_app/ui/shared/theme.dart';
 import 'package:toastification/toastification.dart';
 
 Future<void> main() async {
-  final widgetsBinding = WidgetsFlutterBinding.ensureInitialized();
-  FlutterNativeSplash.preserve(widgetsBinding: widgetsBinding);
+WidgetsFlutterBinding.ensureInitialized();
   AppLogger.initialize(debugMode: AppEnv.isDebug);
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,

@@ -345,8 +345,7 @@ void main() {
           'shows correct formatted decimal for ${locale.languageCode}',
           (tester) async {
             final decimal = Decimal.parse('1234.56');
-            final controller = AppDecimalController()
-              ..languageCode = locale.languageCode;
+            final controller = AppDecimalController();
 
             await pumpDecimalFormField(
               tester,

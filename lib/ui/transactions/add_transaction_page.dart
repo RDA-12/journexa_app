@@ -5,6 +5,7 @@ import 'package:journexa_app/domain/entities/transaction.dart';
 import 'package:journexa_app/ui/expense_categories/bloc/expense_categories_bloc.dart';
 import 'package:journexa_app/ui/income_categories/bloc/income_categories_bloc.dart';
 import 'package:journexa_app/ui/shared/l10n/l10n.dart';
+import 'package:journexa_app/ui/shared/widgets/widgets.dart';
 import 'package:journexa_app/ui/transactions/bloc/add_transaction_bloc.dart';
 import 'package:journexa_app/ui/transactions/widgets/add_transaction_view.dart';
 import 'package:journexa_app/ui/wallets/bloc/wallets_bloc.dart';
@@ -68,8 +69,11 @@ class AddTransactionPage extends StatelessWidget {
         appBar: AppBar(
           title: Text(context.l10n.addTransactionTitle),
         ),
-        body: AddTransactionView(
-          type: type,
+        body: Padding(
+          padding: context.pagePadding,
+          child: AddTransactionView(
+            type: type,
+          ),
         ),
       ),
     );

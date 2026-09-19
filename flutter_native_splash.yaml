@@ -1,0 +1,12 @@
+flutter_native_splash:
+  ios: false
+  web: false
+  
+  color: "#D5DAFF"
+  image: "assets/launcher_icons/launcher_icons.png"
+  android_gravity: center
+  android_min_sdk: 21
+  fullscreen: true
+  android_12:
+    color: "#D5DAFF"
+    icon_background_color: "#D5DAFF"

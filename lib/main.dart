@@ -1,6 +1,7 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_native_splash/flutter_native_splash.dart';
 import 'package:journexa_app/di.dart';
 import 'package:journexa_app/firebase_options.dart';
 import 'package:journexa_app/shared/app_env.dart';
@@ -12,7 +13,8 @@ import 'package:journexa_app/ui/shared/theme.dart';
 import 'package:toastification/toastification.dart';
 
 Future<void> main() async {
-  WidgetsFlutterBinding.ensureInitialized();
+  final widgetsBinding = WidgetsFlutterBinding.ensureInitialized();
+  FlutterNativeSplash.preserve(widgetsBinding: widgetsBinding);
   AppLogger.initialize(debugMode: AppEnv.isDebug);
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
@@ -40,39 +42,42 @@ class JournexaApp extends StatelessWidget {
       create: (context) =>
           (authBloc ?? getIt<AuthBloc>())
             ..add(const AuthEvent.subscriptionRequested()),
-      child: ToastificationWrapper(
-        config: const ToastificationConfig(
+      child: const ToastificationWrapper(
+        config: ToastificationConfig(
           alignment: Alignment.bottomCenter,
           maxDescriptionLines: 2,
           maxTitleLines: 1,
           maxToastLimit: 5,
         ),
-        child: Builder(
-          builder: (context) {
-            final appRouteNotifier = AppRouteNotifier(
-              authBloc: context.read<AuthBloc>(),
-            );
-            final router = AppRouter(
-              routeNotifier: appRouteNotifier,
-              redirectors: [
-                const AppAuthRouteRedirector(),
-              ],
-            );
-
-            return _JournexaView(
-              router: router,
-            );
-          },
-        ),
+        child: _JournexaView(),
       ),
     );
   }
 }
 
-class _JournexaView extends StatelessWidget {
-  const new({required this.router});
+class _JournexaView extends StatefulWidget {
+  const new();
 
-  final AppRouter router;
+  @override
+  State<_JournexaView> createState() => _JournexaViewState();
+}
+
+class _JournexaViewState extends State<_JournexaView> {
+  late final AppRouter router;
+
+  @override
+  void initState() {
+    super.initState();
+    final appRouteNotifier = AppRouteNotifier(
+      authBloc: context.read<AuthBloc>(),
+    );
+    router = AppRouter(
+      routeNotifier: appRouteNotifier,
+      redirectors: [
+        const AppAuthRouteRedirector(),
+      ],
+    );
+  }
 
   @override
   Widget build(BuildContext context) {

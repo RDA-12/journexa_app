@@ -21,12 +21,13 @@ class AppAuthRouteRedirector implements AppRouteRedirector {
   @override
   String? maybeRedirect(BuildContext context, GoRouterState state) {
     final authState = context.read<AuthBloc>().state;
+    final splashLocation = const SplashRoute().location;
     final loginLocation = const LoginRoute().location;
     final homeLocation = const HomeRoute().location;
 
     return authState.maybeWhen(
       authenticated: (user) {
-        if (state.matchedLocation == loginLocation) {
+        if ([splashLocation, loginLocation].contains(state.matchedLocation)) {
           return homeLocation;
         }
         return null;

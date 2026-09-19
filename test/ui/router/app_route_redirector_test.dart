@@ -148,6 +148,22 @@ void main() {
     );
 
     testWidgets(
+      'redirect user to home when authenticated '
+      'and user go to splash page',
+      (tester) async {
+        when(() => mockGoRouterState.matchedLocation)
+            .thenReturn(const SplashRoute().location);
+        when(() => mockAuthBloc.state)
+            .thenReturn(const AuthState.authenticated(user));
+        await pumpWidget(tester, redirector: authRedirector);
+
+        await checkRedirector(tester);
+
+        expect(find.text(const HomeRoute().location), findsOneWidget);
+      },
+    );
+
+    testWidgets(
       'not redirect user when authenticated '
       'and user not go to login page',
       (tester) async {

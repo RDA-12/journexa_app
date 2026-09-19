@@ -41,7 +41,7 @@ void main() {
       expect(finder, findsOneWidget);
       final widget = tester.widget<ExpandableFab>(finder);
       expect(widget.type, ExpandableFabType.up);
-      expect(widget.distance, 4);
+      expect(widget.distance, 60);
     });
 
     testWidgets('shows correct icon', (tester) async {

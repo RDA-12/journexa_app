@@ -8,12 +8,14 @@ import '../util.dart';
 
 final expectedTranslations = {
   'en': {
+    'title': 'Settings',
     'incomeCategoryLabel': 'Income category',
     'incomeCategorySemantics': 'See all income categories',
     'expenseCategoryLabel': 'Expense category',
     'expenseCategorySemantics': 'See all expense categories',
   },
   'id': {
+    'title': 'Settings',
     'incomeCategoryLabel': 'Kategori pendapatan',
     'incomeCategorySemantics': 'Lihat semua kategori pendapatan',
     'expenseCategoryLabel': 'Kategori pengeluaran',
@@ -44,6 +46,16 @@ void main() {
   group('Render', () {
     for (final locale in AppLocalizations.supportedLocales) {
       final translations = expectedTranslations[locale.languageCode]!;
+
+      final title = translations['title']!;
+      testWidgets(
+        'shows $title title for ${locale.languageCode}',
+        (tester) async {
+          await pumpWidget(tester, locale: locale);
+
+          expect(find.text(title), findsOneWidget);
+        },
+      );
 
       final incomeCategoryLabel = translations['incomeCategoryLabel']!;
       testWidgets(
@@ -121,6 +133,20 @@ void main() {
   group('a11y', () {
     for (final locale in AppLocalizations.supportedLocales) {
       final translations = expectedTranslations[locale.languageCode]!;
+
+      final title = translations['title']!;
+      testWidgets(
+        'has $title semantically for title '
+        'for ${locale.languageCode}',
+        (tester) async {
+          await pumpWidget(tester, locale: locale);
+
+          expect(
+            find.bySemanticsLabel(title),
+            findsOneWidget,
+          );
+        },
+      );
 
       final incomeCategorySemantics = translations['incomeCategorySemantics']!;
       testWidgets(

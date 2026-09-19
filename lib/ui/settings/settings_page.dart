@@ -12,6 +12,9 @@ class SettingsPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(
+        title: Text(context.l10n.settingsTitle),
+      ),
       body: Column(
         spacing: 24,
         children: [

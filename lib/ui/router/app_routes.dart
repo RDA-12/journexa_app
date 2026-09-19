@@ -225,7 +225,10 @@ class MainShellRoute extends StatefulShellRouteData {
   ) {
     return MainShellPage(
       currentIndex: navigationShell.currentIndex,
-      onDestinationChanged: navigationShell.goBranch,
+      onDestinationChanged: (index) => navigationShell.goBranch(
+        index,
+        initialLocation: navigationShell.currentIndex == index,
+      ),
       child: navigationShell,
     );
   }

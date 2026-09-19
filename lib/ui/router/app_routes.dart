@@ -191,6 +191,11 @@ class SettingsRoute extends GoRouteData with $SettingsRoute {
         TypedGoRoute<HomeRoute>(path: '/home'),
       ],
     ),
+    TypedStatefulShellBranch<TransactionsShell>(
+      routes: [
+        TypedGoRoute<TransactionsListRoute>(path: '/transactions'),
+      ],
+    ),
     TypedStatefulShellBranch<WalletsShell>(
       routes: [
         TypedGoRoute<WalletsListRoute>(
@@ -199,11 +204,6 @@ class SettingsRoute extends GoRouteData with $SettingsRoute {
             TypedGoRoute<AddWalletRoute>(path: 'add'),
           ],
         ),
-      ],
-    ),
-    TypedStatefulShellBranch<TransactionsShell>(
-      routes: [
-        TypedGoRoute<TransactionsListRoute>(path: '/transactions'),
       ],
     ),
     TypedStatefulShellBranch<SettingsShell>(

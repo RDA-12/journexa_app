@@ -611,4 +611,23 @@ class AppLocalizationsId extends AppLocalizations {
 
   @override
   String get mainShellSettingsLabel => 'Settings';
+
+  @override
+  String get incomeTransactionTypeLabel => 'Pendapatan';
+
+  @override
+  String get expenseTransactionTypeLabel => 'Pengeluaran';
+
+  @override
+  String get transferTransactionTypeLabel => 'Transfer';
+
+  @override
+  String get mainShellAddIncomeSemanticsLabel => 'Tambah transaksi pendapatan';
+
+  @override
+  String get mainShellAddExpenseSemanticsLabel =>
+      'Tambah transaksi pengeluaran';
+
+  @override
+  String get mainShellAddTransferSemanticsLabel => 'Tambah transaksi transfer';
 }

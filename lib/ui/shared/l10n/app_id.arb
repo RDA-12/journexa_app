@@ -157,5 +157,11 @@
   "mainShellHomeLabel": "Home",
   "mainShellWalletsLabel": "Dompet",
   "mainShellTransactionsLabel": "Transaksi",
-  "mainShellSettingsLabel": "Settings"
+  "mainShellSettingsLabel": "Settings",
+  "incomeTransactionTypeLabel": "Pendapatan",
+  "expenseTransactionTypeLabel": "Pengeluaran",
+  "transferTransactionTypeLabel": "Transfer",
+  "mainShellAddIncomeSemanticsLabel": "Tambah transaksi pendapatan",
+  "mainShellAddExpenseSemanticsLabel": "Tambah transaksi pengeluaran",
+  "mainShellAddTransferSemanticsLabel": "Tambah transaksi transfer"
 }

@@ -938,5 +938,29 @@
   "mainShellSettingsLabel": "Settings",
   "@mainShellSettingsLabel": {
     "description": "Label for settings page in main shell"
+  },
+  "incomeTransactionTypeLabel": "Income",
+  "@incomeTransactionTypeLabel": {
+    "description": "Label for income transaction type"
+  },
+  "expenseTransactionTypeLabel": "Expense",
+  "@expenseTransactionTypeLabel": {
+    "description": "Label for expense transaction type"
+  },
+  "transferTransactionTypeLabel": "Transfer",
+  "@transferTransactionTypeLabel": {
+    "description": "Label for transfer transaction type"
+  },
+  "mainShellAddIncomeSemanticsLabel": "Add income transaction",
+  "@mainShellAddIncomeSemanticsLabel": {
+    "description": "Semantics label for add income fab in main shell"
+  },
+  "mainShellAddExpenseSemanticsLabel": "Add expense transaction",
+  "@mainShellAddExpenseSemanticsLabel": {
+    "description": "Semantics label for add expense fab in main shell"
+  },
+  "mainShellAddTransferSemanticsLabel": "Add transfer transaction",
+  "@mainShellAddTransferSemanticsLabel": {
+    "description": "Semantics label for add transfer fab in main shell"
   }
 }

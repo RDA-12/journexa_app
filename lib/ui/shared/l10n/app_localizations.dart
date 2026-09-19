@@ -1072,6 +1072,42 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Settings'**
   String get mainShellSettingsLabel;
+
+  /// Label for income transaction type
+  ///
+  /// In en, this message translates to:
+  /// **'Income'**
+  String get incomeTransactionTypeLabel;
+
+  /// Label for expense transaction type
+  ///
+  /// In en, this message translates to:
+  /// **'Expense'**
+  String get expenseTransactionTypeLabel;
+
+  /// Label for transfer transaction type
+  ///
+  /// In en, this message translates to:
+  /// **'Transfer'**
+  String get transferTransactionTypeLabel;
+
+  /// Semantics label for add income fab in main shell
+  ///
+  /// In en, this message translates to:
+  /// **'Add income transaction'**
+  String get mainShellAddIncomeSemanticsLabel;
+
+  /// Semantics label for add expense fab in main shell
+  ///
+  /// In en, this message translates to:
+  /// **'Add expense transaction'**
+  String get mainShellAddExpenseSemanticsLabel;
+
+  /// Semantics label for add transfer fab in main shell
+  ///
+  /// In en, this message translates to:
+  /// **'Add transfer transaction'**
+  String get mainShellAddTransferSemanticsLabel;
 }
 
 class _AppLocalizationsDelegate

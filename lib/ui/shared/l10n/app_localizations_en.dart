@@ -601,4 +601,22 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get mainShellSettingsLabel => 'Settings';
+
+  @override
+  String get incomeTransactionTypeLabel => 'Income';
+
+  @override
+  String get expenseTransactionTypeLabel => 'Expense';
+
+  @override
+  String get transferTransactionTypeLabel => 'Transfer';
+
+  @override
+  String get mainShellAddIncomeSemanticsLabel => 'Add income transaction';
+
+  @override
+  String get mainShellAddExpenseSemanticsLabel => 'Add expense transaction';
+
+  @override
+  String get mainShellAddTransferSemanticsLabel => 'Add transfer transaction';
 }

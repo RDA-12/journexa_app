@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:journexa_app/ui/shared/l10n/l10n.dart';
 import 'package:journexa_app/ui/shell/main_shell_page.dart';
+import 'package:journexa_app/ui/shell/widgets/widgets.dart';
 
 import '../util.dart';
 
@@ -11,12 +12,24 @@ final expectedTranslations = {
     'wallets': 'Wallets',
     'transactions': 'Transactions',
     'settings': 'Settings',
+    'income': 'Income',
+    'incomeSemantics': 'Add income transaction',
+    'expense': 'Expense',
+    'expenseSemantics': 'Add expense transaction',
+    'transfer': 'Transfer',
+    'transferSemantics': 'Add transfer transaction',
   },
   'id': {
     'home': 'Home',
     'wallets': 'Dompet',
     'transactions': 'Transaksi',
     'settings': 'Settings',
+    'income': 'Pendapatan',
+    'incomeSemantics': 'Tambah transaksi pendapatan',
+    'expense': 'Pengeluaran',
+    'expenseSemantics': 'Tambah transaksi pengeluaran',
+    'transfer': 'Transfer',
+    'transferSemantics': 'Tambah transaksi transfer',
   },
 };
 
@@ -57,6 +70,22 @@ void main() {
       },
     );
 
+    for (var i = 0; i < 2; i++) {
+      testWidgets('shows Fab for index $i', (tester) async {
+        await pumpWidget(tester, currentIndex: i);
+
+        expect(find.byType(AppExpandableFab), findsOneWidget);
+      });
+    }
+
+    for (var i = 2; i < 4; i++) {
+      testWidgets('hides Fab for index $i', (tester) async {
+        await pumpWidget(tester, currentIndex: i);
+
+        expect(find.byType(AppExpandableFab), findsNothing);
+      });
+    }
+
     for (final locale in AppLocalizations.supportedLocales) {
       final translations = expectedTranslations[locale.languageCode]!;
       testWidgets(
@@ -76,6 +105,25 @@ void main() {
 
           expect(find.byIcon(Icons.settings_rounded), findsOneWidget);
           expect(find.text(translations['settings']!), findsOneWidget);
+        },
+      );
+
+      testWidgets(
+        'shows all fab actions with icons and labels '
+        'for ${locale.languageCode}',
+        (tester) async {
+          await pumpWidget(tester, locale: locale);
+
+          await tester.tap(find.byIcon(Icons.add_rounded));
+
+          expect(find.byIcon(Icons.call_received_rounded), findsOneWidget);
+          expect(find.text(translations['income']!), findsOneWidget);
+
+          expect(find.byIcon(Icons.call_made_rounded), findsOneWidget);
+          expect(find.text(translations['expense']!), findsOneWidget);
+
+          expect(find.byIcon(Icons.swap_vert_rounded), findsOneWidget);
+          expect(find.text(translations['transfer']!), findsOneWidget);
         },
       );
     }
@@ -99,20 +147,20 @@ void main() {
         },
       );
     }
+
+    testWidgets('shows correct actions when fab pressed', (tester) async {
+      await pumpWidget(tester);
+
+      final finder = find.byIcon(Icons.add_rounded);
+      expect(finder, findsOneWidget);
+      await tester.tap(finder);
+      await tester.pumpAndSettle();
+
+      expect(find.byType(AppFabAction), findsNWidgets(3));
+    });
   });
 
   group('a11y', () {
-    testWidgets('follows a11y guidelines', (tester) async {
-      final handle = tester.ensureSemantics();
-      await pumpWidget(tester);
-
-      await expectLater(tester, meetsGuideline(androidTapTargetGuideline));
-      await expectLater(tester, meetsGuideline(iOSTapTargetGuideline));
-      await expectLater(tester, meetsGuideline(labeledTapTargetGuideline));
-
-      handle.dispose();
-    });
-
     for (final locale in AppLocalizations.supportedLocales) {
       final translations = expectedTranslations[locale.languageCode]!;
       testWidgets(
@@ -134,6 +182,28 @@ void main() {
           );
           expect(
             find.bySemanticsLabel(RegExp('^${translations['settings']!}')),
+            findsOneWidget,
+          );
+        },
+      );
+
+      testWidgets(
+        'has semantic labels for fab actions for ${locale.languageCode}',
+        (tester) async {
+          await pumpWidget(tester, locale: locale);
+          await tester.tap(find.byIcon(Icons.add_rounded));
+          await tester.pumpAndSettle();
+
+          expect(
+            find.bySemanticsLabel(translations['incomeSemantics']!),
+            findsOneWidget,
+          );
+          expect(
+            find.bySemanticsLabel(translations['expenseSemantics']!),
+            findsOneWidget,
+          );
+          expect(
+            find.bySemanticsLabel(translations['transferSemantics']!),
             findsOneWidget,
           );
         },

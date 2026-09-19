@@ -35,7 +35,7 @@ class AppExpandableFab extends StatelessWidget {
         backgroundColor: context.color.primary,
         foregroundColor: context.color.onPrimary,
       ),
-      distance: 4,
+      distance: 60,
       children: actions,
     );
   }

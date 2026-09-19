@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:journexa_app/domain/entities/transaction.dart';
 import 'package:journexa_app/ui/shared/l10n/l10n.dart';
 import 'package:journexa_app/ui/shell/main_shell_page.dart';
 import 'package:journexa_app/ui/shell/widgets/widgets.dart';
@@ -38,6 +39,7 @@ void main() {
     WidgetTester tester, {
     int currentIndex = 0,
     void Function(int)? onDestinationChanged,
+    void Function(TransactionType)? onAddTransactionPressed,
     Widget child = const Placeholder(),
     Locale locale = const Locale('en'),
   }) {
@@ -47,6 +49,7 @@ void main() {
       widget: MainShellPage(
         currentIndex: currentIndex,
         onDestinationChanged: onDestinationChanged ?? (_) {},
+        onAddTransactionPressed: onAddTransactionPressed ?? (_) {},
         child: child,
       ),
     );
@@ -144,6 +147,30 @@ void main() {
           await tester.pumpAndSettle();
 
           expect(selectedIndex, i);
+        },
+      );
+    }
+
+    for (final type in TransactionType.values) {
+      testWidgets(
+        'calls onAddTransactionPressed with $type '
+        'when add transaction ${type.name} pressed',
+        (tester) async {
+          TransactionType? transactionType;
+          await pumpWidget(
+            tester,
+            onAddTransactionPressed: (t) {
+              transactionType = t;
+            },
+          );
+          await tester.tap(find.byIcon(Icons.add_rounded));
+          await tester.pumpAndSettle();
+
+          final label = expectedTranslations['en']![type.name]!;
+          await tester.tap(find.text(label));
+          await tester.pumpAndSettle();
+
+          expect(transactionType, type);
         },
       );
     }

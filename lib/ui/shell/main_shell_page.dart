@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:go_router/go_router.dart';
 import 'package:journexa_app/domain/entities/transaction.dart';
-import 'package:journexa_app/ui/router/app_router.dart';
 import 'package:journexa_app/ui/shared/l10n/l10n.dart';
 import 'package:journexa_app/ui/shared/theme.dart';
 import 'package:journexa_app/ui/shell/widgets/widgets.dart';
@@ -14,6 +12,7 @@ class MainShellPage extends StatelessWidget {
   const new({
     required this.currentIndex,
     required this.onDestinationChanged,
+    required this.onAddTransactionPressed,
     required this.child,
     super.key,
   });
@@ -27,9 +26,11 @@ class MainShellPage extends StatelessWidget {
   /// Widget that will be showed
   final Widget child;
 
+  /// Callback invoked when add transaction fab pressed
+  final void Function(TransactionType) onAddTransactionPressed;
+
   @override
   Widget build(BuildContext context) {
-    final transactionsLocation = const TransactionsListRoute().location;
     final showsFab = currentIndex < 2;
 
     return Scaffold(
@@ -44,10 +45,7 @@ class MainShellPage extends StatelessWidget {
                   semanticsLabel: context.l10n.mainShellAddIncomeSemanticsLabel,
                   icon: const Icon(Icons.call_received_rounded),
                   onPressed: () async {
-                    final addLocation = const AddTransactionRoute(
-                      TransactionType.income,
-                    ).subLocation;
-                    context.go('$transactionsLocation/$addLocation');
+                    onAddTransactionPressed(TransactionType.income);
                   },
                 ),
                 AppFabAction(
@@ -56,10 +54,7 @@ class MainShellPage extends StatelessWidget {
                       context.l10n.mainShellAddExpenseSemanticsLabel,
                   icon: const Icon(Icons.call_made_rounded),
                   onPressed: () async {
-                    final addLocation = const AddTransactionRoute(
-                      TransactionType.expense,
-                    ).subLocation;
-                    context.go('$transactionsLocation/$addLocation');
+                    onAddTransactionPressed(TransactionType.expense);
                   },
                 ),
                 AppFabAction(
@@ -68,10 +63,7 @@ class MainShellPage extends StatelessWidget {
                       context.l10n.mainShellAddTransferSemanticsLabel,
                   icon: const Icon(Icons.swap_vert_rounded),
                   onPressed: () async {
-                    final addLocation = const AddTransactionRoute(
-                      TransactionType.transfer,
-                    ).subLocation;
-                    context.go('$transactionsLocation/$addLocation');
+                    onAddTransactionPressed(TransactionType.transfer);
                   },
                 ),
               ],

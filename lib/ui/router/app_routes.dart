@@ -235,6 +235,12 @@ class MainShellRoute extends StatefulShellRouteData {
         index,
         initialLocation: navigationShell.currentIndex == index,
       ),
+      onAddTransactionPressed: (type) {
+        final transactionsListLocation = const TransactionsListRoute().location;
+        final subLocation = AddTransactionRoute(type).subLocation;
+        final location = '$transactionsListLocation/$subLocation';
+        context.go(location);
+      },
       child: navigationShell,
     );
   }

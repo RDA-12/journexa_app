@@ -37,12 +37,12 @@ class MainShellPage extends StatelessWidget {
             label: context.l10n.mainShellHomeLabel,
           ),
           NavigationDestination(
-            icon: const Icon(Icons.wallet_rounded),
-            label: context.l10n.mainShellWalletsLabel,
-          ),
-          NavigationDestination(
             icon: const Icon(Icons.notes_rounded),
             label: context.l10n.mainShellTransactionsLabel,
+          ),
+          NavigationDestination(
+            icon: const Icon(Icons.wallet_rounded),
+            label: context.l10n.mainShellWalletsLabel,
           ),
           NavigationDestination(
             icon: const Icon(Icons.settings_rounded),

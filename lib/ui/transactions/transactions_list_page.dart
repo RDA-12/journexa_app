@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:journexa_app/di.dart';
 import 'package:journexa_app/domain/entities/transaction.dart';
 import 'package:journexa_app/ui/shared/l10n/l10n.dart';
+import 'package:journexa_app/ui/shared/widgets/app_responsive.dart';
 import 'package:journexa_app/ui/transactions/bloc/transactions_bloc.dart';
 import 'package:journexa_app/ui/transactions/widgets/transactions_list_view.dart';
 
@@ -39,7 +40,10 @@ class _TransactionsListView extends StatelessWidget {
       appBar: AppBar(
         title: Text(context.l10n.transactionsListTitle),
       ),
-      body: const TransactionsListView(),
+      body: Padding(
+        padding: context.pagePadding,
+        child: const TransactionsListView(),
+      ),
     );
   }
 }

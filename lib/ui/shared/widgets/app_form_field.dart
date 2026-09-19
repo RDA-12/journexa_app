@@ -18,6 +18,7 @@ class AppFormField extends StatelessWidget {
     this.controller,
     this.onPressed,
     this.inputFormatters,
+    this.keyboardType,
     super.key,
   });
 
@@ -44,6 +45,9 @@ class AppFormField extends StatelessWidget {
   /// Input formatters
   final List<TextInputFormatter>? inputFormatters;
 
+  /// Keyboard type to be showed to users
+  final TextInputType? keyboardType;
+
   @override
   Widget build(BuildContext context) {
     var effectiveSemanticsLabel = label;
@@ -57,6 +61,7 @@ class AppFormField extends StatelessWidget {
       readOnly: readOnly,
       onTap: onPressed,
       inputFormatters: inputFormatters,
+      keyboardType: keyboardType,
       decoration: InputDecoration(
         fillColor: WidgetStateColor.resolveWith(
           (states) {
@@ -276,6 +281,7 @@ class _AppDecimalFormFieldState extends State<AppDecimalFormField> {
       inputFormatters: [
         _DecimalInputFormatter(context.languageCode),
       ],
+      keyboardType: const TextInputType.numberWithOptions(decimal: true),
     );
   }
 }

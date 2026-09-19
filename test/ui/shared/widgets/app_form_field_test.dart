@@ -28,6 +28,7 @@ void main() {
     bool? readOnly,
     VoidCallback? onPressed,
     List<TextInputFormatter>? inputFormatters,
+    TextInputType? keyboardType,
   }) async {
     final formKey = GlobalKey<FormState>();
 
@@ -46,6 +47,7 @@ void main() {
               readOnly: readOnly ?? false,
               onPressed: onPressed,
               inputFormatters: inputFormatters,
+              keyboardType: keyboardType,
             ),
             FilledButton(
               key: const ValueKey('validator-button'),
@@ -141,6 +143,14 @@ void main() {
 
       expect(find.text('text'), findsNothing);
       expect(find.text('test'), findsOneWidget);
+    });
+
+    testWidgets('uses keyboardType when provided', (tester) async {
+      await pumpWidget(tester, keyboardType: TextInputType.number);
+
+      final finder = find.byType(TextField);
+      final widget = tester.widget<TextField>(finder);
+      expect(widget.keyboardType, TextInputType.number);
     });
   });
 
@@ -320,6 +330,10 @@ void main() {
         expect(widget.label, label);
         expect(widget.readOnly, false);
         expect(widget.onPressed, null);
+        expect(
+          widget.keyboardType,
+          const TextInputType.numberWithOptions(decimal: true),
+        );
       });
 
       final inputs = {

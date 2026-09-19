@@ -153,7 +153,6 @@ class TransactionsListRoute extends GoRouteData with $TransactionsListRoute {
 }
 
 /// Relative route for adding new transaction page
-@TypedRelativeGoRoute<AddTransactionRoute>(path: 'add/:type')
 class AddTransactionRoute extends RelativeGoRouteData
     with $AddTransactionRoute {
   /// Creates new [AddTransactionRoute]
@@ -193,7 +192,14 @@ class SettingsRoute extends GoRouteData with $SettingsRoute {
     ),
     TypedStatefulShellBranch<TransactionsShell>(
       routes: [
-        TypedGoRoute<TransactionsListRoute>(path: '/transactions'),
+        TypedGoRoute<TransactionsListRoute>(
+          path: '/transactions',
+          routes: [
+            TypedRelativeGoRoute<AddTransactionRoute>(
+              path: 'add/:type',
+            ),
+          ],
+        ),
       ],
     ),
     TypedStatefulShellBranch<WalletsShell>(

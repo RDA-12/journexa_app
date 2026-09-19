@@ -4,8 +4,9 @@ import 'package:intl/intl.dart';
 extension DateTimeX on DateTime {
   /// Formats date and time to [String]
   ///
-  /// Example: `28-02-2026 12:00`
-  String get dateTimeFormat => DateFormat('dd-MM-yyyy HH:mm').format(this);
+  /// Example: `Mon, 28 February 2026 12:00`
+  String dateTimeFormat([String? locale]) =>
+      DateFormat('EEE, dd MMMM yyyy HH:mm', locale).format(this);
 
   /// Formats date to [String]
   ///

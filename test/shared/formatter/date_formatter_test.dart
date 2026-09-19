@@ -7,13 +7,21 @@ void main() {
   group(
     'dateTimeFormat',
     () {
-      test('returns correct formatted string', () {
-        const expected = '28-02-2026 12:00';
+      for (final locale in AppLocalizations.supportedLocales) {
+        test('returns correct formatted string', () async {
+          await initializeDateFormatting(locale.languageCode);
 
-        final result = DateTime.utc(2026, 2, 28, 12);
+          final expected = switch (locale.languageCode) {
+            'en' => 'Sat, 28 February 2026 12:00',
+            'id' => 'Sab, 28 Februari 2026 12:00',
+            _ => 'Mon, 28 February 2026 12:00',
+          };
 
-        expect(result.dateTimeFormat, expected);
-      });
+          final result = DateTime.utc(2026, 2, 28, 12);
+
+          expect(result.dateTimeFormat(locale.languageCode), expected);
+        });
+      }
     },
   );
 

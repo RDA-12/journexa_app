@@ -291,9 +291,21 @@ final class AppDateTimeController extends ChangeNotifier {
   /// Creates new [AppDateTimeController]
   new({DateTime? initialValue})
     : _textEditingController = TextEditingController(
-        text: initialValue?.dateTimeFormat,
+        text: initialValue?.dateTimeFormat('en'),
       ),
       _value = initialValue;
+
+  String _languageCode = 'en';
+
+  /// language code used to format DateTime
+  ///
+  /// Default to 'en'
+  String get languageCode => _languageCode;
+
+  set languageCode(String languageCode) {
+    _languageCode = languageCode;
+    _textEditingController.text = _value?.dateTimeFormat(languageCode) ?? '';
+  }
 
   final TextEditingController _textEditingController;
 
@@ -307,7 +319,7 @@ final class AppDateTimeController extends ChangeNotifier {
 
   set value(DateTime? value) {
     _value = value;
-    _textEditingController.text = value?.dateTimeFormat ?? '';
+    _textEditingController.text = value?.dateTimeFormat(_languageCode) ?? '';
     notifyListeners();
   }
 }
@@ -358,6 +370,12 @@ class _AppDateTimeFormFieldState extends State<AppDateTimeFormField> {
   void initState() {
     super.initState();
     _controller = widget.controller ?? AppDateTimeController();
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    _controller.languageCode = context.languageCode;
   }
 
   @override

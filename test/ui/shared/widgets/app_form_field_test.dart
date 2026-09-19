@@ -510,14 +510,28 @@ void main() {
         },
       );
 
-      testWidgets('shows correct initial value', (tester) async {
-        final value = DateTime.now();
-        final controller = AppDateTimeController(initialValue: value);
+      for (final locale in AppLocalizations.supportedLocales) {
+        testWidgets('shows correct initial value '
+            'for ${locale.languageCode}', (tester) async {
+          final expected = switch (locale.languageCode) {
+            'en' => 'Sat, 28 February 2026 12:00',
+            'id' => 'Sab, 28 Februari 2026 12:00',
+            _ => 'Mon, 28 February 2026 12:00',
+          };
+          final value = DateTime.utc(2026, 2, 28, 12);
+          final controller = AppDateTimeController(initialValue: value);
 
-        await pumpDateTimeFormField(tester, controller: controller);
+          await pumpDateTimeFormField(
+            tester,
+            locale: locale,
+            controller: controller,
+          );
+          // Let language code updated
+          await tester.pumpAndSettle();
 
-        expect(find.text(value.dateTimeFormat), findsOneWidget);
-      });
+          expect(find.text(expected), findsOneWidget);
+        });
+      }
     });
 
     group('Interactions', () {

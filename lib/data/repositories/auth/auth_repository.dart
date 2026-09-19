@@ -103,25 +103,6 @@ class FirebaseAuthRepository with Loggable implements IAuthRepository {
   }
 
   @override
-  Future<AppResult<String>> getCurrentUserId({required String traceId}) async {
-    logInfo('Get current user id', traceId: traceId);
-    final userId = _auth.currentUser?.uid;
-    if (userId == null) {
-      return const AppResult.failure(
-        AppException(
-          'userId is null. probably user is not logged in',
-          code: AppExceptionCode.unauthenticated,
-        ),
-      );
-    }
-    logInfo(
-      'User id found.',
-      traceId: traceId,
-    );
-    return AppResult.success(userId);
-  }
-
-  @override
   Stream<AppResult<User?>> watchUser({required String traceId}) {
     logInfo('Starts watching user changes', traceId: traceId);
     return _auth

@@ -6,9 +6,6 @@ abstract interface class IAuthRepository {
   /// Logging in user with their google account
   Future<AppResult<void>> loginWithGoogle({required String traceId});
 
-  /// Returns current user id
-  Future<AppResult<String>> getCurrentUserId({required String traceId});
-
   /// Returns streams of User
   ///
   /// When it emits null, it means the user has been logged out

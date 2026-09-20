@@ -269,7 +269,7 @@ void main() {
 
       final carouselFinder = find.byType(WalletsHomeCarousel);
       expect(carouselFinder, findsOneWidget);
-      await tester.fling(carouselFinder, const Offset(-300, 0), 100);
+      await tester.fling(carouselFinder, const Offset(-300, 0), 1000);
       await tester.pumpAndSettle();
 
       expect(index, 1);

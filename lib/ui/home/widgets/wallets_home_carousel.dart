@@ -32,12 +32,9 @@ class WalletsHomeCarousel extends StatelessWidget {
 
     return ConstrainedBox(
       constraints: BoxConstraints(maxHeight: maxHeight),
-      child: BlocBuilder<HomeBloc, HomeState>(
-        buildWhen: (p, c) =>
-            p.wallets.status == HomeUIStatus.loading ||
-            c.wallets.status == HomeUIStatus.loading,
-        builder: (context, state) {
-          final walletsState = state.wallets;
+      child: BlocSelector<HomeBloc, HomeState, HomeWalletsUIModel>(
+        selector: (state) => state.wallets,
+        builder: (context, walletsState) {
           if (walletsState.status == HomeUIStatus.loading) {
             return Center(
               child: LoadingIndicator(
@@ -79,7 +76,8 @@ class WalletsHomeCarousel extends StatelessWidget {
               .reduce((prev, curr) => prev + curr);
           return CarouselView.weightedBuilder(
             itemCount: wallets.length + 1,
-            flexWeights: const [1, 5, 1],
+            flexWeights: const [1],
+            itemSnapping: true,
             onIndexChanged: (index) {
               if (index == 0) {
                 onChanged?.call(index, null);

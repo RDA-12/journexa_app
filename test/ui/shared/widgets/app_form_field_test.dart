@@ -568,6 +568,58 @@ void main() {
           expect(controller.value, value);
         });
       });
+
+      testWidgets('default to now when date picker canceled', (tester) async {
+        final controller = AppDateTimeController();
+        final now = DateTime.now();
+
+        await withClock(Clock.fixed(now), () async {
+          await pumpDateTimeFormField(tester, controller: controller);
+
+          await tester.tap(find.byType(TextFormField));
+          await tester.pumpAndSettle();
+
+          await tester.tap(find.text('1'));
+          await tester.pump();
+
+          await tester.tap(find.text('Cancel'));
+
+          expect(controller.value, now);
+        });
+      });
+
+      testWidgets('default to now when time picker canceled', (tester) async {
+        final controller = AppDateTimeController();
+        final now = DateTime.now();
+        final value = DateTime(now.year, now.month, now.day, 12, now.minute);
+
+        await withClock(Clock.fixed(now), () async {
+          await pumpDateTimeFormField(tester, controller: controller);
+
+          await tester.tap(find.byType(TextFormField));
+          await tester.pumpAndSettle();
+
+          await tester.tap(find.text(value.day.toString()));
+          await tester.pump();
+
+          await tester.tap(find.text('OK'));
+          await tester.pumpAndSettle();
+
+          final hourTextFieldFinder = find
+              .descendant(
+                of: find.byType(TimePickerDialog),
+                matching: find.byType(TextFormField),
+              )
+              .first;
+          expect(hourTextFieldFinder, findsOneWidget);
+          await tester.enterText(hourTextFieldFinder, '12');
+
+          await tester.tap(find.text('Cancel'));
+          await tester.pumpAndSettle();
+
+          expect(controller.value, now);
+        });
+      });
     });
   });
 }

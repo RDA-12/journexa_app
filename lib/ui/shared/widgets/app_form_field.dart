@@ -399,7 +399,7 @@ class _AppDateTimeFormFieldState extends State<AppDateTimeFormField>
     );
     if (!mounted) return;
     if (pickedDate == null) {
-      _controller.value = pickedDate;
+      _controller.value = now;
       return;
     }
     final pickedTime = await showTimePicker(
@@ -409,7 +409,7 @@ class _AppDateTimeFormFieldState extends State<AppDateTimeFormField>
     );
     if (!mounted) return;
     if (pickedTime == null) {
-      _controller.value = null;
+      _controller.value = now;
       return;
     }
     final effectiveDateTime = DateTime(

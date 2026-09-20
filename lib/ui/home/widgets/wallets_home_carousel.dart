@@ -28,7 +28,7 @@ class WalletsHomeCarousel extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final height = context.screenHeight;
-    final maxHeight = min<double>(height / 2, 320);
+    final maxHeight = min<double>(height / 2, 200);
 
     return ConstrainedBox(
       constraints: BoxConstraints(maxHeight: maxHeight),

@@ -161,6 +161,9 @@ class AddTransactionRoute extends RelativeGoRouteData
   /// type of transactions that will be added
   final TransactionType type;
 
+  /// parent nav key of this route
+  static final GlobalKey<NavigatorState> $parentNavigatorKey = rootNavigatorKey;
+
   @override
   Widget build(BuildContext context, GoRouterState state) =>
       AddTransactionPage(type: type);

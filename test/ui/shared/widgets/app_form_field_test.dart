@@ -1,3 +1,4 @@
+import 'package:clock/clock.dart';
 import 'package:decimal/decimal.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -538,20 +539,34 @@ void main() {
       testWidgets('allows to select date and time', (tester) async {
         final controller = AppDateTimeController();
         final now = DateTime.now();
-        final value = DateTime(now.year, now.month, now.day);
+        final value = DateTime(now.year, now.month, now.day, 12, now.minute);
 
-        await pumpDateTimeFormField(tester, controller: controller);
+        await withClock(Clock.fixed(now), () async {
+          await pumpDateTimeFormField(tester, controller: controller);
 
-        await tester.tap(find.byType(TextFormField));
-        await tester.pumpAndSettle();
+          await tester.tap(find.byType(TextFormField));
+          await tester.pumpAndSettle();
 
-        await tester.tap(find.text(value.day.toString()));
-        await tester.pump();
+          await tester.tap(find.text(value.day.toString()));
+          await tester.pump();
 
-        await tester.tap(find.text('OK'));
-        await tester.pumpAndSettle();
+          await tester.tap(find.text('OK'));
+          await tester.pumpAndSettle();
 
-        expect(controller.value, value);
+          final hourTextFieldFinder = find
+              .descendant(
+                of: find.byType(TimePickerDialog),
+                matching: find.byType(TextFormField),
+              )
+              .first;
+          expect(hourTextFieldFinder, findsOneWidget);
+          await tester.enterText(hourTextFieldFinder, '12');
+
+          await tester.tap(find.text('OK'));
+          await tester.pumpAndSettle();
+
+          expect(controller.value, value);
+        });
       });
     });
   });

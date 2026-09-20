@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:decimal/decimal.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:journexa_app/shared/app_clock.dart';
 import 'package:journexa_app/shared/formatter/formatter.dart';
 import 'package:journexa_app/ui/shared/l10n/l10n.dart';
 import 'package:journexa_app/ui/shared/theme.dart';
@@ -364,7 +365,8 @@ class AppDateTimeFormField extends StatefulWidget {
   State<AppDateTimeFormField> createState() => _AppDateTimeFormFieldState();
 }
 
-class _AppDateTimeFormFieldState extends State<AppDateTimeFormField> {
+class _AppDateTimeFormFieldState extends State<AppDateTimeFormField>
+    with AppClockMixin {
   late final AppDateTimeController _controller;
 
   @override
@@ -388,14 +390,36 @@ class _AppDateTimeFormFieldState extends State<AppDateTimeFormField> {
   }
 
   Future<void> _onPressed() async {
+    final now = getCurrentDateTime();
     final pickedDate = await showDatePicker(
       context: context,
       firstDate: DateTime(2000),
-      lastDate: DateTime.now(),
+      lastDate: now,
       initialDate: _controller.value,
     );
-    if (!context.mounted) return;
-    _controller.value = pickedDate;
+    if (!mounted) return;
+    if (pickedDate == null) {
+      _controller.value = pickedDate;
+      return;
+    }
+    final pickedTime = await showTimePicker(
+      context: context,
+      initialTime: TimeOfDay.fromDateTime(now),
+      initialEntryMode: TimePickerEntryMode.inputOnly,
+    );
+    if (!mounted) return;
+    if (pickedTime == null) {
+      _controller.value = null;
+      return;
+    }
+    final effectiveDateTime = DateTime(
+      pickedDate.year,
+      pickedDate.month,
+      pickedDate.day,
+      pickedTime.hour,
+      pickedTime.minute,
+    );
+    _controller.value = effectiveDateTime;
   }
 
   @override

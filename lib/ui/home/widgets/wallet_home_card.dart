@@ -23,6 +23,7 @@ class WalletHomeCard extends StatelessWidget {
       borderColor: context.color.primaryContainer,
       child: Column(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           Image.asset(
             'assets/pattern/pattern-1.png',
@@ -31,16 +32,21 @@ class WalletHomeCard extends StatelessWidget {
             width: double.infinity,
           ),
           Column(
-            mainAxisSize: MainAxisSize.min,
+            mainAxisAlignment: MainAxisAlignment.end,
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
                 name,
-                style: context.text.labelMedium,
+                style: context.text.labelMedium?.copyWith(
+                  color: context.color.onPrimary,
+                ),
                 maxLines: 1,
               ),
               Text(
                 balance.idrCurrency(context.languageCode),
-                style: context.text.headlineMedium,
+                style: context.text.headlineMedium?.copyWith(
+                  color: context.color.onPrimary,
+                ),
                 maxLines: 1,
               ),
             ],

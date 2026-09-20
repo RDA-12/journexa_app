@@ -402,14 +402,16 @@ class _AppDateTimeFormFieldState extends State<AppDateTimeFormField> {
   Widget build(BuildContext context) {
     return AppFormField(
       isRequired: widget.isRequired,
-      readOnly: widget.readOnly,
+      readOnly: true,
       icon: widget.icon,
       label: widget.label,
       controller: _controller.textEditingController,
-      onPressed: () {
-        widget.onPressed?.call();
-        unawaited(_onPressed());
-      },
+      onPressed: widget.readOnly
+          ? null
+          : () {
+              widget.onPressed?.call();
+              unawaited(_onPressed());
+            },
     );
   }
 }

@@ -494,7 +494,7 @@ void main() {
             isRequired: false,
             icon: icon,
             label: label,
-            readOnly: false,
+            readOnly: true,
           );
 
           final finder = find.byType(AppFormField);
@@ -505,7 +505,8 @@ void main() {
           expect(widget.isRequired, false);
           expect(widget.icon, icon);
           expect(widget.label, label);
-          expect(widget.readOnly, false);
+          expect(widget.readOnly, true);
+          expect(widget.onPressed, isNull);
         },
       );
 

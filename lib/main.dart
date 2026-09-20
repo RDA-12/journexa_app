@@ -12,7 +12,7 @@ import 'package:journexa_app/ui/shared/theme.dart';
 import 'package:toastification/toastification.dart';
 
 Future<void> main() async {
-WidgetsFlutterBinding.ensureInitialized();
+  WidgetsFlutterBinding.ensureInitialized();
   AppLogger.initialize(debugMode: AppEnv.isDebug);
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,

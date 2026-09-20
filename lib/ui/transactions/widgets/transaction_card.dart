@@ -85,10 +85,13 @@ class TransactionCard extends StatelessWidget {
             Expanded(
               child: Column(
                 spacing: 4,
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
                     title,
-                    style: context.text.bodyMedium,
+                    style: context.text.bodyMedium?.copyWith(
+                      fontWeight: FontWeight.bold,
+                    ),
                   ),
                   Text(
                     subtitle,
@@ -105,7 +108,9 @@ class TransactionCard extends StatelessWidget {
               children: [
                 Text(
                   amountString,
-                  style: context.text.bodyMedium,
+                  style: context.text.bodyMedium?.copyWith(
+                    fontWeight: FontWeight.bold,
+                  ),
                 ),
                 Text(
                   dateString,

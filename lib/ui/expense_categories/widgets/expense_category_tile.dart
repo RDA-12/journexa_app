@@ -73,6 +73,7 @@ class ExpenseCategoryTile extends StatelessWidget {
                 builder: (context) {
                   return Column(
                     spacing: 8,
+                    mainAxisSize: MainAxisSize.min,
                     crossAxisAlignment: CrossAxisAlignment.stretch,
                     children: [
                       AppButton(

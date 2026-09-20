@@ -4,7 +4,6 @@ import 'package:journexa_app/ui/expense_categories/widgets/expense_category_form
 import 'package:journexa_app/ui/shared/l10n/l10n.dart';
 import 'package:journexa_app/ui/shared/theme.dart';
 import 'package:journexa_app/ui/shared/widgets/app_bottom_sheet.dart';
-import 'package:journexa_app/ui/shared/widgets/app_button.dart';
 import 'package:journexa_app/ui/shared/widgets/app_dialog.dart';
 
 /// Possible Action for this tile
@@ -76,25 +75,27 @@ class ExpenseCategoryTile extends StatelessWidget {
                     mainAxisSize: MainAxisSize.min,
                     crossAxisAlignment: CrossAxisAlignment.stretch,
                     children: [
-                      AppButton(
-                        type: ButtonType.text,
-                        icon: const Icon(Icons.edit_rounded),
-                        label: context.l10n.commonUpdateLabel,
-                        semanticsLabel: context.l10n
-                            .updateExpenseCategorySemantics(
-                              category.name,
-                            ),
-                        onPressed: () {
+                      ListTile(
+                        leading: const Icon(Icons.edit_rounded),
+                        title: Text(
+                          context.l10n.commonUpdateLabel,
+                          semanticsLabel: context.l10n
+                              .updateExpenseCategorySemantics(
+                                category.name,
+                              ),
+                        ),
+                        onTap: () {
                           Navigator.pop(context, _Action.update);
                         },
                       ),
-                      AppButton(
-                        type: ButtonType.text,
-                        icon: const Icon(Icons.delete_rounded),
-                        label: context.l10n.commonDelete,
-                        semanticsLabel: context.l10n
-                            .deleteExpenseCategorySemantics(category.name),
-                        onPressed: () {
+                      ListTile(
+                        leading: const Icon(Icons.delete_rounded),
+                        title: Text(
+                          context.l10n.commonDelete,
+                          semanticsLabel: context.l10n
+                              .deleteExpenseCategorySemantics(category.name),
+                        ),
+                        onTap: () {
                           Navigator.pop(context, _Action.delete);
                         },
                       ),

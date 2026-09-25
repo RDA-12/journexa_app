@@ -17,18 +17,6 @@ enum WalletsUIStatus {
   failure,
 }
 
-/// Status for [WalletUIModel]
-enum WalletUIStatus {
-  /// Idle status
-  idle,
-
-  /// Status when delete event is in process
-  deleting,
-
-  /// Status when update event is in process
-  updating,
-}
-
 /// Class meant to be used as notice of [WalletsBloc]
 ///
 /// This class can be used as notice to show any notice to UI
@@ -77,9 +65,6 @@ sealed class WalletUIModel with _$WalletUIModel {
 
     /// Balance this [Wallet] has
     required Decimal balance,
-
-    /// Status for UI
-    @Default(WalletUIStatus.idle) WalletUIStatus status,
   }) = _WalletUIModel;
 }
 
@@ -99,6 +84,12 @@ sealed class WalletsState with _$WalletsState {
 
     /// Notice that meant to be announce by UI
     WalletUINotice? notice,
+
+    /// Set of ids that in the middle of deleting process
+    @Default({}) Set<String> deletingIds,
+
+    /// Set of ids that in the middle of updating process
+    @Default({}) Set<String> updatingIds,
   }) = _WalletsState;
 
   const new _();

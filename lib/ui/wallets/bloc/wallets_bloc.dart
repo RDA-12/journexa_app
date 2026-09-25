@@ -116,9 +116,6 @@ class WalletsBloc extends Bloc<WalletsEvent, WalletsState>
       onData: (result) {
         return result.when(
           success: (wallets) {
-            final currentItemState = {
-              for (final it in state.wallets) it.wallet.id: it.status,
-            };
             logInfo(
               'Streamed wallets succeeded. Emit loaded status',
               traceId: traceId,
@@ -130,8 +127,6 @@ class WalletsBloc extends Bloc<WalletsEvent, WalletsState>
                     (it) => WalletUIModel(
                       wallet: it.wallet,
                       balance: it.balance,
-                      status:
-                          currentItemState[it.wallet.id] ?? WalletUIStatus.idle,
                     ),
                   )
                   .toList(),
@@ -171,58 +166,45 @@ class WalletsBloc extends Bloc<WalletsEvent, WalletsState>
 
     logInfo(
       'Starts deleting wallet with id ${wallet.id}. '
-      'Emit new wallets with status deleting on the Wallet',
+      'Emit new deletingIds with wallet id',
       traceId: traceId,
     );
     emit(
       state.copyWith(
-        wallets: state.wallets.map((it) {
-          final isDeleting = it.wallet.id == wallet.id;
-          if (!isDeleting) return it;
-          return it.copyWith(status: WalletUIStatus.deleting);
-        }).toList(),
+        deletingIds: Set.from(state.deletingIds)..add(wallet.id),
       ),
     );
     final result = await _deleteWallet.execute(
       DeleteWalletParams(wallet: wallet),
       traceId: traceId,
     );
-    result.when(
+    final notice = result.when(
       success: (_) {
         logInfo(
           'Deletes wallet success. '
-          'Filter wallet from wallets. '
+          'Remove ID from deletingIds '
           'Emit with recentlyDeleted notice',
           traceId: traceId,
         );
-        emit(
-          state.copyWith(
-            status: WalletsUIStatus.loaded,
-            notice: WalletUINotice.recentlyDeleted(wallet: wallet),
-          ),
-        );
+        return WalletUINotice.recentlyDeleted(wallet: wallet);
       },
       failure: (exc) {
         logInfo(
           'Delete wallet failed. '
-          'Emit idle status on the Wallet with deleteFailed notice',
+          'Emit removed ID from deletingIds with deleteFailed notice',
           traceId: traceId,
         );
-        emit(
-          state.copyWith(
-            status: WalletsUIStatus.loaded,
-            wallets: state.wallets.map((it) {
-              final processed = it.wallet.id == wallet.id;
-              if (!processed) return it;
-              return it.copyWith(status: WalletUIStatus.idle);
-            }).toList(),
-            notice: WalletUINotice.deleteFailed(
-              wallet: wallet,
-              exception: exc,
-            ),
-          ),
+        return WalletUINotice.deleteFailed(
+          wallet: wallet,
+          exception: exc,
         );
       },
+    );
+    emit(
+      state.copyWith(
+        deletingIds: Set.from(state.deletingIds)..remove(wallet.id),
+        notice: notice,
+      ),
     );
   }
 
@@ -244,16 +226,12 @@ class WalletsBloc extends Bloc<WalletsEvent, WalletsState>
 
     logInfo(
       'Starts updating wallet ${wallet.id}. '
-      'Emit new wallets with status updateing on the Wallet',
+      'Emit new updatingIds with wallet id',
       traceId: traceId,
     );
     emit(
       state.copyWith(
-        wallets: state.wallets.map((it) {
-          final isUpdating = it.wallet.id == wallet.id;
-          if (!isUpdating) return it;
-          return it.copyWith(status: WalletUIStatus.updating);
-        }).toList(),
+        updatingIds: Set.from(state.updatingIds)..add(wallet.id),
       ),
     );
 
@@ -262,43 +240,32 @@ class WalletsBloc extends Bloc<WalletsEvent, WalletsState>
       name: name,
     );
     final result = await _updateWallet.execute(params, traceId: traceId);
-    result.when(
+    final notice = result.when(
       success: (updated) {
         logInfo(
           'Updates wallet success. '
-          'Emit updated wallet with idle status and recentlyUpdated notice',
+          'Emit removed ID from updatingIds and recentlyUpdated notice',
           traceId: traceId,
         );
-        emit(
-          state.copyWith(
-            status: WalletsUIStatus.loaded,
-            notice: WalletUINotice.recentlyUpdated(
-              from: oldWallet,
-              to: updated,
-            ),
-          ),
+        return WalletUINotice.recentlyUpdated(
+          from: oldWallet,
+          to: updated,
         );
       },
       failure: (exc) {
         logInfo(
           'Update wallet failed. '
-          'Emit idel status on the Wallet and updateFailed notice',
+          'Emit removed ID from updatingIds and updateFailed notice',
           traceId: traceId,
         );
-        emit(
-          state.copyWith(
-            status: WalletsUIStatus.loaded,
-            wallets: state.wallets.map((it) {
-              final processed = it.wallet.id == wallet.id;
-              if (!processed) return it;
-              return it.copyWith(
-                status: WalletUIStatus.idle,
-              );
-            }).toList(),
-            notice: WalletUINotice.updateFailed(wallet: wallet, exception: exc),
-          ),
-        );
+        return WalletUINotice.updateFailed(wallet: wallet, exception: exc);
       },
+    );
+    emit(
+      state.copyWith(
+        updatingIds: Set.from(state.updatingIds)..remove(wallet.id),
+        notice: notice,
+      ),
     );
   }
 }

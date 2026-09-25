@@ -287,7 +287,7 @@ void main() {
 
   group('delete', () {
     blocTest<WalletsBloc, WalletsState>(
-      'emits [new wallets, loaded with notice] '
+      'emits [new deletingIds, updated notice and deletingIds] '
       'when deleteWalletUseCase returns success',
       seed: () {
         return WalletsState(
@@ -303,19 +303,13 @@ void main() {
       expect: () => <WalletsState>[
         WalletsState(
           status: WalletsUIStatus.loaded,
-          wallets: walletsWithState.map((it) {
-            final isDeleting = it.wallet.id == wallets.first.id;
-            if (!isDeleting) return it;
-            return it.copyWith(status: WalletUIStatus.deleting);
-          }).toList(),
+          wallets: walletsWithState,
+          deletingIds: {wallets.first.id},
         ),
         WalletsState(
           status: WalletsUIStatus.loaded,
-          wallets: walletsWithState.map((it) {
-            final isDeleting = it.wallet.id == wallets.first.id;
-            if (!isDeleting) return it;
-            return it.copyWith(status: WalletUIStatus.deleting);
-          }).toList(),
+          wallets: walletsWithState,
+          deletingIds: {},
           notice: WalletUINotice.recentlyDeleted(wallet: wallets.first),
         ),
       ],
@@ -330,8 +324,8 @@ void main() {
     );
 
     blocTest<WalletsBloc, WalletsState>(
-      'emits [new wallets, '
-      'new idle wallets and failed notice] '
+      'emits [new deletingIds, '
+      'failed notice and updated deletingIds] '
       'when deleteWalletUseCase returns failure',
       setUp: () {
         when(
@@ -355,15 +349,13 @@ void main() {
       expect: () => <WalletsState>[
         WalletsState(
           status: WalletsUIStatus.loaded,
-          wallets: walletsWithState.map((it) {
-            final isDeleting = it.wallet.id == wallets.first.id;
-            if (!isDeleting) return it;
-            return it.copyWith(status: WalletUIStatus.deleting);
-          }).toList(),
+          wallets: walletsWithState,
+          deletingIds: {wallets.first.id},
         ),
         WalletsState(
           status: WalletsUIStatus.loaded,
           wallets: walletsWithState,
+          deletingIds: {},
           notice: WalletUINotice.deleteFailed(
             wallet: wallets.first,
             exception: AppException.test(),
@@ -403,7 +395,7 @@ void main() {
 
   group('update', () {
     blocTest<WalletsBloc, WalletsState>(
-      'emits [new updating wallets, loaded with updated notice] '
+      'emits [new updatingIds, updated notice and updatingIds] '
       'when updateWalletUseCase returns success',
       seed: () {
         return WalletsState(
@@ -421,19 +413,13 @@ void main() {
       expect: () => <WalletsState>[
         WalletsState(
           status: WalletsUIStatus.loaded,
-          wallets: walletsWithState.map((it) {
-            final isUpdating = it.wallet.id == wallets.first.id;
-            if (!isUpdating) return it;
-            return it.copyWith(status: WalletUIStatus.updating);
-          }).toList(),
+          wallets: walletsWithState,
+          updatingIds: {wallets.first.id},
         ),
         WalletsState(
           status: WalletsUIStatus.loaded,
-          wallets: walletsWithState.map((it) {
-            final isUpdating = it.wallet.id == wallets.first.id;
-            if (!isUpdating) return it;
-            return it.copyWith(status: WalletUIStatus.updating);
-          }).toList(),
+          wallets: walletsWithState,
+          updatingIds: {},
           notice: WalletUINotice.recentlyUpdated(
             from: wallets.first,
             to: updatedFirstWallet,
@@ -454,8 +440,8 @@ void main() {
     );
 
     blocTest<WalletsBloc, WalletsState>(
-      'emits [new wallets, '
-      'new wallets with idle status and updateFailure notice] '
+      'emits [new updatingIds, '
+      'updateFailure notice and updated updatingIds] '
       'when updateWalletUseCase returns failure',
       setUp: () {
         when(
@@ -486,15 +472,13 @@ void main() {
       expect: () => <WalletsState>[
         WalletsState(
           status: WalletsUIStatus.loaded,
-          wallets: walletsWithState.map((it) {
-            final isUpdating = it.wallet.id == wallets.first.id;
-            if (!isUpdating) return it;
-            return it.copyWith(status: WalletUIStatus.updating);
-          }).toList(),
+          wallets: walletsWithState,
+          updatingIds: {wallets.first.id},
         ),
         WalletsState(
           status: WalletsUIStatus.loaded,
           wallets: walletsWithState,
+          updatingIds: {},
           notice: WalletUINotice.updateFailed(
             wallet: wallets.first,
             exception: AppException.test(),

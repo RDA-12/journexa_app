@@ -164,24 +164,36 @@ class _WalletsListViewState extends State<WalletsListView> {
                       items: walletBalances,
                       itemBuilder: (context, index) {
                         final item = walletBalances[index];
-                        return BlocSelector<
-                          WalletsBloc,
-                          WalletsState,
-                          WalletUIModel?
-                        >(
-                          selector: (state) {
-                            return state.wallets.firstWhereOrNull(
+                        return BlocBuilder<WalletsBloc, WalletsState>(
+                          buildWhen: (p, c) {
+                            final pWallet = p.wallets.firstWhereOrNull(
                               (it) => it.wallet.id == item.wallet.id,
                             );
+                            final cWallet = c.wallets.firstWhereOrNull(
+                              (it) => it.wallet.id == item.wallet.id,
+                            );
+                            final differentWallet = pWallet != cWallet;
+                            final updating =
+                                p.updatingIds.contains(item.wallet.id) ||
+                                c.updatingIds.contains(item.wallet.id);
+                            final deleting =
+                                p.deletingIds.contains(item.wallet.id) ||
+                                c.deletingIds.contains(item.wallet.id);
+                            return differentWallet || updating || deleting;
                           },
-                          builder: (context, data) {
+                          builder: (context, state) {
+                            final data = state.wallets.firstWhereOrNull(
+                              (it) => it.wallet.id == item.wallet.id,
+                            );
                             if (data == null) {
                               return const SizedBox.shrink();
                             }
-                            final isDeleting =
-                                data.status == WalletUIStatus.deleting;
-                            final isUpdating =
-                                data.status == WalletUIStatus.updating;
+                            final isDeleting = state.deletingIds.contains(
+                              data.wallet.id,
+                            );
+                            final isUpdating = state.updatingIds.contains(
+                              data.wallet.id,
+                            );
                             return WalletCard(
                               data: data,
                               isDeleting: isDeleting,

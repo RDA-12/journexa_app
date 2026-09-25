@@ -11,6 +11,7 @@ import 'package:journexa_app/ui/shared/widgets/widgets.dart';
 import 'package:journexa_app/ui/wallets/bloc/wallets_bloc.dart';
 import 'package:journexa_app/ui/wallets/widgets/delete_wallet_button.dart';
 import 'package:journexa_app/ui/wallets/widgets/update_wallet_button.dart';
+import 'package:journexa_app/ui/wallets/widgets/wallet_card.dart';
 import 'package:journexa_app/ui/wallets/widgets/wallet_form.dart';
 import 'package:journexa_app/ui/wallets/widgets/wallets_list_view.dart';
 import 'package:mocktail/mocktail.dart';
@@ -48,7 +49,7 @@ final expectedTranslations = {
 
 void main() {
   final assetParent = SystemDefinedAccount.walletParent;
-  final walletsData = List.generate(5, (idx) {
+  final walletsData = List.generate(4, (idx) {
     return WalletUIModel(
       wallet: Wallet(
         id: '$idx',
@@ -119,6 +120,8 @@ void main() {
           initialState: WalletsState(
             status: WalletsUIStatus.loaded,
             wallets: walletsData,
+            deletingIds: {walletsData.first.wallet.id},
+            updatingIds: {walletsData[1].wallet.id},
           ),
         );
 
@@ -130,6 +133,19 @@ void main() {
           finder,
         );
         expect(widget.items, walletsData);
+
+        final walletCardsFinder = find.descendant(
+          of: finder,
+          matching: find.byType(WalletCard),
+        );
+        for (var i = 0; i < walletsData.length; i++) {
+          final walletCardFinder = walletCardsFinder.at(i);
+          final widget = tester.widget<WalletCard>(walletCardFinder);
+          final item = walletsData[i];
+          expect(widget.data, item);
+          expect(widget.isDeleting, i == 0 ? isTrue : isFalse);
+          expect(widget.isUpdating, i == 1 ? isTrue : isFalse);
+        }
       },
     );
 

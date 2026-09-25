@@ -17,17 +17,6 @@ enum ExpenseCategoriesUIStatus {
   failure,
 }
 
-/// Status for [ExpenseCategoryUIModel]
-enum ExpenseCategoryUIStatus {
-  /// Idle status
-  idle,
-
-  /// Status when delete event is in process
-  deleting,
-
-  /// Status when update event is in process
-  updating,
-}
 
 /// Class meant to be used as notice of [ExpenseCategoriesBloc]
 ///
@@ -68,18 +57,6 @@ sealed class ExpenseCategoryUINotice with _$ExpenseCategoryUINotice {
   }) = _ExpenseCategoryUINoticeUpdateFailed;
 }
 
-/// Extends [ExpenseCategory] to includes state for UI
-@freezed
-sealed class ExpenseCategoryUIModel with _$ExpenseCategoryUIModel {
-  const factory({
-    /// The [ExpenseCategory]
-    required ExpenseCategory category,
-
-    /// Status for UI
-    @Default(ExpenseCategoryUIStatus.idle) ExpenseCategoryUIStatus status,
-  }) = _ExpenseCategoryUIModel;
-}
-
 /// States of [ExpenseCategoriesBloc]
 @freezed
 sealed class ExpenseCategoriesState with _$ExpenseCategoriesState {
@@ -89,14 +66,20 @@ sealed class ExpenseCategoriesState with _$ExpenseCategoriesState {
     @Default(ExpenseCategoriesUIStatus.initial)
     ExpenseCategoriesUIStatus status,
 
-    /// List of expense categories with their balances
-    @Default([]) List<ExpenseCategoryUIModel> categories,
+    /// List of expense categories
+    @Default([]) List<ExpenseCategory> categories,
 
     /// Exception that occurred when load or search event failed
     AppException? exception,
 
     /// Notice that meant to be announce by UI
     ExpenseCategoryUINotice? notice,
+
+    /// Set of ids that in the middle of deleting process
+    @Default({}) Set<String> deletingIds,
+
+    /// Set of ids that in the middle of updating process
+    @Default({}) Set<String> updatingIds,
   }) = _ExpenseCategoriesState;
 
   const new _();

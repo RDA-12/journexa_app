@@ -162,9 +162,7 @@ void main() {
         mockIncomeCategoriesBloc,
         Stream<IncomeCategoriesState>.fromIterable([
           IncomeCategoriesState(
-            categories: items
-                .map((it) => IncomeCategoryUIModel(category: it))
-                .toList(),
+            categories: items,
             status: IncomeCategoriesUIStatus.loaded,
           ),
         ]),

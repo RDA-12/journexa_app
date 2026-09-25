@@ -122,41 +122,54 @@ class _ExpenseCategoriesListViewState extends State<ExpenseCategoriesListView> {
                     items: categories,
                     itemBuilder: (context, index) {
                       final item = categories[index];
-                      return BlocSelector<
+                      return BlocBuilder<
                         ExpenseCategoriesBloc,
-                        ExpenseCategoriesState,
-                        ExpenseCategoryUIModel?
+                        ExpenseCategoriesState
                       >(
-                        selector: (state) {
-                          return state.categories.firstWhereOrNull(
-                            (it) => it.category.id == item.category.id,
+                        buildWhen: (p, c) {
+                          final pCategory = p.categories.firstWhereOrNull(
+                            (it) => it.id == item.id,
                           );
+                          final cCategory = c.categories.firstWhereOrNull(
+                            (it) => it.id == item.id,
+                          );
+                          final differentCategory = pCategory != cCategory;
+                          final updating =
+                              p.updatingIds.contains(item.id) ||
+                              c.updatingIds.contains(item.id);
+                          final deleting =
+                              p.deletingIds.contains(item.id) ||
+                              c.deletingIds.contains(item.id);
+                          return differentCategory || updating || deleting;
                         },
-                        builder: (context, expenseCategory) {
-                          if (expenseCategory == null) {
+                        builder: (context, state) {
+                          final category = state.categories.firstWhereOrNull(
+                            (it) => it.id == item.id,
+                          );
+                          if (category == null) {
                             return const SizedBox.shrink();
                           }
-                          final isDeleting =
-                              expenseCategory.status ==
-                              ExpenseCategoryUIStatus.deleting;
-                          final isUpdating =
-                              expenseCategory.status ==
-                              ExpenseCategoryUIStatus.updating;
+                          final isDeleting = state.deletingIds.contains(
+                            category.id,
+                          );
+                          final isUpdating = state.updatingIds.contains(
+                            category.id,
+                          );
                           return ExpenseCategoryTile(
-                            category: expenseCategory.category,
+                            category: category,
                             isDeleting: isDeleting,
                             isUpdating: isUpdating,
                             onDeletePressed: () {
                               context.read<ExpenseCategoriesBloc>().add(
                                 ExpenseCategoriesEvent.delete(
-                                  expenseCategory.category,
+                                  category,
                                 ),
                               );
                             },
                             onUpdatePressed: ({required icon, required name}) {
                               context.read<ExpenseCategoriesBloc>().add(
                                 ExpenseCategoriesEvent.update(
-                                  expenseCategory.category,
+                                  category,
                                   name: name,
                                 ),
                               );

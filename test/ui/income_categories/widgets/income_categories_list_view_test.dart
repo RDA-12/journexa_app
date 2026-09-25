@@ -8,6 +8,7 @@ import 'package:journexa_app/shared/app_exception.dart';
 import 'package:journexa_app/ui/income_categories/bloc/income_categories_bloc.dart';
 import 'package:journexa_app/ui/income_categories/widgets/income_categories_list_view.dart';
 import 'package:journexa_app/ui/income_categories/widgets/income_category_form.dart';
+import 'package:journexa_app/ui/income_categories/widgets/income_category_tile.dart';
 import 'package:journexa_app/ui/shared/l10n/app_localizations.dart';
 import 'package:journexa_app/ui/shared/widgets/app_empty_box.dart';
 import 'package:journexa_app/ui/shared/widgets/app_exception_box.dart';
@@ -55,9 +56,7 @@ void main() {
       ),
     );
   });
-  final categoriesState = categories
-      .map((it) => IncomeCategoryUIModel(category: it))
-      .toList();
+  final categoriesState = categories;
 
   late IncomeCategoriesBloc mockIncomeCategoriesBloc;
 
@@ -115,17 +114,32 @@ void main() {
           initialState: IncomeCategoriesState(
             status: IncomeCategoriesUIStatus.loaded,
             categories: categoriesState,
+            deletingIds: {categoriesState.first.id},
+            updatingIds: {categoriesState[1].id},
           ),
         );
 
         await pumpWidget(tester);
 
-        final finder = find.byType(AppListView<IncomeCategoryUIModel>);
+        final finder = find.byType(AppListView<IncomeCategory>);
         expect(finder, findsOneWidget);
-        final widget = tester.widget<AppListView<IncomeCategoryUIModel>>(
+        final widget = tester.widget<AppListView<IncomeCategory>>(
           finder,
         );
         expect(widget.items, categoriesState);
+
+        final categoryTilesFinder = find.descendant(
+          of: finder,
+          matching: find.byType(IncomeCategoryTile),
+        );
+        for (var i = 0; i < categoriesState.length; i++) {
+          final tileFinder = categoryTilesFinder.at(i);
+          final widget = tester.widget<IncomeCategoryTile>(tileFinder);
+          final item = categoriesState[i];
+          expect(widget.category, item);
+          expect(widget.isDeleting, i == 0 ? isTrue : isFalse);
+          expect(widget.isUpdating, i == 1 ? isTrue : isFalse);
+        }
       },
     );
 

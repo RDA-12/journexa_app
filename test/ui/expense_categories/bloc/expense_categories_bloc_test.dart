@@ -37,11 +37,6 @@ void main() {
       ),
     );
   });
-  final expenseCategoriesWithState = expenseCategories
-      .map(
-        (it) => ExpenseCategoryUIModel(category: it),
-      )
-      .toList();
   final updatedFirstCategory = expenseCategories.first.update(
     name: 'new name',
   );
@@ -126,7 +121,7 @@ void main() {
         const ExpenseCategoriesState(status: ExpenseCategoriesUIStatus.loading),
         ExpenseCategoriesState(
           status: ExpenseCategoriesUIStatus.loaded,
-          categories: expenseCategoriesWithState,
+          categories: expenseCategories,
         ),
       ],
       verify: (_) {
@@ -152,7 +147,7 @@ void main() {
         const ExpenseCategoriesState(status: ExpenseCategoriesUIStatus.loading),
         ExpenseCategoriesState(
           status: ExpenseCategoriesUIStatus.loaded,
-          categories: expenseCategoriesWithState,
+          categories: expenseCategories,
         ),
       ],
       verify: (_) {
@@ -205,12 +200,12 @@ void main() {
 
   group('delete', () {
     blocTest<ExpenseCategoriesBloc, ExpenseCategoriesState>(
-      'emits [new categories, loaded with notice] '
+      'emits [new deletingIds, updated notice and deletingIds] '
       'when deleteExpenseCategory returns success',
       seed: () {
         return ExpenseCategoriesState(
           status: ExpenseCategoriesUIStatus.loaded,
-          categories: expenseCategoriesWithState,
+          categories: expenseCategories,
         );
       },
       build: buildBloc,
@@ -221,21 +216,13 @@ void main() {
       expect: () => <ExpenseCategoriesState>[
         ExpenseCategoriesState(
           status: ExpenseCategoriesUIStatus.loaded,
-          categories: expenseCategoriesWithState.map((it) {
-            final isDeleting =
-                it.category.id == expenseCategoriesWithState.first.category.id;
-            if (!isDeleting) return it;
-            return it.copyWith(status: ExpenseCategoryUIStatus.deleting);
-          }).toList(),
+          categories: expenseCategories,
+          deletingIds: {expenseCategories.first.id},
         ),
         ExpenseCategoriesState(
           status: ExpenseCategoriesUIStatus.loaded,
-          categories: expenseCategoriesWithState.map((it) {
-            final isDeleting =
-                it.category.id == expenseCategoriesWithState.first.category.id;
-            if (!isDeleting) return it;
-            return it.copyWith(status: ExpenseCategoryUIStatus.deleting);
-          }).toList(),
+          categories: expenseCategories,
+          deletingIds: {},
           notice: ExpenseCategoryUINotice.recentlyDeleted(
             category: expenseCategories.first,
           ),
@@ -252,7 +239,8 @@ void main() {
     );
 
     blocTest<ExpenseCategoriesBloc, ExpenseCategoriesState>(
-      'emits [new categories, new idle categories and failed notice] '
+      'emits [new deletingIds, '
+      'failed notice and updated deletingIds] '
       'when deleteExpenseCategory returns failure',
       setUp: () {
         when(
@@ -267,7 +255,7 @@ void main() {
       seed: () {
         return ExpenseCategoriesState(
           status: ExpenseCategoriesUIStatus.loaded,
-          categories: expenseCategoriesWithState,
+          categories: expenseCategories,
         );
       },
       build: buildBloc,
@@ -278,16 +266,13 @@ void main() {
       expect: () => <ExpenseCategoriesState>[
         ExpenseCategoriesState(
           status: ExpenseCategoriesUIStatus.loaded,
-          categories: expenseCategoriesWithState.map((it) {
-            final isDeleting =
-                it.category.id == expenseCategoriesWithState.first.category.id;
-            if (!isDeleting) return it;
-            return it.copyWith(status: ExpenseCategoryUIStatus.deleting);
-          }).toList(),
+          categories: expenseCategories,
+          deletingIds: {expenseCategories.first.id},
         ),
         ExpenseCategoriesState(
           status: ExpenseCategoriesUIStatus.loaded,
-          categories: expenseCategoriesWithState,
+          categories: expenseCategories,
+          deletingIds: {},
           notice: ExpenseCategoryUINotice.deleteFailed(
             category: expenseCategories.first,
             exception: AppException.test(),
@@ -327,12 +312,12 @@ void main() {
 
   group('update', () {
     blocTest<ExpenseCategoriesBloc, ExpenseCategoriesState>(
-      'emits [new updating categories, loaded with updated notice] '
+      'emits [new updatingIds, updated notice and updatingIds] '
       'when updateExpenseCategory returns success',
       seed: () {
         return ExpenseCategoriesState(
           status: ExpenseCategoriesUIStatus.loaded,
-          categories: expenseCategoriesWithState,
+          categories: expenseCategories,
         );
       },
       build: buildBloc,
@@ -345,23 +330,15 @@ void main() {
       expect: () => <ExpenseCategoriesState>[
         ExpenseCategoriesState(
           status: ExpenseCategoriesUIStatus.loaded,
-          categories: expenseCategoriesWithState.map((it) {
-            final isUpdating =
-                it.category.id == expenseCategoriesWithState.first.category.id;
-            if (!isUpdating) return it;
-            return it.copyWith(status: ExpenseCategoryUIStatus.updating);
-          }).toList(),
+          categories: expenseCategories,
+          updatingIds: {expenseCategories.first.id},
         ),
         ExpenseCategoriesState(
           status: ExpenseCategoriesUIStatus.loaded,
-          categories: expenseCategoriesWithState.map((it) {
-            final isUpdating =
-                it.category.id == expenseCategoriesWithState.first.category.id;
-            if (!isUpdating) return it;
-            return it.copyWith(status: ExpenseCategoryUIStatus.updating);
-          }).toList(),
+          categories: expenseCategories,
+          updatingIds: {},
           notice: ExpenseCategoryUINotice.recentlyUpdated(
-            from: expenseCategoriesWithState.first.category,
+            from: expenseCategories.first,
             to: updatedFirstCategory,
           ),
         ),
@@ -380,8 +357,8 @@ void main() {
     );
 
     blocTest<ExpenseCategoriesBloc, ExpenseCategoriesState>(
-      'emits [new categories, '
-      'new categories with idle status and updateFailure notice] '
+      'emits [new updatingIds, '
+      'updateFailure notice and updated updatingIds] '
       'when updateExpenseCategory returns failure',
       setUp: () {
         when(
@@ -399,7 +376,7 @@ void main() {
       seed: () {
         return ExpenseCategoriesState(
           status: ExpenseCategoriesUIStatus.loaded,
-          categories: expenseCategoriesWithState,
+          categories: expenseCategories,
         );
       },
       build: buildBloc,
@@ -412,16 +389,13 @@ void main() {
       expect: () => <ExpenseCategoriesState>[
         ExpenseCategoriesState(
           status: ExpenseCategoriesUIStatus.loaded,
-          categories: expenseCategoriesWithState.map((it) {
-            final isUpdating =
-                it.category.id == expenseCategoriesWithState.first.category.id;
-            if (!isUpdating) return it;
-            return it.copyWith(status: ExpenseCategoryUIStatus.updating);
-          }).toList(),
+          categories: expenseCategories,
+          updatingIds: {expenseCategories.first.id},
         ),
         ExpenseCategoriesState(
           status: ExpenseCategoriesUIStatus.loaded,
-          categories: expenseCategoriesWithState,
+          categories: expenseCategories,
+          updatingIds: {},
           notice: ExpenseCategoryUINotice.updateFailed(
             category: expenseCategories.first,
             exception: AppException.test(),

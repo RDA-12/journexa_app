@@ -17,18 +17,6 @@ enum IncomeCategoriesUIStatus {
   failure,
 }
 
-/// Status for [IncomeCategoryUIModel]
-enum IncomeCategoryUIStatus {
-  /// Idle status
-  idle,
-
-  /// Status when delete event is in process
-  deleting,
-
-  /// Status when update event is in process
-  updating,
-}
-
 /// Class meant to be used as notice of [IncomeCategoriesBloc]
 ///
 /// This class can be used as notice to show any notice to UI
@@ -68,18 +56,6 @@ sealed class IncomeCategoryUINotice with _$IncomeCategoryUINotice {
   }) = _IncomeCategoryUINoticeUpdateFailed;
 }
 
-/// Extends [IncomeCategory] to includes state for UI
-@freezed
-sealed class IncomeCategoryUIModel with _$IncomeCategoryUIModel {
-  const factory({
-    /// The [IncomeCategory]
-    required IncomeCategory category,
-
-    /// Status for UI
-    @Default(IncomeCategoryUIStatus.idle) IncomeCategoryUIStatus status,
-  }) = _IncomeCategoryUIModel;
-}
-
 /// States of [IncomeCategoriesBloc]
 @freezed
 sealed class IncomeCategoriesState with _$IncomeCategoriesState {
@@ -88,14 +64,20 @@ sealed class IncomeCategoriesState with _$IncomeCategoriesState {
     /// Status of the state
     @Default(IncomeCategoriesUIStatus.initial) IncomeCategoriesUIStatus status,
 
-    /// List of income categories with their balances
-    @Default([]) List<IncomeCategoryUIModel> categories,
+    /// List of income categories
+    @Default([]) List<IncomeCategory> categories,
 
     /// Exception that occurred when load or search event failed
     AppException? exception,
 
     /// Notice that meant to be announce by UI
     IncomeCategoryUINotice? notice,
+
+    /// Set of ids that in the middle of deleting process
+    @Default({}) Set<String> deletingIds,
+
+    /// Set of ids that in the middle of updating process
+    @Default({}) Set<String> updatingIds,
   }) = _IncomeCategoriesState;
 
   const new _();

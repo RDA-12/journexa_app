@@ -83,18 +83,14 @@ void main() {
         .update(name: 'category $index')
         .copyWith(id: '$index');
   }).toList();
-  final blocIncomeCategories = incomeCategories.map((it) {
-    return IncomeCategoryUIModel(category: it);
-  }).toList();
+  final blocIncomeCategories = incomeCategories;
 
   final expenseCategories = List.generate(5, (index) {
     return ExpenseCategory.test()
         .update(name: 'category $index')
         .copyWith(id: '$index');
   }).toList();
-  final blocExpenseCategories = expenseCategories.map((it) {
-    return ExpenseCategoryUIModel(category: it);
-  }).toList();
+  final blocExpenseCategories = expenseCategories;
 
   late WalletsBloc mockWalletsBloc;
   late IncomeCategoriesBloc mockIncomeCategoriesBloc;

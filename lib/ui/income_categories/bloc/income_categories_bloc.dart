@@ -83,25 +83,13 @@ class IncomeCategoriesBloc
       onData: (result) {
         return result.when(
           success: (categories) {
-            final currentItemState = {
-              for (final it in state.categories) it.category.id: it.status,
-            };
             logInfo(
               'Streamed income categories succeeded. Emit loaded status',
               traceId: traceId,
             );
             return state.copyWith(
               status: IncomeCategoriesUIStatus.loaded,
-              categories: categories
-                  .map(
-                    (it) => IncomeCategoryUIModel(
-                      category: it,
-                      status:
-                          currentItemState[it.id] ??
-                          IncomeCategoryUIStatus.idle,
-                    ),
-                  )
-                  .toList(),
+              categories: categories,
             );
           },
           failure: (exc) {
@@ -125,7 +113,7 @@ class IncomeCategoriesBloc
   }) async {
     final traceId = generateUid();
     final categoryIdx = state.categories.indexWhere(
-      (it) => it.category.id == category.id,
+      (it) => it.id == category.id,
     );
     if (categoryIdx == -1) {
       logInfo(
@@ -138,58 +126,45 @@ class IncomeCategoriesBloc
 
     logInfo(
       'Starts deleting category with id ${category.id}. '
-      'Emit new categories with status deleting on the IncomeCategory',
+      'Emit new deletingIds with category id',
       traceId: traceId,
     );
     emit(
       state.copyWith(
-        categories: state.categories.map((it) {
-          final isDeleting = it.category.id == category.id;
-          if (!isDeleting) return it;
-          return it.copyWith(status: IncomeCategoryUIStatus.deleting);
-        }).toList(),
+        deletingIds: Set.from(state.deletingIds)..add(category.id),
       ),
     );
     final result = await _deleteIncomeCategory.execute(
       DeleteIncomeCategoryParams(category: category),
       traceId: traceId,
     );
-    result.when(
+    final notice = result.when(
       success: (_) {
         logInfo(
           'Deletes category success. '
-          'Filter category from categories. '
+          'Remove ID from deletingIds '
           'Emit with recentlyDeleted notice',
           traceId: traceId,
         );
-        emit(
-          state.copyWith(
-            status: IncomeCategoriesUIStatus.loaded,
-            notice: IncomeCategoryUINotice.recentlyDeleted(category: category),
-          ),
-        );
+        return IncomeCategoryUINotice.recentlyDeleted(category: category);
       },
       failure: (exc) {
         logInfo(
           'Delete category failed. '
-          'Emit idle status on the IncomeCategory with deleteFailed notice',
+          'Emit removed ID from deletingIds with deleteFailed notice',
           traceId: traceId,
         );
-        emit(
-          state.copyWith(
-            status: IncomeCategoriesUIStatus.loaded,
-            categories: state.categories.map((it) {
-              final processed = it.category.id == category.id;
-              if (!processed) return it;
-              return it.copyWith(status: IncomeCategoryUIStatus.idle);
-            }).toList(),
-            notice: IncomeCategoryUINotice.deleteFailed(
-              category: category,
-              exception: exc,
-            ),
-          ),
+        return IncomeCategoryUINotice.deleteFailed(
+          category: category,
+          exception: exc,
         );
       },
+    );
+    emit(
+      state.copyWith(
+        deletingIds: Set.from(state.deletingIds)..remove(category.id),
+        notice: notice,
+      ),
     );
   }
 
@@ -201,26 +176,22 @@ class IncomeCategoriesBloc
     final traceId = generateUid();
     logInfo('Checking category with id ${category.id}', traceId: traceId);
     final categoryIdx = state.categories.indexWhere(
-      (it) => it.category.id == category.id,
+      (it) => it.id == category.id,
     );
     if (categoryIdx == -1) {
       logInfo('IncomeCategory not found. Skipping', traceId: traceId);
       return;
     }
-    final oldIncomeCategory = state.categories[categoryIdx].category;
+    final oldIncomeCategory = state.categories[categoryIdx];
 
     logInfo(
       'Starts updating category ${category.id}. '
-      'Emit new categories with status updateing on the IncomeCategory',
+      'Emit new updatingIds with category id',
       traceId: traceId,
     );
     emit(
       state.copyWith(
-        categories: state.categories.map((it) {
-          final isUpdating = it.category.id == category.id;
-          if (!isUpdating) return it;
-          return it.copyWith(status: IncomeCategoryUIStatus.updating);
-        }).toList(),
+        updatingIds: Set.from(state.updatingIds)..add(category.id),
       ),
     );
 
@@ -232,46 +203,35 @@ class IncomeCategoriesBloc
       params,
       traceId: traceId,
     );
-    result.when(
+    final notice = result.when(
       success: (updated) {
         logInfo(
           'Updates category success. '
-          'Emit updated category with idle status and recentlyUpdated notice',
+          'Emit removed ID from updatingIds and recentlyUpdated notice',
           traceId: traceId,
         );
-        emit(
-          state.copyWith(
-            status: IncomeCategoriesUIStatus.loaded,
-            notice: IncomeCategoryUINotice.recentlyUpdated(
-              from: oldIncomeCategory,
-              to: updated,
-            ),
-          ),
+        return IncomeCategoryUINotice.recentlyUpdated(
+          from: oldIncomeCategory,
+          to: updated,
         );
       },
       failure: (exc) {
         logInfo(
           'Update category failed. '
-          'Emit idle status on the IncomeCategory and updateFailed notice',
+          'Emit removed ID from updatingIds and updateFailed notice',
           traceId: traceId,
         );
-        emit(
-          state.copyWith(
-            status: IncomeCategoriesUIStatus.loaded,
-            categories: state.categories.map((it) {
-              final processed = it.category.id == category.id;
-              if (!processed) return it;
-              return it.copyWith(
-                status: IncomeCategoryUIStatus.idle,
-              );
-            }).toList(),
-            notice: IncomeCategoryUINotice.updateFailed(
-              category: category,
-              exception: exc,
-            ),
-          ),
+        return IncomeCategoryUINotice.updateFailed(
+          category: category,
+          exception: exc,
         );
       },
+    );
+    emit(
+      state.copyWith(
+        updatingIds: Set.from(state.updatingIds)..remove(category.id),
+        notice: notice,
+      ),
     );
   }
 }

@@ -37,11 +37,6 @@ void main() {
       ),
     );
   });
-  final incomeCategoriesWithState = incomeCategories
-      .map(
-        (it) => IncomeCategoryUIModel(category: it),
-      )
-      .toList();
   final updatedFirstCategory = incomeCategories.first.update(
     name: 'new name',
   );
@@ -126,7 +121,7 @@ void main() {
         const IncomeCategoriesState(status: IncomeCategoriesUIStatus.loading),
         IncomeCategoriesState(
           status: IncomeCategoriesUIStatus.loaded,
-          categories: incomeCategoriesWithState,
+          categories: incomeCategories,
         ),
       ],
       verify: (_) {
@@ -152,7 +147,7 @@ void main() {
         const IncomeCategoriesState(status: IncomeCategoriesUIStatus.loading),
         IncomeCategoriesState(
           status: IncomeCategoriesUIStatus.loaded,
-          categories: incomeCategoriesWithState,
+          categories: incomeCategories,
         ),
       ],
       verify: (_) {
@@ -205,12 +200,12 @@ void main() {
 
   group('delete', () {
     blocTest<IncomeCategoriesBloc, IncomeCategoriesState>(
-      'emits [new categories, loaded with notice] '
+      'emits [new deletingIds, updated notice and deletingIds] '
       'when deleteIncomeCategory returns success',
       seed: () {
         return IncomeCategoriesState(
           status: IncomeCategoriesUIStatus.loaded,
-          categories: incomeCategoriesWithState,
+          categories: incomeCategories,
         );
       },
       build: buildBloc,
@@ -221,21 +216,13 @@ void main() {
       expect: () => <IncomeCategoriesState>[
         IncomeCategoriesState(
           status: IncomeCategoriesUIStatus.loaded,
-          categories: incomeCategoriesWithState.map((it) {
-            final isDeleting =
-                it.category.id == incomeCategoriesWithState.first.category.id;
-            if (!isDeleting) return it;
-            return it.copyWith(status: IncomeCategoryUIStatus.deleting);
-          }).toList(),
+          categories: incomeCategories,
+          deletingIds: {incomeCategories.first.id},
         ),
         IncomeCategoriesState(
           status: IncomeCategoriesUIStatus.loaded,
-          categories: incomeCategoriesWithState.map((it) {
-            final isDeleting =
-                it.category.id == incomeCategoriesWithState.first.category.id;
-            if (!isDeleting) return it;
-            return it.copyWith(status: IncomeCategoryUIStatus.deleting);
-          }).toList(),
+          categories: incomeCategories,
+          deletingIds: {},
           notice: IncomeCategoryUINotice.recentlyDeleted(
             category: incomeCategories.first,
           ),
@@ -252,7 +239,8 @@ void main() {
     );
 
     blocTest<IncomeCategoriesBloc, IncomeCategoriesState>(
-      'emits [new categories, new idle categories and failed notice] '
+      'emits [new deletingIds, '
+      'failed notice and updated deletingIds] '
       'when deleteIncomeCategory returns failure',
       setUp: () {
         when(
@@ -267,7 +255,7 @@ void main() {
       seed: () {
         return IncomeCategoriesState(
           status: IncomeCategoriesUIStatus.loaded,
-          categories: incomeCategoriesWithState,
+          categories: incomeCategories,
         );
       },
       build: buildBloc,
@@ -278,16 +266,13 @@ void main() {
       expect: () => <IncomeCategoriesState>[
         IncomeCategoriesState(
           status: IncomeCategoriesUIStatus.loaded,
-          categories: incomeCategoriesWithState.map((it) {
-            final isDeleting =
-                it.category.id == incomeCategoriesWithState.first.category.id;
-            if (!isDeleting) return it;
-            return it.copyWith(status: IncomeCategoryUIStatus.deleting);
-          }).toList(),
+          categories: incomeCategories,
+          deletingIds: {incomeCategories.first.id},
         ),
         IncomeCategoriesState(
           status: IncomeCategoriesUIStatus.loaded,
-          categories: incomeCategoriesWithState,
+          categories: incomeCategories,
+          deletingIds: {},
           notice: IncomeCategoryUINotice.deleteFailed(
             category: incomeCategories.first,
             exception: AppException.test(),
@@ -327,12 +312,12 @@ void main() {
 
   group('update', () {
     blocTest<IncomeCategoriesBloc, IncomeCategoriesState>(
-      'emits [new updating categories, loaded with updated notice] '
+      'emits [new updatingIds, updated notice and updatingIds] '
       'when updateIncomeCategory returns success',
       seed: () {
         return IncomeCategoriesState(
           status: IncomeCategoriesUIStatus.loaded,
-          categories: incomeCategoriesWithState,
+          categories: incomeCategories,
         );
       },
       build: buildBloc,
@@ -345,23 +330,15 @@ void main() {
       expect: () => <IncomeCategoriesState>[
         IncomeCategoriesState(
           status: IncomeCategoriesUIStatus.loaded,
-          categories: incomeCategoriesWithState.map((it) {
-            final isUpdating =
-                it.category.id == incomeCategoriesWithState.first.category.id;
-            if (!isUpdating) return it;
-            return it.copyWith(status: IncomeCategoryUIStatus.updating);
-          }).toList(),
+          categories: incomeCategories,
+          updatingIds: {incomeCategories.first.id},
         ),
         IncomeCategoriesState(
           status: IncomeCategoriesUIStatus.loaded,
-          categories: incomeCategoriesWithState.map((it) {
-            final isUpdating =
-                it.category.id == incomeCategoriesWithState.first.category.id;
-            if (!isUpdating) return it;
-            return it.copyWith(status: IncomeCategoryUIStatus.updating);
-          }).toList(),
+          categories: incomeCategories,
+          updatingIds: {},
           notice: IncomeCategoryUINotice.recentlyUpdated(
-            from: incomeCategoriesWithState.first.category,
+            from: incomeCategories.first,
             to: updatedFirstCategory,
           ),
         ),
@@ -380,8 +357,8 @@ void main() {
     );
 
     blocTest<IncomeCategoriesBloc, IncomeCategoriesState>(
-      'emits [new categories, '
-      'new categories with idle status and updateFailure notice] '
+      'emits [new updatingIds, '
+      'updateFailure notice and updated updatingIds] '
       'when updateIncomeCategory returns failure',
       setUp: () {
         when(
@@ -399,7 +376,7 @@ void main() {
       seed: () {
         return IncomeCategoriesState(
           status: IncomeCategoriesUIStatus.loaded,
-          categories: incomeCategoriesWithState,
+          categories: incomeCategories,
         );
       },
       build: buildBloc,
@@ -412,16 +389,13 @@ void main() {
       expect: () => <IncomeCategoriesState>[
         IncomeCategoriesState(
           status: IncomeCategoriesUIStatus.loaded,
-          categories: incomeCategoriesWithState.map((it) {
-            final isUpdating =
-                it.category.id == incomeCategoriesWithState.first.category.id;
-            if (!isUpdating) return it;
-            return it.copyWith(status: IncomeCategoryUIStatus.updating);
-          }).toList(),
+          categories: incomeCategories,
+          updatingIds: {incomeCategories.first.id},
         ),
         IncomeCategoriesState(
           status: IncomeCategoriesUIStatus.loaded,
-          categories: incomeCategoriesWithState,
+          categories: incomeCategories,
+          updatingIds: {},
           notice: IncomeCategoryUINotice.updateFailed(
             category: incomeCategories.first,
             exception: AppException.test(),

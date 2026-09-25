@@ -83,25 +83,13 @@ class ExpenseCategoriesBloc
       onData: (result) {
         return result.when(
           success: (categories) {
-            final currentItemState = {
-              for (final it in state.categories) it.category.id: it.status,
-            };
             logInfo(
               'Streamed expense categories succeeded. Emit loaded status',
               traceId: traceId,
             );
             return state.copyWith(
               status: ExpenseCategoriesUIStatus.loaded,
-              categories: categories
-                  .map(
-                    (it) => ExpenseCategoryUIModel(
-                      category: it,
-                      status:
-                          currentItemState[it.id] ??
-                          ExpenseCategoryUIStatus.idle,
-                    ),
-                  )
-                  .toList(),
+              categories: categories,
             );
           },
           failure: (exc) {
@@ -125,7 +113,7 @@ class ExpenseCategoriesBloc
   }) async {
     final traceId = generateUid();
     final categoryIdx = state.categories.indexWhere(
-      (it) => it.category.id == category.id,
+      (it) => it.id == category.id,
     );
     if (categoryIdx == -1) {
       logInfo(
@@ -138,58 +126,45 @@ class ExpenseCategoriesBloc
 
     logInfo(
       'Starts deleting category with id ${category.id}. '
-      'Emit new categories with status deleting on the ExpenseCategory',
+      'Emit new deletingIds with category id',
       traceId: traceId,
     );
     emit(
       state.copyWith(
-        categories: state.categories.map((it) {
-          final isDeleting = it.category.id == category.id;
-          if (!isDeleting) return it;
-          return it.copyWith(status: ExpenseCategoryUIStatus.deleting);
-        }).toList(),
+        deletingIds: Set.from(state.deletingIds)..add(category.id),
       ),
     );
     final result = await _deleteExpenseCategory.execute(
       DeleteExpenseCategoryParams(category: category),
       traceId: traceId,
     );
-    result.when(
+    final notice = result.when(
       success: (_) {
         logInfo(
           'Deletes category success. '
-          'Filter category from categories. '
+          'Remove ID from deletingIds '
           'Emit with recentlyDeleted notice',
           traceId: traceId,
         );
-        emit(
-          state.copyWith(
-            status: ExpenseCategoriesUIStatus.loaded,
-            notice: ExpenseCategoryUINotice.recentlyDeleted(category: category),
-          ),
-        );
+        return ExpenseCategoryUINotice.recentlyDeleted(category: category);
       },
       failure: (exc) {
         logInfo(
           'Delete category failed. '
-          'Emit idle status on the ExpenseCategory with deleteFailed notice',
+          'Emit removed ID from deletingIds with deleteFailed notice',
           traceId: traceId,
         );
-        emit(
-          state.copyWith(
-            status: ExpenseCategoriesUIStatus.loaded,
-            categories: state.categories.map((it) {
-              final processed = it.category.id == category.id;
-              if (!processed) return it;
-              return it.copyWith(status: ExpenseCategoryUIStatus.idle);
-            }).toList(),
-            notice: ExpenseCategoryUINotice.deleteFailed(
-              category: category,
-              exception: exc,
-            ),
-          ),
+        return ExpenseCategoryUINotice.deleteFailed(
+          category: category,
+          exception: exc,
         );
       },
+    );
+    emit(
+      state.copyWith(
+        deletingIds: Set.from(state.deletingIds)..remove(category.id),
+        notice: notice,
+      ),
     );
   }
 
@@ -201,26 +176,22 @@ class ExpenseCategoriesBloc
     final traceId = generateUid();
     logInfo('Checking category with id ${category.id}', traceId: traceId);
     final categoryIdx = state.categories.indexWhere(
-      (it) => it.category.id == category.id,
+      (it) => it.id == category.id,
     );
     if (categoryIdx == -1) {
       logInfo('ExpenseCategory not found. Skipping', traceId: traceId);
       return;
     }
-    final oldExpenseCategory = state.categories[categoryIdx].category;
+    final oldExpenseCategory = state.categories[categoryIdx];
 
     logInfo(
       'Starts updating category ${category.id}. '
-      'Emit new categories with status updating on the ExpenseCategory',
+      'Emit new updatingIds with category id',
       traceId: traceId,
     );
     emit(
       state.copyWith(
-        categories: state.categories.map((it) {
-          final isUpdating = it.category.id == category.id;
-          if (!isUpdating) return it;
-          return it.copyWith(status: ExpenseCategoryUIStatus.updating);
-        }).toList(),
+        updatingIds: Set.from(state.updatingIds)..add(category.id),
       ),
     );
 
@@ -232,46 +203,35 @@ class ExpenseCategoriesBloc
       params,
       traceId: traceId,
     );
-    result.when(
+    final notice = result.when(
       success: (updated) {
         logInfo(
           'Updates category success. '
-          'Emit updated category with idle status and recentlyUpdated notice',
+          'Emit removed ID from updatingIds and recentlyUpdated notice',
           traceId: traceId,
         );
-        emit(
-          state.copyWith(
-            status: ExpenseCategoriesUIStatus.loaded,
-            notice: ExpenseCategoryUINotice.recentlyUpdated(
-              from: oldExpenseCategory,
-              to: updated,
-            ),
-          ),
+        return ExpenseCategoryUINotice.recentlyUpdated(
+          from: oldExpenseCategory,
+          to: updated,
         );
       },
       failure: (exc) {
         logInfo(
           'Update category failed. '
-          'Emit idle status on the ExpenseCategory and updateFailed notice',
+          'Emit removed ID from updatingIds and updateFailed notice',
           traceId: traceId,
         );
-        emit(
-          state.copyWith(
-            status: ExpenseCategoriesUIStatus.loaded,
-            categories: state.categories.map((it) {
-              final processed = it.category.id == category.id;
-              if (!processed) return it;
-              return it.copyWith(
-                status: ExpenseCategoryUIStatus.idle,
-              );
-            }).toList(),
-            notice: ExpenseCategoryUINotice.updateFailed(
-              category: category,
-              exception: exc,
-            ),
-          ),
+        return ExpenseCategoryUINotice.updateFailed(
+          category: category,
+          exception: exc,
         );
       },
+    );
+    emit(
+      state.copyWith(
+        updatingIds: Set.from(state.updatingIds)..remove(category.id),
+        notice: notice,
+      ),
     );
   }
 }

@@ -81,9 +81,7 @@ class _IncomeCategorySelectorState extends State<IncomeCategorySelector> {
             _controller.lastError = state.exception;
           case IncomeCategoriesUIStatus.loaded:
             _controller.isLoading = false;
-            _controller.items = state.categories
-                .map((it) => it.category)
-                .toList();
+            _controller.items = state.categories;
           case _:
         }
       },

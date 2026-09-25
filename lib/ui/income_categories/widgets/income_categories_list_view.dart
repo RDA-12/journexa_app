@@ -122,41 +122,54 @@ class _IncomeCategoriesListViewState extends State<IncomeCategoriesListView> {
                     items: categories,
                     itemBuilder: (context, index) {
                       final item = categories[index];
-                      return BlocSelector<
+                      return BlocBuilder<
                         IncomeCategoriesBloc,
-                        IncomeCategoriesState,
-                        IncomeCategoryUIModel?
+                        IncomeCategoriesState
                       >(
-                        selector: (state) {
-                          return state.categories.firstWhereOrNull(
-                            (it) => it.category.id == item.category.id,
+                        buildWhen: (p, c) {
+                          final pCategory = p.categories.firstWhereOrNull(
+                            (it) => it.id == item.id,
                           );
+                          final cCategory = c.categories.firstWhereOrNull(
+                            (it) => it.id == item.id,
+                          );
+                          final differentCategory = pCategory != cCategory;
+                          final updating =
+                              p.updatingIds.contains(item.id) ||
+                              c.updatingIds.contains(item.id);
+                          final deleting =
+                              p.deletingIds.contains(item.id) ||
+                              c.deletingIds.contains(item.id);
+                          return differentCategory || updating || deleting;
                         },
-                        builder: (context, incomeCategory) {
-                          if (incomeCategory == null) {
+                        builder: (context, state) {
+                          final category = state.categories.firstWhereOrNull(
+                            (it) => it.id == item.id,
+                          );
+                          if (category == null) {
                             return const SizedBox.shrink();
                           }
-                          final isDeleting =
-                              incomeCategory.status ==
-                              IncomeCategoryUIStatus.deleting;
-                          final isUpdating =
-                              incomeCategory.status ==
-                              IncomeCategoryUIStatus.updating;
+                          final isDeleting = state.deletingIds.contains(
+                            category.id,
+                          );
+                          final isUpdating = state.updatingIds.contains(
+                            category.id,
+                          );
                           return IncomeCategoryTile(
-                            category: incomeCategory.category,
+                            category: category,
                             isDeleting: isDeleting,
                             isUpdating: isUpdating,
                             onDeletePressed: () {
                               context.read<IncomeCategoriesBloc>().add(
                                 IncomeCategoriesEvent.delete(
-                                  incomeCategory.category,
+                                  category,
                                 ),
                               );
                             },
                             onUpdatePressed: ({required icon, required name}) {
                               context.read<IncomeCategoriesBloc>().add(
                                 IncomeCategoriesEvent.update(
-                                  incomeCategory.category,
+                                  category,
                                   name: name,
                                 ),
                               );

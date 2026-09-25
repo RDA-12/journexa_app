@@ -55,9 +55,7 @@ void main() {
         .update(name: 'category $index')
         .copyWith(id: '$index');
   }).toList();
-  final blocCategories = categories.map((it) {
-    return IncomeCategoryUIModel(category: it);
-  }).toList();
+  final blocCategories = categories;
 
   late WalletsBloc mockWalletsBloc;
   late IncomeCategoriesBloc mockIncomeCategoriesBloc;

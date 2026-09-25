@@ -172,9 +172,7 @@ void main() {
         mockExpenseCategoriesBloc,
         Stream<ExpenseCategoriesState>.fromIterable([
           ExpenseCategoriesState(
-            categories: items
-                .map((it) => ExpenseCategoryUIModel(category: it))
-                .toList(),
+            categories: items,
             status: ExpenseCategoriesUIStatus.loaded,
           ),
         ]),

@@ -82,9 +82,7 @@ class _ExpenseCategorySelectorState extends State<ExpenseCategorySelector> {
             _controller.lastError = state.exception;
           case ExpenseCategoriesUIStatus.loaded:
             _controller.isLoading = false;
-            _controller.items = state.categories
-                .map((it) => it.category)
-                .toList();
+            _controller.items = state.categories;
           case _:
         }
       },
